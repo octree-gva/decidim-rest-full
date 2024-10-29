@@ -1,0 +1,35 @@
+services:
+  rest_full:
+    command: bash -c "sleep infinity"
+    image: octree/decidim-dev:0.29
+    entrypoint: ""
+    volumes:
+      - .:/home/decidim/module
+      - bundle:/home/decidim/app/vendor
+      - node_modules:/home/decidim/app/node_modules
+    environment:
+      - PORT=3000
+      - DATABASE_HOST=pg
+      - DATABASE_USERNAME=decidim
+      - DATABASE_PASSWORD=pleaseChangeMe
+      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim
+      - DEV_MODULE=decidim-rest_full
+      - RAILS_ENV=development
+    ports:
+      - 3000:3000
+    links:
+      - rest-full-pg
+
+  rest-full-pg:
+    image: postgres:15
+    volumes:
+      - rest_full-pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DATABASE=decidim
+      - POSTGRES_USER=decidim
+      - POSTGRES_PASSWORD=pleaseChangeMe
+
+volumes:
+  node_modules: {}
+  bundle: {}
+  rest_full-pg-data: {}

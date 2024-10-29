@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decidim Rest API</title>
+    <style>
+        .container {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: #313131; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .button {
+            color: white;
+            padding: 8px 16px;
+            border: 1px solid white;
+            margin: 1rem;
+            font-size: 21px;
+            letter-spacing: 0.2px; 
+            display: inline-block;
+            border-radius: 4px;
+            text-decoration: none;
+
+        }
+        .button:hover{
+            color: white;
+            opacity: 0.8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="button" href="#">
+            Documentation website
+        </a>
+        <a class="button" href="/api/rest/docs/openapi.json" target="_blank">
+            Open API spec 2
+        </a>
+    </div>
+</body>
+</html>
