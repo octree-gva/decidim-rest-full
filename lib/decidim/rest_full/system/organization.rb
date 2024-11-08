@@ -23,7 +23,7 @@ module Decidim
           get "/" do
             Entities::OrganizationEntity.represent(
               paginate(Decidim::Organization.all),
-              only: populated(System::Organization.available_fields),
+              only: populated([:id]),
               locales: locales
             )
           end
@@ -45,7 +45,6 @@ module Decidim
               locales: locales
             )
           end
-
         end
       end
     end
