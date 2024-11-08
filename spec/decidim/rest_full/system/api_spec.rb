@@ -12,10 +12,10 @@ RSpec.describe Decidim::RestFull::System::API do
 
   describe "GET /system/statuses/public_timeline" do
     it "returns the public timeline" do
-      get "/system/statuses/public_timeline"
+      get "/system/organization"
       expect(last_response.status).to eq(200)
       expect(last_response.headers["Content-Type"]).to eq("application/json")
-      expect(JSON.parse(last_response.body)).to eq("foo" => "bar")
+      expect(JSON.parse(last_response.body)).to eq("organization" => {"id": 1})
     end
   end
 end
