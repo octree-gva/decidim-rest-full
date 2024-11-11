@@ -1,0 +1,37 @@
+<% add_decidim_page_title(t(".title")) %>
+
+<% provide :title do %>
+  <h1 class="h1"><%= t ".title" %></h1>
+<% end %>
+
+<%= link_to t("actions.new_api_client", scope: "decidim.rest_full.system.api_clients"), [:new, :system, :api_client], class: "button button__sm md:button__lg button__primary" %>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= t("created_at", scope: "decidim.rest_full.models.api_client.fields") %></th>
+      <th><%= t("name", scope: "decidim.rest_full.models.api_client.fields") %></th>
+      <th><%= t("client_id", scope: "decidim.rest_full.models.api_client.fields") %></th>
+      <th><%= t("actions.title", scope: "decidim.rest_full.system.api_clients") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @api_clients.each do |api_client| %>
+      <tr>
+        <td>
+          <%= l api_client.created_at, format: :short %>
+        </td>
+        <td>
+          <%= link_to api_client.name, system_api_client_path(api_client) %>
+        </td>
+        <td>
+          <%= link_to api_client.client_id, system_api_client_path(api_client) %>
+        </td>
+        <td class="flex gap-4 justify-end">
+          <%= link_to t("actions.edit", scope: "decidim.rest_full.system.api_clients"), edit_system_api_client_path(api_client), class: "button button__sm button__text-primary" %>
+          <%= link_to t("actions.destroy", scope: "decidim.rest_full.system.api_clients"), system_api_client_path(api_client), method: :delete, data: { confirm: t(".confirm_delete") }, class: "button button__sm button__text-primary" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

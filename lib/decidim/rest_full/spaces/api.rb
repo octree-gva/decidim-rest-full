@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 require "doorkeeper/grape/helpers"
-# Require system endpoints
-require_relative "organization"
+# Require spaces endpoints
+require_relative "space"
 module Decidim
   module RestFull
-    module System
+    module Spaces
       class API < Grape::API
         helpers Doorkeeper::Grape::Helpers
         before do
-          doorkeeper_authorize! :system
+          doorkeeper_authorize! :spaces
         end
         version "v1", using: :header, vendor: "decidim"
         format :json
-        prefix "system"
-        mount Organization
+        prefix "spaces"
+        mount Space
       end
     end
   end

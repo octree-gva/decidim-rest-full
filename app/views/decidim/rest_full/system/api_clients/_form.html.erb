@@ -1,0 +1,18 @@
+<div class="form__wrapper">
+    <%= form.text_field :name, disabled: %>
+    <%= form.select :decidim_organization_id,
+                    Decidim::Organization.all.map { |o| [organization_name(o), o.id] },
+                    { include_blank: t(".select_organization"), },
+                    { multiple: false,  disabled: } %>
+    <div>
+        <h3 class="h5"><%= t('.scopes_label') %></h3>
+        <% scope_options = %w[system proposals meetings debates pages] %>
+        <% scope_options.each do |scope| %>
+            <label class="block py-2">
+                <%= form.check_box :scopes, { multiple: true, label: "", disabled: disabled, checked: (form.object.scopes.first || "").include?(scope)}, scope, nil %>
+                <span class="font-normal"><%= t("scope_#{scope}", scope: "decidim.rest_full.models.api_client.fields") %></span>
+            </label>
+        <% end %>
+    </div>
+</div>
+

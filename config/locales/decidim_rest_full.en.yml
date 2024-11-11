@@ -1,0 +1,43 @@
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            name: Human name
+            client_id: Client ID
+            created_at: Created At
+            scope_system: "System: manage Organizations and Rails"
+            scope_proposals: "Proposal: manage proposal components"
+            scope_meetings: "Meeting: manage meeting components"
+            scope_debates: "Debate: manage debate components"
+            scope_pages: "Page: manage page components"
+      admin:
+        menu:
+          api_clients: "API Clients"
+          
+      system:
+        api_clients:
+          form:
+            select_organization: "Select an organization"
+            scopes_label: "Allowed scopes"
+          index: 
+            title: "API Clients"
+            confirm_delete: "This will block all queries using these credentials. Are you sure?"
+          new:
+            title: "New API Client Credentials"
+            save: "Create"
+          edit:
+            title: "Edit API Client Credentials"
+            save: "Save"
+            go_back: "Back to the list"
+            permissions_title: "Permissions"
+          show:
+            go_back: "Back to the list"
+          create:
+            success: "API Client created"
+          actions:
+            title: Actions
+            new_api_client: "New API Client"
+            edit: "Edit"
+            destroy: "Revoke"

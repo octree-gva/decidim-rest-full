@@ -6,6 +6,7 @@ PATH
       decidim-admin (>= 0.28, < 0.30)
       decidim-comments (>= 0.28, < 0.30)
       decidim-core (>= 0.28, < 0.30)
+      doorkeeper
       grape (~> 2.2.0)
       grape-entity (~> 1.0.1)
       grape-swagger (>= 2.0.0)

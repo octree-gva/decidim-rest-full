@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-comments", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
+  s.add_dependency "doorkeeper"
   s.add_dependency "grape", "~> 2.2.0"
   s.add_dependency "grape-entity", "~> 1.0.1"
   s.add_dependency "grape-swagger", ">= 2.0.0"

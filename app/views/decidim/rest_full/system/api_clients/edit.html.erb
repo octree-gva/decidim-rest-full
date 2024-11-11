@@ -1,0 +1,17 @@
+<% add_decidim_page_title(@api_client.name) %>
+<%= link_to t(".go_back"), system_api_clients_path, class: "button button__sm button__text-primary" %>
+<% provide :title do %>
+  <h1 class="h1"><%= @api_client.name %></h1>
+<% end %>
+<%= decidim_form_for(@form) do |f| %>
+  <%= render partial: "form", object: f, locals: {disabled:true} %>
+<% end %>
+<h2 class="h2"><%= t(".permissions_title") %></h2>
+<% if @api_client.scopes.exists?("system") %>
+                <h2 class="card-title" id="system_permissions">
+                    <%= t("scope_system", scope: "decidim.rest_full.models.api_client.fields") %>
+                </h2>
+        <div id="system_permissions" class="card-section" >
+            Hello
+        </div>
+<% end %>
