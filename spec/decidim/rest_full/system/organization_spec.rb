@@ -7,7 +7,7 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
     get "List available organizations" do
       tags "System"
       produces "application/json"
-      security [{ credentialFlowBearer: [] }]
+      security [{ credentialFlowBearer: ["system"] }]
       parameter name: "populate[]", in: :query, style: :form, explode: true, schema: Api::Definitions::POPULATE_PARAM.call(Decidim::Api::RestFull::OrganizationSerializer), required: false
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false

@@ -2,6 +2,8 @@
 This repository contains a Rails Engine describe a RestAPI for Decidim.
 This works is still a work on progress (started end-2024).
 
+## Documentation
+The documentation and the API specification are in the [documentation website](https://octree-gva.github.io/decidim-rest-full/)
 
 ### Resources supported
 
