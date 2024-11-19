@@ -29,7 +29,7 @@ RSpec.configure do |config|
           A RestFull API for Decidim, to be able to CRUD resources from Decidim.
 
           ## Authentication
-          [Get a token](Decidim::RestFull.docs_url/category/authentication) from our `/oauth/token` routes,#{" "}
+          [Get a token](#{Decidim::RestFull.docs_url}/category/authentication) from our `/oauth/token` routes,#{" "}
           following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.
 
           ### Permissions

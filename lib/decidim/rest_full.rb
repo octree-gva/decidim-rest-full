@@ -23,7 +23,7 @@ module Decidim
     end
 
     def self.docs_url
-      ENV.fetch("DOCS_URL", "http://localhost:3232/decidim-rest-full")
+      ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")
     end
   end
 end
