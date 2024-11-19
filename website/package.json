@@ -16,8 +16,12 @@
   },
   "dependencies": {
     "@docusaurus/core": "^3.6.1",
+    "@docusaurus/plugin-content-docs": "^3.6.1",
     "@docusaurus/preset-classic": "^3.6.1",
+    "@docusaurus/theme-common": "^3.6.1",
+    "@docusaurus/utils": "^3.6.1",
     "@mdx-js/react": "^3.1.0",
+    "@types/react": "^18.3.12",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.0",
     "react": "^18.3.1",
@@ -28,6 +32,7 @@
     "@docusaurus/module-type-aliases": "^3.6.1",
     "@docusaurus/tsconfig": "^3.6.1",
     "@docusaurus/types": "3.6.1",
+    "@redocly/cli": "^1.25.11",
     "typescript": "~5.5.4"
   },
   "browserslist": {
