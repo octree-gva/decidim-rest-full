@@ -1,0 +1,709 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API V1",
+    "version": "0.0.1",
+    "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.\n\n## Authentication\n[Get a token](Decidim::RestFull.docs_url/category/authentication) from our `/oauth/token` routes, \nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels: \n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions. \n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant\nDecidim is multi-tenant, and this API supports it.\n- The **`system` scope** endpoints are available in any tenant\n- The tenant `host` attribute will be used to guess which tenant you are requesting. \n  For example, given a tenant `example.org` and `foobar.org`, the endpoint\n  * `example.org/oauth/token` will ask a token for the example.org organization\n  * `foobar.org/oauth/token` for foobar.org.\n"
+  },
+  "security": [
+    {
+      "resourceOwnerFlowBearer": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "www.example.com"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "OAuth",
+      "description": "Use OAuth to get tokens and interact with the API. You can use machine-to-machine tokens, or user token directly with the API.\n* **Machine-to-machine**: Client Credential Flow\n* **User**: Resource Owner Password Credential Flow, with **impersonation** or **login**",
+      "externalDocs": {
+        "description": "How to authenticate",
+        "url": "http://localhost:3232/decidim-rest-full/category/authentication"
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "credentialFlowBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](http://localhost:3232/decidim-rest-full/auth/client-credential-flow)"
+      },
+      "resourceOwnerFlowBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](http://localhost:3232/decidim-rest-full/auth/user-credentials-flow)"
+      }
+    },
+    "schemas": {
+      "error": {
+        "type": "object",
+        "properties": {
+          "error_code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "details": {
+            "type": "string",
+            "example": "Title is required"
+          }
+        },
+        "required": [
+          "error_code",
+          "message"
+        ]
+      },
+      "organizations_response": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/organization"
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1"
+          },
+          "type": {
+            "type": "string",
+            "example": "organization"
+          },
+          "attributes": {
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "name": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "en": "Organization Name",
+                  "fr": "Nom de l'organisation"
+                }
+              },
+              "host": {
+                "type": "string",
+                "example": "example.org"
+              },
+              "secondaryHosts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "secondary.example.org"
+                ]
+              },
+              "meta": {
+                "type": "object",
+                "properties": {
+                  "populated": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "locales": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "en",
+                      "fr"
+                    ]
+                  }
+                }
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date_time",
+                "example": "2024-11-12T12:34:56Z"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date_time",
+                "example": "2024-11-12T12:34:56Z"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "oauth_grant_param": {
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "Client Credential",
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": [
+                  "client_credentials"
+                ],
+                "description": "Client Credential Flow, for **machine-to-machine**"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "OAuth application Client Id"
+              },
+              "client_secret": {
+                "type": "string",
+                "description": "OAuth application Client Secret"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "spaces",
+                  "system",
+                  "proposals",
+                  "meetings",
+                  "debates",
+                  "pages"
+                ],
+                "description": "Requested scopes"
+              }
+            },
+            "required": [
+              "grant_type",
+              "client_id",
+              "client_secret",
+              "scope"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Impersonation",
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ],
+                "description": "Resource Owner Password Credentials (ROPC) Flow, for **user impersonation**"
+              },
+              "auth_type": {
+                "type": "string",
+                "enum": [
+                  "impersonate"
+                ],
+                "description": "Type of ROPC"
+              },
+              "username": {
+                "type": "string",
+                "description": "User nickname"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "OAuth application Client Id"
+              },
+              "client_secret": {
+                "type": "string",
+                "description": "OAuth application Client Secret"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "spaces",
+                  "proposals",
+                  "meetings",
+                  "debates",
+                  "pages"
+                ],
+                "description": "Request scopes"
+              }
+            },
+            "required": [
+              "grant_type",
+              "client_id",
+              "client_secret",
+              "scope",
+              "username",
+              "auth_type"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Login",
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ],
+                "description": "Resource Owner Password Credentials (ROPC) Flow, for **user login**"
+              },
+              "auth_type": {
+                "type": "string",
+                "enum": [
+                  "login"
+                ],
+                "description": "Type of ROPC"
+              },
+              "username": {
+                "type": "string",
+                "description": "User nickname"
+              },
+              "password": {
+                "type": "string",
+                "description": "User password"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "OAuth application Client Id"
+              },
+              "client_secret": {
+                "type": "string",
+                "description": "OAuth application Client Secret"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "spaces",
+                  "proposals",
+                  "meetings",
+                  "debates",
+                  "pages"
+                ],
+                "description": "Request scopes"
+              }
+            },
+            "required": [
+              "grant_type",
+              "client_id",
+              "client_secret",
+              "scope",
+              "username",
+              "password",
+              "auth_type"
+            ]
+          }
+        ]
+      },
+      "password_grant_param": {
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "Impersonation",
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ],
+                "description": "Resource Owner Password Credentials (ROPC) Flow, for **user impersonation**"
+              },
+              "auth_type": {
+                "type": "string",
+                "enum": [
+                  "impersonate"
+                ],
+                "description": "Type of ROPC"
+              },
+              "username": {
+                "type": "string",
+                "description": "User nickname"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "OAuth application Client Id"
+              },
+              "client_secret": {
+                "type": "string",
+                "description": "OAuth application Client Secret"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "spaces",
+                  "proposals",
+                  "meetings",
+                  "debates",
+                  "pages"
+                ],
+                "description": "Request scopes"
+              }
+            },
+            "required": [
+              "grant_type",
+              "client_id",
+              "client_secret",
+              "scope",
+              "username",
+              "auth_type"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Login",
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ],
+                "description": "Resource Owner Password Credentials (ROPC) Flow, for **user login**"
+              },
+              "auth_type": {
+                "type": "string",
+                "enum": [
+                  "login"
+                ],
+                "description": "Type of ROPC"
+              },
+              "username": {
+                "type": "string",
+                "description": "User nickname"
+              },
+              "password": {
+                "type": "string",
+                "description": "User password"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "OAuth application Client Id"
+              },
+              "client_secret": {
+                "type": "string",
+                "description": "OAuth application Client Secret"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "spaces",
+                  "proposals",
+                  "meetings",
+                  "debates",
+                  "pages"
+                ],
+                "description": "Request scopes"
+              }
+            },
+            "required": [
+              "grant_type",
+              "client_id",
+              "client_secret",
+              "scope",
+              "username",
+              "password",
+              "auth_type"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "summary": "Request a OAuth token",
+        "tags": [
+          "OAuth"
+        ],
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Token returned"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/oauth_grant_param"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/api/rest_full/v0.0/system/organizations": {
+      "get": {
+        "summary": "List available organizations",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "credentialFlowBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "populate[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "id",
+                  "host",
+                  "secondary_hosts",
+                  "name",
+                  "created_at",
+                  "updated_at"
+                ]
+              }
+            },
+            "required": false
+          },
+          {
+            "name": "locales[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "fr"
+                ]
+              }
+            },
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organizations listed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ok": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "1",
+                          "type": "organization",
+                          "attributes": {
+                            "id": 1,
+                            "host": "localhost",
+                            "secondary_hosts": [
+                              "0.0.0.0",
+                              "127.0.0.1"
+                            ],
+                            "name": {
+                              "en": "Schoen, Gutmann and VonRueden",
+                              "fr": "Payet SAS"
+                            },
+                            "created_at": "2024-11-08T10:42:59Z",
+                            "updated_at": "2024-11-08T10:43:02Z",
+                            "meta": {
+                              "populated": [
+                                "id",
+                                "host",
+                                "secondary_hosts",
+                                "name",
+                                "created_at",
+                                "updated_at",
+                                "meta"
+                              ],
+                              "locales": [
+                                "en",
+                                "fr"
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "id": "2351",
+                          "type": "organization",
+                          "attributes": {
+                            "id": 2351,
+                            "host": "9.lvh.me",
+                            "secondary_hosts": [],
+                            "name": {
+                              "en": "Padberg-Windler",
+                              "fr": "Green and Sons"
+                            },
+                            "created_at": "2024-11-19T06:27:41Z",
+                            "updated_at": "2024-11-19T06:27:41Z",
+                            "meta": {
+                              "populated": [
+                                "id",
+                                "host",
+                                "secondary_hosts",
+                                "name",
+                                "created_at",
+                                "updated_at",
+                                "meta"
+                              ],
+                              "locales": [
+                                "en",
+                                "fr"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "paginated": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "1",
+                          "type": "organization",
+                          "attributes": {
+                            "id": 1,
+                            "created_at": "2024-11-08T10:42:59Z",
+                            "updated_at": "2024-11-08T10:43:02Z",
+                            "meta": {
+                              "populated": [
+                                "id",
+                                "created_at",
+                                "updated_at",
+                                "meta"
+                              ],
+                              "locales": [
+                                "en",
+                                "fr"
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "id": "2352",
+                          "type": "organization",
+                          "attributes": {
+                            "id": 2352,
+                            "created_at": "2024-11-19T06:27:41Z",
+                            "updated_at": "2024-11-19T06:27:41Z",
+                            "meta": {
+                              "populated": [
+                                "id",
+                                "created_at",
+                                "updated_at",
+                                "meta"
+                              ],
+                              "locales": [
+                                "en",
+                                "fr"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/organizations_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bad_format": {
+                    "value": {
+                      "error_code": 400,
+                      "message": "Bad request",
+                      "detail": "Not allowed populate param: invalid_field"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "server_error": {
+                    "value": {
+                      "error_code": 500,
+                      "message": "An error occurred",
+                      "detail": "StandardError"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

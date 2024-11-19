@@ -29,8 +29,8 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
   presets: [
+    
     [
       'classic',
       {
@@ -44,6 +44,21 @@ const config: Config = {
         },
       } satisfies Preset.Options,
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: './static/openapi.json',
+            route: '/api/',
+          },
+        ],
+        theme: {
+          // Change with your site colors
+          primaryColor: '#1890ff',
+        },
+      },
+    ]
   ],
 
   themeConfig: {
@@ -58,9 +73,14 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'documentationSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          to: '/api',
+          position: 'left',
+          label: 'API',
         },
         {
           href: 'https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full',

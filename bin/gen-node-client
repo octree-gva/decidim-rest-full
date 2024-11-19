@@ -1,0 +1,14 @@
+#! /bin/bash
+
+# Regenerate the openapi spec
+yarn gen:openapi-spec
+# Regenerate the node client (typescript+axios)
+yarn openapi-generator-cli generate -i ./website/static/openapi.json -o ./contrib/decidim-node-client -g typescript-axios --additional-properties=paramNaming=camelCase,axiosVersion=1.7.7 
+
+# Build node client
+cd contrib/decidim-node-client 
+yarn build
+
+# Harmonize packages version
+cd ../.. 
+yarn postversion

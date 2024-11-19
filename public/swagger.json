@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API V1",
+    "version": "v1",
+    "description": "This is the first version of my API"
+  },
+  "servers": [
+    {
+      "url": "https://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "www.example.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/api/rest_full/system/organizations": {
+      "get": {
+        "summary": "List available organizations",
+        "tags": [
+          "System"
+        ],
+        "parameters": [
+          {
+            "name": "populate[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "id",
+                  "host",
+                  "secondary_hosts",
+                  "created_at",
+                  "updated_at",
+                  "name"
+                ]
+              }
+            }
+          },
+          {
+            "name": "locales[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "fr"
+                ]
+              }
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organizations listed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "organization"
+                          },
+                          "attributes": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "name": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "example": {
+                                  "en": "Organization Name",
+                                  "fr": "Nom de l'organisation"
+                                }
+                              },
+                              "host": {
+                                "type": "string",
+                                "example": "example.org"
+                              },
+                              "secondaryHosts": {
+                                "type": "string",
+                                "example": "secondary.example.org"
+                              },
+                              "meta": {
+                                "type": "object",
+                                "properties": {
+                                  "populated": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "example": [
+                                      "id",
+                                      "name"
+                                    ]
+                                  },
+                                  "locales": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "example": [
+                                      "en",
+                                      "fr"
+                                    ]
+                                  }
+                                }
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date_time",
+                                "example": "2024-11-12T12:34:56Z"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "format": "date_time",
+                                "example": "2024-11-12T12:34:56Z"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -29,11 +29,9 @@ Gem::Specification.new do |s|
   s.add_dependency "decidim-comments", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
   s.add_dependency "doorkeeper"
-  s.add_dependency "grape", "~> 2.2.0"
-  s.add_dependency "grape-entity", "~> 1.0.1"
-  s.add_dependency "grape-swagger", ">= 2.0.0"
-  s.add_dependency "grape-swagger-entity", "~> 0.5.5"
-  s.add_dependency "kaminari"
+  s.add_dependency "jsonapi-serializer"
+  s.add_dependency "rswag-api"
+  s.add_dependency "rswag-ui"
 
   s.metadata["rubygems_mfa_required"] = "true"
 end
