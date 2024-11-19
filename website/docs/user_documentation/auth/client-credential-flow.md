@@ -4,6 +4,8 @@ title: Machine-to-Machine Token
 description: How to authenticate a service to Decidim.
 ---
 
+![Client Credentials](../../client_cred.png)
+
 # Machine-to-Machine Authentication (Client Credentials Flow)
 
 This flow is used for service-to-service authentication in Decidim, allowing systems to interact with the Decidim API without user involvement.

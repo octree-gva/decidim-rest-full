@@ -3,6 +3,7 @@ sidebar_position: 4
 title: User Token
 description: How to authenticate a user to Decidim API.
 ---
+![ROPC](../../ropc.png)
 
 # User Authentication (Resource Owner Password Flow)
 

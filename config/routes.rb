@@ -1,19 +1,14 @@
 # frozen_string_literal: true
 
 # config/routes.rb
-Decidim::RestFull::Engine.routes.draw do
-  get "/api/rest/docs", to: "pages#show", as: :documentation_root
 
+Decidim::Core::Engine.routes.draw do
   authenticate(:admin) do
     namespace "system" do
-      resources :api_clients
+      resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
     end
   end
 
-  root to: "system/api_clients#index"
-end
-
-Decidim::Core::Engine.routes.draw do
   namespace :api do
     namespace :rest_full do
       scope "v#{Decidim::RestFull.major_minor_version}" do

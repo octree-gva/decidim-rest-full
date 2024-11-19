@@ -3,6 +3,6 @@
   "position": 3,
   "link": {
     "type": "generated-index",
-    "description": "How to configure rest-full with Decidim"
+    "description": "How to configure the Rest API for Decidim"
   }
 }

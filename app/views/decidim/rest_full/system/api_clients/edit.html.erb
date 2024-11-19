@@ -6,12 +6,75 @@
 <%= decidim_form_for(@form) do |f| %>
   <%= render partial: "form", object: f, locals: {disabled:true} %>
 <% end %>
+<div class="form__wrapper">
+  <h3 class="h5"><%= t('.keys_label') %></h3>
+  <label>
+    <span><%= t('.client_id') %></span>
+    <input type="text" value="<%= @api_client.client_id %>" name="unnamed" />
+  </label>
+  <label>
+    <span><%= t('.client_secret') %></span>
+    <input type="text" value="<%= @api_client.client_secret %>" name="unnamed" />
+  </label>
+</div>
 <h2 class="h2"><%= t(".permissions_title") %></h2>
-<% if @api_client.scopes.exists?("system") %>
-                <h2 class="card-title" id="system_permissions">
-                    <%= t("scope_system", scope: "decidim.rest_full.models.api_client.fields") %>
-                </h2>
-        <div id="system_permissions" class="card-section" >
-            Hello
-        </div>
+<div>
+  <strong><%= t(".permissions_scopes") %></strong><code><%= @api_client.scopes.to_a %></code>
+</div>
+
+<% if @api_client.scopes.to_a.include?("system") %>
+<div class="border border-black ">
+        <h2 class="border-b-4 h5 p-4" id="system_permissions">
+            <%= t("scope_system", scope: "decidim.rest_full.models.api_client.fields") %>
+        </h2>
+        <div id="system_permissions" class="p-4 " >
+          <div class="mt-2">
+            <div class="font-bold py-2"><%= t('.auth_type') %></div>
+            <div class="flex gap-6 flex-wrap">
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">impersonate</span>
+              </label>
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">login</span>
+              </label>
+            </div>
+          </div>
+          <div class="mt-2">
+            <div class="font-bold py-2"><%= t('.organization_perm') %></div>
+            <div class="flex gap-6 flex-wrap">
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">list</span>
+              </label>
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">detail</span>
+              </label>
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">update</span>
+              </label>
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">destroy</span>
+              </label>
+            </div>
+          </div>
+          <div class="mt-2">
+            <div class="font-bold py-2"><%= t('.rails_perm') %></div>
+            <div class="flex gap-6 flex-wrap">
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">restart</span>
+              </label>
+              <label>
+                <input type="checkbox" /> 
+                <span class="pre">execute task</span>
+              </label>
+            </div>
+          </div>
+    </div>
+      </div>
 <% end %>

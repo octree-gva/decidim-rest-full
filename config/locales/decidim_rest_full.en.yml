@@ -32,6 +32,13 @@ en:
             save: "Save"
             go_back: "Back to the list"
             permissions_title: "Permissions"
+            permissions_scopes: "Allowed scopes"
+            keys_label: "Credentials"
+            client_id: "Client Id"
+            client_secret: "Client Secret"
+            auth_type: "Auth Type"
+            organization_perm: "Organization"
+            rails_perm: "Ruby on Rails"
           show:
             go_back: "Back to the list"
           create:

@@ -3,6 +3,6 @@
   "position": 4,
   "link": {
     "type": "generated-index",
-    "description": "How to authenticate with the rest api"
+    "description": "Get tokens with your credentials."
   }
 }

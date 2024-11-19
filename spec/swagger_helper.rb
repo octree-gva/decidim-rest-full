@@ -84,13 +84,13 @@ RSpec.configure do |config|
             type: :http,
             scheme: :bearer,
             bearerFormat: :JWT,
-            description: "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](#{Decidim::RestFull.docs_url}/auth/client-credential-flow)"
+            description: "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/client-credential-flow)"
           },
           resourceOwnerFlowBearer: {
             type: :http,
             scheme: :bearer,
             bearerFormat: :JWT,
-            description: "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](#{Decidim::RestFull.docs_url}/auth/user-credentials-flow)"
+            description: "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/user-credentials-flow)"
 
           }
         },

@@ -5,12 +5,19 @@ module Decidim
     module System
       class ApiClientsController < Decidim::System::ApplicationController
         helper Decidim::Admin::AttributesDisplayHelper
+        helper Decidim::Core::Engine.routes.url_helpers
         helper_method :destroy_admin_session_path
-
+        def core_engine_routes
+          Decidim::Core::Engine.routes.url_helpers
+        end
         def destroy_admin_session_path
           Decidim::System::Engine.routes.url_helpers.destroy_admin_session_path
         end
-
+        def destroy
+          @api_client = collection.find(params[:id])
+          @api_client.destroy
+          redirect_to core_engine_routes.system_api_clients_path, flash: {success: "Client Revoked"}
+        end
         def index
           @api_clients = collection.page(params[:page]).per(15)
         end
@@ -35,7 +42,7 @@ module Decidim
           CreateApiClient.call(@form) do
             on(:ok) do |api_client|
               flash[:notice] = I18n.t("create.success", scope: "decidim.rest_full.system.api_clients")
-              redirect_to edit_system_api_client_path(api_client)
+              redirect_to core_engine_routes.edit_system_api_client_path(api_client)
             end
 
             on(:invalid) do
