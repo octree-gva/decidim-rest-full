@@ -2,12 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
-    "version": "0.0.1",
-    "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.\n\n## Authentication\n[Get a token](Decidim::RestFull.docs_url/category/authentication) from our `/oauth/token` routes, \nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels: \n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions. \n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant\nDecidim is multi-tenant, and this API supports it.\n- The **`system` scope** endpoints are available in any tenant\n- The tenant `host` attribute will be used to guess which tenant you are requesting. \n  For example, given a tenant `example.org` and `foobar.org`, the endpoint\n  * `example.org/oauth/token` will ask a token for the example.org organization\n  * `foobar.org/oauth/token` for foobar.org.\n"
+    "version": "v0.0",
+    "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, \nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels: \n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions. \n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant\nDecidim is multi-tenant, and this API supports it.\n- The **`system` scope** endpoints are available in any tenant\n- The tenant `host` attribute will be used to guess which tenant you are requesting. \n  For example, given a tenant `example.org` and `foobar.org`, the endpoint\n  * `example.org/oauth/token` will ask a token for the example.org organization\n  * `foobar.org/oauth/token` for foobar.org.\n"
   },
   "security": [
     {
-      "resourceOwnerFlowBearer": []
+      "resourceOwnerFlowBearer": [
+
+      ]
     }
   ],
   "servers": [
@@ -26,7 +28,7 @@
       "description": "Use OAuth to get tokens and interact with the API. You can use machine-to-machine tokens, or user token directly with the API.\n* **Machine-to-machine**: Client Credential Flow\n* **User**: Resource Owner Password Credential Flow, with **impersonation** or **login**",
       "externalDocs": {
         "description": "How to authenticate",
-        "url": "http://localhost:3232/decidim-rest-full/category/authentication"
+        "url": "https://octree-gva.github.io/decidim-rest-full/category/authentication"
       }
     }
   ],
@@ -36,13 +38,13 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](http://localhost:3232/decidim-rest-full/auth/client-credential-flow)"
+        "description": "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](https://octree-gva.github.io/decidim-rest-full/auth/client-credential-flow)"
       },
       "resourceOwnerFlowBearer": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](http://localhost:3232/decidim-rest-full/auth/user-credentials-flow)"
+        "description": "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](https://octree-gva.github.io/decidim-rest-full/auth/user-credentials-flow)"
       }
     },
     "schemas": {
@@ -443,8 +445,12 @@
         "tags": [
           "OAuth"
         ],
-        "security": [],
-        "parameters": [],
+        "security": [
+
+        ],
+        "parameters": [
+
+        ],
         "responses": {
           "200": {
             "description": "Token returned"
@@ -473,7 +479,9 @@
         ],
         "security": [
           {
-            "credentialFlowBearer": []
+            "credentialFlowBearer": [
+              "system"
+            ]
           }
         ],
         "parameters": [
@@ -577,18 +585,20 @@
                           }
                         },
                         {
-                          "id": "2351",
+                          "id": "2447",
                           "type": "organization",
                           "attributes": {
-                            "id": 2351,
+                            "id": 2447,
                             "host": "9.lvh.me",
-                            "secondary_hosts": [],
+                            "secondary_hosts": [
+
+                            ],
                             "name": {
-                              "en": "Padberg-Windler",
-                              "fr": "Green and Sons"
+                              "en": "Mante Group",
+                              "fr": "Bahringer-Russel"
                             },
-                            "created_at": "2024-11-19T06:27:41Z",
-                            "updated_at": "2024-11-19T06:27:41Z",
+                            "created_at": "2024-11-19T07:38:32Z",
+                            "updated_at": "2024-11-19T07:38:32Z",
                             "meta": {
                               "populated": [
                                 "id",
@@ -634,12 +644,12 @@
                           }
                         },
                         {
-                          "id": "2352",
+                          "id": "2448",
                           "type": "organization",
                           "attributes": {
-                            "id": 2352,
-                            "created_at": "2024-11-19T06:27:41Z",
-                            "updated_at": "2024-11-19T06:27:41Z",
+                            "id": 2448,
+                            "created_at": "2024-11-19T07:38:32Z",
+                            "updated_at": "2024-11-19T07:38:32Z",
                             "meta": {
                               "populated": [
                                 "id",
