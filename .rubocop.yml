@@ -1,3 +1,12 @@
+require: 
+  - rubocop-rspec
 inherit_from:
   - .rubocop_ruby.yml
   - .rubocop_rails.yml
+inherit_gem:
+  rswag-specs: .rubocop_rspec_alias_config.yml
+RSpec/VariableName:
+    EnforcedStyle: snake_case
+    AllowedPatterns:
+      - '^[a-z_]+\[\]$' # Allows symbols like locales[] and host__in
+      - 'Authorization' # Authorization header

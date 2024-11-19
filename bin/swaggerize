@@ -1,0 +1,6 @@
+#! /bin/bash
+set -e
+echo -n "generating openapi spec .................................. "
+SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb --format Rswag::Specs::SwaggerFormatter --order defined  > /dev/null 2>&1
+mv -f spec/decidim_dummy_app/swagger/v1/swagger.json ./website/static/openapi.json  > /dev/null 2>&1
+echo "ok"

@@ -8,7 +8,7 @@ base_path = "../" if File.basename(__dir__) == "development_app"
 
 require_relative "#{base_path}lib/decidim/rest_full/version"
 
-DECIDIM_VERSION = "~> 0.29.1"
+DECIDIM_VERSION = Decidim::RestFull.decidim_version
 
 gem "decidim", DECIDIM_VERSION
 gem "decidim-rest_full", path: base_path
@@ -21,7 +21,9 @@ gem "deface", ">= 1.9.0"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
-  gem "decidim-dev", "~> 0.29.1"
+  gem "decidim-dev", Decidim::RestFull.decidim_version
+  gem "rswag-specs"
+  gem "rubocop-rspec"
 end
 
 group :test do
