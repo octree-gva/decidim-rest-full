@@ -4,7 +4,7 @@ module Api
   module Definitions
     SPACE = {
       type: :object,
-      title: "Space"
+      title: "Space",
       properties: {
         id: { type: :string, example: "1", description: "Space Id" },
         type: { type: :string, enum: ["space"], example: "space" },
@@ -53,7 +53,7 @@ module Api
             }
           },
           required: [:title, :manifest_name, :visibility, :components]
-        },
+        }
       },
       required: [:id, :type]
     }.freeze

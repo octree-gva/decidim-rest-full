@@ -26,7 +26,7 @@ module Api
             manifest_name: { type: :string, enum: Decidim.component_registry.manifests.map(&:name) }
           },
           required: [:title, :manifest_name]
-        },
+        }
       },
       required: [:id, :type]
     }.freeze
