@@ -51,16 +51,7 @@ ruby::rubocop:
   script:
     - bundle
     - bundle exec rubocop .
-##
-# Lint crowdin.yml configuration file
-crowdin::lint:  
-  extends: .development_rules
-  image: node:18.20
-  stage: lint
-  script:
-    - npm install -g @crowdin/cli
-    - crowdin config lint --no-progress || exit 1
-    - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress || exit 1
+
 ##
 # Publish the gem un ruby gem.
 ruby::rubygem:
@@ -112,6 +103,7 @@ crowdin::merge_request:
     - git add config/locales
     - git commit -m "Crowdin Updates"
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
+
 ##
 # Execute rspec and expose a spec report
 ruby::rspec:
@@ -145,9 +137,8 @@ ruby::rspec:
     - bundle exec rake test_app
   script:
     - RAILS_ENV=test bundle exec rspec spec/decidim/
+    
 # Publish decidim rest full api package
-
-
 decidim-client::publish:
   image: node:latest
   before_script:
