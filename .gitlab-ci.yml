@@ -46,7 +46,7 @@ services:
 # Lint ruby code
 ruby::rubocop:  
   extends: .development_rules
-  image: ruby:3.0.7
+  image: ruby:3.2.5
   stage: lint
   script:
     - bundle
@@ -64,7 +64,7 @@ crowdin::lint:
 ##
 # Publish the gem un ruby gem.
 ruby::rubygem:
-  image: ruby:3.0.7
+  image: ruby:3.2.5
   stage: publish
   script:
     - echo "---" > .credentials
@@ -115,7 +115,7 @@ crowdin::merge_request:
 ##
 # Execute rspec and expose a spec report
 ruby::rspec:
-  image: ruby:3.0.7
+  image: ruby:3.2.5
   stage: test
   extends: .development_rules
   artifacts:
