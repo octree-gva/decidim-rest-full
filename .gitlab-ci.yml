@@ -137,7 +137,7 @@ ruby::rspec:
     - bundle exec rake test_app
   script:
     - RAILS_ENV=test bundle exec rspec spec/decidim/
-    
+
 # Publish decidim rest full api package
 decidim-client::publish:
   image: node:latest
