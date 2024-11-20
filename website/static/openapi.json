@@ -2,12 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
-    "version": "0.0.1",
+    "version": "v0.0",
     "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, \nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels: \n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions. \n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant\nDecidim is multi-tenant, and this API supports it.\n- The **`system` scope** endpoints are available in any tenant\n- The tenant `host` attribute will be used to guess which tenant you are requesting. \n  For example, given a tenant `example.org` and `foobar.org`, the endpoint\n  * `example.org/oauth/token` will ask a token for the example.org organization\n  * `foobar.org/oauth/token` for foobar.org.\n"
   },
   "security": [
     {
-      "resourceOwnerFlowBearer": []
+      "resourceOwnerFlowBearer": [
+
+      ]
     }
   ],
   "servers": [
@@ -48,6 +50,7 @@
     "schemas": {
       "api_error": {
         "type": "object",
+        "title": "Api Error",
         "properties": {
           "error_code": {
             "type": "integer",
@@ -83,6 +86,7 @@
       },
       "organization": {
         "type": "object",
+        "title": "Organization",
         "properties": {
           "id": {
             "type": "string",
@@ -170,6 +174,7 @@
       },
       "space": {
         "type": "object",
+        "title": "Space",
         "properties": {
           "id": {
             "type": "string",
@@ -184,10 +189,12 @@
             "example": "space"
           },
           "attributes": {
+            "title": "Space Attributes",
             "type": "object",
             "properties": {
               "title": {
                 "type": "object",
+                "title": "Title translations",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -199,6 +206,7 @@
               },
               "subtitle": {
                 "type": "object",
+                "title": "Subtitle translations",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -206,6 +214,7 @@
               },
               "short_description": {
                 "type": "object",
+                "title": "Short Description translations",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -213,6 +222,7 @@
               },
               "description": {
                 "type": "object",
+                "title": "Description translations",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -238,6 +248,7 @@
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "title": "Component Summary",
                   "properties": {
                     "id": {
                       "type": "integer",
@@ -282,6 +293,7 @@
       },
       "component": {
         "type": "object",
+        "title": "Component",
         "properties": {
           "id": {
             "type": "string",
@@ -650,8 +662,12 @@
         "tags": [
           "OAuth"
         ],
-        "security": [],
-        "parameters": [],
+        "security": [
+
+        ],
+        "parameters": [
+
+        ],
         "responses": {
           "200": {
             "description": "Token returned"
@@ -917,12 +933,12 @@
                     "value": {
                       "data": [
                         {
-                          "id": "3328",
+                          "id": "3353",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "meetings",
                             "title": {
-                              "en": "<script>alert(\"component_name\");</script> Explicabo sit nisi. 135",
+                              "en": "<script>alert(\"component_name\");</script> Voluptatem molestiae aut. 135",
                               "fr": ""
                             },
                             "global_annoucement": {
@@ -930,23 +946,25 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:25Z",
-                            "updated_at": "2024-11-20T15:41:25Z"
+                            "created_at": "2024-11-20T15:54:15Z",
+                            "updated_at": "2024-11-20T15:54:15Z"
                           }
                         },
                         {
-                          "id": "3329",
+                          "id": "3354",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "proposals",
                             "title": {
-                              "en": "<script>alert(\"component_name\");</script> Et dolor aut. 221",
+                              "en": "<script>alert(\"component_name\");</script> Autem est non. 221",
                               "fr": ""
                             },
                             "global_annoucement": {
@@ -954,18 +972,20 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:25Z",
-                            "updated_at": "2024-11-20T15:41:25Z"
+                            "created_at": "2024-11-20T15:54:15Z",
+                            "updated_at": "2024-11-20T15:54:15Z"
                           }
                         },
                         {
-                          "id": "3330",
+                          "id": "3355",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "accountability",
@@ -978,14 +998,16 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:25Z",
-                            "updated_at": "2024-11-20T15:41:25Z"
+                            "created_at": "2024-11-20T15:54:15Z",
+                            "updated_at": "2024-11-20T15:54:15Z"
                           }
                         }
                       ]
@@ -995,12 +1017,12 @@
                     "value": {
                       "data": [
                         {
-                          "id": "3331",
+                          "id": "3356",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "meetings",
                             "title": {
-                              "en": "<script>alert(\"component_name\");</script> Sed nisi eos. 317",
+                              "en": "<script>alert(\"component_name\");</script> Qui aspernatur nostrum. 317",
                               "fr": ""
                             },
                             "global_annoucement": {
@@ -1008,14 +1030,16 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:25Z",
-                            "updated_at": "2024-11-20T15:41:26Z"
+                            "created_at": "2024-11-20T15:54:16Z",
+                            "updated_at": "2024-11-20T15:54:16Z"
                           }
                         }
                       ]
@@ -1025,12 +1049,12 @@
                     "value": {
                       "data": [
                         {
-                          "id": "3334",
+                          "id": "3359",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "meetings",
                             "title": {
-                              "en": "<script>alert(\"component_name\");</script> Commodi quidem nemo. 499",
+                              "en": "<script>alert(\"component_name\");</script> Aut pariatur amet. 499",
                               "fr": ""
                             },
                             "global_annoucement": {
@@ -1038,23 +1062,25 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:26Z",
-                            "updated_at": "2024-11-20T15:41:26Z"
+                            "created_at": "2024-11-20T15:54:16Z",
+                            "updated_at": "2024-11-20T15:54:16Z"
                           }
                         },
                         {
-                          "id": "3335",
+                          "id": "3360",
                           "type": "component",
                           "attributes": {
                             "manifest_name": "proposals",
                             "title": {
-                              "en": "<script>alert(\"component_name\");</script> Eius omnis error. 585",
+                              "en": "<script>alert(\"component_name\");</script> Ut assumenda quidem. 585",
                               "fr": ""
                             },
                             "global_annoucement": {
@@ -1062,14 +1088,16 @@
                               "fr": ""
                             },
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:26Z",
-                            "updated_at": "2024-11-20T15:41:26Z"
+                            "created_at": "2024-11-20T15:54:16Z",
+                            "updated_at": "2024-11-20T15:54:16Z"
                           }
                         }
                       ]
@@ -1531,7 +1559,7 @@
                     "value": {
                       "data": [
                         {
-                          "id": "1491",
+                          "id": "1508",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
@@ -1540,96 +1568,108 @@
                               "fr": "c'est une assemblée"
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Iure quas laudantium. 1055",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Sed ratione ut. 1055",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Deserunt quod perspiciatis. 1057</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Laudantium accusantium harum. 1057</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Enim et dolor. 1059</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Magni nemo dolor. 1059</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:28Z",
-                            "updated_at": "2024-11-20T15:41:28Z"
+                            "created_at": "2024-11-20T15:54:18Z",
+                            "updated_at": "2024-11-20T15:54:18Z"
                           }
                         },
                         {
-                          "id": "1492",
+                          "id": "1509",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
                             "title": {
-                              "en": "<script>alert(\"assembly_title\");</script> Rerum libero ut. 1083",
+                              "en": "<script>alert(\"assembly_title\");</script> Vero itaque numquam. 1083",
                               "fr": ""
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Quis minus omnis. 1085",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Beatae quo tenetur. 1085",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Aut sed occaecati. 1087</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Vel blanditiis ducimus. 1087</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Neque rerum id. 1089</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Perferendis ut totam. 1089</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:28Z",
-                            "updated_at": "2024-11-20T15:41:28Z"
+                            "created_at": "2024-11-20T15:54:18Z",
+                            "updated_at": "2024-11-20T15:54:18Z"
                           }
                         },
                         {
-                          "id": "896",
+                          "id": "907",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "participatory_processes",
                             "title": {
-                              "en": "<script>alert(\"participatory_process_title\");</script> Blanditiis impedit enim. 1113",
+                              "en": "<script>alert(\"participatory_process_title\");</script> Sint id voluptas. 1113",
                               "fr": ""
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"participatory_process_subtitle\");</script> Eum sunt omnis. 1115",
+                              "en": "<script>alert(\"participatory_process_subtitle\");</script> Qui est mollitia. 1115",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"participatory_process_short_description\");</script> Aut architecto ratione. 1117</p>",
+                              "en": "<p><script>alert(\"participatory_process_short_description\");</script> Et dicta debitis. 1117</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"participatory_process_description\");</script> Odit qui repellendus. 1119</p>",
+                              "en": "<p><script>alert(\"participatory_process_description\");</script> Enim facilis ex. 1119</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:28Z",
-                            "updated_at": "2024-11-20T15:41:28Z"
+                            "created_at": "2024-11-20T15:54:18Z",
+                            "updated_at": "2024-11-20T15:54:18Z"
                           }
                         }
                       ]
@@ -1639,7 +1679,7 @@
                     "value": {
                       "data": [
                         {
-                          "id": "1493",
+                          "id": "1510",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
@@ -1648,62 +1688,70 @@
                               "fr": "c'est une assemblée"
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Laboriosam enim non. 1141",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Velit qui aspernatur. 1141",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Consequatur enim aut. 1143</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Consequuntur omnis mollitia. 1143</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> In quisquam quas. 1145</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Quibusdam voluptates quia. 1145</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:29Z",
-                            "updated_at": "2024-11-20T15:41:29Z"
+                            "created_at": "2024-11-20T15:54:19Z",
+                            "updated_at": "2024-11-20T15:54:19Z"
                           }
                         },
                         {
-                          "id": "1494",
+                          "id": "1511",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
                             "title": {
-                              "en": "<script>alert(\"assembly_title\");</script> Quisquam tenetur dolorem. 1169",
+                              "en": "<script>alert(\"assembly_title\");</script> Tempore vero veniam. 1169",
                               "fr": ""
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Qui pariatur aut. 1171",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Est est modi. 1171",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Eveniet doloremque omnis. 1173</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Sit velit et. 1173</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Distinctio tempore ut. 1175</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Minima velit corrupti. 1175</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:29Z",
-                            "updated_at": "2024-11-20T15:41:29Z"
+                            "created_at": "2024-11-20T15:54:19Z",
+                            "updated_at": "2024-11-20T15:54:19Z"
                           }
                         }
                       ]
@@ -1713,7 +1761,7 @@
                     "value": {
                       "data": [
                         {
-                          "id": "1495",
+                          "id": "1512",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
@@ -1722,28 +1770,32 @@
                               "fr": "c'est une assemblée"
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Provident ipsam occaecati. 1227",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Porro alias maiores. 1227",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Omnis sunt exercitationem. 1229</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Sit molestiae recusandae. 1229</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Iste et earum. 1231</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Commodi est repudiandae. 1231</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:29Z",
-                            "updated_at": "2024-11-20T15:41:29Z"
+                            "created_at": "2024-11-20T15:54:19Z",
+                            "updated_at": "2024-11-20T15:54:19Z"
                           }
                         }
                       ]
@@ -1753,7 +1805,7 @@
                     "value": {
                       "data": [
                         {
-                          "id": "1497",
+                          "id": "1514",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
@@ -1762,62 +1814,70 @@
                               "fr": "c'est une assemblée"
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Minus officia esse. 1313",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Vitae ipsam voluptatem. 1313",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Magni voluptatem est. 1315</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Occaecati fugiat accusantium. 1315</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Ducimus quo reiciendis. 1317</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Amet dignissimos aliquid. 1317</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:29Z",
-                            "updated_at": "2024-11-20T15:41:29Z"
+                            "created_at": "2024-11-20T15:54:19Z",
+                            "updated_at": "2024-11-20T15:54:19Z"
                           }
                         },
                         {
-                          "id": "1498",
+                          "id": "1515",
                           "type": "space",
                           "attributes": {
                             "manifest_name": "assemblies",
                             "title": {
-                              "en": "<script>alert(\"assembly_title\");</script> Beatae sunt aperiam. 1341",
+                              "en": "<script>alert(\"assembly_title\");</script> Perspiciatis quia et. 1341",
                               "fr": ""
                             },
                             "subtitle": {
-                              "en": "<script>alert(\"assembly_subtitle\");</script> Odit vero ut. 1343",
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Aut fugiat consequatur. 1343",
                               "fr": ""
                             },
                             "short_description": {
-                              "en": "<p><script>alert(\"assembly_short_description\");</script> Et non ad. 1345</p>",
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Inventore et totam. 1345</p>",
                               "fr": ""
                             },
                             "description": {
-                              "en": "<p><script>alert(\"assembly_description\");</script> Unde tempore earum. 1347</p>",
+                              "en": "<p><script>alert(\"assembly_description\");</script> Et sint quis. 1347</p>",
                               "fr": ""
                             },
                             "visibility": "public",
-                            "components": [],
+                            "components": [
+
+                            ],
                             "meta": {
-                              "populated": [],
+                              "populated": [
+
+                              ],
                               "locales": [
                                 "en",
                                 "fr"
                               ]
                             },
-                            "created_at": "2024-11-20T15:41:29Z",
-                            "updated_at": "2024-11-20T15:41:29Z"
+                            "created_at": "2024-11-20T15:54:19Z",
+                            "updated_at": "2024-11-20T15:54:19Z"
                           }
                         }
                       ]
@@ -1974,17 +2034,19 @@
                           }
                         },
                         {
-                          "id": "5584",
+                          "id": "5614",
                           "type": "organization",
                           "attributes": {
                             "host": "33.lvh.me",
-                            "secondary_hosts": [],
+                            "secondary_hosts": [
+
+                            ],
                             "name": {
-                              "en": "Kling LLC",
-                              "fr": "Kerluke-Dare"
+                              "en": "Ankunding and Sons",
+                              "fr": "Torp LLC"
                             },
-                            "created_at": "2024-11-20T15:41:32Z",
-                            "updated_at": "2024-11-20T15:41:32Z",
+                            "created_at": "2024-11-20T15:54:22Z",
+                            "updated_at": "2024-11-20T15:54:22Z",
                             "meta": {
                               "populated": [
                                 "host",
@@ -2029,11 +2091,11 @@
                           }
                         },
                         {
-                          "id": "5585",
+                          "id": "5615",
                           "type": "organization",
                           "attributes": {
-                            "created_at": "2024-11-20T15:41:32Z",
-                            "updated_at": "2024-11-20T15:41:32Z",
+                            "created_at": "2024-11-20T15:54:22Z",
+                            "updated_at": "2024-11-20T15:54:22Z",
                             "meta": {
                               "populated": [
                                 "id",
