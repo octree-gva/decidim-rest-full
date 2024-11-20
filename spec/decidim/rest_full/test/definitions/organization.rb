@@ -5,12 +5,13 @@ module Api
   module Definitions
     ORGANIZATION = {
       type: :object,
+      title: "Organization",
       properties: {
         id: { type: :string, example: "1" },
-        type: { type: :string, example: "organization" },
+        type: { type: :string, enum: ["organization"], example: "organization" },
         attributes: {
+          type: :object,
           properties: {
-            id: { type: :integer, example: 1 },
             name: {
               type: :object,
               additionalProperties: { type: :string },
@@ -28,10 +29,10 @@ module Api
             created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
             updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
           },
-          required: [:id, :created_at, :updated_at]
+          required: [:created_at, :updated_at]
         }
       },
-      required: [:id]
+      required: [:id, :type]
     }.freeze
   end
 end

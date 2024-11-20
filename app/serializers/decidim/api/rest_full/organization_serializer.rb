@@ -4,17 +4,21 @@
 module Decidim
   module Api
     module RestFull
-      class OrganizationSerializer
+      class OrganizationSerializer < ApplicationSerializer
         include ::JSONAPI::Serializer
         def self.db_fields
-          (attributes_to_serialize.keys || []).reject { |k| k == :meta }
+          (attributes_to_serialize.keys || []).reject { |k| [:meta, :id].include? k }
         end
 
         def self.translated_field(translated_value, locales)
-          translated_value.select { |key| locales.include?(key.to_sym) }
+          translated_value = JSON.parse(translated_value) if translated_value.is_a?(String)
+          default_values = locales.index_with { |_l| "" }
+          default_values.merge(
+            (translated_value || {}).select { |key| locales.include?(key.to_sym) }
+          )
         end
 
-        attributes :id, :host, :secondary_hosts
+        attributes :host, :secondary_hosts
 
         attribute :name do |org, params|
           translated_field(org.name, params[:locales])

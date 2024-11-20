@@ -811,6 +811,7 @@ DEPENDENCIES
   capybara (~> 3.40)
   decidim (>= 0.28, < 0.30)
   decidim-dev (>= 0.28, < 0.30)
+  decidim-meetings (>= 0.28, < 0.30)
   decidim-rest_full!
   deface (>= 1.9.0)
   faker (~> 3.2)

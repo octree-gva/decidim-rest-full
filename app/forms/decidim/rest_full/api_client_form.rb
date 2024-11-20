@@ -9,7 +9,7 @@ module Decidim
       attribute :decidim_organization_id, Integer
       attribute :scopes, [String]
       validates :name, :decidim_organization_id, presence: true
-      
+
       def organization
         current_organization || Decidim::Organization.find_by(id: decidim_organization_id)
       end

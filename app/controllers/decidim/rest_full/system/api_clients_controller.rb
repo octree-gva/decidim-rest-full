@@ -10,14 +10,11 @@ module Decidim
         def core_engine_routes
           Decidim::Core::Engine.routes.url_helpers
         end
+
         def destroy_admin_session_path
           Decidim::System::Engine.routes.url_helpers.destroy_admin_session_path
         end
-        def destroy
-          @api_client = collection.find(params[:id])
-          @api_client.destroy
-          redirect_to core_engine_routes.system_api_clients_path, flash: {success: "Client Revoked"}
-        end
+
         def index
           @api_clients = collection.page(params[:page]).per(15)
         end
@@ -50,6 +47,12 @@ module Decidim
               render :new
             end
           end
+        end
+
+        def destroy
+          @api_client = collection.find(params[:id])
+          @api_client.destroy
+          redirect_to core_engine_routes.system_api_clients_path, flash: { success: "Client Revoked" }
         end
 
         private

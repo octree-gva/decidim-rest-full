@@ -22,6 +22,7 @@ gem "deface", ">= 1.9.0"
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version
+  gem "decidim-meetings", Decidim::RestFull.decidim_version
   gem "rswag-specs"
   gem "rubocop-rspec"
 end

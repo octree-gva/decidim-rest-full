@@ -12,7 +12,7 @@ module Decidim
           def index
             # Extract only the populated fields
             allowed_fields = OrganizationSerializer.db_fields
-            only_fields = populated_fields([:id], allowed_fields)
+            only_fields = populated_fields([], allowed_fields)
 
             # Fetch organizations and paginate
             organizations = paginate(Decidim::Organization.select(*only_fields))

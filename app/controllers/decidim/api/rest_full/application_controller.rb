@@ -8,17 +8,42 @@ module Decidim
 
         protected
 
+        ##
+        # Give the current API actor.
+        # if acting as a service (machine-to-machine): Act as you where the first available admin
+        # if having a resource owner: as the resource owner
+        # else act as you are a public agent
+        def act_as
+          @act_as ||= if service_token?
+                        Decidim::User.where(admin: true, blocked_at: nil, organization: current_organization).where.not(confirmed_at: nil).first
+                      elsif current_user
+                        current_user
+                      end
+        end
+
+        def service_token?
+          doorkeeper_token.valid? && !doorkeeper_token.resource_owner_id
+        end
+
+        def current_user
+          Decidim::User.find_by(id: doorkeeper_token.resource_owner_id, organization: current_organization)
+        end
+
+        def current_organization
+          request.env["decidim.current_organization"]
+        end
+
         def populated_fields(default_fields, allowed_fields)
           fields = populate_params || default_fields
           raise Decidim::RestFull::ApiException::BadRequest, "Not allowed populate param: #{fields.join(", ")}" if allowed_fields.empty?
+
+          unallowed_params = fields.reject { |f| allowed_fields.include?(f) }
+          raise Decidim::RestFull::ApiException::BadRequest, "Not allowed populate param: #{unallowed_params.join(", ")}" unless unallowed_params.empty?
 
           fields.push(:id) unless fields.include? :id
           # Always add timestamping
           fields.push(:created_at) unless fields.include? :created_at
           fields.push(:updated_at) unless fields.include? :updated_at
-
-          unallowed_params = fields.reject { |f| allowed_fields.include?(f) }
-          raise Decidim::RestFull::ApiException::BadRequest, "Not allowed populate param: #{unallowed_params.join(", ")}" unless unallowed_params.empty?
 
           fields
         end
