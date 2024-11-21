@@ -7,8 +7,6 @@ yarn openapi-generator-cli generate -i ./website/static/openapi.json -o ./contri
 
 # Build node client
 cd contrib/decidim-node-client 
+yarn format
 yarn build
 
-# Harmonize packages version
-cd ../.. 
-yarn postversion

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors = ["Hadrien Froger"]
   s.email = ["hadrien@octree.ch"]
   s.license = "AGPL-3.0"
-  s.homepage = "https://github.com/octree-gva/decidim-module-rest_full"
+  s.homepage = "https://git.octree.ch/decidim/decidim-chatbot/decidim-module-rest_full"
   s.required_ruby_version = ">= 3.0"
 
   s.name = "decidim-rest_full"

@@ -12,6 +12,7 @@
 /bin/rails
 .DS_Store
 .migrations
+.bash_history
 # rspec failure tracking
 .rspec-failures
 
@@ -24,3 +25,5 @@ development_app
 .circleci
 node_modules
 .yarn
+.local
+.npm

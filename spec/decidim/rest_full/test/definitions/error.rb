@@ -4,6 +4,7 @@ module Api
   module Definitions
     ERROR = {
       type: :object,
+      title: "Api Error",
       properties: {
         error_code: { type: :integer, example: 400 },
         message: { type: :string, example: "Bad Request" },

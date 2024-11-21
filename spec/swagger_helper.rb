@@ -95,7 +95,7 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          error: Api::Definitions::ERROR,
+          api_error: Api::Definitions::ERROR,
           organizations_response: {
             type: :object,
             properties: {
@@ -107,6 +107,42 @@ RSpec.configure do |config|
             required: [:data]
           },
           organization: Api::Definitions::ORGANIZATION,
+          space: Api::Definitions::SPACE,
+          component: Api::Definitions::COMPONENT,
+          component_response: {
+            type: :object,
+            properties: {
+              data: { "$ref" => "#/components/schemas/component" }
+            },
+            required: [:data]
+          },
+          components_response: {
+            type: :object,
+            properties: {
+              data: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/component" }
+              }
+            },
+            required: [:data]
+          },
+          spaces_response: {
+            type: :object,
+            properties: {
+              data: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/space" }
+              }
+            },
+            required: [:data]
+          },
+          space_response: {
+            type: :object,
+            properties: {
+              data: { "$ref" => "#/components/schemas/space" }
+            },
+            required: [:data]
+          },
           oauth_grant_param: {
             oneOf: [
               Api::Definitions::CLIENT_CREDENTIAL_GRANT,

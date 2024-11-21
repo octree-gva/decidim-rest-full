@@ -4,27 +4,15 @@
 module Decidim
   module Api
     module RestFull
-      class OrganizationSerializer
-        include ::JSONAPI::Serializer
+      class OrganizationSerializer < ApplicationSerializer
         def self.db_fields
-          (attributes_to_serialize.keys || []).reject { |k| k == :meta }
+          (attributes_to_serialize.keys || []).reject { |k| [:meta, :id].include? k }
         end
 
-        def self.translated_field(translated_value, locales)
-          translated_value.select { |key| locales.include?(key.to_sym) }
-        end
-
-        attributes :id, :host, :secondary_hosts
+        attributes :host, :secondary_hosts
 
         attribute :name do |org, params|
           translated_field(org.name, params[:locales])
-        end
-
-        attribute :meta do |_org, params|
-          {
-            populated: params[:only],
-            locales: params[:locales]
-          }
         end
 
         # Format timestamps to ISO 8601
@@ -34,6 +22,12 @@ module Decidim
 
         attribute :updated_at do |org|
           org.updated_at.iso8601
+        end
+
+        meta do |_org, params|
+          {
+            locales: params[:locales]
+          }
         end
       end
     end

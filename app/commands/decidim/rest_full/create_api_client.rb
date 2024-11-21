@@ -30,7 +30,7 @@ module Decidim
           organization: @form.current_organization,
           name: @form.name,
           decidim_organization_id: @form.decidim_organization_id,
-          scopes: @form.scopes
+          scopes: @form.scopes.push("public").uniq
         }
       end
     end

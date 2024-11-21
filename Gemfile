@@ -14,14 +14,15 @@ gem "decidim", DECIDIM_VERSION
 gem "decidim-rest_full", path: base_path
 
 gem "bootsnap", "~> 1.4"
+gem "deface", ">= 1.9.0"
+gem "pg"
 gem "puma", ">= 5.5.1"
 gem "uglifier", "~> 4.1"
-
-gem "deface", ">= 1.9.0"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version
+  gem "decidim-meetings", Decidim::RestFull.decidim_version
   gem "rswag-specs"
   gem "rubocop-rspec"
 end

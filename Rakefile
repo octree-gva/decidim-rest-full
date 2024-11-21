@@ -5,7 +5,8 @@ require "rspec/core/rake_task"
 
 def install_module(path)
   Dir.chdir(path) do
-    system("bundle exec rake decidim_rest_full:install:migrations")
+    system("bundle check || bundle install")
+    # system("bundle exec rake decidim_rest_full:install:migrations")
     system("bundle exec rails db:migrate")
   end
 end
@@ -24,7 +25,7 @@ def database_yml
 
     "development" => {
       primary: {
-        "adapter" => "postgres",
+        "adapter" => "postgresql",
         "encoding" => "unicode",
         "host" => ENV.fetch("DATABASE_HOST", "localhost"),
         "port" => ENV.fetch("DATABASE_PORT", "5432").to_i,
@@ -35,7 +36,7 @@ def database_yml
     },
     "test" => {
       primary: {
-        "adapter" => "postgres",
+        "adapter" => "postgresql",
         "encoding" => "unicode",
         "host" => ENV.fetch("DATABASE_HOST", "localhost"),
         "port" => ENV.fetch("DATABASE_PORT", "5432").to_i,
@@ -53,6 +54,7 @@ task :prepare_tests do
   File.open(config_file, "w") { |f| YAML.dump(database_yml, f) }
   Dir.chdir("spec/decidim_dummy_app") do
     system("sed -i 's/config.cache_classes = true/config.cache_classes = false/' ./config/environments/test.rb")
+    system("bundle exec rails db:create")
     system("bundle exec rails db:migrate")
   end
 end
@@ -69,13 +71,14 @@ task :test_app do
       "../..",
       "--skip_spring",
       "--demo",
+      "--recreate_db",
       "--force_ssl",
       "false",
       "--locales",
       "en,fr"
     )
   end
-
+  File.open("spec/decidim_dummy_app/Gemfile", "a") { |f| f.puts "gem 'pg'\n" }
   puts "Setup DB config"
   Rake::Task["prepare_tests"].invoke
   puts "Install module"

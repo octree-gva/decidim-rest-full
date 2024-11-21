@@ -8,5 +8,6 @@ inherit_gem:
 RSpec/VariableName:
     EnforcedStyle: snake_case
     AllowedPatterns:
-      - '^[a-z_]+\[\]$' # Allows symbols like locales[] and host__in
+      - '^[a-z_]+\[[a-z_]*\]\[\]$' # Allows symbols like locales[][] and filter[name_in][]
+      - '^[a-z_]+\[[a-z_]*\]$' # Allows symbols like locales[] and filter[name_in]
       - 'Authorization' # Authorization header

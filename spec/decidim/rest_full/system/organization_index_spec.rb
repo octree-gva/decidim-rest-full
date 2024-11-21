@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# spec/integration/api/rest_full/system/organizations_spec.rb
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: :request do
   path "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/system/organizations" do
@@ -49,7 +48,7 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/error"
+        schema "$ref" => "#/components/schemas/api_error"
         context "with invalid populate[] fields" do
           let(:"populate[]") { ["invalid_field"] }
 
@@ -79,7 +78,7 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
             .to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/error"
+        schema "$ref" => "#/components/schemas/api_error"
         run_test!(example_name: :server_error)
       end
     end

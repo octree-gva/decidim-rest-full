@@ -38,18 +38,19 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](https://octree-gva.github.io/decidim-rest-full/auth/client-credential-flow)"
+        "description": "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](https://octree-gva.github.io/decidim-rest-full/user_documentation/auth/client-credential-flow)"
       },
       "resourceOwnerFlowBearer": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](https://octree-gva.github.io/decidim-rest-full/auth/user-credentials-flow)"
+        "description": "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](https://octree-gva.github.io/decidim-rest-full/user_documentation/auth/user-credentials-flow)"
       }
     },
     "schemas": {
-      "error": {
+      "api_error": {
         "type": "object",
+        "title": "Api Error",
         "properties": {
           "error_code": {
             "type": "integer",
@@ -85,6 +86,7 @@
       },
       "organization": {
         "type": "object",
+        "title": "Organization",
         "properties": {
           "id": {
             "type": "string",
@@ -92,14 +94,14 @@
           },
           "type": {
             "type": "string",
+            "enum": [
+              "organization"
+            ],
             "example": "organization"
           },
           "attributes": {
+            "type": "object",
             "properties": {
-              "id": {
-                "type": "integer",
-                "example": 1
-              },
               "name": {
                 "type": "object",
                 "additionalProperties": {
@@ -123,31 +125,6 @@
                   "secondary.example.org"
                 ]
               },
-              "meta": {
-                "type": "object",
-                "properties": {
-                  "populated": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "id",
-                      "name"
-                    ]
-                  },
-                  "locales": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "en",
-                      "fr"
-                    ]
-                  }
-                }
-              },
               "created_at": {
                 "type": "string",
                 "format": "date_time",
@@ -160,14 +137,424 @@
               }
             },
             "required": [
-              "id",
               "created_at",
               "updated_at"
+            ]
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "locales": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "en",
+                  "fr"
+                ]
+              }
+            },
+            "required": [
+              "locales"
             ]
           }
         },
         "required": [
-          "id"
+          "id",
+          "type",
+          "attributes",
+          "meta"
+        ]
+      },
+      "space": {
+        "type": "object",
+        "title": "Space",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1",
+            "description": "Space Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "space"
+            ],
+            "example": "space"
+          },
+          "attributes": {
+            "title": "Space Attributes",
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "object",
+                "title": "Title translations",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "en": "Assembly Name",
+                  "fr": "Nom de l'Assemblée"
+                },
+                "description": "Space title"
+              },
+              "subtitle": {
+                "type": "object",
+                "title": "Subtitle translations",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Space subtitle"
+              },
+              "short_description": {
+                "type": "object",
+                "title": "Short Description translations",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Space short_description"
+              },
+              "description": {
+                "type": "object",
+                "title": "Description translations",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Space description"
+              },
+              "manifest_name": {
+                "type": "string",
+                "enum": [
+                  "participatory_processes",
+                  "assemblies"
+                ]
+              },
+              "participatory_space_type": {
+                "type": "string",
+                "example": "Decidim::Assembly"
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "transparent",
+                  "private"
+                ],
+                "description": "Space visibility"
+              }
+            },
+            "required": [
+              "title",
+              "manifest_name",
+              "visibility"
+            ]
+          },
+          "relationships": {
+            "type": "object",
+            "title": "Space relationships",
+            "properties": {
+              "components": {
+                "type": "object",
+                "title": "Attached Components",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "page_component",
+                            "proposal_component",
+                            "meeting_component",
+                            "budget_component",
+                            "survey_component",
+                            "accountability_component",
+                            "debate_component",
+                            "sortition_component",
+                            "blog_component"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ]
+                    }
+                  },
+                  "meta": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "count"
+                    ]
+                  }
+                },
+                "required": [
+                  "data",
+                  "meta"
+                ]
+              }
+            },
+            "required": [
+              "components"
+            ]
+          },
+          "links": {
+            "type": "object",
+            "title": "Space Links",
+            "properties": {
+              "self": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "self"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "attributes",
+          "links",
+          "relationships"
+        ]
+      },
+      "component": {
+        "type": "object",
+        "title": "Component",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1",
+            "description": "Component Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "page_component",
+              "proposal_component",
+              "meeting_component",
+              "budget_component",
+              "survey_component",
+              "accountability_component",
+              "debate_component",
+              "sortition_component",
+              "blog_component"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "en": "Component Name",
+                  "fr": "Nom du composant"
+                },
+                "description": "Component name"
+              },
+              "global_announcement": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "en": "Welcome! You can create",
+                  "fr": "Bienvenue! Vous pouvez"
+                },
+                "description": "Component annoucement (intro)"
+              },
+              "manifest_name": {
+                "type": "string",
+                "enum": [
+                  "dummy",
+                  "pages",
+                  "proposals",
+                  "meetings",
+                  "budgets",
+                  "surveys",
+                  "accountability",
+                  "debates",
+                  "sortitions",
+                  "blogs"
+                ]
+              },
+              "participatory_space_type": {
+                "type": "string",
+                "example": "Decidim::Assembly"
+              },
+              "participatory_space_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "manifest_name",
+              "participatory_space_type",
+              "participatory_space_id"
+            ]
+          },
+          "meta": {
+            "type": "object",
+            "title": "Component Metadata",
+            "properties": {
+              "published": {
+                "type": "boolean",
+                "description": "Published component?"
+              },
+              "scopes_enabled": {
+                "type": "boolean",
+                "description": "Component handle scopes?"
+              }
+            },
+            "required": [
+              "published",
+              "scopes_enabled"
+            ]
+          },
+          "links": {
+            "type": "object",
+            "title": "Component Links",
+            "properties": {
+              "self": {
+                "type": "string",
+                "description": "API URL to the component"
+              },
+              "related": {
+                "type": "string",
+                "description": "Component details API URL"
+              }
+            },
+            "required": [
+              "self",
+              "related"
+            ]
+          },
+          "relationships": {
+            "type": "object",
+            "title": "Component Relationships",
+            "properties": {
+              "resources": {
+                "type": "object",
+                "title": "Component Resources Descriptor",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "title": "Component Resource Sample (max 50items)",
+                    "items": {
+                      "type": "object",
+                      "title": "Component Resource",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Resource ID"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Resource Type"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ]
+                    }
+                  },
+                  "meta": {
+                    "type": "object",
+                    "title": "Component Resource Descriptor Meta",
+                    "properties": {
+                      "count": {
+                        "type": "integer",
+                        "description": "Total count of resources"
+                      }
+                    },
+                    "required": [
+                      "count"
+                    ]
+                  }
+                },
+                "required": [
+                  "data",
+                  "meta"
+                ]
+              }
+            },
+            "required": [
+              "resources"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "attributes",
+          "meta",
+          "links"
+        ]
+      },
+      "component_response": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/component"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "components_response": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/component"
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "spaces_response": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/space"
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "space_response": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/space"
+          }
+        },
+        "required": [
+          "data"
         ]
       },
       "oauth_grant_param": {
@@ -471,6 +858,2031 @@
         }
       }
     },
+    "/api/rest_full/v0.0/public/components": {
+      "get": {
+        "summary": "List Components",
+        "tags": [
+          "Public"
+        ],
+        "security": [
+          {
+            "credentialFlowBearer": [
+              "public"
+            ]
+          },
+          {
+            "resourceOwnerFlowBearer": [
+              "public"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "locales[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "fr"
+                ]
+              }
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_not_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "pages",
+                  "proposals",
+                  "meetings",
+                  "budgets",
+                  "surveys",
+                  "accountability",
+                  "debates",
+                  "sortitions",
+                  "blogs"
+                ]
+              },
+              "description": "match none of _manifest_name_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "pages",
+                  "proposals",
+                  "meetings",
+                  "budgets",
+                  "surveys",
+                  "accountability",
+                  "debates",
+                  "sortitions",
+                  "blogs"
+                ]
+              },
+              "description": "match one of _manifest_name_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_manifest_name_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_not_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_manifest_name_ is NOT equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[participatory_space_id_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "match one of _participatory_space_id_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[participatory_space_id_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_participatory_space_id_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[participatory_space_type_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "example": "Decidim::Assembly"
+              },
+              "description": "match one of _participatory_space_type_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[participatory_space_type_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_participatory_space_type_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[name_start]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_name_ starts with",
+              "example": "some_string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[name_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_name_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[name_not_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_name_ is NOT equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[name_matches]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "matches _name_ with `LIKE`",
+              "example": "%some_string"
+            },
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of components",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ok": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "14978",
+                          "type": "meeting_component",
+                          "attributes": {
+                            "manifest_name": "meetings",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5148",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Natus cum quia. 135",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:11Z",
+                            "updated_at": "2024-11-21T12:49:11Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://9.lvh.me/api/rest_full/v0.0/components/14978",
+                            "related": "https://9.lvh.me/api/rest_full/v0.0/participatory_processes/5148/meetings/14978"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false,
+                            "default_registration_terms": false,
+                            "comments_enabled": false,
+                            "comments_max_length": false,
+                            "registration_code_enabled": false,
+                            "creation_enabled_for_participants": false
+                          }
+                        },
+                        {
+                          "id": "14979",
+                          "type": "proposal_component",
+                          "attributes": {
+                            "manifest_name": "proposals",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5148",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Fugit dolorem officia. 221",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:11Z",
+                            "updated_at": "2024-11-21T12:49:11Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+                                {
+                                  "id": "6782",
+                                  "type": "proposal"
+                                },
+                                {
+                                  "id": "6783",
+                                  "type": "proposal"
+                                }
+                              ],
+                              "meta": {
+                                "count": 2
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://9.lvh.me/api/rest_full/v0.0/components/14979",
+                            "related": "https://9.lvh.me/api/rest_full/v0.0/participatory_processes/5148/proposals/14979"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false
+                          }
+                        },
+                        {
+                          "id": "14980",
+                          "type": "accountability_component",
+                          "attributes": {
+                            "manifest_name": "accountability",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5148",
+                            "name": {
+                              "en": "<script>alert(\"accountability\");</script> Accountability",
+                              "fr": "<script>alert(\"accountability\");</script> Suivi"
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:11Z",
+                            "updated_at": "2024-11-21T12:49:11Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+                                {
+                                  "id": "2365",
+                                  "type": "result"
+                                },
+                                {
+                                  "id": "2366",
+                                  "type": "result"
+                                }
+                              ],
+                              "meta": {
+                                "count": 2
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://9.lvh.me/api/rest_full/v0.0/components/14980",
+                            "related": "https://9.lvh.me/api/rest_full/v0.0/participatory_processes/5148/accountability/14980"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "manifest_name_in_Meetings": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "14981",
+                          "type": "meeting_component",
+                          "attributes": {
+                            "manifest_name": "meetings",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5149",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Sed in et. 317",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:11Z",
+                            "updated_at": "2024-11-21T12:49:11Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://12.lvh.me/api/rest_full/v0.0/components/14981",
+                            "related": "https://12.lvh.me/api/rest_full/v0.0/participatory_processes/5149/meetings/14981"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false,
+                            "default_registration_terms": false,
+                            "comments_enabled": false,
+                            "comments_max_length": false,
+                            "registration_code_enabled": false,
+                            "creation_enabled_for_participants": false
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "components_in_Process": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "14984",
+                          "type": "meeting_component",
+                          "attributes": {
+                            "manifest_name": "meetings",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5150",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Praesentium natus iure. 499",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:11Z",
+                            "updated_at": "2024-11-21T12:49:12Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://15.lvh.me/api/rest_full/v0.0/components/14984",
+                            "related": "https://15.lvh.me/api/rest_full/v0.0/participatory_processes/5150/meetings/14984"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false,
+                            "default_registration_terms": false,
+                            "comments_enabled": false,
+                            "comments_max_length": false,
+                            "registration_code_enabled": false,
+                            "creation_enabled_for_participants": false
+                          }
+                        },
+                        {
+                          "id": "14985",
+                          "type": "proposal_component",
+                          "attributes": {
+                            "manifest_name": "proposals",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5150",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Qui aperiam ab. 585",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:12Z",
+                            "updated_at": "2024-11-21T12:49:12Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+                                {
+                                  "id": "6786",
+                                  "type": "proposal"
+                                },
+                                {
+                                  "id": "6787",
+                                  "type": "proposal"
+                                }
+                              ],
+                              "meta": {
+                                "count": 2
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://15.lvh.me/api/rest_full/v0.0/components/14985",
+                            "related": "https://15.lvh.me/api/rest_full/v0.0/participatory_processes/5150/proposals/14985"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false
+                          }
+                        },
+                        {
+                          "id": "14986",
+                          "type": "accountability_component",
+                          "attributes": {
+                            "manifest_name": "accountability",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5150",
+                            "name": {
+                              "en": "<script>alert(\"accountability\");</script> Accountability",
+                              "fr": "<script>alert(\"accountability\");</script> Suivi"
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:12Z",
+                            "updated_at": "2024-11-21T12:49:12Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+                                {
+                                  "id": "2369",
+                                  "type": "result"
+                                },
+                                {
+                                  "id": "2370",
+                                  "type": "result"
+                                }
+                              ],
+                              "meta": {
+                                "count": 2
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://15.lvh.me/api/rest_full/v0.0/components/14986",
+                            "related": "https://15.lvh.me/api/rest_full/v0.0/participatory_processes/5150/accountability/14986"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "paginated": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "14987",
+                          "type": "meeting_component",
+                          "attributes": {
+                            "manifest_name": "meetings",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5151",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Consequatur dolorum aut. 681",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:12Z",
+                            "updated_at": "2024-11-21T12:49:12Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://18.lvh.me/api/rest_full/v0.0/components/14987",
+                            "related": "https://18.lvh.me/api/rest_full/v0.0/participatory_processes/5151/meetings/14987"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false,
+                            "default_registration_terms": false,
+                            "comments_enabled": false,
+                            "comments_max_length": false,
+                            "registration_code_enabled": false,
+                            "creation_enabled_for_participants": false
+                          }
+                        },
+                        {
+                          "id": "14988",
+                          "type": "proposal_component",
+                          "attributes": {
+                            "manifest_name": "proposals",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "participatory_space_id": "5151",
+                            "name": {
+                              "en": "<script>alert(\"component_name\");</script> Nesciunt consequatur reiciendis. 767",
+                              "fr": ""
+                            },
+                            "global_announcement": {
+                              "en": "",
+                              "fr": ""
+                            },
+                            "created_at": "2024-11-21T12:49:12Z",
+                            "updated_at": "2024-11-21T12:49:12Z"
+                          },
+                          "relationships": {
+                            "resources": {
+                              "data": [
+                                {
+                                  "id": "6789",
+                                  "type": "proposal"
+                                },
+                                {
+                                  "id": "6788",
+                                  "type": "proposal"
+                                }
+                              ],
+                              "meta": {
+                                "count": 2
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://18.lvh.me/api/rest_full/v0.0/components/14988",
+                            "related": "https://18.lvh.me/api/rest_full/v0.0/participatory_processes/5151/proposals/14988"
+                          },
+                          "meta": {
+                            "published": true,
+                            "scopes_enabled": false
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/components_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "server_error": {
+                    "value": {
+                      "error_code": 500,
+                      "message": "An error occurred",
+                      "detail": "test: StandardError"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rest_full/v0.0/public/components/{id}": {
+      "get": {
+        "summary": "Show a Component",
+        "tags": [
+          "Public"
+        ],
+        "security": [
+          {
+            "credentialFlowBearer": [
+              "public"
+            ]
+          },
+          {
+            "resourceOwnerFlowBearer": [
+              "public"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "locales[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "fr"
+                ]
+              }
+            },
+            "required": false
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Component Found",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ok": {
+                    "value": {
+                      "data": {
+                        "id": "15006",
+                        "type": "meeting_component",
+                        "attributes": {
+                          "manifest_name": "meetings",
+                          "participatory_space_type": "Decidim::ParticipatoryProcess",
+                          "participatory_space_id": "5154",
+                          "name": {
+                            "en": "<script>alert(\"component_name\");</script> Velit facilis ad. 1287",
+                            "fr": ""
+                          },
+                          "global_announcement": {
+                            "en": "",
+                            "fr": ""
+                          },
+                          "created_at": "2024-11-21T12:49:15Z",
+                          "updated_at": "2024-11-21T12:49:15Z"
+                        },
+                        "relationships": {
+                          "resources": {
+                            "data": [
+                              {
+                                "id": "12537",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12538",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12539",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12540",
+                                "type": "meeting"
+                              }
+                            ],
+                            "meta": {
+                              "count": 4
+                            }
+                          }
+                        },
+                        "links": {
+                          "self": "https://27.lvh.me/api/rest_full/v0.0/components/15006",
+                          "related": "https://27.lvh.me/api/rest_full/v0.0/participatory_processes/5154/meetings/15006"
+                        },
+                        "meta": {
+                          "published": true,
+                          "scopes_enabled": false,
+                          "default_registration_terms": {
+                          },
+                          "comments_enabled": true,
+                          "comments_max_length": 1000,
+                          "registration_code_enabled": true,
+                          "creation_enabled_for_participants": false
+                        }
+                      }
+                    }
+                  },
+                  "select_FR_locale": {
+                    "value": {
+                      "data": {
+                        "id": "15007",
+                        "type": "meeting_component",
+                        "attributes": {
+                          "manifest_name": "meetings",
+                          "participatory_space_type": "Decidim::ParticipatoryProcess",
+                          "participatory_space_id": "5155",
+                          "name": {
+                            "fr": ""
+                          },
+                          "global_announcement": {
+                            "fr": ""
+                          },
+                          "created_at": "2024-11-21T12:49:15Z",
+                          "updated_at": "2024-11-21T12:49:15Z"
+                        },
+                        "relationships": {
+                          "resources": {
+                            "data": [
+                              {
+                                "id": "12541",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12542",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12543",
+                                "type": "meeting"
+                              },
+                              {
+                                "id": "12544",
+                                "type": "meeting"
+                              }
+                            ],
+                            "meta": {
+                              "count": 4
+                            }
+                          }
+                        },
+                        "links": {
+                          "self": "https://32.lvh.me/api/rest_full/v0.0/components/15007",
+                          "related": "https://32.lvh.me/api/rest_full/v0.0/participatory_processes/5155/meetings/15007"
+                        },
+                        "meta": {
+                          "published": true,
+                          "scopes_enabled": false,
+                          "default_registration_terms": {
+                          },
+                          "comments_enabled": true,
+                          "comments_max_length": 1000,
+                          "registration_code_enabled": true,
+                          "creation_enabled_for_participants": false
+                        }
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/component_response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Component Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                },
+                "examples": {
+                  "not_found": {
+                    "value": {
+                      "error_code": 404,
+                      "message": "Record not found",
+                      "detail": "test: Couldn't find Decidim::Component with [WHERE \"decidim_components\".\"manifest_name\" IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) AND \"decidim_components\".\"participatory_space_type\" IN ($11, $12) AND \"decidim_components\".\"id\" = $13 AND (\"decidim_components\".\"participatory_space_type\" = $14 AND \"decidim_components\".\"participatory_space_id\" = $15 OR \"decidim_components\".\"participatory_space_type\" = $16 AND \"decidim_components\".\"participatory_space_id\" = $17)]"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "server_error": {
+                    "value": {
+                      "error_code": 500,
+                      "message": "An error occurred",
+                      "detail": "test: StandardError"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rest_full/v0.0/public/spaces": {
+      "get": {
+        "summary": "List Participatory Spaces",
+        "tags": [
+          "Public"
+        ],
+        "security": [
+          {
+            "credentialFlowBearer": [
+              "public"
+            ]
+          },
+          {
+            "resourceOwnerFlowBearer": [
+              "public"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "locales[]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "fr"
+                ]
+              }
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_not_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "participatory_processes",
+                  "assemblies"
+                ]
+              },
+              "description": "match none of _manifest_name_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "participatory_processes",
+                  "assemblies"
+                ]
+              },
+              "description": "match one of _manifest_name_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_manifest_name_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[manifest_name_not_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_manifest_name_ is NOT equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_not_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "match none of _title_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_in][]",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "match one of _title_'s values in array"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_start]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ starts with",
+              "example": "some_string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_not_start]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ does not starts with",
+              "example": "some_string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ is equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_not_eq]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ is NOT equal to"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_matches]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "matches _title_ with `LIKE`",
+              "example": "%some_string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_does_not_match]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "Does not matches _title_ with `LIKE`"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_present]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ is not null and not empty",
+              "enum": [
+                "1",
+                "0"
+              ],
+              "example": "1"
+            },
+            "required": false
+          },
+          {
+            "name": "filter[title_blank]",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "_title_ is null or empty",
+              "enum": [
+                "1",
+                "0"
+              ],
+              "example": "1"
+            },
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search Results",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ok": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "6",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "My assembly for testing purpose",
+                              "fr": "c'est une assemblée"
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Aut illum sequi. 2581",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Blanditiis nemo minus. 2583</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Neque vel rerum. 2585</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+                                {
+                                  "id": "15023",
+                                  "type": "accountability_component"
+                                },
+                                {
+                                  "id": "15026",
+                                  "type": "blog_component"
+                                },
+                                {
+                                  "id": "15021",
+                                  "type": "budget_component"
+                                },
+                                {
+                                  "id": "15024",
+                                  "type": "debate_component"
+                                },
+                                {
+                                  "id": "15020",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15013",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15017",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15015",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15018",
+                                  "type": "page_component"
+                                },
+                                {
+                                  "id": "15019",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15014",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15016",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15012",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15025",
+                                  "type": "sortition_component"
+                                },
+                                {
+                                  "id": "15022",
+                                  "type": "survey_component"
+                                }
+                              ],
+                              "meta": {
+                                "count": 15
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=6"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/assemblies/6"
+                          }
+                        },
+                        {
+                          "id": "5923",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Illum porro optio. 2609",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Incidunt quaerat neque. 2611",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Dolorem vel soluta. 2613</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Voluptas nam numquam. 2615</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5923"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/assemblies/5923"
+                          }
+                        },
+                        {
+                          "id": "5160",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "participatory_processes",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "title": {
+                              "en": "<script>alert(\"participatory_process_title\");</script> Libero quos et. 2639",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"participatory_process_subtitle\");</script> Minima aliquid et. 2641",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"participatory_process_short_description\");</script> Reprehenderit et voluptas. 2643</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"participatory_process_description\");</script> Non est aut. 2645</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess&filter[participatory_space_id_eq]=5160"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/participatory_processes/5160"
+                          }
+                        },
+                        {
+                          "id": "5924",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Reiciendis quis suscipit. 2659",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Accusantium magnam sed. 2661",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Quia error velit. 2663</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Saepe cumque inventore. 2665</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5924"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/assemblies/5924"
+                          }
+                        },
+                        {
+                          "id": "5161",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "participatory_processes",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "title": {
+                              "en": "<script>alert(\"participatory_process_title\");</script> Id eaque voluptatibus. 2689",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"participatory_process_subtitle\");</script> Nemo sequi cum. 2691",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"participatory_process_short_description\");</script> Vel ullam est. 2693</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"participatory_process_description\");</script> Laudantium consequatur quia. 2695</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess&filter[participatory_space_id_eq]=5161"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/participatory_processes/5161"
+                          }
+                        },
+                        {
+                          "id": "5925",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Qui et perspiciatis. 2709",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Fugit tenetur architecto. 2711",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Aut sequi et. 2713</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Officiis et occaecati. 2715</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5925"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/assemblies/5925"
+                          }
+                        },
+                        {
+                          "id": "5162",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "participatory_processes",
+                            "participatory_space_type": "Decidim::ParticipatoryProcess",
+                            "title": {
+                              "en": "<script>alert(\"participatory_process_title\");</script> Enim sapiente est. 2739",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"participatory_process_subtitle\");</script> A unde laboriosam. 2741",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"participatory_process_short_description\");</script> Tempora porro vero. 2743</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"participatory_process_description\");</script> Ab unde voluptatibus. 2745</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:18Z",
+                            "updated_at": "2024-11-21T12:49:18Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://57.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess&filter[participatory_space_id_eq]=5162"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://57.lvh.me/api/rest_full/v0.0/participatory_processes/5162"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "manifest_name_in_Assemblies": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "6",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "My assembly for testing purpose",
+                              "fr": "c'est une assemblée"
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Fugit et quasi. 3157",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Id similique laborum. 3159</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> In quasi placeat. 3161</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:19Z",
+                            "updated_at": "2024-11-21T12:49:19Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+                                {
+                                  "id": "15038",
+                                  "type": "accountability_component"
+                                },
+                                {
+                                  "id": "15041",
+                                  "type": "blog_component"
+                                },
+                                {
+                                  "id": "15036",
+                                  "type": "budget_component"
+                                },
+                                {
+                                  "id": "15039",
+                                  "type": "debate_component"
+                                },
+                                {
+                                  "id": "15032",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15028",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15035",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15030",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15033",
+                                  "type": "page_component"
+                                },
+                                {
+                                  "id": "15029",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15027",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15031",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15034",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15040",
+                                  "type": "sortition_component"
+                                },
+                                {
+                                  "id": "15037",
+                                  "type": "survey_component"
+                                }
+                              ],
+                              "meta": {
+                                "count": 15
+                              },
+                              "links": {
+                                "related": "https://64.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=6"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://64.lvh.me/api/rest_full/v0.0/assemblies/6"
+                          }
+                        },
+                        {
+                          "id": "5926",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Est cumque vel. 3185",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Dolores vel ut. 3187",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Quis rerum sit. 3189</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Quidem qui dolores. 3191</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:19Z",
+                            "updated_at": "2024-11-21T12:49:19Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://64.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5926"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://64.lvh.me/api/rest_full/v0.0/assemblies/5926"
+                          }
+                        },
+                        {
+                          "id": "5927",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Fugit ut sint. 3235",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Qui aliquid animi. 3237",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Possimus quibusdam dolor. 3239</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Corporis nostrum maiores. 3241</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:19Z",
+                            "updated_at": "2024-11-21T12:49:19Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://64.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5927"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://64.lvh.me/api/rest_full/v0.0/assemblies/5927"
+                          }
+                        },
+                        {
+                          "id": "5928",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Dolore consequatur est. 3285",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Ut hic rerum. 3287",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Doloribus laborum dicta. 3289</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Id tenetur rerum. 3291</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:19Z",
+                            "updated_at": "2024-11-21T12:49:19Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://64.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5928"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://64.lvh.me/api/rest_full/v0.0/assemblies/5928"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "search_translatable_text": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "6",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "My assembly for testing purpose",
+                              "fr": "c'est une assemblée"
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Iure officia blanditiis. 3733",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Ducimus est qui. 3735</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Aut aut quo. 3737</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:19Z",
+                            "updated_at": "2024-11-21T12:49:19Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+                                {
+                                  "id": "15053",
+                                  "type": "accountability_component"
+                                },
+                                {
+                                  "id": "15056",
+                                  "type": "blog_component"
+                                },
+                                {
+                                  "id": "15051",
+                                  "type": "budget_component"
+                                },
+                                {
+                                  "id": "15054",
+                                  "type": "debate_component"
+                                },
+                                {
+                                  "id": "15047",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15043",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15045",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15050",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15048",
+                                  "type": "page_component"
+                                },
+                                {
+                                  "id": "15049",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15042",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15046",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15044",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15055",
+                                  "type": "sortition_component"
+                                },
+                                {
+                                  "id": "15052",
+                                  "type": "survey_component"
+                                }
+                              ],
+                              "meta": {
+                                "count": 15
+                              },
+                              "links": {
+                                "related": "https://71.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=6"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://71.lvh.me/api/rest_full/v0.0/assemblies/6"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "paginated": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "6",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "My assembly for testing purpose",
+                              "fr": "c'est une assemblée"
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Autem sint aut. 4309",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Non sit aut. 4311</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Sit aut nostrum. 4313</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:20Z",
+                            "updated_at": "2024-11-21T12:49:20Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+                                {
+                                  "id": "15068",
+                                  "type": "accountability_component"
+                                },
+                                {
+                                  "id": "15071",
+                                  "type": "blog_component"
+                                },
+                                {
+                                  "id": "15066",
+                                  "type": "budget_component"
+                                },
+                                {
+                                  "id": "15069",
+                                  "type": "debate_component"
+                                },
+                                {
+                                  "id": "15062",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15065",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15058",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15060",
+                                  "type": "meeting_component"
+                                },
+                                {
+                                  "id": "15063",
+                                  "type": "page_component"
+                                },
+                                {
+                                  "id": "15057",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15061",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15059",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15064",
+                                  "type": "proposal_component"
+                                },
+                                {
+                                  "id": "15070",
+                                  "type": "sortition_component"
+                                },
+                                {
+                                  "id": "15067",
+                                  "type": "survey_component"
+                                }
+                              ],
+                              "meta": {
+                                "count": 15
+                              },
+                              "links": {
+                                "related": "https://78.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=6"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://78.lvh.me/api/rest_full/v0.0/assemblies/6"
+                          }
+                        },
+                        {
+                          "id": "5932",
+                          "type": "space",
+                          "attributes": {
+                            "manifest_name": "assemblies",
+                            "participatory_space_type": "Decidim::Assembly",
+                            "title": {
+                              "en": "<script>alert(\"assembly_title\");</script> Et accusantium labore. 4337",
+                              "fr": ""
+                            },
+                            "subtitle": {
+                              "en": "<script>alert(\"assembly_subtitle\");</script> Est similique doloribus. 4339",
+                              "fr": ""
+                            },
+                            "short_description": {
+                              "en": "<p><script>alert(\"assembly_short_description\");</script> Debitis soluta beatae. 4341</p>",
+                              "fr": ""
+                            },
+                            "description": {
+                              "en": "<p><script>alert(\"assembly_description\");</script> Expedita quidem fugit. 4343</p>",
+                              "fr": ""
+                            },
+                            "visibility": "public",
+                            "created_at": "2024-11-21T12:49:20Z",
+                            "updated_at": "2024-11-21T12:49:20Z"
+                          },
+                          "relationships": {
+                            "components": {
+                              "data": [
+
+                              ],
+                              "meta": {
+                                "count": 0
+                              },
+                              "links": {
+                                "related": "https://78.lvh.me/api/rest_full/v0.0/components?filter[participatory_space_type_eq]=Decidim::Assembly&filter[participatory_space_id_eq]=5932"
+                              }
+                            }
+                          },
+                          "links": {
+                            "self": "https://78.lvh.me/api/rest_full/v0.0/assemblies/5932"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/spaces_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "server_error": {
+                    "value": {
+                      "error_code": 500,
+                      "message": "An error occurred",
+                      "detail": "test: StandardError"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/api_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/rest_full/v0.0/system/organizations": {
       "get": {
         "summary": "List available organizations",
@@ -495,7 +2907,6 @@
               "items": {
                 "type": "string",
                 "enum": [
-                  "id",
                   "host",
                   "secondary_hosts",
                   "name",
@@ -555,7 +2966,6 @@
                           "id": "1",
                           "type": "organization",
                           "attributes": {
-                            "id": 1,
                             "host": "localhost",
                             "secondary_hosts": [
                               "0.0.0.0",
@@ -566,54 +2976,35 @@
                               "fr": "Payet SAS"
                             },
                             "created_at": "2024-11-08T10:42:59Z",
-                            "updated_at": "2024-11-08T10:43:02Z",
-                            "meta": {
-                              "populated": [
-                                "id",
-                                "host",
-                                "secondary_hosts",
-                                "name",
-                                "created_at",
-                                "updated_at",
-                                "meta"
-                              ],
-                              "locales": [
-                                "en",
-                                "fr"
-                              ]
-                            }
+                            "updated_at": "2024-11-08T10:43:02Z"
+                          },
+                          "meta": {
+                            "locales": [
+                              "en",
+                              "fr"
+                            ]
                           }
                         },
                         {
-                          "id": "2447",
+                          "id": "10032",
                           "type": "organization",
                           "attributes": {
-                            "id": 2447,
-                            "host": "9.lvh.me",
+                            "host": "102.lvh.me",
                             "secondary_hosts": [
 
                             ],
                             "name": {
-                              "en": "Mante Group",
-                              "fr": "Bahringer-Russel"
+                              "en": "Schimmel-Farrell",
+                              "fr": "Wisozk Group"
                             },
-                            "created_at": "2024-11-19T07:38:32Z",
-                            "updated_at": "2024-11-19T07:38:32Z",
-                            "meta": {
-                              "populated": [
-                                "id",
-                                "host",
-                                "secondary_hosts",
-                                "name",
-                                "created_at",
-                                "updated_at",
-                                "meta"
-                              ],
-                              "locales": [
-                                "en",
-                                "fr"
-                              ]
-                            }
+                            "created_at": "2024-11-21T12:49:24Z",
+                            "updated_at": "2024-11-21T12:49:24Z"
+                          },
+                          "meta": {
+                            "locales": [
+                              "en",
+                              "fr"
+                            ]
                           }
                         }
                       ]
@@ -626,42 +3017,28 @@
                           "id": "1",
                           "type": "organization",
                           "attributes": {
-                            "id": 1,
                             "created_at": "2024-11-08T10:42:59Z",
-                            "updated_at": "2024-11-08T10:43:02Z",
-                            "meta": {
-                              "populated": [
-                                "id",
-                                "created_at",
-                                "updated_at",
-                                "meta"
-                              ],
-                              "locales": [
-                                "en",
-                                "fr"
-                              ]
-                            }
+                            "updated_at": "2024-11-08T10:43:02Z"
+                          },
+                          "meta": {
+                            "locales": [
+                              "en",
+                              "fr"
+                            ]
                           }
                         },
                         {
-                          "id": "2448",
+                          "id": "10033",
                           "type": "organization",
                           "attributes": {
-                            "id": 2448,
-                            "created_at": "2024-11-19T07:38:32Z",
-                            "updated_at": "2024-11-19T07:38:32Z",
-                            "meta": {
-                              "populated": [
-                                "id",
-                                "created_at",
-                                "updated_at",
-                                "meta"
-                              ],
-                              "locales": [
-                                "en",
-                                "fr"
-                              ]
-                            }
+                            "created_at": "2024-11-21T12:49:24Z",
+                            "updated_at": "2024-11-21T12:49:24Z"
+                          },
+                          "meta": {
+                            "locales": [
+                              "en",
+                              "fr"
+                            ]
                           }
                         }
                       ]
@@ -688,7 +3065,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/error"
+                  "$ref": "#/components/schemas/api_error"
                 }
               }
             }
@@ -702,12 +3079,12 @@
                     "value": {
                       "error_code": 500,
                       "message": "An error occurred",
-                      "detail": "StandardError"
+                      "detail": "test: StandardError"
                     }
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/error"
+                  "$ref": "#/components/schemas/api_error"
                 }
               }
             }
