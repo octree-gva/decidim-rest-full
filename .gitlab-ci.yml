@@ -157,5 +157,5 @@ decidim-client::publish:
       - .yarn/
   script:
     - yarn build
-    - yarn publish --non-interactive
+    - yarn npm publish --non-interactive
   extends: .publication_rules
