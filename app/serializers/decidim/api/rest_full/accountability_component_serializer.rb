@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       class AccountabilityComponentSerializer < ComponentSerializer
-        def self.resources_for(component, act_as)
+        def self.resources_for(component, _act_as)
           Decidim::Accountability::Result.where(component: component)
         end
         has_many :resources, meta: (proc do |component, params|

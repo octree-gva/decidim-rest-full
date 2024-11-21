@@ -33,8 +33,8 @@ module Api
           type: :object,
           title: "Component Metadata",
           properties: {
-            published: {type: :boolean, description: "Published component?"},
-            scopes_enabled: {type: :boolean, description: "Component handle scopes?"}
+            published: { type: :boolean, description: "Published component?" },
+            scopes_enabled: { type: :boolean, description: "Component handle scopes?" }
           },
           required: [:published, :scopes_enabled]
         },
@@ -42,8 +42,8 @@ module Api
           type: :object,
           title: "Component Links",
           properties: {
-            self: {type: :string, description: "API URL to the component"},
-            related: {type: :string, description: "Component details API URL"},
+            self: { type: :string, description: "API URL to the component" },
+            related: { type: :string, description: "Component details API URL" }
           },
           required: [:self, :related]
         },
@@ -62,8 +62,8 @@ module Api
                     type: :object,
                     title: "Component Resource",
                     properties: {
-                      id: {type: :string, description: "Resource ID"},
-                      type: {type: :string, description: "Resource Type"}
+                      id: { type: :string, description: "Resource ID" },
+                      type: { type: :string, description: "Resource Type" }
                     },
                     required: [:id, :type]
                   }
@@ -72,7 +72,7 @@ module Api
                   type: :object,
                   title: "Component Resource Descriptor Meta",
                   properties: {
-                    count: {type: :integer, description: "Total count of resources"}
+                    count: { type: :integer, description: "Total count of resources" }
                   },
                   required: [:count]
                 }

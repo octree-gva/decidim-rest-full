@@ -28,7 +28,7 @@ module Api
           type: :object,
           properties: {
             locales: { type: :array, items: { type: :string }, example: %w(en fr) }
-          }, 
+          },
           required: [:locales]
         }
       },

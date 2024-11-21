@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       class BudgetComponentSerializer < ComponentSerializer
-        def self.resources_for(component, act_as)
+        def self.resources_for(component, _act_as)
           Decidim::Budgets::Budget.where(decidim_component_id: component.id)
         end
         has_many :resources, meta: (proc do |component, params|
@@ -12,7 +12,6 @@ module Decidim
         end) do |component, params|
           resources_for(component, params[:act_as]).limit(50)
         end
-
       end
     end
   end

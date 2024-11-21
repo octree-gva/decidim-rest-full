@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["*.ts"],
   "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "composite": false,

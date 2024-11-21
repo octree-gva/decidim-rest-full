@@ -1,0 +1,21 @@
+services:
+  rest_full:
+    command: bash -c "bin/setup-tests && bundle exec rspec spec/decidim/" 
+    image: ruby:3.2.5
+    entrypoint: ""
+    volumes:
+      - .:/home/decidim/module
+    working_dir: /home/decidim/module
+    environment:
+      - PORT=3000
+      - DATABASE_HOST=rest-full-pg
+      - DATABASE_USERNAME=decidim
+      - DATABASE_PASSWORD=pleaseChangeMe
+      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim
+      - DEV_MODULE=decidim-rest_full
+      - RAILS_ENV=test
+      - NODE_MAJOR=18
+    ports:
+      - 3000:3000
+    links:
+      - rest-full-pg

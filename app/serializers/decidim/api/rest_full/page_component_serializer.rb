@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       class PageComponentSerializer < ComponentSerializer
-        def self.resources_for(component, act_as)
+        def self.resources_for(component, _act_as)
           Decidim::Pages::Page.where(decidim_component_id: component.id)
         end
         has_many :resources, meta: (proc do |component, params|

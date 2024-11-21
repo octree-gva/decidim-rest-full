@@ -31,6 +31,11 @@ Start a docusaurus website
 **yarn docs:update**<br />
 Generates again the openapi spec, add it to docusaurus, and compile again.
 
+## Run tests
+You can run tests on the same image used by the pipeline, to be confident to push: 
+```
+docker compose  -f docker-compose.yml -f docker-compose.test.yml up
+```
 
 ## Update Versions
 > Release a version is up to the maintainer of this repo. 

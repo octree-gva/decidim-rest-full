@@ -6,13 +6,13 @@ module Decidim
       class ProposalComponentSerializer < ComponentSerializer
         def self.resources_for(component, act_as)
           resources = ::Decidim::Proposals::Proposal.where(component: component)
-          resources = if act_as.nil?
-                        resources.published
-                      else
-                        resources.published.or(resources.where(published_at: nil, decidim_user_id: params[:act_as].id))
-                      end
-          resources
+          if act_as.nil?
+            resources.published
+          else
+            resources.published.or(resources.where(published_at: nil, decidim_user_id: params[:act_as].id))
+          end
         end
+
         has_many :resources, meta: (proc do |component, params|
           { count: resources_for(component, params[:act_as]).count }
         end) do |component, params|

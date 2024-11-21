@@ -9,7 +9,7 @@ services:
       - node_modules:/home/decidim/app/node_modules
     environment:
       - PORT=3000
-      - DATABASE_HOST=pg
+      - DATABASE_HOST=rest-full-pg
       - DATABASE_USERNAME=decidim
       - DATABASE_PASSWORD=pleaseChangeMe
       - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim

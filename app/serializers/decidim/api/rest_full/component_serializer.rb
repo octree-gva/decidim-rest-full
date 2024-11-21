@@ -7,6 +7,7 @@ module Decidim
         def self.db_fields
           (attributes_to_serialize.keys || []).reject { |k| [:meta, :type].include? k }
         end
+
         def self.default_meta(component)
           settings = settings_for(component)
           scopes_enabled = false
@@ -16,6 +17,7 @@ module Decidim
             scopes_enabled: scopes_enabled
           }
         end
+
         def self.settings_for(comp)
           settings = comp.settings
           if settings.is_a?(String)
@@ -24,7 +26,6 @@ module Decidim
             comp.settings.attributes
           end
         end
-
 
         attributes :manifest_name, :participatory_space_type
 

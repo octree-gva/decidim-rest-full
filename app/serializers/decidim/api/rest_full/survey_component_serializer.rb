@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       class SurveyComponentSerializer < ComponentSerializer
-        def self.resources_for(component, act_as)
+        def self.resources_for(component, _act_as)
           Decidim::Surveys::Survey.where(decidim_component_id: component.id)
         end
         has_many :resources, meta: (proc do |component, params|
