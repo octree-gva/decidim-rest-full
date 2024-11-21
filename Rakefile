@@ -5,6 +5,7 @@ require "rspec/core/rake_task"
 
 def install_module(path)
   Dir.chdir(path) do
+    system("bundle check || bundle install")
     # system("bundle exec rake decidim_rest_full:install:migrations")
     system("bundle exec rails db:migrate")
   end
@@ -75,7 +76,7 @@ task :test_app do
       "en,fr"
     )
   end
-
+  File.open("spec/decidim_dummy_app/Gemfile", "a") { |f| f.puts "gem 'pg'\n" }
   puts "Setup DB config"
   Rake::Task["prepare_tests"].invoke
   puts "Install module"
