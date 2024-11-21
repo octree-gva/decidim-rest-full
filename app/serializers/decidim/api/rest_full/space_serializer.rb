@@ -4,12 +4,13 @@ module Decidim
   module Api
     module RestFull
       class SpaceSerializer < ApplicationSerializer
-        include ::JSONAPI::Serializer
         def self.db_fields
           (attributes_to_serialize.keys || []).reject { |k| [:id, :meta, :visibility, :components, :type].include? k }
         end
 
         attribute :manifest_name, &:manifest_name
+
+        attribute :participatory_space_type, &:class_name
 
         attribute :title do |space, params|
           translated_field(space.title, params[:locales])
@@ -39,15 +40,19 @@ module Decidim
           end
         end
 
-        attribute :components do
-          []
-        end
-
-        attribute :meta do |_org, params|
-          {
-            populated: params[:only],
-            locales: params[:locales]
+        has_many :components, serializer: (proc do |component, _params|
+          "Decidim::Api::RestFull::#{component.manifest_name.to_s.singularize.camelize}ComponentSerializer".constantize
+        end), meta: (proc do |space, _params|
+          { count: Decidim::Component.where(participatory_space_type: space.class_name, participatory_space_id: space.id).count }
+        end), links: {
+          related: lambda { |object, params|
+            "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/components?filter[participatory_space_type_eq]=#{object.class_name}&filter[participatory_space_id_eq]=#{object.id}"
           }
+        } do |space, _params|
+          Decidim::Component.where(
+            participatory_space_type: space.class_name,
+            participatory_space_id: space.id
+          ).limit(50)
         end
 
         # Format timestamps to ISO 8601
@@ -57,6 +62,10 @@ module Decidim
 
         attribute :updated_at do |org|
           org.updated_at.iso8601
+        end
+
+        link :self do |object, params|
+          "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/#{object.manifest_name}/#{object.id}"
         end
       end
     end

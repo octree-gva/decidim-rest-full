@@ -8,10 +8,14 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      Api::Definitions::FILTER_PARAM.call("manifest_name", { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }).each do |param|
+      Api::Definitions::FILTER_PARAM.call(
+        "manifest_name",
+        { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
+        %w(lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
         parameter(**param)
       end
-      Api::Definitions::FILTER_PARAM.call("title", { type: :string }).each do |param|
+      Api::Definitions::FILTER_PARAM.call("title", { type: :string }, %w(lt gt)).each do |param|
         parameter(**param)
       end
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
@@ -20,25 +24,55 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       let!(:api_client) { create(:api_client, organization: organization) }
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+
+      let!(:space_list) do
+        3.times do
+          create(:assembly, organization: organization)
+          create(:participatory_process, organization: organization)
+        end
+      end
+
+      let!(:component_list) do
+        3.times.map do
+          proposals = create(:component, participatory_space: assembly, manifest_name: "proposals", published_at: Time.zone.now)
+          create(:proposal, component: proposals)
+          create(:proposal, component: proposals)
+
+          meeting = create(:component, participatory_space: assembly, manifest_name: "meetings", published_at: Time.zone.now)
+          create(:meeting, component: meeting)
+          create(:meeting, component: meeting)
+          [meeting, proposals]
+        end.flatten
+      end
 
       before do
         host! organization.host
-        create(:assembly, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" })
-        create(:assembly, organization: organization)
-        create(:participatory_process, organization: organization)
+        Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
+          create(:component, participatory_space: assembly, manifest_name: manifest_name, published_at: Time.zone.now)
+        end
       end
 
       response "200", "Search Results" do
-        consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/space_response"
+        schema "$ref" => "#/components/schemas/spaces_response"
 
         context "with no filter params" do
           let(:"locales[]") { %w(en fr) }
           let(:page) { 1 }
           let(:per_page) { 10 }
 
-          run_test!(example_name: :ok)
+          run_test!(example_name: :ok) do |example|
+            data = JSON.parse(example.body)["data"]
+            assembly = Decidim::Assembly.find(6)
+            assembly_data = data.find { |result| result["id"] == assembly.id.to_s && result["attributes"]["manifest_name"] == "assemblies" }
+            expect(assembly_data).to be_truthy
+            relationships = assembly_data["relationships"]
+            expect(relationships["components"]["data"].select { |r| r["type"] == "proposal_component" }.size).to eq(4)
+            expect(relationships["components"]["data"].select { |r| r["type"] == "meeting_component" }.size).to eq(4)
+            expect(relationships["components"]["data"].select { |r| r["type"] == "blog_component" }.size).to eq(1)
+            expect(relationships["components"]["data"].select { |r| r["type"] == "budget_component" }.size).to eq(1)
+          end
         end
 
         context "with filter[manifest_name_in][] filter" do

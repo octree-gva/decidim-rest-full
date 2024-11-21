@@ -112,6 +112,13 @@ RSpec.configure do |config|
           component_response: {
             type: :object,
             properties: {
+              data: { "$ref" => "#/components/schemas/component" }
+            },
+            required: [:data]
+          },
+          components_response: {
+            type: :object,
+            properties: {
               data: {
                 type: :array,
                 items: { "$ref" => "#/components/schemas/component" }
@@ -119,13 +126,20 @@ RSpec.configure do |config|
             },
             required: [:data]
           },
-          space_response: {
+          spaces_response: {
             type: :object,
             properties: {
               data: {
                 type: :array,
                 items: { "$ref" => "#/components/schemas/space" }
               }
+            },
+            required: [:data]
+          },
+          space_response: {
+            type: :object,
+            properties: {
+              data: { "$ref" => "#/components/schemas/space" }
             },
             required: [:data]
           },

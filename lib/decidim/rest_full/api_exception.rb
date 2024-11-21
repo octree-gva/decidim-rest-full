@@ -46,7 +46,11 @@ module Decidim
                        json: {
                          error_code: context[:status],
                          message: context[:message],
-                         detail: Rails.env.production? ? nil : exception.message
+                         detail: if context[:status] == 400
+                                   exception.message
+                                 else
+                                   Rails.env.development? ? "#{Rails.env}: #{exception.message}" : nil
+                                 end
                        }.compact
               end
             end

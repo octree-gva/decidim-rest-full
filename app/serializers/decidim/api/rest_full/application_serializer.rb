@@ -4,6 +4,7 @@ module Decidim
   module Api
     module RestFull
       class ApplicationSerializer
+        include ::JSONAPI::Serializer
         def self.translated_field(translated_value, locales)
           translated_value = JSON.parse(translated_value) if translated_value.is_a?(String)
           default_values = locales.index_with { |_l| "" }

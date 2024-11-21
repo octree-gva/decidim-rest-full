@@ -31,7 +31,8 @@ module Decidim
                 "#{model.table_name}.short_description",
                 "#{model.table_name}.private_space",
                 select_transparent,
-                "'#{manifest}' AS manifest_name"
+                "'#{manifest}' AS manifest_name",
+                "'#{data[:model]}' AS class_name"
               ).ransack(params[:filter])
               query.result.to_sql
             end
@@ -42,7 +43,7 @@ module Decidim
             end)
             render json: SpaceSerializer.new(
               results,
-              params: { only: [], locales: available_locales }
+              params: { only: [], locales: available_locales, host: current_organization.host }
             ).serializable_hash
           end
 

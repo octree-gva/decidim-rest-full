@@ -17,7 +17,7 @@ Decidim::Core::Engine.routes.draw do
         end
         namespace :public do
           resources :spaces, only: [:index]
-          resources :components, only: [:index]
+          resources :components, only: [:index, :show]
         end
       end
     end

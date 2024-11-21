@@ -7,25 +7,27 @@ module Api
       title: "Component",
       properties: {
         id: { type: :string, example: "1", description: "Component Id" },
-        type: { type: :string, enum: ["component"], example: "component" },
+        type: { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" } },
         attributes: {
           type: :object,
           properties: {
-            title: {
+            name: {
               type: :object,
               additionalProperties: { type: :string },
-              example: { en: "Assembly Name", fr: "Nom de l'Assemblée" },
-              description: "Component title"
+              example: { en: "Component Name", fr: "Nom du composant" },
+              description: "Component name"
             },
-            global_annoucement: {
+            global_announcement: {
               type: :object,
               additionalProperties: { type: :string },
               example: { en: "Welcome! You can create", fr: "Bienvenue! Vous pouvez" },
-              description: "Component title"
+              description: "Component annoucement (intro)"
             },
-            manifest_name: { type: :string, enum: Decidim.component_registry.manifests.map(&:name) }
+            manifest_name: { type: :string, enum: Decidim.component_registry.manifests.map(&:name) },
+            participatory_space_type: { type: :string, example: "Decidim::Assembly" },
+            participatory_space_id: { type: :string }
           },
-          required: [:title, :manifest_name]
+          required: [:name, :manifest_name, :participatory_space_type, :participatory_space_id]
         }
       },
       required: [:id, :type]

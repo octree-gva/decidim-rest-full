@@ -38,24 +38,55 @@ module Api
               description: "Space description"
             },
             manifest_name: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
-            visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" },
+            participatory_space_type: { type: :string, example: "Decidim::Assembly" },
+            visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" }
+          },
+          required: [:title, :manifest_name, :visibility]
+        },
+        relationships: {
+          type: :object,
+          title: "Space relationships",
+          properties: {
             components: {
-              type: :array,
-              items: {
-                type: :object,
-                title: "Component Summary",
-                properties: {
-                  id: { type: :integer, example: 2, description: "Component Id" },
-                  manifest_name: { type: :string, enum: Decidim.component_registry.manifests.map(&:name) }
+              type: :object,
+              title: "Attached Components",
+              properties: {
+                data: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      id: { type: :string },
+                      type: { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" } }
+                    },
+                    required: [:id, :type]
+                  }
                 },
-                required: [:id, :manifest_name]
-              }
+                meta: {
+                  type: :object,
+                  properties: {
+                    count: { type: :integer }
+                  },
+                  required: [:count]
+                }
+              },
+              required: [:data, :meta]
             }
           },
-          required: [:title, :manifest_name, :visibility, :components]
+          required: [:components]
+        },
+        links: {
+          type: :object,
+          title: "Space Links",
+          properties: {
+            self: {
+              type: :string
+            }
+          },
+          required: [:self]
         }
       },
-      required: [:id, :type]
+      required: [:id, :type, :attributes, :links, :relationships]
     }.freeze
   end
 end

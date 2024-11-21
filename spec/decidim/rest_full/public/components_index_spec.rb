@@ -8,7 +8,32 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      Api::Definitions::FILTER_PARAM.call("manifest_name", { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }).each do |param|
+      Api::Definitions::FILTER_PARAM.call(
+        "manifest_name",
+        { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| manifest.name.to_s }.reject { |manifest_name| manifest_name == "dummy" } },
+        %w(lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+      Api::Definitions::FILTER_PARAM.call(
+        "participatory_space_id",
+        { type: :string },
+        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+      Api::Definitions::FILTER_PARAM.call(
+        "participatory_space_type",
+        { type: :string, example: "Decidim::Assembly" },
+        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+      Api::Definitions::FILTER_PARAM.call(
+        "name",
+        { type: :string },
+        %w(not_in in lt gt not_start does_not_match present blank)
+      ).each do |param|
         parameter(**param)
       end
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
@@ -36,10 +61,9 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
         create(:result, component: accountabilities)
       end
 
-      response "200", "Search Results" do
-        consumes "application/json"
+      response "200", "List of components" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/component_response"
+        schema "$ref" => "#/components/schemas/components_response"
 
         context "with no filter params" do
           let(:"locales[]") { %w(en fr) }
@@ -58,6 +82,21 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
           run_test!(example_name: :manifest_name_in_Meetings) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data).to eq(data.select { |resp| resp["attributes"]["manifest_name"] == "meetings" })
+            expect(data).to eq(data.select { |resp| resp["type"] == "meeting_component" })
+          end
+        end
+
+        context "with filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess and filter[participatory_space_type_id_eq]=processId filters" do
+          let(:"filter[participatory_space_id_eq]") { participatory_process.id.to_s }
+          let(:"filter[participatory_space_type_eq]") { "Decidim::ParticipatoryProcess" }
+          let(:"locales[]") { %w(en fr) }
+          let(:page) { 1 }
+          let(:per_page) { 10 }
+
+          run_test!(example_name: :components_in_Process) do |example|
+            data = JSON.parse(example.body)["data"]
+            not_in_process = data.select { |component| component["attributes"]["participatory_space_type"] != "Decidim::ParticipatoryProcess" && component["attributes"]["participatory_space_id"] != participatory_process.id.to_s }
+            expect(not_in_process).to be_empty
           end
         end
 

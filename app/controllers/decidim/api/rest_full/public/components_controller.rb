@@ -9,30 +9,47 @@ module Decidim
 
           # Index all components
           def index
-            query = if visible_spaces.size.positive?
-                      # Query components that are published in a visible space.
-                      first_visible_space = visible_spaces.first
-                      query_manifest = Decidim::Component.all
-                      query = query_manifest.where(**first_visible_space)
-                      visible_spaces[1..].each do |visible_space|
-                        query = query.or(query_manifest.where(**visible_space))
-                      end
-                      query.select(:created_at, :updated_at, :id, "name AS title", :manifest_name, :settings)
-                    else
-                      model.where("1=0")
-                    end
-
+            query = find_components(Decidim::Component.all)
             query = query.reorder(nil).ransack(params[:filter])
-            results = paginate(ActiveRecord::Base.connection.exec_query(query.result.to_sql).map do |result|
-              Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
+            data = paginate(ActiveRecord::Base.connection.exec_query(query.result.to_sql).map do |result|
+              result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
+              serializer = "Decidim::Api::RestFull::#{result.manifest_name.singularize.camelize}ComponentSerializer".constantize
+              serializer.new(result, params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }).serializable_hash[:data]
             end)
-            render json: ComponentSerializer.new(
-              results,
-              params: { only: [], locales: available_locales }
+
+            render json: { data: data }
+          end
+
+          def show
+            component_id = params.require(:id).to_i
+            component = find_components(Decidim::Component.where(id: component_id)).first!
+            serializer = "Decidim::Api::RestFull::#{component.manifest_name.singularize.camelize}ComponentSerializer".constantize
+
+            render json: serializer.new(
+              component,
+              params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
             ).serializable_hash
           end
 
           private
+
+          ##
+          # Find components that are published in a visible space.
+          # exemple: if the user has no view on Decidim::Assembly#2
+          #          THEN should not be able to query any Decidim::Assembly#2 components
+          def find_components(context = Decidim::Component.all)
+            if visible_spaces.size.positive?
+              first_visible_space = visible_spaces.first
+              query_manifest = context
+              query = query_manifest.where(**first_visible_space)
+              visible_spaces[1..].each do |visible_space|
+                query = query.or(query_manifest.where(**visible_space))
+              end
+              query
+            else
+              context.where("1=0")
+            end
+          end
 
           ##
           # All the spaces (assembly, participatory process) visible
