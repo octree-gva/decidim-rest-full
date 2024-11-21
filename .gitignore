@@ -24,3 +24,5 @@ development_app
 .circleci
 node_modules
 .yarn
+.local
+.npm

@@ -25,7 +25,7 @@ def database_yml
 
     "development" => {
       primary: {
-        "adapter" => "postgres",
+        "adapter" => "postgresql",
         "encoding" => "unicode",
         "host" => ENV.fetch("DATABASE_HOST", "localhost"),
         "port" => ENV.fetch("DATABASE_PORT", "5432").to_i,
@@ -36,7 +36,7 @@ def database_yml
     },
     "test" => {
       primary: {
-        "adapter" => "postgres",
+        "adapter" => "postgresql",
         "encoding" => "unicode",
         "host" => ENV.fetch("DATABASE_HOST", "localhost"),
         "port" => ENV.fetch("DATABASE_PORT", "5432").to_i,
@@ -70,6 +70,7 @@ task :test_app do
       "../..",
       "--skip_spring",
       "--demo",
+      "--skip_bundle",
       "--force_ssl",
       "false",
       "--locales",
