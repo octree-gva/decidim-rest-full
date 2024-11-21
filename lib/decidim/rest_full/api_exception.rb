@@ -49,7 +49,7 @@ module Decidim
                          detail: if context[:status] == 400
                                    exception.message
                                  else
-                                   Rails.env.development? ? "#{Rails.env}: #{exception.message}" : nil
+                                   Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
                                  end
                        }.compact
               end

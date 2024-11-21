@@ -70,7 +70,6 @@ task :test_app do
       "../..",
       "--skip_spring",
       "--demo",
-      "--skip_bundle",
       "--force_ssl",
       "false",
       "--locales",

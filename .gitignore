@@ -12,6 +12,7 @@
 /bin/rails
 .DS_Store
 .migrations
+.bash_history
 # rspec failure tracking
 .rspec-failures
 

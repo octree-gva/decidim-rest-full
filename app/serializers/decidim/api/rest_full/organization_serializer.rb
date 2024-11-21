@@ -23,6 +23,12 @@ module Decidim
         attribute :updated_at do |org|
           org.updated_at.iso8601
         end
+
+        meta do |_org, params|
+          {
+            locales: params[:locales]
+          }
+        end
       end
     end
   end

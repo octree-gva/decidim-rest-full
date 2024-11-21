@@ -205,7 +205,25 @@ export interface Component {
    * @type {ComponentAttributes}
    * @memberof Component
    */
-  attributes?: ComponentAttributes;
+  attributes: ComponentAttributes;
+  /**
+   *
+   * @type {ComponentMetadata}
+   * @memberof Component
+   */
+  meta: ComponentMetadata;
+  /**
+   *
+   * @type {ComponentLinks}
+   * @memberof Component
+   */
+  links: ComponentLinks;
+  /**
+   *
+   * @type {ComponentRelationships}
+   * @memberof Component
+   */
+  relationships?: ComponentRelationships;
 }
 
 export const ComponentTypeEnum = {
@@ -277,6 +295,108 @@ export const ComponentAttributesManifestNameEnum = {
 export type ComponentAttributesManifestNameEnum =
   (typeof ComponentAttributesManifestNameEnum)[keyof typeof ComponentAttributesManifestNameEnum];
 
+/**
+ *
+ * @export
+ * @interface ComponentLinks
+ */
+export interface ComponentLinks {
+  /**
+   * API URL to the component
+   * @type {string}
+   * @memberof ComponentLinks
+   */
+  self: string;
+  /**
+   * Component details API URL
+   * @type {string}
+   * @memberof ComponentLinks
+   */
+  related: string;
+}
+/**
+ *
+ * @export
+ * @interface ComponentMetadata
+ */
+export interface ComponentMetadata {
+  /**
+   * Published component?
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  published: boolean;
+  /**
+   * Component handle scopes?
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  scopes_enabled: boolean;
+}
+/**
+ *
+ * @export
+ * @interface ComponentRelationships
+ */
+export interface ComponentRelationships {
+  /**
+   *
+   * @type {ComponentResourcesDescriptor}
+   * @memberof ComponentRelationships
+   */
+  resources: ComponentResourcesDescriptor;
+}
+/**
+ *
+ * @export
+ * @interface ComponentResource
+ */
+export interface ComponentResource {
+  /**
+   * Resource ID
+   * @type {string}
+   * @memberof ComponentResource
+   */
+  id: string;
+  /**
+   * Resource Type
+   * @type {string}
+   * @memberof ComponentResource
+   */
+  type: string;
+}
+/**
+ *
+ * @export
+ * @interface ComponentResourceDescriptorMeta
+ */
+export interface ComponentResourceDescriptorMeta {
+  /**
+   * Total count of resources
+   * @type {number}
+   * @memberof ComponentResourceDescriptorMeta
+   */
+  count: number;
+}
+/**
+ *
+ * @export
+ * @interface ComponentResourcesDescriptor
+ */
+export interface ComponentResourcesDescriptor {
+  /**
+   *
+   * @type {Array<ComponentResource>}
+   * @memberof ComponentResourcesDescriptor
+   */
+  data: Array<ComponentResource>;
+  /**
+   *
+   * @type {ComponentResourceDescriptorMeta}
+   * @memberof ComponentResourcesDescriptor
+   */
+  meta: ComponentResourceDescriptorMeta;
+}
 /**
  *
  * @export
@@ -474,7 +594,13 @@ export interface Organization {
    * @type {OrganizationAttributes}
    * @memberof Organization
    */
-  attributes?: OrganizationAttributes;
+  attributes: OrganizationAttributes;
+  /**
+   *
+   * @type {OrganizationMeta}
+   * @memberof Organization
+   */
+  meta: OrganizationMeta;
 }
 
 export const OrganizationTypeEnum = {
@@ -510,12 +636,6 @@ export interface OrganizationAttributes {
   secondaryHosts?: Array<string>;
   /**
    *
-   * @type {OrganizationAttributesMeta}
-   * @memberof OrganizationAttributes
-   */
-  meta?: OrganizationAttributesMeta;
-  /**
-   *
    * @type {string}
    * @memberof OrganizationAttributes
    */
@@ -530,21 +650,15 @@ export interface OrganizationAttributes {
 /**
  *
  * @export
- * @interface OrganizationAttributesMeta
+ * @interface OrganizationMeta
  */
-export interface OrganizationAttributesMeta {
+export interface OrganizationMeta {
   /**
    *
    * @type {Array<string>}
-   * @memberof OrganizationAttributesMeta
+   * @memberof OrganizationMeta
    */
-  populated?: Array<string>;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof OrganizationAttributesMeta
-   */
-  locales?: Array<string>;
+  locales: Array<string>;
 }
 /**
  *

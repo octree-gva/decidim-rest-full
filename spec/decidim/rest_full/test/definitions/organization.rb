@@ -19,20 +19,20 @@ module Api
             },
             host: { type: :string, example: "example.org" },
             secondaryHosts: { type: :array, items: { type: :string }, example: ["secondary.example.org"] },
-            meta: {
-              type: :object,
-              properties: {
-                populated: { type: :array, items: { type: :string }, example: %w(id name) },
-                locales: { type: :array, items: { type: :string }, example: %w(en fr) }
-              }
-            },
             created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
             updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
           },
           required: [:created_at, :updated_at]
+        },
+        meta: {
+          type: :object,
+          properties: {
+            locales: { type: :array, items: { type: :string }, example: %w(en fr) }
+          }, 
+          required: [:locales]
         }
       },
-      required: [:id, :type]
+      required: [:id, :type, :attributes, :meta]
     }.freeze
   end
 end
