@@ -13,6 +13,12 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       Api::Definitions::FILTER_PARAM.call("nickname", { type: :string }, %w(lt gt)).each do |param|
         parameter(**param)
       end
+      parameter name: :"filter[extra_cont]",
+                schema: { type: :string },
+                in: :query,
+                required: false,
+                example: '"foo": "bar"',
+                description: 'Search on user extended_data. use the format: `"<key>":<space>"<value>"`'
 
       let!(:organization) { create(:organization) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
@@ -30,20 +36,45 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         context "with no params" do
           before do
-            5.times.each do
-              create(:user, organization: organization)
-            end
+            create(:user, organization: organization)
+            create_list(:user, 5, organization: organization)
           end
 
           run_test!(example_name: :ok)
         end
 
+        context "with locale" do
+          before do
+            create(:user, locale: "fr", organization: organization)
+          end
+
+          run_test!(example_name: :user_fr) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.first["attributes"]["locale"]).to eq("fr")
+          end
+        end
+
+        context "with filter[extra_cont]" do
+          before do
+            create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization: organization)
+            create_list(:user, 5, organization: organization)
+          end
+
+          let(:"filter[extra_cont]") do
+            '"foo": "bar"'
+          end
+
+          run_test!(example_name: :filter_by_extended_data) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.size).to eq(1)
+            expect(data.first["attributes"]["nickname"]).to eq("specific-data")
+          end
+        end
+
         context "with filter[nickname_eq]" do
           before do
             create(:user, nickname: "blue-panda-218", organization: organization)
-            5.times.each do
-              create(:user, organization: organization)
-            end
+            create_list(:user, 5, organization: organization)
           end
 
           let(:"filter[nickname_eq]") { "blue-panda-218" }

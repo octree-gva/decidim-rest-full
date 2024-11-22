@@ -7,6 +7,7 @@ module Decidim
 
       config.to_prepare do
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
+        Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
       end
 
       initializer "rest_full.scopes" do
