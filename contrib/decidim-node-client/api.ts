@@ -311,7 +311,6 @@ export interface ComponentAttributes {
 }
 
 export const ComponentAttributesManifestNameEnum = {
-  Dummy: "dummy",
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",

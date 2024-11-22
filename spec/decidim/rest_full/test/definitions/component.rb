@@ -23,7 +23,7 @@ module Api
             },
             manifest_name: {
               type: :string,
-              enum: Decidim.component_registry.manifests.map(&:name),
+              enum: Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy },
               description: "Manifest name of the component"
             },
             participatory_space_type: {
