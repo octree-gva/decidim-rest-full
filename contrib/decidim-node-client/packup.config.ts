@@ -1,6 +1,6 @@
-import { defineConfig } from '@strapi/pack-up';
+import { defineConfig } from "@strapi/pack-up";
 
 export default defineConfig({
-  runtime: 'node',
+  runtime: "node",
   preserveModules: true,
 });

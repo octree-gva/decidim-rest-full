@@ -13,7 +13,8 @@ Decidim::Core::Engine.routes.draw do
     namespace :rest_full do
       scope "v#{Decidim::RestFull.major_minor_version}" do
         namespace :system do
-          resources :organizations, only: [:index, :show, :create, :update, :destroy]
+          resources :organizations, only: [:index]
+          resources :users, only: [:index]
         end
         namespace :public do
           resources :spaces, only: [:index]
