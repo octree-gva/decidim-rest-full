@@ -134,48 +134,70 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
           end
         end
 
-        context "with grant=password auth_type=impersonate" do
-          let(:body) do
-            {
-              grant_type: "password",
-              auth_type: "impersonate",
-              username: user.nickname,
-              client_id: api_client.client_id,
-              client_secret: api_client.client_secret,
-              scope: "public"
-            }
+        context "when user does exists" do
+          context "with auth_type=impersonate and extra.foo=bar" do
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "impersonate",
+                username: user.nickname,
+                client_id: api_client.client_id,
+                client_secret: api_client.client_secret,
+                extra: {
+                  foo: "bar"
+                },
+                scope: "public"
+              }
+            end
+
+            run_test!(example_name: :ok_ropc_impersonate_with_extra) do |_response|
+              expect(user.reload.extended_data).to eq({ "foo" => "bar" })
+            end
           end
 
-          run_test!(example_name: :ok_ropc_impersonate) do |response|
-            json_response = JSON.parse(response.body)
-            expect(json_response["access_token"]).to be_present
-            expect(
-              Doorkeeper::AccessToken.find_by(token: json_response["access_token"]).scopes
-            ).to include("public")
-          end
-        end
+          context "with auth_type=impersonate" do
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "impersonate",
+                username: user.nickname,
+                client_id: api_client.client_id,
+                client_secret: api_client.client_secret,
+                scope: "public"
+              }
+            end
 
-        context "with grant=password auth_type=login" do
-          let(:proposal_api_client) { create(:api_client, organization: organization, scopes: "proposals public") }
-
-          let(:body) do
-            {
-              grant_type: "password",
-              auth_type: "login",
-              password: "decidim123456789!",
-              username: user.nickname,
-              client_id: proposal_api_client.client_id,
-              client_secret: proposal_api_client.client_secret,
-              scope: "public proposals"
-            }
+            run_test!(example_name: :ok_ropc_impersonate) do |response|
+              json_response = JSON.parse(response.body)
+              expect(json_response["access_token"]).to be_present
+              expect(
+                Doorkeeper::AccessToken.find_by(token: json_response["access_token"]).scopes
+              ).to include("public")
+            end
           end
 
-          run_test!(example_name: :ok_ropc_login) do |response|
-            json_response = JSON.parse(response.body)
-            expect(json_response["access_token"]).to be_present
-            expect(
-              Doorkeeper::AccessToken.find_by(token: json_response["access_token"]).scopes
-            ).to include("proposals")
+          context "with auth_type=login" do
+            let(:proposal_api_client) { create(:api_client, organization: organization, scopes: "proposals public") }
+
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "login",
+                password: "decidim123456789!",
+                username: user.nickname,
+                client_id: proposal_api_client.client_id,
+                client_secret: proposal_api_client.client_secret,
+                scope: "public proposals"
+              }
+            end
+
+            run_test!(example_name: :ok_ropc_login) do |response|
+              json_response = JSON.parse(response.body)
+              expect(json_response["access_token"]).to be_present
+              expect(
+                Doorkeeper::AccessToken.find_by(token: json_response["access_token"]).scopes
+              ).to include("proposals")
+            end
           end
         end
       end

@@ -44,7 +44,19 @@ module Decidim
                 nickname: username,
                 organization: current_organization
               )
-              unless user
+              extra = if params.has_key? :extra
+                        params[:extra].permit!.to_h
+                      else
+                        {}
+                      end
+
+              if user
+                user.update!(
+                  extended_data: (user.extended_data || {}).merge(
+                    extra
+                  )
+                )
+              else
                 default_meta = {
                   "register_on_missing" => false,
                   "accept_tos_on_register" => false,
@@ -64,11 +76,6 @@ module Decidim
                               {}
                             end
                 meta = default_meta.merge(user_meta)
-                extra = if params.has_key? :extra
-                          params[:extra].permit!.to_h
-                        else
-                          {}
-                        end
                 raise ::Doorkeeper::Errors::DoorkeeperError, "User not found" unless meta["register_on_missing"]
 
                 email = meta.delete("email")
