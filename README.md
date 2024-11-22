@@ -46,9 +46,9 @@ To run these scripts, change your current branch to `main` and do:
 
 Release a patch
 ```
-yarn version patch
+yarn version --new-version patch --no-git-tag-version
 git add .
-git tag $(yarn postversion)
+git tag v0.0.<yourpatch>
 ```
 
 Release a minor
