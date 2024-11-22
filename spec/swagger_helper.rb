@@ -108,6 +108,17 @@ RSpec.configure do |config|
             required: [:data]
           },
           organization: Api::Definitions::ORGANIZATION,
+          users_response: {
+            type: :object,
+            properties: {
+              data: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/user" }
+              }
+            },
+            required: [:data]
+          },
+          user: Api::Definitions::USER,
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,
           component_response: {

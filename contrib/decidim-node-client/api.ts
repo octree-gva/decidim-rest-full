@@ -923,6 +923,102 @@ export interface TranslatedProp {
   fr?: string;
 }
 /**
+ *
+ * @export
+ * @interface User
+ */
+export interface User {
+  /**
+   *
+   * @type {string}
+   * @memberof User
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof User
+   */
+  type: UserTypeEnum;
+  /**
+   *
+   * @type {UserAttributes}
+   * @memberof User
+   */
+  attributes: UserAttributes;
+}
+
+export const UserTypeEnum = {
+  User: "user",
+} as const;
+
+export type UserTypeEnum = (typeof UserTypeEnum)[keyof typeof UserTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface UserAttributes
+ */
+export interface UserAttributes {
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  nickname: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  locale?: UserAttributesLocaleEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  personal_url?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  email?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  about?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  created_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  updated_at: string;
+}
+
+export const UserAttributesLocaleEnum = {
+  En: "en",
+  Fr: "fr",
+} as const;
+
+export type UserAttributesLocaleEnum =
+  (typeof UserAttributesLocaleEnum)[keyof typeof UserAttributesLocaleEnum];
+
+/**
  * Impersonation Settings
  * @export
  * @interface UserImpersonationSettings
@@ -958,6 +1054,19 @@ export interface UserImpersonationSettings {
    * @memberof UserImpersonationSettings
    */
   name?: string;
+}
+/**
+ *
+ * @export
+ * @interface UsersResponse
+ */
+export interface UsersResponse {
+  /**
+   *
+   * @type {Array<User>}
+   * @memberof UsersResponse
+   */
+  data: Array<User>;
 }
 
 /**
@@ -2172,6 +2281,126 @@ export const SystemApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     *
+     * @summary List available Users
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<string>} [filterNicknameNotIn]
+     * @param {Array<string>} [filterNicknameIn]
+     * @param {string} [filterNicknameStart]
+     * @param {string} [filterNicknameNotStart]
+     * @param {string} [filterNicknameEq]
+     * @param {string} [filterNicknameNotEq]
+     * @param {string} [filterNicknameMatches]
+     * @param {string} [filterNicknameDoesNotMatch]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    apiRestFullV00SystemUsersGet: async (
+      page?: number,
+      perPage?: number,
+      filterNicknameNotIn?: Array<string>,
+      filterNicknameIn?: Array<string>,
+      filterNicknameStart?: string,
+      filterNicknameNotStart?: string,
+      filterNicknameEq?: string,
+      filterNicknameNotEq?: string,
+      filterNicknameMatches?: string,
+      filterNicknameDoesNotMatch?: string,
+      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
+      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/api/rest_full/v0.0/system/users`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (filterNicknameNotIn) {
+        localVarQueryParameter["filter[nickname_not_in][]"] =
+          filterNicknameNotIn;
+      }
+
+      if (filterNicknameIn) {
+        localVarQueryParameter["filter[nickname_in][]"] = filterNicknameIn;
+      }
+
+      if (filterNicknameStart !== undefined) {
+        localVarQueryParameter["filter[nickname_start]"] = filterNicknameStart;
+      }
+
+      if (filterNicknameNotStart !== undefined) {
+        localVarQueryParameter["filter[nickname_not_start]"] =
+          filterNicknameNotStart;
+      }
+
+      if (filterNicknameEq !== undefined) {
+        localVarQueryParameter["filter[nickname_eq]"] = filterNicknameEq;
+      }
+
+      if (filterNicknameNotEq !== undefined) {
+        localVarQueryParameter["filter[nickname_not_eq]"] = filterNicknameNotEq;
+      }
+
+      if (filterNicknameMatches !== undefined) {
+        localVarQueryParameter["filter[nickname_matches]"] =
+          filterNicknameMatches;
+      }
+
+      if (filterNicknameDoesNotMatch !== undefined) {
+        localVarQueryParameter["filter[nickname_does_not_match]"] =
+          filterNicknameDoesNotMatch;
+      }
+
+      if (filterNicknamePresent !== undefined) {
+        localVarQueryParameter["filter[nickname_present]"] =
+          filterNicknamePresent;
+      }
+
+      if (filterNicknameBlank !== undefined) {
+        localVarQueryParameter["filter[nickname_blank]"] = filterNicknameBlank;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -2225,6 +2454,70 @@ export const SystemApiFp = function (configuration?: Configuration) {
           configuration,
         )(axios, localVarOperationServerBasePath || basePath);
     },
+    /**
+     *
+     * @summary List available Users
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<string>} [filterNicknameNotIn]
+     * @param {Array<string>} [filterNicknameIn]
+     * @param {string} [filterNicknameStart]
+     * @param {string} [filterNicknameNotStart]
+     * @param {string} [filterNicknameEq]
+     * @param {string} [filterNicknameNotEq]
+     * @param {string} [filterNicknameMatches]
+     * @param {string} [filterNicknameDoesNotMatch]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async apiRestFullV00SystemUsersGet(
+      page?: number,
+      perPage?: number,
+      filterNicknameNotIn?: Array<string>,
+      filterNicknameIn?: Array<string>,
+      filterNicknameStart?: string,
+      filterNicknameNotStart?: string,
+      filterNicknameEq?: string,
+      filterNicknameNotEq?: string,
+      filterNicknameMatches?: string,
+      filterNicknameDoesNotMatch?: string,
+      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
+      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.apiRestFullV00SystemUsersGet(
+          page,
+          perPage,
+          filterNicknameNotIn,
+          filterNicknameIn,
+          filterNicknameStart,
+          filterNicknameNotStart,
+          filterNicknameEq,
+          filterNicknameNotEq,
+          filterNicknameMatches,
+          filterNicknameDoesNotMatch,
+          filterNicknamePresent,
+          filterNicknameBlank,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SystemApi.apiRestFullV00SystemUsersGet"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
   };
 };
 
@@ -2262,6 +2555,57 @@ export const SystemApiFactory = function (
           locales,
           page,
           perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary List available Users
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<string>} [filterNicknameNotIn]
+     * @param {Array<string>} [filterNicknameIn]
+     * @param {string} [filterNicknameStart]
+     * @param {string} [filterNicknameNotStart]
+     * @param {string} [filterNicknameEq]
+     * @param {string} [filterNicknameNotEq]
+     * @param {string} [filterNicknameMatches]
+     * @param {string} [filterNicknameDoesNotMatch]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    apiRestFullV00SystemUsersGet(
+      page?: number,
+      perPage?: number,
+      filterNicknameNotIn?: Array<string>,
+      filterNicknameIn?: Array<string>,
+      filterNicknameStart?: string,
+      filterNicknameNotStart?: string,
+      filterNicknameEq?: string,
+      filterNicknameNotEq?: string,
+      filterNicknameMatches?: string,
+      filterNicknameDoesNotMatch?: string,
+      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
+      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<UsersResponse> {
+      return localVarFp
+        .apiRestFullV00SystemUsersGet(
+          page,
+          perPage,
+          filterNicknameNotIn,
+          filterNicknameIn,
+          filterNicknameStart,
+          filterNicknameNotStart,
+          filterNicknameEq,
+          filterNicknameNotEq,
+          filterNicknameMatches,
+          filterNicknameDoesNotMatch,
+          filterNicknamePresent,
+          filterNicknameBlank,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -2304,6 +2648,59 @@ export class SystemApi extends BaseAPI {
       )
       .then((request) => request(this.axios, this.basePath));
   }
+
+  /**
+   *
+   * @summary List available Users
+   * @param {number} [page] Page number for pagination
+   * @param {number} [perPage] Number of items per page
+   * @param {Array<string>} [filterNicknameNotIn]
+   * @param {Array<string>} [filterNicknameIn]
+   * @param {string} [filterNicknameStart]
+   * @param {string} [filterNicknameNotStart]
+   * @param {string} [filterNicknameEq]
+   * @param {string} [filterNicknameNotEq]
+   * @param {string} [filterNicknameMatches]
+   * @param {string} [filterNicknameDoesNotMatch]
+   * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+   * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SystemApi
+   */
+  public apiRestFullV00SystemUsersGet(
+    page?: number,
+    perPage?: number,
+    filterNicknameNotIn?: Array<string>,
+    filterNicknameIn?: Array<string>,
+    filterNicknameStart?: string,
+    filterNicknameNotStart?: string,
+    filterNicknameEq?: string,
+    filterNicknameNotEq?: string,
+    filterNicknameMatches?: string,
+    filterNicknameDoesNotMatch?: string,
+    filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
+    filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SystemApiFp(this.configuration)
+      .apiRestFullV00SystemUsersGet(
+        page,
+        perPage,
+        filterNicknameNotIn,
+        filterNicknameIn,
+        filterNicknameStart,
+        filterNicknameNotStart,
+        filterNicknameEq,
+        filterNicknameNotEq,
+        filterNicknameMatches,
+        filterNicknameDoesNotMatch,
+        filterNicknamePresent,
+        filterNicknameBlank,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
 }
 
 /**
@@ -2327,3 +2724,21 @@ export const ApiRestFullV00SystemOrganizationsGetLocalesEnum = {
 } as const;
 export type ApiRestFullV00SystemOrganizationsGetLocalesEnum =
   (typeof ApiRestFullV00SystemOrganizationsGetLocalesEnum)[keyof typeof ApiRestFullV00SystemOrganizationsGetLocalesEnum];
+/**
+ * @export
+ */
+export const ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum = {
+  _1: "1",
+  _0: "0",
+} as const;
+export type ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum =
+  (typeof ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum)[keyof typeof ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum];
+/**
+ * @export
+ */
+export const ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum = {
+  _1: "1",
+  _0: "0",
+} as const;
+export type ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum =
+  (typeof ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum)[keyof typeof ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum];
