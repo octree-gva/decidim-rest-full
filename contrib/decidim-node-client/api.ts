@@ -448,6 +448,18 @@ export interface Impersonation {
    */
   username: string;
   /**
+   * Additional properties for the user (private)
+   * @type {{ [key: string]: string; }}
+   * @memberof Impersonation
+   */
+  extra?: { [key: string]: string };
+  /**
+   *
+   * @type {UserImpersonationSettings}
+   * @memberof Impersonation
+   */
+  meta?: UserImpersonationSettings;
+  /**
    * OAuth application Client Id
    * @type {string}
    * @memberof Impersonation
@@ -841,6 +853,43 @@ export interface SpacesResponse {
    */
   data: Array<Space>;
 }
+/**
+ * Impersonation Settings
+ * @export
+ * @interface UserImpersonationSettings
+ */
+export interface UserImpersonationSettings {
+  /**
+   * Register the user if it does not exists. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  register_on_missing?: boolean;
+  /**
+   * Accept the TOS on registration, used only if register_on_missing=true. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  accept_tos_on_register?: boolean;
+  /**
+   * Skip email confirmation on creation, used only if register_on_missing=true. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  skip_confirmation_on_register?: boolean;
+  /**
+   * User email to use on registration. used only if register_on_missing=true. Default to <username>@example.org
+   * @type {string}
+   * @memberof UserImpersonationSettings
+   */
+  email?: string;
+  /**
+   * User name. Used only if register_on_missing=true. Default to username
+   * @type {string}
+   * @memberof UserImpersonationSettings
+   */
+  name?: string;
+}
 
 /**
  * OAuthApi - axios parameter creator
@@ -852,7 +901,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -912,7 +961,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -956,7 +1005,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -981,7 +1030,7 @@ export const OAuthApiFactory = function (
 export class OAuthApi extends BaseAPI {
   /**
    *
-   * @summary Request a OAuth token
+   * @summary Request a OAuth token throught ROPC
    * @param {OauthGrantParam} oauthGrantParam
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
