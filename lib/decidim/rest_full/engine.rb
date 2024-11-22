@@ -48,13 +48,17 @@ module Decidim
                 default_meta = {
                   "register_on_missing" => false,
                   "accept_tos_on_register" => false,
-                  "skip_confirmation_on_register" => false
+                  "skip_confirmation_on_register" => false,
+                  "email" => "#{username}@example.org",
+                  "name" => username.titleize
                 }
                 user_meta = if params[:meta]
                               params[:meta].permit(
                                 :register_on_missing,
                                 :accept_tos_on_register,
-                                :skip_confirmation_on_register
+                                :skip_confirmation_on_register,
+                                :name,
+                                :email
                               ).to_h
                             else
                               {}
@@ -67,12 +71,13 @@ module Decidim
                         end
                 raise ::Doorkeeper::Errors::DoorkeeperError, "User not found" unless meta["register_on_missing"]
 
-                email = extra.delete("email") || "#{username}@example.org"
-                name = extra.delete("name") || username.titleize
+                email = meta.delete("email")
+                name = meta.delete("name")
                 user = current_organization.users.build(
                   email: email,
                   name: name,
-                  nickname: username
+                  nickname: username,
+                  extended_data: extra
                 )
                 user.accepted_tos_version = if meta["accept_tos_on_register"]
                                               current_organization.tos_version + 1.hour

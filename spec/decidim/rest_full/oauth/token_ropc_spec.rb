@@ -2,6 +2,15 @@
 
 # spec/integration/oauth_scopes_spec.rb
 require "swagger_helper"
+def uniq_nickname
+  final_nickname = nickname = "decidimuser"
+  i = 0
+  while Decidim::User.find_by(nickname: final_nickname)
+    i += 1
+    final_nickname = "#{nickname}_#{i}"
+  end
+  final_nickname
+end
 RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :request do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
@@ -21,15 +30,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       response "200", "Token returned" do
         context "when user does not exists" do
           context "with meta.register_on_missing=true" do
-            let(:nickname) do
-              final_nickname = nickname = "decidimuser"
-              i = 0
-              while Decidim::User.find_by(nickname: final_nickname)
-                i += 1
-                final_nickname = "#{nickname}_#{i}"
-              end
-              final_nickname
-            end
+            let(:nickname) { uniq_nickname }
             let(:body) do
               {
                 grant_type: "password",
@@ -49,16 +50,8 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
             end
           end
 
-          context "with meta.register_on_missing=true and extra.email=an_email" do
-            let(:nickname) do
-              final_nickname = nickname = "decidimuser"
-              i = 0
-              while Decidim::User.find_by(nickname: final_nickname)
-                i += 1
-                final_nickname = "#{nickname}_#{i}"
-              end
-              final_nickname
-            end
+          context "with meta.register_on_missing=true and meta.email=an_email" do
+            let(:nickname) { uniq_nickname }
             let(:email) do
               "test#{Devise.friendly_token.first(10).downcase}@example.org"
             end
@@ -70,9 +63,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
                 client_id: api_client.client_id,
                 client_secret: api_client.client_secret,
                 meta: {
-                  register_on_missing: true
-                },
-                extra: {
+                  register_on_missing: true,
                   email: email
                 },
                 scope: "public"
@@ -80,7 +71,65 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
             end
 
             run_test! do |_example|
-              expect(Decidim::User.find_by(nickname: nickname).email).to eq(email)
+              created_user = Decidim::User.find_by(nickname: nickname)
+              expect(created_user).to be_truthy
+              expect(created_user.email).to eq(email)
+              expect(created_user.extended_data).to eq({})
+            end
+          end
+
+          context "with meta.register_on_missing=true and extra.foo=bar" do
+            let(:nickname) { uniq_nickname }
+
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "impersonate",
+                username: nickname,
+                client_id: api_client.client_id,
+                client_secret: api_client.client_secret,
+                meta: {
+                  register_on_missing: true
+                },
+                extra: {
+                  foo: "bar"
+                },
+                scope: "public"
+              }
+            end
+
+            run_test! do |_example|
+              created_user = Decidim::User.find_by(nickname: nickname)
+              expect(created_user).to be_truthy
+              expect(created_user.email).to end_with("example.org")
+              expect(created_user.extended_data).to eq({ "foo" => "bar" })
+            end
+          end
+
+          context "with meta.register_on_missing=true and meta.name='My Name'" do
+            let(:nickname) { uniq_nickname }
+
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "impersonate",
+                username: nickname,
+                client_id: api_client.client_id,
+                client_secret: api_client.client_secret,
+                meta: {
+                  register_on_missing: true,
+                  name: "My Name"
+                },
+                extra: {},
+                scope: "public"
+              }
+            end
+
+            run_test! do |_example|
+              created_user = Decidim::User.find_by(nickname: nickname)
+              expect(created_user).to be_truthy
+              expect(created_user.name).to eq("My Name")
+              expect(created_user.extended_data).to eq({})
             end
           end
         end
@@ -134,15 +183,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       response "400", "Bad Request" do
         context "when user does not exists" do
           context "with meta.register_on_missing=false" do
-            let(:nickname) do
-              final_nickname = nickname = "decidimuser"
-              i = 0
-              while Decidim::User.find_by(nickname: final_nickname)
-                i += 1
-                final_nickname = "#{nickname}_#{i}"
-              end
-              final_nickname
-            end
+            let(:nickname) { uniq_nickname }
             let(:body) do
               {
                 grant_type: "password",
@@ -163,15 +204,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
           end
 
           context "with meta.register_on_missing=true and invalid username" do
-            let(:nickname) do
-              final_nickname = nickname = "d"
-              i = 0
-              while Decidim::User.find_by(nickname: final_nickname)
-                i += 1
-                final_nickname = "#{nickname}_#{i}"
-              end
-              final_nickname
-            end
+            let(:nickname) { uniq_nickname }
             let(:body) do
               {
                 grant_type: "password",

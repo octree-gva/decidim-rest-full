@@ -29,8 +29,8 @@ module Api
           type: :object,
           title: "User extra data",
           description: "Additional properties for the user (private)",
-          properties: {
-            email: { type: :string, description: "User email. Default to <username>@example.org" }
+          additionalProperties: {
+            type: "string"
           }
         },
         meta: {
@@ -39,8 +39,10 @@ module Api
           description: "Impersonation Settings",
           properties: {
             register_on_missing: { type: :boolean, description: "Register the user if it does not exists. Default: false" },
-            accept_tos_on_register: { type: :boolean, description: "Accept the TOS on registration, valid only if register_on_missing=true. Default: false" },
-            skip_confirmation_on_register: { type: :boolean, description: "Skip email confirmation on creation, valid only if register_on_missing=true. Default: false" }
+            accept_tos_on_register: { type: :boolean, description: "Accept the TOS on registration, used only if register_on_missing=true. Default: false" },
+            skip_confirmation_on_register: { type: :boolean, description: "Skip email confirmation on creation, used only if register_on_missing=true. Default: false" },
+            email: { type: :string, description: "User email to use on registration. used only if register_on_missing=true. Default to <username>@example.org" },
+            name: { type: :string, description: "User name. Used only if register_on_missing=true. Default to username" }
           }
         },
         client_id: { type: :string, description: "OAuth application Client Id" },

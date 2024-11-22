@@ -19,6 +19,7 @@
     "docs:build": "yarn docs:compile_re_doc && cd website && yarn build",
     "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize",
     "gen:node-client": "bin/gen-node-client",
+    "postcommit": "yarn docs:compile_re_doc && yarn gen:node-client",
     "postversion": "bin/postversion"
   }
 }
