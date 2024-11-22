@@ -76,8 +76,8 @@ crowdin::upload:
     - crowdin upload -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
     - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $GITLAB_USER_ID == $TRANSLATIONBOT_ID'
-      when: always
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
 ##
 # Create a Merge request in the project with updated 
 # crowndin translations.
@@ -85,8 +85,8 @@ crowdin::merge_request:
   stage: translate
   image: node:18.20
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $GITLAB_USER_ID != $TRANSLATIONBOT_ID'
-      when: always
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
   before_script:
     - apt-get update && apt-get install -y git
   script:
@@ -132,20 +132,20 @@ ruby::rspec:
 # Publish decidim rest full api package
 decidim-client::publish:
   image: node:18.20
+  variables:
+    CI: 1
   before_script:
     - cd contrib/decidim-node-client
     - corepack enable
     - yarn
-    - |
-      {
-        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
-        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
-      } | tee -a .npmrc
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - .yarn/
   script:
     - yarn build
-    - yarn publish --non-interactive
+    - touch .npmrc
+    - echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/" >> .npmrc
+    - echo "${CI_API_V4_URL#http*:}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}" >> .npmrc
+    - npm publish --non-interactive --registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/
   extends: .publication_rules
