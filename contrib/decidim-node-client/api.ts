@@ -46,23 +46,23 @@ import {
  */
 export interface ApiError {
   /**
-   *
+   * Error code, starting with HTTP Code
    * @type {number}
    * @memberof ApiError
    */
   error_code: number;
   /**
-   *
+   * Error message
    * @type {string}
    * @memberof ApiError
    */
   message: string;
   /**
-   *
+   * Error detail, mostly validation error
    * @type {string}
    * @memberof ApiError
    */
-  details?: string;
+  detail?: string;
 }
 /**
  *
@@ -82,6 +82,12 @@ export interface AttachedComponents {
    * @memberof AttachedComponents
    */
   meta: AttachedComponentsMeta;
+  /**
+   *
+   * @type {AttachedComponentsLinks}
+   * @memberof AttachedComponents
+   */
+  links: AttachedComponentsLinks;
 }
 /**
  *
@@ -121,11 +127,24 @@ export type AttachedComponentsDataInnerTypeEnum =
 /**
  *
  * @export
+ * @interface AttachedComponentsLinks
+ */
+export interface AttachedComponentsLinks {
+  /**
+   * Complete list
+   * @type {string}
+   * @memberof AttachedComponentsLinks
+   */
+  related: string;
+}
+/**
+ *
+ * @export
  * @interface AttachedComponentsMeta
  */
 export interface AttachedComponentsMeta {
   /**
-   *
+   * Total count for components association
    * @type {number}
    * @memberof AttachedComponentsMeta
    */
@@ -248,39 +267,50 @@ export type ComponentTypeEnum =
  */
 export interface ComponentAttributes {
   /**
-   * Component name
-   * @type {{ [key: string]: string; }}
+   *
+   * @type {TranslatedProp}
    * @memberof ComponentAttributes
    */
-  name: { [key: string]: string };
-  /**
-   * Component annoucement (intro)
-   * @type {{ [key: string]: string; }}
-   * @memberof ComponentAttributes
-   */
-  global_announcement?: { [key: string]: string };
+  name: TranslatedProp;
   /**
    *
+   * @type {TranslatedProp}
+   * @memberof ComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   * Manifest name of the component
    * @type {string}
    * @memberof ComponentAttributes
    */
   manifest_name: ComponentAttributesManifestNameEnum;
   /**
-   *
+   * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
    * @type {string}
    * @memberof ComponentAttributes
    */
   participatory_space_type: string;
   /**
-   *
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
    * @type {string}
    * @memberof ComponentAttributes
    */
   participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof ComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof ComponentAttributes
+   */
+  updated_at: string;
 }
 
 export const ComponentAttributesManifestNameEnum = {
-  Dummy: "dummy",
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",
@@ -320,6 +350,8 @@ export interface ComponentLinks {
  * @interface ComponentMetadata
  */
 export interface ComponentMetadata {
+  [key: string]: ComponentMetadataValue | any;
+
   /**
    * Published component?
    * @type {boolean}
@@ -333,6 +365,12 @@ export interface ComponentMetadata {
    */
   scopes_enabled: boolean;
 }
+/**
+ * @type ComponentMetadataValue
+ * @export
+ */
+export type ComponentMetadataValue = TranslatedProp | boolean | number | string;
+
 /**
  *
  * @export
@@ -442,11 +480,23 @@ export interface Impersonation {
    */
   auth_type: ImpersonationAuthTypeEnum;
   /**
-   * User nickname
+   * User nickname, unique and at least 6 alphanumeric chars.
    * @type {string}
    * @memberof Impersonation
    */
   username: string;
+  /**
+   * Additional properties for the user (private)
+   * @type {{ [key: string]: string; }}
+   * @memberof Impersonation
+   */
+  extra?: { [key: string]: string };
+  /**
+   *
+   * @type {UserImpersonationSettings}
+   * @memberof Impersonation
+   */
+  meta?: UserImpersonationSettings;
   /**
    * OAuth application Client Id
    * @type {string}
@@ -633,7 +683,7 @@ export interface OrganizationAttributes {
    * @type {Array<string>}
    * @memberof OrganizationAttributes
    */
-  secondaryHosts?: Array<string>;
+  secondary_hosts?: Array<string>;
   /**
    *
    * @type {string}
@@ -730,29 +780,29 @@ export type SpaceTypeEnum = (typeof SpaceTypeEnum)[keyof typeof SpaceTypeEnum];
  */
 export interface SpaceAttributes {
   /**
-   * Space title
-   * @type {{ [key: string]: string; }}
+   *
+   * @type {TranslatedProp}
    * @memberof SpaceAttributes
    */
-  title: { [key: string]: string };
+  title: TranslatedProp;
   /**
-   * Space subtitle
-   * @type {{ [key: string]: string; }}
+   *
+   * @type {TranslatedProp}
    * @memberof SpaceAttributes
    */
-  subtitle?: { [key: string]: string };
+  subtitle?: TranslatedProp;
   /**
-   * Space short_description
-   * @type {{ [key: string]: string; }}
+   *
+   * @type {TranslatedProp}
    * @memberof SpaceAttributes
    */
-  short_description?: { [key: string]: string };
+  short_description?: TranslatedProp;
   /**
-   * Space description
-   * @type {{ [key: string]: string; }}
+   *
+   * @type {TranslatedProp}
    * @memberof SpaceAttributes
    */
-  description?: { [key: string]: string };
+  description?: TranslatedProp;
   /**
    *
    * @type {string}
@@ -771,6 +821,18 @@ export interface SpaceAttributes {
    * @memberof SpaceAttributes
    */
   visibility: SpaceAttributesVisibilityEnum;
+  /**
+   * Space creation date
+   * @type {string}
+   * @memberof SpaceAttributes
+   */
+  created_at: string;
+  /**
+   * Last update of the space
+   * @type {string}
+   * @memberof SpaceAttributes
+   */
+  updated_at: string;
 }
 
 export const SpaceAttributesManifestNameEnum = {
@@ -841,6 +903,62 @@ export interface SpacesResponse {
    */
   data: Array<Space>;
 }
+/**
+ * Hash with translated data, key=locale value=translation
+ * @export
+ * @interface TranslatedProp
+ */
+export interface TranslatedProp {
+  /**
+   * Translation in en
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  en?: string;
+  /**
+   * Translation in fr
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  fr?: string;
+}
+/**
+ * Impersonation Settings
+ * @export
+ * @interface UserImpersonationSettings
+ */
+export interface UserImpersonationSettings {
+  /**
+   * Register the user if it does not exists. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  register_on_missing?: boolean;
+  /**
+   * Accept the TOS on registration, used only if register_on_missing=true. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  accept_tos_on_register?: boolean;
+  /**
+   * Skip email confirmation on creation, used only if register_on_missing=true. Default: false
+   * @type {boolean}
+   * @memberof UserImpersonationSettings
+   */
+  skip_confirmation_on_register?: boolean;
+  /**
+   * User email to use on registration. used only if register_on_missing=true. Default to <username>@example.org
+   * @type {string}
+   * @memberof UserImpersonationSettings
+   */
+  email?: string;
+  /**
+   * User name. Used only if register_on_missing=true. Default to username
+   * @type {string}
+   * @memberof UserImpersonationSettings
+   */
+  name?: string;
+}
 
 /**
  * OAuthApi - axios parameter creator
@@ -852,7 +970,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -912,7 +1030,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -956,7 +1074,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      *
-     * @summary Request a OAuth token
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -981,7 +1099,7 @@ export const OAuthApiFactory = function (
 export class OAuthApi extends BaseAPI {
   /**
    *
-   * @summary Request a OAuth token
+   * @summary Request a OAuth token throught ROPC
    * @param {OauthGrantParam} oauthGrantParam
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -12,22 +12,31 @@ module Api
           type: :object,
           properties: {
             name: {
-              type: :object,
-              additionalProperties: { type: :string },
+              "$ref" => "#/components/schemas/translated_prop",
               example: { en: "Component Name", fr: "Nom du composant" },
               description: "Component name"
             },
             global_announcement: {
-              type: :object,
-              additionalProperties: { type: :string },
+              "$ref" => "#/components/schemas/translated_prop",
               example: { en: "Welcome! You can create", fr: "Bienvenue! Vous pouvez" },
               description: "Component annoucement (intro)"
             },
-            manifest_name: { type: :string, enum: Decidim.component_registry.manifests.map(&:name) },
-            participatory_space_type: { type: :string, example: "Decidim::Assembly" },
-            participatory_space_id: { type: :string }
+            manifest_name: {
+              type: :string,
+              enum: Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy },
+              description: "Manifest name of the component"
+            },
+            participatory_space_type: {
+              type: :string,
+              example: "Decidim::Assembly",
+              description: "Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)"
+            },
+            participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },
+            created_at: { type: :string, description: "Creation date of the component" },
+            updated_at: { type: :string, description: "Last update date of the component" }
           },
-          required: [:name, :manifest_name, :participatory_space_type, :participatory_space_id]
+          required: [:created_at, :updated_at, :name, :manifest_name, :participatory_space_type, :participatory_space_id],
+          additionalProperties: false
         },
         meta: {
           type: :object,
@@ -35,6 +44,22 @@ module Api
           properties: {
             published: { type: :boolean, description: "Published component?" },
             scopes_enabled: { type: :boolean, description: "Component handle scopes?" }
+          },
+          additionalProperties: {
+            oneOf: [
+              {
+                type: :boolean
+              },
+              {
+                type: :integer
+              },
+              {
+                type: :string
+              },
+              {
+                "$ref" => "#/components/schemas/translated_prop"
+              }
+            ]
           },
           required: [:published, :scopes_enabled]
         },
@@ -45,6 +70,7 @@ module Api
             self: { type: :string, description: "API URL to the component" },
             related: { type: :string, description: "Component details API URL" }
           },
+          additionalProperties: false,
           required: [:self, :related]
         },
         relationships: {
@@ -80,7 +106,8 @@ module Api
               required: [:data, :meta]
             }
           },
-          required: [:resources]
+          required: [:resources],
+          additionalProperties: false
         }
       },
       required: [:id, :type, :attributes, :meta, :links]

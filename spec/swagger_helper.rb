@@ -96,6 +96,7 @@ RSpec.configure do |config|
         },
         schemas: {
           api_error: Api::Definitions::ERROR,
+          translated_prop: Api::Definitions::TRANSLATED_PROP,
           organizations_response: {
             type: :object,
             properties: {

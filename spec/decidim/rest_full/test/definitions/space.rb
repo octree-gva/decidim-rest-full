@@ -13,35 +13,34 @@ module Api
           type: :object,
           properties: {
             title: {
-              type: :object,
+              "$ref" => "#/components/schemas/translated_prop",
               title: "Title translations",
-              additionalProperties: { type: :string },
               example: { en: "Assembly Name", fr: "Nom de l'Assemblée" },
               description: "Space title"
             },
             subtitle: {
-              type: :object,
+              "$ref" => "#/components/schemas/translated_prop",
               title: "Subtitle translations",
-              additionalProperties: { type: :string },
               description: "Space subtitle"
             },
             short_description: {
-              type: :object,
+              "$ref" => "#/components/schemas/translated_prop",
               title: "Short Description translations",
-              additionalProperties: { type: :string },
               description: "Space short_description"
             },
             description: {
-              type: :object,
+              "$ref" => "#/components/schemas/translated_prop",
               title: "Description translations",
-              additionalProperties: { type: :string },
               description: "Space description"
             },
             manifest_name: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
             participatory_space_type: { type: :string, example: "Decidim::Assembly" },
-            visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" }
+            visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" },
+            created_at: { type: :string, description: "Space creation date" },
+            updated_at: { type: :string, description: "Last update of the space" }
           },
-          required: [:title, :manifest_name, :visibility]
+          required: [:title, :manifest_name, :visibility, :created_at, :updated_at],
+          additionalProperties: false
         },
         relationships: {
           type: :object,
@@ -57,23 +56,43 @@ module Api
                     type: :object,
                     properties: {
                       id: { type: :string },
-                      type: { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" } }
+                      type: {
+                        type: :string,
+                        enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" }
+                      }
                     },
+                    additionalProperties: false,
                     required: [:id, :type]
                   }
                 },
                 meta: {
+                  title: "Attached Components Meta",
                   type: :object,
                   properties: {
-                    count: { type: :integer }
+                    count: { type: :integer, description: "Total count for components association" }
                   },
+                  additionalProperties: false,
                   required: [:count]
+                },
+                links: {
+                  type: :object,
+                  title: "Attached Components Links",
+                  properties: {
+                    related: {
+                      type: :string,
+                      description: "Complete list"
+                    }
+                  },
+                  additionalProperties: false,
+                  required: [:related]
                 }
               },
-              required: [:data, :meta]
+              required: [:data, :meta, :links],
+              additionalProperties: false
             }
           },
-          required: [:components]
+          required: [:components],
+          additionalProperties: false
         },
         links: {
           type: :object,
@@ -83,7 +102,8 @@ module Api
               type: :string
             }
           },
-          required: [:self]
+          required: [:self],
+          additionalProperties: false
         }
       },
       required: [:id, :type, :attributes, :links, :relationships]

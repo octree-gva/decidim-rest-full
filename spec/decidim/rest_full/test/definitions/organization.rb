@@ -13,15 +13,16 @@ module Api
           type: :object,
           properties: {
             name: {
-              type: :object,
+              "$ref" => "#/components/schemas/translated_prop",
               additionalProperties: { type: :string },
               example: { en: "Organization Name", fr: "Nom de l'organisation" }
             },
             host: { type: :string, example: "example.org" },
-            secondaryHosts: { type: :array, items: { type: :string }, example: ["secondary.example.org"] },
+            secondary_hosts: { type: :array, items: { type: :string, description: "Additional host, will redirect (301) to `host`" }, example: ["secondary.example.org"] },
             created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
             updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
           },
+          additionalProperties: false,
           required: [:created_at, :updated_at]
         },
         meta: {
@@ -29,7 +30,8 @@ module Api
           properties: {
             locales: { type: :array, items: { type: :string }, example: %w(en fr) }
           },
-          required: [:locales]
+          required: [:locales],
+          additionalProperties: false
         }
       },
       required: [:id, :type, :attributes, :meta]
