@@ -36,8 +36,8 @@ module Api
             manifest_name: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
             participatory_space_type: { type: :string, example: "Decidim::Assembly" },
             visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" },
-            created_at: { type: :string, name: "Space creation date" },
-            updated_at: { type: :string, name: "Last update of the space" }
+            created_at: { type: :string, description: "Space creation date" },
+            updated_at: { type: :string, description: "Last update of the space" }
           },
           required: [:title, :manifest_name, :visibility, :created_at, :updated_at],
           additionalProperties: false
