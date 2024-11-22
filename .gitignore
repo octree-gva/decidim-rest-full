@@ -27,3 +27,4 @@ node_modules
 .yarn
 .local
 .npm
+.cache
