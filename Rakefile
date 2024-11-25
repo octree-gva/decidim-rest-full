@@ -6,7 +6,7 @@ require "rspec/core/rake_task"
 def install_module(path)
   Dir.chdir(path) do
     system("bundle check || bundle install")
-    # system("bundle exec rake decidim_rest_full:install:migrations")
+    system("bundle exec rake decidim_rest_full:install:migrations")
     system("bundle exec rails db:migrate")
   end
 end

@@ -7,9 +7,14 @@ module Decidim
       include Decidim::Loggable
 
       belongs_to :organization, foreign_key: "decidim_organization_id", class_name: "Decidim::Organization", inverse_of: :api_clients
+      has_many :permissions, class_name: "Decidim::RestFull::Permission", dependent: :destroy
 
       validates :scopes, presence: true
       before_validation :dummy_attributes
+
+      def permission_strings
+        @permission_strings ||= permissions.pluck(:permission)
+      end
 
       def owner
         organization

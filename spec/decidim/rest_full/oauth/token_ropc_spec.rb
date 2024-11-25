@@ -14,7 +14,15 @@ end
 RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :request do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
-  let!(:api_client) { create(:api_client, organization: organization) }
+  let!(:api_client) do
+    api_client = create(:api_client, organization: organization)
+    api_client.permissions = [
+      api_client.permissions.build(permission: "oauth.impersonate"),
+      api_client.permissions.build(permission: "oauth.login")
+    ]
+    api_client.save!
+    api_client.reload
+  end
 
   before do
     host! organization.host
@@ -177,7 +185,14 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
           end
 
           context "with auth_type=login" do
-            let(:proposal_api_client) { create(:api_client, organization: organization, scopes: "proposals public") }
+            let(:proposal_api_client) do
+              api_client = create(:api_client, organization: organization, scopes: "proposals public")
+              api_client.permissions = [
+                api_client.permissions.build(permission: "oauth.login")
+              ]
+              api_client.save!
+              api_client
+            end
 
             let(:body) do
               {

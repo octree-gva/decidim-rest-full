@@ -7,20 +7,36 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
       tags "System"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
-      parameter name: "populate[]", in: :query, style: :form, explode: true, schema: Api::Definitions::POPULATE_PARAM.call(Decidim::Api::RestFull::OrganizationSerializer), required: false
+
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
+      let(:organization) { create(:organization) }
+      let(:api_client) do
+        api_client = create(:api_client, organization: organization, scopes: "system")
+        api_client.permissions = [
+          api_client.permissions.build(permission: "oauth.impersonate"),
+          api_client.permissions.build(permission: "oauth.login"),
+          api_client.permissions.build(permission: "system.organizations.read")
+        ]
+        api_client.save!
+        api_client
+      end
+      let!(:user) { create(:user) }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
 
-      let(:Authorization) { "Bearer #{create(:oauth_access_token, scopes: "system").token}" }
+      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+
+      before do
+        create(:rest_full_permission, api_client: api_client, permission: "system.organization.read")
+      end
 
       response "200", "Organizations listed" do
         consumes "application/json"
         produces "application/json"
         schema "$ref" => "#/components/schemas/organizations_response"
 
-        context "with populate[] and locale[] filter displayed fields and translated results" do
-          let(:"populate[]") { Decidim::Api::RestFull::OrganizationSerializer.db_fields }
+        context "with locale[] filter translated results" do
           let(:"locales[]") { %w(en fr) }
           let(:page) { 1 }
           let(:per_page) { 10 }
@@ -49,14 +65,6 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
         consumes "application/json"
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
-        context "with invalid populate[] fields" do
-          let(:"populate[]") { ["invalid_field"] }
-
-          run_test!(example_name: :bad_format) do |example|
-            message = JSON.parse(example.body)["detail"]
-            expect(message).to start_with("Not allowed populate param: invalid_field")
-          end
-        end
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }

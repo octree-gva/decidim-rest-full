@@ -6,38 +6,45 @@ module Decidim
     module RestFull
       module System
         class OrganizationsController < ApplicationController
-          before_action { doorkeeper_authorize! :system }
+          before_action do
+            doorkeeper_authorize! :system
+            authorize! :read, ::Decidim::Organization
+          end
 
           # List all organizations
           def index
-            # Extract only the populated fields
-            allowed_fields = OrganizationSerializer.db_fields
-            only_fields = populated_fields([], allowed_fields)
-
             # Fetch organizations and paginate
-            organizations = paginate(Decidim::Organization.select(*only_fields))
+            organizations = paginate(collection)
             # Render the response
-            render json: OrganizationSerializer.new(
-              organizations,
-              params: { only: only_fields, locales: available_locales },
-              fields: { organization: only_fields.push(:meta) }
-            ).serializable_hash
+            render json: serializable_hash(organizations)
           end
 
           # Show a single organization
           def show
-            # Extract only the populated fields
-            only_fields = populated_fields(OrganizationSerializer.db_fields, OrganizationSerializer.db_fields)
-
             # Find the organization by ID
-            organization = Decidim::Organization.find(params[:id])
-
+            organization = collection.find(params[:id])
             # Render the response
-            render json: OrganizationSerializer.new(
-              organization,
-              params: { only: only_fields, locales: available_locales },
-              fields: { organization: only_fields.map(&:to_sym) }
+            render json: serializable_hash(organization)
+          end
+
+          private
+
+          def serializable_hash(resource)
+            OrganizationSerializer.new(
+              resource,
+              params: { locales: available_locales }
             ).serializable_hash
+          end
+
+          def collection
+            Decidim::Organization.select(
+              :id,
+              :name,
+              :secondary_hosts,
+              :host,
+              :created_at,
+              :updated_at
+            )
           end
         end
       end

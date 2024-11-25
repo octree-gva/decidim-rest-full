@@ -12,6 +12,22 @@ en:
             scope_meetings: "Meeting: manage meeting components"
             scope_debates: "Debate: manage debate components"
             scope_pages: "Page: manage page components"
+          permission:
+            oauth:
+              impersonate: "impersonate: Login as another user"
+              login: "login: login with username/password"
+            system: 
+              organizations:
+                read: "read: List and detail of organizations"
+                update: "update: Update an organization"
+                destroy: "destroy: Remove definitly an organization"
+              users:
+                read: "read: List and detail of users"
+                update: "update: Update a user"
+                destroy: "destroy: Remove definitly a user"
+              server:
+                restart: "restart: Soft restart the server"
+                exec: "exec: Execute jobs"
       admin:
         menu:
           api_clients: "API Clients"
@@ -38,7 +54,9 @@ en:
             client_secret: "Client Secret"
             auth_type: "Auth Type"
             organization_perm: "Organization"
+            user_perm: "User"
             rails_perm: "Ruby on Rails"
+            update_permissions: "Update permissions"
           show:
             go_back: "Back to the list"
           create:

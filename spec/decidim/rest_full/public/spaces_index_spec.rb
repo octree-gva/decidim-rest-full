@@ -23,6 +23,7 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       let!(:organization) { create(:organization) }
       let!(:api_client) { create(:api_client, organization: organization) }
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
       let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
 

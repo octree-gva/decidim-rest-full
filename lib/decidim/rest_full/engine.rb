@@ -32,13 +32,14 @@ module Decidim
 
             api_client = Decidim::RestFull::ApiClient.find_by(
               uid: client_id,
-
               organization: current_organization
             )
             raise ::Doorkeeper::Errors::DoorkeeperError, "Invalid Api Client, check credentials" unless api_client
 
+            ability = Decidim::RestFull::Ability.new(api_client)
             case auth_type
             when "impersonate"
+              ability.authorize! :impersonate, Decidim::RestFull::ApiClient
               username = params.require("username")
               user = Decidim::User.find_by(
                 nickname: username,
@@ -110,6 +111,7 @@ module Decidim
               end
               user
             when "login"
+              ability.authorize! :login, Decidim::RestFull::ApiClient
               user = Decidim::User.find_by(
                 nickname: params.require("username"),
                 organization: current_organization
