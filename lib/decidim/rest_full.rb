@@ -15,6 +15,7 @@ require "decidim/rest_full/api_exception"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids"
+require "decidim/rest_full/overrides/user_extended_data_ransack"
 
 module Decidim
   module RestFull

@@ -942,6 +942,18 @@ export interface User {
   type: UserTypeEnum;
   /**
    *
+   * @type {UserMeta}
+   * @memberof User
+   */
+  meta?: UserMeta;
+  /**
+   *
+   * @type {UserRelationships}
+   * @memberof User
+   */
+  relationships?: UserRelationships;
+  /**
+   *
    * @type {UserAttributes}
    * @memberof User
    */
@@ -961,41 +973,41 @@ export type UserTypeEnum = (typeof UserTypeEnum)[keyof typeof UserTypeEnum];
  */
 export interface UserAttributes {
   /**
-   *
+   * User name, use to display the Profile identity. Public
    * @type {string}
    * @memberof UserAttributes
    */
   name: string;
   /**
-   *
+   * User nickname, unique identifier for the user. Public
    * @type {string}
    * @memberof UserAttributes
    */
   nickname: string;
   /**
-   *
-   * @type {string}
-   * @memberof UserAttributes
-   */
-  locale?: UserAttributesLocaleEnum;
-  /**
-   *
+   * Personal website URL or social link. Public
    * @type {string}
    * @memberof UserAttributes
    */
   personal_url?: string;
   /**
-   *
-   * @type {string}
-   * @memberof UserAttributes
-   */
-  email?: string;
-  /**
-   *
+   * Short bio of the user. Public
    * @type {string}
    * @memberof UserAttributes
    */
   about?: string;
+  /**
+   * User locale. Fallback to default locale of the organization. Private
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  locale: UserAttributesLocaleEnum;
+  /**
+   * Email of the user. Private
+   * @type {string}
+   * @memberof UserAttributes
+   */
+  email?: string;
   /**
    *
    * @type {string}
@@ -1055,6 +1067,86 @@ export interface UserImpersonationSettings {
    */
   name?: string;
 }
+/**
+ *
+ * @export
+ * @interface UserMeta
+ */
+export interface UserMeta {
+  [key: string]: UserMetaValue | any;
+
+  /**
+   * If the user is blocked, and need to be unblocked to signin
+   * @type {boolean}
+   * @memberof UserMeta
+   */
+  blocked: boolean;
+  /**
+   * If the user is locked, and need to click on the mail link to unlock
+   * @type {boolean}
+   * @memberof UserMeta
+   */
+  locked: boolean;
+}
+/**
+ * @type UserMetaValue
+ * @export
+ */
+export type UserMetaValue = boolean | string;
+
+/**
+ *
+ * @export
+ * @interface UserRelationships
+ */
+export interface UserRelationships {
+  /**
+   *
+   * @type {UserRelationshipsRoles}
+   * @memberof UserRelationships
+   */
+  roles?: UserRelationshipsRoles;
+}
+/**
+ *
+ * @export
+ * @interface UserRelationshipsRoles
+ */
+export interface UserRelationshipsRoles {
+  /**
+   *
+   * @type {Array<UserRelationshipsRolesDataInner>}
+   * @memberof UserRelationshipsRoles
+   */
+  data: Array<UserRelationshipsRolesDataInner>;
+}
+/**
+ *
+ * @export
+ * @interface UserRelationshipsRolesDataInner
+ */
+export interface UserRelationshipsRolesDataInner {
+  /**
+   *
+   * @type {string}
+   * @memberof UserRelationshipsRolesDataInner
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UserRelationshipsRolesDataInner
+   */
+  type: UserRelationshipsRolesDataInnerTypeEnum;
+}
+
+export const UserRelationshipsRolesDataInnerTypeEnum = {
+  UserRole: "user_role",
+} as const;
+
+export type UserRelationshipsRolesDataInnerTypeEnum =
+  (typeof UserRelationshipsRolesDataInnerTypeEnum)[keyof typeof UserRelationshipsRolesDataInnerTypeEnum];
+
 /**
  *
  * @export
@@ -2296,6 +2388,7 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2312,6 +2405,7 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
       filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      filterExtraCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/api/rest_full/v0.0/system/users`;
@@ -2385,6 +2479,10 @@ export const SystemApiAxiosParamCreator = function (
 
       if (filterNicknameBlank !== undefined) {
         localVarQueryParameter["filter[nickname_blank]"] = filterNicknameBlank;
+      }
+
+      if (filterExtraCont !== undefined) {
+        localVarQueryParameter["filter[extra_cont]"] = filterExtraCont;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -2469,6 +2567,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2485,6 +2584,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
       filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      filterExtraCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
@@ -2503,6 +2603,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
           filterNicknameDoesNotMatch,
           filterNicknamePresent,
           filterNicknameBlank,
+          filterExtraCont,
           options,
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -2574,6 +2675,7 @@ export const SystemApiFactory = function (
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
      * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2590,6 +2692,7 @@ export const SystemApiFactory = function (
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
       filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      filterExtraCont?: string,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<UsersResponse> {
       return localVarFp
@@ -2606,6 +2709,7 @@ export const SystemApiFactory = function (
           filterNicknameDoesNotMatch,
           filterNicknamePresent,
           filterNicknameBlank,
+          filterExtraCont,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -2664,6 +2768,7 @@ export class SystemApi extends BaseAPI {
    * @param {string} [filterNicknameDoesNotMatch]
    * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
    * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+   * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SystemApi
@@ -2681,6 +2786,7 @@ export class SystemApi extends BaseAPI {
     filterNicknameDoesNotMatch?: string,
     filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
     filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+    filterExtraCont?: string,
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
@@ -2697,6 +2803,7 @@ export class SystemApi extends BaseAPI {
         filterNicknameDoesNotMatch,
         filterNicknamePresent,
         filterNicknameBlank,
+        filterExtraCont,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
