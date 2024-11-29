@@ -31,6 +31,7 @@ module Decidim
         def edit
           @api_client = collection.find(params[:id])
           @form = form(ApiClientForm).from_model(@api_client)
+          @perm_form = form(ApiPermissions).from_model(@api_client)
         end
 
         def create

@@ -6,6 +6,7 @@ Decidim::Core::Engine.routes.draw do
   authenticate(:admin) do
     namespace "system" do
       resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
+      resources :api_permissions, only: [:create], controller: "/decidim/rest_full/system/permissions"
     end
   end
 

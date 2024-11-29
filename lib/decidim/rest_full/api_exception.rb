@@ -20,7 +20,7 @@ module Decidim
 
         # Parsing Errors
         "ActionDispatch::Http::Parameters::ParseError" => { status: 400, message: "Malformed JSON request" },
-
+        "CanCan::AccessDenied" => { status: 401, message: "Unauthorized access" },
         # Generic Application-Level Errors
         "BadRequest" => { status: 400, message: "Bad request" },
         "Unauthorized" => { status: 401, message: "Unauthorized access" },

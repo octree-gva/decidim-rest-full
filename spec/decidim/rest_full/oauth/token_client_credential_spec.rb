@@ -6,6 +6,13 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization: organization) }
+  let!(:permissions) do
+    api_client.permissions = [
+      api_client.permissions.build(permission: "oauth.impersonate"),
+      api_client.permissions.build(permission: "oauth.login")
+    ]
+    api_client.save!
+  end
 
   before do
     host! api_client.organization.host

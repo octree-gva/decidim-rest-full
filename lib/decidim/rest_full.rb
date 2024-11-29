@@ -2,7 +2,7 @@
 
 require "rails"
 require "active_support/all"
-
+require "cancan"
 require "rswag/api"
 require "jsonapi/serializer"
 require "api-pagination"

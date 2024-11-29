@@ -16,7 +16,16 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
       let!(:organization) { create(:organization) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
-      let!(:api_client) { create(:api_client, organization: organization) }
+      let(:api_client) do
+        api_client = create(:api_client, organization: organization, scopes: "system")
+        api_client.permissions = [
+          api_client.permissions.build(permission: "oauth.impersonate"),
+          api_client.permissions.build(permission: "oauth.login"),
+          api_client.permissions.build(permission: "system.users.read")
+        ]
+        api_client.save!
+        api_client
+      end
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
       before do

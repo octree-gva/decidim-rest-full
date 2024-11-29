@@ -5,7 +5,10 @@ module Decidim
     module RestFull
       module System
         class UsersController < ApplicationController
-          before_action { doorkeeper_authorize! :system }
+          before_action do
+            doorkeeper_authorize! :system
+            authorize! :read, ::Decidim::User
+          end
 
           # List all users
           def index

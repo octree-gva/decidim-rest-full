@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       class ApplicationController < ActionController::API
         include Decidim::RestFull::ApiException::Handler
+        delegate :can?, :cannot?, :authorize!, to: :ability
 
         protected
 
@@ -58,6 +59,10 @@ module Decidim
         end
 
         private
+
+        def ability
+          @ability ||= Decidim::RestFull::Ability.from_doorkeeper_token(doorkeeper_token)
+        end
 
         def populate_params
           @populate_params ||= if params[:populate].is_a?(String)
