@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: :request do
-  path "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/system/organizations" do
+  path "/system/organizations" do
     get "List available organizations" do
       tags "System"
       produces "application/json"

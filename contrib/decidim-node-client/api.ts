@@ -916,11 +916,287 @@ export interface TranslatedProp {
    */
   en?: string;
   /**
+   * Translation in bg
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  bg?: string;
+  /**
+   * Translation in ar
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ar?: string;
+  /**
+   * Translation in ca
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ca?: string;
+  /**
+   * Translation in cs
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  cs?: string;
+  /**
+   * Translation in da
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  da?: string;
+  /**
+   * Translation in de
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  de?: string;
+  /**
+   * Translation in el
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  el?: string;
+  /**
+   * Translation in eo
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  eo?: string;
+  /**
+   * Translation in es
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  es?: string;
+  /**
+   * Translation in es-MX
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "es-MX"?: string;
+  /**
+   * Translation in es-PY
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "es-PY"?: string;
+  /**
+   * Translation in et
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  et?: string;
+  /**
+   * Translation in eu
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  eu?: string;
+  /**
+   * Translation in fa
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  fa?: string;
+  /**
+   * Translation in fi-pl
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "fi-pl"?: string;
+  /**
+   * Translation in fi
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  fi?: string;
+  /**
    * Translation in fr
    * @type {string}
    * @memberof TranslatedProp
    */
   fr?: string;
+  /**
+   * Translation in fr-CA
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "fr-CA"?: string;
+  /**
+   * Translation in ga
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ga?: string;
+  /**
+   * Translation in gl
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  gl?: string;
+  /**
+   * Translation in hr
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  hr?: string;
+  /**
+   * Translation in hu
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  hu?: string;
+  /**
+   * Translation in id
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  id?: string;
+  /**
+   * Translation in is
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  is?: string;
+  /**
+   * Translation in it
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  it?: string;
+  /**
+   * Translation in ja
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ja?: string;
+  /**
+   * Translation in ko
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ko?: string;
+  /**
+   * Translation in lb
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  lb?: string;
+  /**
+   * Translation in lt
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  lt?: string;
+  /**
+   * Translation in lv
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  lv?: string;
+  /**
+   * Translation in mt
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  mt?: string;
+  /**
+   * Translation in nl
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  nl?: string;
+  /**
+   * Translation in no
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  no?: string;
+  /**
+   * Translation in pl
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  pl?: string;
+  /**
+   * Translation in pt
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  pt?: string;
+  /**
+   * Translation in pt-BR
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "pt-BR"?: string;
+  /**
+   * Translation in ro
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ro?: string;
+  /**
+   * Translation in ru
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  ru?: string;
+  /**
+   * Translation in sk
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  sk?: string;
+  /**
+   * Translation in sl
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  sl?: string;
+  /**
+   * Translation in sr
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  sr?: string;
+  /**
+   * Translation in sv
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  sv?: string;
+  /**
+   * Translation in tr
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  tr?: string;
+  /**
+   * Translation in uk
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  uk?: string;
+  /**
+   * Translation in vi
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  vi?: string;
+  /**
+   * Translation in zh-CN
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "zh-CN"?: string;
+  /**
+   * Translation in zh-TW
+   * @type {string}
+   * @memberof TranslatedProp
+   */
+  "zh-TW"?: string;
 }
 /**
  *
@@ -1024,7 +1300,53 @@ export interface UserAttributes {
 
 export const UserAttributesLocaleEnum = {
   En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
   Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
 } as const;
 
 export type UserAttributesLocaleEnum =
@@ -1276,20 +1598,34 @@ export const OAuthApiFactory = function (
     /**
      *
      * @summary Request a OAuth token throught ROPC
-     * @param {OauthGrantParam} oauthGrantParam
+     * @param {OAuthApiOauthTokenPostRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     oauthTokenPost(
-      oauthGrantParam: OauthGrantParam,
+      requestParameters: OAuthApiOauthTokenPostRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<void> {
       return localVarFp
-        .oauthTokenPost(oauthGrantParam, options)
+        .oauthTokenPost(requestParameters.oauthGrantParam, options)
         .then((request) => request(axios, basePath));
     },
   };
 };
+
+/**
+ * Request parameters for oauthTokenPost operation in OAuthApi.
+ * @export
+ * @interface OAuthApiOauthTokenPostRequest
+ */
+export interface OAuthApiOauthTokenPostRequest {
+  /**
+   *
+   * @type {OauthGrantParam}
+   * @memberof OAuthApiOauthTokenPost
+   */
+  readonly oauthGrantParam: OauthGrantParam;
+}
 
 /**
  * OAuthApi - object-oriented interface
@@ -1301,17 +1637,17 @@ export class OAuthApi extends BaseAPI {
   /**
    *
    * @summary Request a OAuth token throught ROPC
-   * @param {OauthGrantParam} oauthGrantParam
+   * @param {OAuthApiOauthTokenPostRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof OAuthApi
    */
   public oauthTokenPost(
-    oauthGrantParam: OauthGrantParam,
+    requestParameters: OAuthApiOauthTokenPostRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return OAuthApiFp(this.configuration)
-      .oauthTokenPost(oauthGrantParam, options)
+      .oauthTokenPost(requestParameters.oauthGrantParam, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
@@ -1327,9 +1663,9 @@ export const PublicApiAxiosParamCreator = function (
     /**
      *
      * @summary List Components
-     * @param {Array<ApiRestFullV00PublicComponentsGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<PublicComponentsGetLocalesEnum>} [locales]
+     * @param {Array<PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterParticipatorySpaceIdIn]
@@ -1345,10 +1681,10 @@ export const PublicApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicComponentsGet: async (
-      locales?: Array<ApiRestFullV00PublicComponentsGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>,
+    publicComponentsGet: async (
+      locales?: Array<PublicComponentsGetLocalesEnum>,
+      filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterParticipatorySpaceIdIn?: Array<string>,
@@ -1363,7 +1699,7 @@ export const PublicApiAxiosParamCreator = function (
       perPage?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/api/rest_full/v0.0/public/components`;
+      const localVarPath = `/public/components`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -1473,18 +1809,18 @@ export const PublicApiAxiosParamCreator = function (
      *
      * @summary Show a Component
      * @param {number} id
-     * @param {Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>} [locales]
+     * @param {Array<PublicComponentsIdGetLocalesEnum>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicComponentsIdGet: async (
+    publicComponentsIdGet: async (
       id: number,
-      locales?: Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>,
+      locales?: Array<PublicComponentsIdGetLocalesEnum>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
-      assertParamExists("apiRestFullV00PublicComponentsIdGet", "id", id);
-      const localVarPath = `/api/rest_full/v0.0/public/components/{id}`.replace(
+      assertParamExists("publicComponentsIdGet", "id", id);
+      const localVarPath = `/public/components/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
       );
@@ -1532,9 +1868,9 @@ export const PublicApiAxiosParamCreator = function (
     /**
      *
      * @summary List Participatory Spaces
-     * @param {Array<ApiRestFullV00PublicSpacesGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
+     * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
@@ -1545,17 +1881,17 @@ export const PublicApiAxiosParamCreator = function (
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicSpacesGet: async (
-      locales?: Array<ApiRestFullV00PublicSpacesGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>,
+    publicSpacesGet: async (
+      locales?: Array<PublicSpacesGetLocalesEnum>,
+      filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterTitleNotIn?: Array<string>,
@@ -1566,13 +1902,13 @@ export const PublicApiAxiosParamCreator = function (
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum,
-      filterTitleBlank?: ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum,
+      filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum,
+      filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/api/rest_full/v0.0/public/spaces`;
+      const localVarPath = `/public/spaces`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -1696,9 +2032,9 @@ export const PublicApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary List Components
-     * @param {Array<ApiRestFullV00PublicComponentsGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<PublicComponentsGetLocalesEnum>} [locales]
+     * @param {Array<PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterParticipatorySpaceIdIn]
@@ -1714,10 +2050,10 @@ export const PublicApiFp = function (configuration?: Configuration) {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async apiRestFullV00PublicComponentsGet(
-      locales?: Array<ApiRestFullV00PublicComponentsGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>,
+    async publicComponentsGet(
+      locales?: Array<PublicComponentsGetLocalesEnum>,
+      filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterParticipatorySpaceIdIn?: Array<string>,
@@ -1738,7 +2074,7 @@ export const PublicApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<ComponentsResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.apiRestFullV00PublicComponentsGet(
+        await localVarAxiosParamCreator.publicComponentsGet(
           locales,
           filterManifestNameNotIn,
           filterManifestNameIn,
@@ -1758,7 +2094,7 @@ export const PublicApiFp = function (configuration?: Configuration) {
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.apiRestFullV00PublicComponentsGet"]?.[
+        operationServerMap["PublicApi.publicComponentsGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -1773,13 +2109,13 @@ export const PublicApiFp = function (configuration?: Configuration) {
      *
      * @summary Show a Component
      * @param {number} id
-     * @param {Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>} [locales]
+     * @param {Array<PublicComponentsIdGetLocalesEnum>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async apiRestFullV00PublicComponentsIdGet(
+    async publicComponentsIdGet(
       id: number,
-      locales?: Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>,
+      locales?: Array<PublicComponentsIdGetLocalesEnum>,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -1788,14 +2124,14 @@ export const PublicApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<ComponentResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.apiRestFullV00PublicComponentsIdGet(
+        await localVarAxiosParamCreator.publicComponentsIdGet(
           id,
           locales,
           options,
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.apiRestFullV00PublicComponentsIdGet"]?.[
+        operationServerMap["PublicApi.publicComponentsIdGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -1809,9 +2145,9 @@ export const PublicApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary List Participatory Spaces
-     * @param {Array<ApiRestFullV00PublicSpacesGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
+     * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
@@ -1822,17 +2158,17 @@ export const PublicApiFp = function (configuration?: Configuration) {
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async apiRestFullV00PublicSpacesGet(
-      locales?: Array<ApiRestFullV00PublicSpacesGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>,
+    async publicSpacesGet(
+      locales?: Array<PublicSpacesGetLocalesEnum>,
+      filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterTitleNotIn?: Array<string>,
@@ -1843,38 +2179,37 @@ export const PublicApiFp = function (configuration?: Configuration) {
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum,
-      filterTitleBlank?: ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum,
+      filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum,
+      filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum,
       page?: number,
       perPage?: number,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<SpacesResponse>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.apiRestFullV00PublicSpacesGet(
-          locales,
-          filterManifestNameNotIn,
-          filterManifestNameIn,
-          filterManifestNameEq,
-          filterManifestNameNotEq,
-          filterTitleNotIn,
-          filterTitleIn,
-          filterTitleStart,
-          filterTitleNotStart,
-          filterTitleEq,
-          filterTitleNotEq,
-          filterTitleMatches,
-          filterTitleDoesNotMatch,
-          filterTitlePresent,
-          filterTitleBlank,
-          page,
-          perPage,
-          options,
-        );
+      const localVarAxiosArgs = await localVarAxiosParamCreator.publicSpacesGet(
+        locales,
+        filterManifestNameNotIn,
+        filterManifestNameIn,
+        filterManifestNameEq,
+        filterManifestNameNotEq,
+        filterTitleNotIn,
+        filterTitleIn,
+        filterTitleStart,
+        filterTitleNotStart,
+        filterTitleEq,
+        filterTitleNotEq,
+        filterTitleMatches,
+        filterTitleDoesNotMatch,
+        filterTitlePresent,
+        filterTitleBlank,
+        page,
+        perPage,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.apiRestFullV00PublicSpacesGet"]?.[
+        operationServerMap["PublicApi.publicSpacesGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -1902,59 +2237,31 @@ export const PublicApiFactory = function (
     /**
      *
      * @summary List Components
-     * @param {Array<ApiRestFullV00PublicComponentsGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
-     * @param {Array<string>} [filterParticipatorySpaceIdIn]
-     * @param {string} [filterParticipatorySpaceIdEq]
-     * @param {Array<string>} [filterParticipatorySpaceTypeIn]
-     * @param {string} [filterParticipatorySpaceTypeEq]
-     * @param {string} [filterNameStart]
-     * @param {string} [filterNameEq]
-     * @param {string} [filterNameNotEq]
-     * @param {string} [filterNameMatches]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
+     * @param {PublicApiPublicComponentsGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicComponentsGet(
-      locales?: Array<ApiRestFullV00PublicComponentsGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
-      filterParticipatorySpaceIdIn?: Array<string>,
-      filterParticipatorySpaceIdEq?: string,
-      filterParticipatorySpaceTypeIn?: Array<string>,
-      filterParticipatorySpaceTypeEq?: string,
-      filterNameStart?: string,
-      filterNameEq?: string,
-      filterNameNotEq?: string,
-      filterNameMatches?: string,
-      page?: number,
-      perPage?: number,
+    publicComponentsGet(
+      requestParameters: PublicApiPublicComponentsGetRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ComponentsResponse> {
       return localVarFp
-        .apiRestFullV00PublicComponentsGet(
-          locales,
-          filterManifestNameNotIn,
-          filterManifestNameIn,
-          filterManifestNameEq,
-          filterManifestNameNotEq,
-          filterParticipatorySpaceIdIn,
-          filterParticipatorySpaceIdEq,
-          filterParticipatorySpaceTypeIn,
-          filterParticipatorySpaceTypeEq,
-          filterNameStart,
-          filterNameEq,
-          filterNameNotEq,
-          filterNameMatches,
-          page,
-          perPage,
+        .publicComponentsGet(
+          requestParameters.locales,
+          requestParameters.filterManifestNameNotIn,
+          requestParameters.filterManifestNameIn,
+          requestParameters.filterManifestNameEq,
+          requestParameters.filterManifestNameNotEq,
+          requestParameters.filterParticipatorySpaceIdIn,
+          requestParameters.filterParticipatorySpaceIdEq,
+          requestParameters.filterParticipatorySpaceTypeIn,
+          requestParameters.filterParticipatorySpaceTypeEq,
+          requestParameters.filterNameStart,
+          requestParameters.filterNameEq,
+          requestParameters.filterNameNotEq,
+          requestParameters.filterNameMatches,
+          requestParameters.page,
+          requestParameters.perPage,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -1962,88 +2269,317 @@ export const PublicApiFactory = function (
     /**
      *
      * @summary Show a Component
-     * @param {number} id
-     * @param {Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>} [locales]
+     * @param {PublicApiPublicComponentsIdGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicComponentsIdGet(
-      id: number,
-      locales?: Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>,
+    publicComponentsIdGet(
+      requestParameters: PublicApiPublicComponentsIdGetRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ComponentResponse> {
       return localVarFp
-        .apiRestFullV00PublicComponentsIdGet(id, locales, options)
+        .publicComponentsIdGet(
+          requestParameters.id,
+          requestParameters.locales,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
      *
      * @summary List Participatory Spaces
-     * @param {Array<ApiRestFullV00PublicSpacesGetLocalesEnum>} [locales]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
-     * @param {Array<string>} [filterTitleNotIn]
-     * @param {Array<string>} [filterTitleIn]
-     * @param {string} [filterTitleStart]
-     * @param {string} [filterTitleNotStart]
-     * @param {string} [filterTitleEq]
-     * @param {string} [filterTitleNotEq]
-     * @param {string} [filterTitleMatches]
-     * @param {string} [filterTitleDoesNotMatch]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
+     * @param {PublicApiPublicSpacesGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00PublicSpacesGet(
-      locales?: Array<ApiRestFullV00PublicSpacesGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
-      filterTitleNotIn?: Array<string>,
-      filterTitleIn?: Array<string>,
-      filterTitleStart?: string,
-      filterTitleNotStart?: string,
-      filterTitleEq?: string,
-      filterTitleNotEq?: string,
-      filterTitleMatches?: string,
-      filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum,
-      filterTitleBlank?: ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum,
-      page?: number,
-      perPage?: number,
+    publicSpacesGet(
+      requestParameters: PublicApiPublicSpacesGetRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<SpacesResponse> {
       return localVarFp
-        .apiRestFullV00PublicSpacesGet(
-          locales,
-          filterManifestNameNotIn,
-          filterManifestNameIn,
-          filterManifestNameEq,
-          filterManifestNameNotEq,
-          filterTitleNotIn,
-          filterTitleIn,
-          filterTitleStart,
-          filterTitleNotStart,
-          filterTitleEq,
-          filterTitleNotEq,
-          filterTitleMatches,
-          filterTitleDoesNotMatch,
-          filterTitlePresent,
-          filterTitleBlank,
-          page,
-          perPage,
+        .publicSpacesGet(
+          requestParameters.locales,
+          requestParameters.filterManifestNameNotIn,
+          requestParameters.filterManifestNameIn,
+          requestParameters.filterManifestNameEq,
+          requestParameters.filterManifestNameNotEq,
+          requestParameters.filterTitleNotIn,
+          requestParameters.filterTitleIn,
+          requestParameters.filterTitleStart,
+          requestParameters.filterTitleNotStart,
+          requestParameters.filterTitleEq,
+          requestParameters.filterTitleNotEq,
+          requestParameters.filterTitleMatches,
+          requestParameters.filterTitleDoesNotMatch,
+          requestParameters.filterTitlePresent,
+          requestParameters.filterTitleBlank,
+          requestParameters.page,
+          requestParameters.perPage,
           options,
         )
         .then((request) => request(axios, basePath));
     },
   };
 };
+
+/**
+ * Request parameters for publicComponentsGet operation in PublicApi.
+ * @export
+ * @interface PublicApiPublicComponentsGetRequest
+ */
+export interface PublicApiPublicComponentsGetRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly locales?: Array<PublicComponentsGetLocalesEnum>;
+
+  /**
+   *
+   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>;
+
+  /**
+   *
+   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterManifestNameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterManifestNameNotEq?: string;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterParticipatorySpaceIdIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterParticipatorySpaceIdEq?: string;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterParticipatorySpaceTypeIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterParticipatorySpaceTypeEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterNameStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterNameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterNameNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly filterNameMatches?: string;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof PublicApiPublicComponentsGet
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for publicComponentsIdGet operation in PublicApi.
+ * @export
+ * @interface PublicApiPublicComponentsIdGetRequest
+ */
+export interface PublicApiPublicComponentsIdGetRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof PublicApiPublicComponentsIdGet
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof PublicApiPublicComponentsIdGet
+   */
+  readonly locales?: Array<PublicComponentsIdGetLocalesEnum>;
+}
+
+/**
+ * Request parameters for publicSpacesGet operation in PublicApi.
+ * @export
+ * @interface PublicApiPublicSpacesGetRequest
+ */
+export interface PublicApiPublicSpacesGetRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly locales?: Array<PublicSpacesGetLocalesEnum>;
+
+  /**
+   *
+   * @type {Array<'participatory_processes' | 'assemblies'>}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>;
+
+  /**
+   *
+   * @type {Array<'participatory_processes' | 'assemblies'>}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterManifestNameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterManifestNameNotEq?: string;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleNotStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleMatches?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleDoesNotMatch?: string;
+
+  /**
+   *
+   * @type {'1' | '0'}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum;
+
+  /**
+   *
+   * @type {'1' | '0'}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof PublicApiPublicSpacesGet
+   */
+  readonly perPage?: number;
+}
 
 /**
  * PublicApi - object-oriented interface
@@ -2055,60 +2591,32 @@ export class PublicApi extends BaseAPI {
   /**
    *
    * @summary List Components
-   * @param {Array<ApiRestFullV00PublicComponentsGetLocalesEnum>} [locales]
-   * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-   * @param {Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
-   * @param {string} [filterManifestNameEq]
-   * @param {string} [filterManifestNameNotEq]
-   * @param {Array<string>} [filterParticipatorySpaceIdIn]
-   * @param {string} [filterParticipatorySpaceIdEq]
-   * @param {Array<string>} [filterParticipatorySpaceTypeIn]
-   * @param {string} [filterParticipatorySpaceTypeEq]
-   * @param {string} [filterNameStart]
-   * @param {string} [filterNameEq]
-   * @param {string} [filterNameNotEq]
-   * @param {string} [filterNameMatches]
-   * @param {number} [page] Page number for pagination
-   * @param {number} [perPage] Number of items per page
+   * @param {PublicApiPublicComponentsGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public apiRestFullV00PublicComponentsGet(
-    locales?: Array<ApiRestFullV00PublicComponentsGetLocalesEnum>,
-    filterManifestNameNotIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum>,
-    filterManifestNameIn?: Array<ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum>,
-    filterManifestNameEq?: string,
-    filterManifestNameNotEq?: string,
-    filterParticipatorySpaceIdIn?: Array<string>,
-    filterParticipatorySpaceIdEq?: string,
-    filterParticipatorySpaceTypeIn?: Array<string>,
-    filterParticipatorySpaceTypeEq?: string,
-    filterNameStart?: string,
-    filterNameEq?: string,
-    filterNameNotEq?: string,
-    filterNameMatches?: string,
-    page?: number,
-    perPage?: number,
+  public publicComponentsGet(
+    requestParameters: PublicApiPublicComponentsGetRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .apiRestFullV00PublicComponentsGet(
-        locales,
-        filterManifestNameNotIn,
-        filterManifestNameIn,
-        filterManifestNameEq,
-        filterManifestNameNotEq,
-        filterParticipatorySpaceIdIn,
-        filterParticipatorySpaceIdEq,
-        filterParticipatorySpaceTypeIn,
-        filterParticipatorySpaceTypeEq,
-        filterNameStart,
-        filterNameEq,
-        filterNameNotEq,
-        filterNameMatches,
-        page,
-        perPage,
+      .publicComponentsGet(
+        requestParameters.locales,
+        requestParameters.filterManifestNameNotIn,
+        requestParameters.filterManifestNameIn,
+        requestParameters.filterManifestNameEq,
+        requestParameters.filterManifestNameNotEq,
+        requestParameters.filterParticipatorySpaceIdIn,
+        requestParameters.filterParticipatorySpaceIdEq,
+        requestParameters.filterParticipatorySpaceTypeIn,
+        requestParameters.filterParticipatorySpaceTypeEq,
+        requestParameters.filterNameStart,
+        requestParameters.filterNameEq,
+        requestParameters.filterNameNotEq,
+        requestParameters.filterNameMatches,
+        requestParameters.page,
+        requestParameters.perPage,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -2117,85 +2625,55 @@ export class PublicApi extends BaseAPI {
   /**
    *
    * @summary Show a Component
-   * @param {number} id
-   * @param {Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>} [locales]
+   * @param {PublicApiPublicComponentsIdGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public apiRestFullV00PublicComponentsIdGet(
-    id: number,
-    locales?: Array<ApiRestFullV00PublicComponentsIdGetLocalesEnum>,
+  public publicComponentsIdGet(
+    requestParameters: PublicApiPublicComponentsIdGetRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .apiRestFullV00PublicComponentsIdGet(id, locales, options)
+      .publicComponentsIdGet(
+        requestParameters.id,
+        requestParameters.locales,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
    * @summary List Participatory Spaces
-   * @param {Array<ApiRestFullV00PublicSpacesGetLocalesEnum>} [locales]
-   * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-   * @param {Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
-   * @param {string} [filterManifestNameEq]
-   * @param {string} [filterManifestNameNotEq]
-   * @param {Array<string>} [filterTitleNotIn]
-   * @param {Array<string>} [filterTitleIn]
-   * @param {string} [filterTitleStart]
-   * @param {string} [filterTitleNotStart]
-   * @param {string} [filterTitleEq]
-   * @param {string} [filterTitleNotEq]
-   * @param {string} [filterTitleMatches]
-   * @param {string} [filterTitleDoesNotMatch]
-   * @param {ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-   * @param {ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
-   * @param {number} [page] Page number for pagination
-   * @param {number} [perPage] Number of items per page
+   * @param {PublicApiPublicSpacesGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public apiRestFullV00PublicSpacesGet(
-    locales?: Array<ApiRestFullV00PublicSpacesGetLocalesEnum>,
-    filterManifestNameNotIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum>,
-    filterManifestNameIn?: Array<ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum>,
-    filterManifestNameEq?: string,
-    filterManifestNameNotEq?: string,
-    filterTitleNotIn?: Array<string>,
-    filterTitleIn?: Array<string>,
-    filterTitleStart?: string,
-    filterTitleNotStart?: string,
-    filterTitleEq?: string,
-    filterTitleNotEq?: string,
-    filterTitleMatches?: string,
-    filterTitleDoesNotMatch?: string,
-    filterTitlePresent?: ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum,
-    filterTitleBlank?: ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum,
-    page?: number,
-    perPage?: number,
+  public publicSpacesGet(
+    requestParameters: PublicApiPublicSpacesGetRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .apiRestFullV00PublicSpacesGet(
-        locales,
-        filterManifestNameNotIn,
-        filterManifestNameIn,
-        filterManifestNameEq,
-        filterManifestNameNotEq,
-        filterTitleNotIn,
-        filterTitleIn,
-        filterTitleStart,
-        filterTitleNotStart,
-        filterTitleEq,
-        filterTitleNotEq,
-        filterTitleMatches,
-        filterTitleDoesNotMatch,
-        filterTitlePresent,
-        filterTitleBlank,
-        page,
-        perPage,
+      .publicSpacesGet(
+        requestParameters.locales,
+        requestParameters.filterManifestNameNotIn,
+        requestParameters.filterManifestNameIn,
+        requestParameters.filterManifestNameEq,
+        requestParameters.filterManifestNameNotEq,
+        requestParameters.filterTitleNotIn,
+        requestParameters.filterTitleIn,
+        requestParameters.filterTitleStart,
+        requestParameters.filterTitleNotStart,
+        requestParameters.filterTitleEq,
+        requestParameters.filterTitleNotEq,
+        requestParameters.filterTitleMatches,
+        requestParameters.filterTitleDoesNotMatch,
+        requestParameters.filterTitlePresent,
+        requestParameters.filterTitleBlank,
+        requestParameters.page,
+        requestParameters.perPage,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -2205,16 +2683,62 @@ export class PublicApi extends BaseAPI {
 /**
  * @export
  */
-export const ApiRestFullV00PublicComponentsGetLocalesEnum = {
+export const PublicComponentsGetLocalesEnum = {
   En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
   Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
 } as const;
-export type ApiRestFullV00PublicComponentsGetLocalesEnum =
-  (typeof ApiRestFullV00PublicComponentsGetLocalesEnum)[keyof typeof ApiRestFullV00PublicComponentsGetLocalesEnum];
+export type PublicComponentsGetLocalesEnum =
+  (typeof PublicComponentsGetLocalesEnum)[keyof typeof PublicComponentsGetLocalesEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum = {
+export const PublicComponentsGetFilterManifestNameNotInEnum = {
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",
@@ -2225,12 +2749,12 @@ export const ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum = {
   Sortitions: "sortitions",
   Blogs: "blogs",
 } as const;
-export type ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum =
-  (typeof ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum)[keyof typeof ApiRestFullV00PublicComponentsGetFilterManifestNameNotInEnum];
+export type PublicComponentsGetFilterManifestNameNotInEnum =
+  (typeof PublicComponentsGetFilterManifestNameNotInEnum)[keyof typeof PublicComponentsGetFilterManifestNameNotInEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum = {
+export const PublicComponentsGetFilterManifestNameInEnum = {
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",
@@ -2241,62 +2765,154 @@ export const ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum = {
   Sortitions: "sortitions",
   Blogs: "blogs",
 } as const;
-export type ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum =
-  (typeof ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum)[keyof typeof ApiRestFullV00PublicComponentsGetFilterManifestNameInEnum];
+export type PublicComponentsGetFilterManifestNameInEnum =
+  (typeof PublicComponentsGetFilterManifestNameInEnum)[keyof typeof PublicComponentsGetFilterManifestNameInEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicComponentsIdGetLocalesEnum = {
+export const PublicComponentsIdGetLocalesEnum = {
   En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
   Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
 } as const;
-export type ApiRestFullV00PublicComponentsIdGetLocalesEnum =
-  (typeof ApiRestFullV00PublicComponentsIdGetLocalesEnum)[keyof typeof ApiRestFullV00PublicComponentsIdGetLocalesEnum];
+export type PublicComponentsIdGetLocalesEnum =
+  (typeof PublicComponentsIdGetLocalesEnum)[keyof typeof PublicComponentsIdGetLocalesEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicSpacesGetLocalesEnum = {
+export const PublicSpacesGetLocalesEnum = {
   En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
   Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
 } as const;
-export type ApiRestFullV00PublicSpacesGetLocalesEnum =
-  (typeof ApiRestFullV00PublicSpacesGetLocalesEnum)[keyof typeof ApiRestFullV00PublicSpacesGetLocalesEnum];
+export type PublicSpacesGetLocalesEnum =
+  (typeof PublicSpacesGetLocalesEnum)[keyof typeof PublicSpacesGetLocalesEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum = {
+export const PublicSpacesGetFilterManifestNameNotInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
 } as const;
-export type ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum =
-  (typeof ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum)[keyof typeof ApiRestFullV00PublicSpacesGetFilterManifestNameNotInEnum];
+export type PublicSpacesGetFilterManifestNameNotInEnum =
+  (typeof PublicSpacesGetFilterManifestNameNotInEnum)[keyof typeof PublicSpacesGetFilterManifestNameNotInEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum = {
+export const PublicSpacesGetFilterManifestNameInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
 } as const;
-export type ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum =
-  (typeof ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum)[keyof typeof ApiRestFullV00PublicSpacesGetFilterManifestNameInEnum];
+export type PublicSpacesGetFilterManifestNameInEnum =
+  (typeof PublicSpacesGetFilterManifestNameInEnum)[keyof typeof PublicSpacesGetFilterManifestNameInEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum = {
+export const PublicSpacesGetFilterTitlePresentEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum =
-  (typeof ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum)[keyof typeof ApiRestFullV00PublicSpacesGetFilterTitlePresentEnum];
+export type PublicSpacesGetFilterTitlePresentEnum =
+  (typeof PublicSpacesGetFilterTitlePresentEnum)[keyof typeof PublicSpacesGetFilterTitlePresentEnum];
 /**
  * @export
  */
-export const ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum = {
+export const PublicSpacesGetFilterTitleBlankEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum =
-  (typeof ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum)[keyof typeof ApiRestFullV00PublicSpacesGetFilterTitleBlankEnum];
+export type PublicSpacesGetFilterTitleBlankEnum =
+  (typeof PublicSpacesGetFilterTitleBlankEnum)[keyof typeof PublicSpacesGetFilterTitleBlankEnum];
 
 /**
  * SystemApi - axios parameter creator
@@ -2309,21 +2925,19 @@ export const SystemApiAxiosParamCreator = function (
     /**
      *
      * @summary List available organizations
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>} [populate]
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>} [locales]
+     * @param {Array<SystemOrganizationsGetLocalesEnum>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00SystemOrganizationsGet: async (
-      populate?: Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>,
-      locales?: Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>,
+    systemOrganizationsGet: async (
+      locales?: Array<SystemOrganizationsGetLocalesEnum>,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/api/rest_full/v0.0/system/organizations`;
+      const localVarPath = `/system/organizations`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -2342,10 +2956,6 @@ export const SystemApiAxiosParamCreator = function (
       // authentication credentialFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (populate) {
-        localVarQueryParameter["populate[]"] = populate;
-      }
 
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
@@ -2386,13 +2996,13 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameNotEq]
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
      * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00SystemUsersGet: async (
+    systemUsersGet: async (
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -2403,12 +3013,12 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameNotEq?: string,
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
-      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum,
+      filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum,
       filterExtraCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/api/rest_full/v0.0/system/users`;
+      const localVarPath = `/system/users`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -2512,16 +3122,14 @@ export const SystemApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary List available organizations
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>} [populate]
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>} [locales]
+     * @param {Array<SystemOrganizationsGetLocalesEnum>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async apiRestFullV00SystemOrganizationsGet(
-      populate?: Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>,
-      locales?: Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>,
+    async systemOrganizationsGet(
+      locales?: Array<SystemOrganizationsGetLocalesEnum>,
       page?: number,
       perPage?: number,
       options?: RawAxiosRequestConfig,
@@ -2532,8 +3140,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<OrganizationsResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.apiRestFullV00SystemOrganizationsGet(
-          populate,
+        await localVarAxiosParamCreator.systemOrganizationsGet(
           locales,
           page,
           perPage,
@@ -2541,7 +3148,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.apiRestFullV00SystemOrganizationsGet"]?.[
+        operationServerMap["SystemApi.systemOrganizationsGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -2565,13 +3172,13 @@ export const SystemApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameNotEq]
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
      * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async apiRestFullV00SystemUsersGet(
+    async systemUsersGet(
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -2582,33 +3189,32 @@ export const SystemApiFp = function (configuration?: Configuration) {
       filterNicknameNotEq?: string,
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
-      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
+      filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum,
+      filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum,
       filterExtraCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.apiRestFullV00SystemUsersGet(
-          page,
-          perPage,
-          filterNicknameNotIn,
-          filterNicknameIn,
-          filterNicknameStart,
-          filterNicknameNotStart,
-          filterNicknameEq,
-          filterNicknameNotEq,
-          filterNicknameMatches,
-          filterNicknameDoesNotMatch,
-          filterNicknamePresent,
-          filterNicknameBlank,
-          filterExtraCont,
-          options,
-        );
+      const localVarAxiosArgs = await localVarAxiosParamCreator.systemUsersGet(
+        page,
+        perPage,
+        filterNicknameNotIn,
+        filterNicknameIn,
+        filterNicknameStart,
+        filterNicknameNotStart,
+        filterNicknameEq,
+        filterNicknameNotEq,
+        filterNicknameMatches,
+        filterNicknameDoesNotMatch,
+        filterNicknamePresent,
+        filterNicknameBlank,
+        filterExtraCont,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.apiRestFullV00SystemUsersGet"]?.[
+        operationServerMap["SystemApi.systemUsersGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -2636,26 +3242,19 @@ export const SystemApiFactory = function (
     /**
      *
      * @summary List available organizations
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>} [populate]
-     * @param {Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>} [locales]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
+     * @param {SystemApiSystemOrganizationsGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00SystemOrganizationsGet(
-      populate?: Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>,
-      locales?: Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>,
-      page?: number,
-      perPage?: number,
+    systemOrganizationsGet(
+      requestParameters: SystemApiSystemOrganizationsGetRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<OrganizationsResponse> {
       return localVarFp
-        .apiRestFullV00SystemOrganizationsGet(
-          populate,
-          locales,
-          page,
-          perPage,
+        .systemOrganizationsGet(
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -2663,59 +3262,161 @@ export const SystemApiFactory = function (
     /**
      *
      * @summary List available Users
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {Array<string>} [filterNicknameNotIn]
-     * @param {Array<string>} [filterNicknameIn]
-     * @param {string} [filterNicknameStart]
-     * @param {string} [filterNicknameNotStart]
-     * @param {string} [filterNicknameEq]
-     * @param {string} [filterNicknameNotEq]
-     * @param {string} [filterNicknameMatches]
-     * @param {string} [filterNicknameDoesNotMatch]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
-     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+     * @param {SystemApiSystemUsersGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    apiRestFullV00SystemUsersGet(
-      page?: number,
-      perPage?: number,
-      filterNicknameNotIn?: Array<string>,
-      filterNicknameIn?: Array<string>,
-      filterNicknameStart?: string,
-      filterNicknameNotStart?: string,
-      filterNicknameEq?: string,
-      filterNicknameNotEq?: string,
-      filterNicknameMatches?: string,
-      filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
-      filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
-      filterExtraCont?: string,
+    systemUsersGet(
+      requestParameters: SystemApiSystemUsersGetRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<UsersResponse> {
       return localVarFp
-        .apiRestFullV00SystemUsersGet(
-          page,
-          perPage,
-          filterNicknameNotIn,
-          filterNicknameIn,
-          filterNicknameStart,
-          filterNicknameNotStart,
-          filterNicknameEq,
-          filterNicknameNotEq,
-          filterNicknameMatches,
-          filterNicknameDoesNotMatch,
-          filterNicknamePresent,
-          filterNicknameBlank,
-          filterExtraCont,
+        .systemUsersGet(
+          requestParameters.page,
+          requestParameters.perPage,
+          requestParameters.filterNicknameNotIn,
+          requestParameters.filterNicknameIn,
+          requestParameters.filterNicknameStart,
+          requestParameters.filterNicknameNotStart,
+          requestParameters.filterNicknameEq,
+          requestParameters.filterNicknameNotEq,
+          requestParameters.filterNicknameMatches,
+          requestParameters.filterNicknameDoesNotMatch,
+          requestParameters.filterNicknamePresent,
+          requestParameters.filterNicknameBlank,
+          requestParameters.filterExtraCont,
           options,
         )
         .then((request) => request(axios, basePath));
     },
   };
 };
+
+/**
+ * Request parameters for systemOrganizationsGet operation in SystemApi.
+ * @export
+ * @interface SystemApiSystemOrganizationsGetRequest
+ */
+export interface SystemApiSystemOrganizationsGetRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof SystemApiSystemOrganizationsGet
+   */
+  readonly locales?: Array<SystemOrganizationsGetLocalesEnum>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SystemApiSystemOrganizationsGet
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SystemApiSystemOrganizationsGet
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for systemUsersGet operation in SystemApi.
+ * @export
+ * @interface SystemApiSystemUsersGetRequest
+ */
+export interface SystemApiSystemUsersGetRequest {
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly perPage?: number;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameNotStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameMatches?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameDoesNotMatch?: string;
+
+  /**
+   *
+   * @type {'1' | '0'}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum;
+
+  /**
+   *
+   * @type {'1' | '0'}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum;
+
+  /**
+   * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+   * @type {string}
+   * @memberof SystemApiSystemUsersGet
+   */
+  readonly filterExtraCont?: string;
+}
 
 /**
  * SystemApi - object-oriented interface
@@ -2727,27 +3428,20 @@ export class SystemApi extends BaseAPI {
   /**
    *
    * @summary List available organizations
-   * @param {Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>} [populate]
-   * @param {Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>} [locales]
-   * @param {number} [page] Page number for pagination
-   * @param {number} [perPage] Number of items per page
+   * @param {SystemApiSystemOrganizationsGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SystemApi
    */
-  public apiRestFullV00SystemOrganizationsGet(
-    populate?: Array<ApiRestFullV00SystemOrganizationsGetPopulateEnum>,
-    locales?: Array<ApiRestFullV00SystemOrganizationsGetLocalesEnum>,
-    page?: number,
-    perPage?: number,
+  public systemOrganizationsGet(
+    requestParameters: SystemApiSystemOrganizationsGetRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
-      .apiRestFullV00SystemOrganizationsGet(
-        populate,
-        locales,
-        page,
-        perPage,
+      .systemOrganizationsGet(
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -2756,54 +3450,30 @@ export class SystemApi extends BaseAPI {
   /**
    *
    * @summary List available Users
-   * @param {number} [page] Page number for pagination
-   * @param {number} [perPage] Number of items per page
-   * @param {Array<string>} [filterNicknameNotIn]
-   * @param {Array<string>} [filterNicknameIn]
-   * @param {string} [filterNicknameStart]
-   * @param {string} [filterNicknameNotStart]
-   * @param {string} [filterNicknameEq]
-   * @param {string} [filterNicknameNotEq]
-   * @param {string} [filterNicknameMatches]
-   * @param {string} [filterNicknameDoesNotMatch]
-   * @param {ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-   * @param {ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
-   * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+   * @param {SystemApiSystemUsersGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SystemApi
    */
-  public apiRestFullV00SystemUsersGet(
-    page?: number,
-    perPage?: number,
-    filterNicknameNotIn?: Array<string>,
-    filterNicknameIn?: Array<string>,
-    filterNicknameStart?: string,
-    filterNicknameNotStart?: string,
-    filterNicknameEq?: string,
-    filterNicknameNotEq?: string,
-    filterNicknameMatches?: string,
-    filterNicknameDoesNotMatch?: string,
-    filterNicknamePresent?: ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum,
-    filterNicknameBlank?: ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum,
-    filterExtraCont?: string,
+  public systemUsersGet(
+    requestParameters: SystemApiSystemUsersGetRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
-      .apiRestFullV00SystemUsersGet(
-        page,
-        perPage,
-        filterNicknameNotIn,
-        filterNicknameIn,
-        filterNicknameStart,
-        filterNicknameNotStart,
-        filterNicknameEq,
-        filterNicknameNotEq,
-        filterNicknameMatches,
-        filterNicknameDoesNotMatch,
-        filterNicknamePresent,
-        filterNicknameBlank,
-        filterExtraCont,
+      .systemUsersGet(
+        requestParameters.page,
+        requestParameters.perPage,
+        requestParameters.filterNicknameNotIn,
+        requestParameters.filterNicknameIn,
+        requestParameters.filterNicknameStart,
+        requestParameters.filterNicknameNotStart,
+        requestParameters.filterNicknameEq,
+        requestParameters.filterNicknameNotEq,
+        requestParameters.filterNicknameMatches,
+        requestParameters.filterNicknameDoesNotMatch,
+        requestParameters.filterNicknamePresent,
+        requestParameters.filterNicknameBlank,
+        requestParameters.filterExtraCont,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -2813,39 +3483,73 @@ export class SystemApi extends BaseAPI {
 /**
  * @export
  */
-export const ApiRestFullV00SystemOrganizationsGetPopulateEnum = {
-  Host: "host",
-  SecondaryHosts: "secondary_hosts",
-  Name: "name",
-  CreatedAt: "created_at",
-  UpdatedAt: "updated_at",
-} as const;
-export type ApiRestFullV00SystemOrganizationsGetPopulateEnum =
-  (typeof ApiRestFullV00SystemOrganizationsGetPopulateEnum)[keyof typeof ApiRestFullV00SystemOrganizationsGetPopulateEnum];
-/**
- * @export
- */
-export const ApiRestFullV00SystemOrganizationsGetLocalesEnum = {
+export const SystemOrganizationsGetLocalesEnum = {
   En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
   Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
 } as const;
-export type ApiRestFullV00SystemOrganizationsGetLocalesEnum =
-  (typeof ApiRestFullV00SystemOrganizationsGetLocalesEnum)[keyof typeof ApiRestFullV00SystemOrganizationsGetLocalesEnum];
+export type SystemOrganizationsGetLocalesEnum =
+  (typeof SystemOrganizationsGetLocalesEnum)[keyof typeof SystemOrganizationsGetLocalesEnum];
 /**
  * @export
  */
-export const ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum = {
+export const SystemUsersGetFilterNicknamePresentEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum =
-  (typeof ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum)[keyof typeof ApiRestFullV00SystemUsersGetFilterNicknamePresentEnum];
+export type SystemUsersGetFilterNicknamePresentEnum =
+  (typeof SystemUsersGetFilterNicknamePresentEnum)[keyof typeof SystemUsersGetFilterNicknamePresentEnum];
 /**
  * @export
  */
-export const ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum = {
+export const SystemUsersGetFilterNicknameBlankEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum =
-  (typeof ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum)[keyof typeof ApiRestFullV00SystemUsersGetFilterNicknameBlankEnum];
+export type SystemUsersGetFilterNicknameBlankEnum =
+  (typeof SystemUsersGetFilterNicknameBlankEnum)[keyof typeof SystemUsersGetFilterNicknameBlankEnum];

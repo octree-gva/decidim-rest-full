@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :request do
-  path "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/public/spaces" do
+  path "/public/spaces" do
     get "List Participatory Spaces" do
       tags "Public"
       produces "application/json"

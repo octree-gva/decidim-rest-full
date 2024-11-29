@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request do
-  path "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/system/users" do
+  path "/system/users" do
     get "List available Users" do
       tags "System"
       produces "application/json"

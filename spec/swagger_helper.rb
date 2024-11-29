@@ -57,7 +57,7 @@ RSpec.configure do |config|
       ],
       servers: [
         {
-          url: "https://{defaultHost}",
+          url: "https://{defaultHost}/api/rest_full/v#{Decidim::RestFull.major_minor_version}",
           variables: {
             defaultHost: {
               default: "www.example.com"

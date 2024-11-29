@@ -3,10 +3,11 @@
 # Regenerate the openapi spec
 yarn gen:openapi-spec
 # Regenerate the node client (typescript+axios)
-yarn openapi-generator-cli generate -i ./website/static/openapi.json -o ./contrib/decidim-node-client -g typescript-axios --additional-properties=paramNaming=camelCase,axiosVersion=1.7.7 
+yarn openapi-generator-cli generate -i ./website/static/openapi.json -o ./contrib/decidim-node-client -g typescript-axios --additional-properties=useSingleRequestParameter=true,paramNaming=camelCase,axiosVersion=1.7.7 
 
 # Build node client
 cd contrib/decidim-node-client 
+rm -rf ./dist
 yarn format
 yarn build
 

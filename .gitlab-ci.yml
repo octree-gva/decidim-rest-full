@@ -135,6 +135,7 @@ decidim-client::publish:
   variables:
     CI: 1
   before_script:
+    - apt-get update -y && apt-get install -y jq
     - cd contrib/decidim-node-client
     - corepack enable
     - yarn
@@ -147,5 +148,6 @@ decidim-client::publish:
     - touch .npmrc
     - echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/" >> .npmrc
     - echo "${CI_API_V4_URL#http*:}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}" >> .npmrc
-    - npm publish --non-interactive --registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/
+    - PACKAGE_VERSION=$(jq -r '.version' package.json); 
+    - npm publish --non-interactive --access=public --tag$PACKAGE_VERSION --registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/
   extends: .publication_rules

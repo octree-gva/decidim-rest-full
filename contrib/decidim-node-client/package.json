@@ -1,6 +1,6 @@
 {
   "name": "@octree/decidim-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Typescript-fetch client for Decidim Restfull APi",
   "keywords": [],
   "license": "AGPL-3.0-only",
@@ -24,7 +24,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "pack-up build",
+    "build": "rm -rf dist && pack-up build",
     "check": "pack-up check",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

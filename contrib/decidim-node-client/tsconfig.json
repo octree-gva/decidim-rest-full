@@ -1,5 +1,5 @@
 {
-  "include": ["*.ts"],
+  "include": ["./index.ts", "**/*.ts"],
   "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "composite": false,
@@ -11,11 +11,15 @@
     "isolatedModules": true,
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "noEmit": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": false,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "resolveJsonModule": true
   }
 }

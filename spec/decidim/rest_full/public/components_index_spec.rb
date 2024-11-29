@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :request do
-  path "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/public/components" do
+  path "/public/components" do
     get "List Components" do
       tags "Public"
       produces "application/json"
