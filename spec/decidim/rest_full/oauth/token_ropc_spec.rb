@@ -163,6 +163,28 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
             end
           end
 
+          context "with auth_type=impersonate and finding by id" do
+            let(:body) do
+              {
+                grant_type: "password",
+                auth_type: "impersonate",
+                id: user.id,
+                client_id: api_client.client_id,
+                client_secret: api_client.client_secret,
+                scope: "public"
+              }
+            end
+
+            run_test!(example_name: :ok_ropc_impersonate_with_extra) do |response|
+              json_response = JSON.parse(response.body)
+              expect(json_response["access_token"]).to be_present
+              access_token = Doorkeeper::AccessToken.find_by(token: json_response["access_token"])
+              expect(
+                access_token.resource_owner_id
+              ).to eq(user.id)
+            end
+          end
+
           context "with auth_type=impersonate" do
             let(:body) do
               {

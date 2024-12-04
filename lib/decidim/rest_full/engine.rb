@@ -40,77 +40,27 @@ module Decidim
             ability = Decidim::RestFull::Ability.new(api_client)
             case auth_type
             when "impersonate"
-              ability.authorize! :impersonate, Decidim::RestFull::ApiClient
-              username = params.require("username")
-              user = Decidim::User.find_by(
-                nickname: username,
-                organization: current_organization
-              )
-              extra = if params.has_key? :extra
-                        params[:extra].permit!.to_h
-                      else
-                        {}
-                      end
+              impersonation_payload = params.permit(
+                :username,
+                :id,
+                meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :name, :email]
+              ).to_h
+              impersonation_payload.merge!({ extra: params[:extra].permit!.to_h }) if params.has_key? :extra
 
-              if user
-                user.update!(
-                  extended_data: (user.extended_data || {}).merge(
-                    extra
-                  )
-                )
-              else
-                default_meta = {
-                  "register_on_missing" => false,
-                  "accept_tos_on_register" => false,
-                  "skip_confirmation_on_register" => false,
-                  "email" => "#{username}@example.org",
-                  "name" => username.titleize
-                }
-                user_meta = if params[:meta]
-                              params[:meta].permit(
-                                :register_on_missing,
-                                :accept_tos_on_register,
-                                :skip_confirmation_on_register,
-                                :name,
-                                :email
-                              ).to_h
-                            else
-                              {}
-                            end
-                meta = default_meta.merge(user_meta)
-                raise ::Doorkeeper::Errors::DoorkeeperError, "User not found" unless meta["register_on_missing"]
-
-                email = meta.delete("email")
-                name = meta.delete("name")
-                user = current_organization.users.build(
-                  email: email,
-                  name: name,
-                  nickname: username,
-                  extended_data: extra
-                )
-                user.accepted_tos_version = if meta["accept_tos_on_register"]
-                                              current_organization.tos_version + 1.hour
-                                            else
-                                              # Will need to revalidate tos
-                                              current_organization.tos_version - 1.hour
-                                            end
-                user.tos_agreement = true
-
-                password = begin
-                  special_chars = ["@", "#", "$", "%", "^", "&", "*", "-", "_", "+", "=", "~"]
-                  part1 = ::Devise.friendly_token.first((20 + 1) / 2)
-                  special_part = special_chars.sample(2).join
-                  part2 = ::Devise.friendly_token.first((20 + 1) / 2)
-
-                  # Combine parts to form the final password
-                  password = part1 + special_part + part2
-                  password.chars.shuffle.join
+              command_result = ImpersonateResourceOwnerFromCredentials.call(
+                api_client,
+                impersonation_payload,
+                current_organization
+              ) do
+                on(:ok) do |user|
+                  user
                 end
-                user.password = user.password_confirmation = password
-                user.skip_confirmation! if meta["skip_confirmation_on_register"]
-                user.save!
+                on(:error) do |error_message|
+                  raise ::Doorkeeper::Errors::DoorkeeperError, error_message
+                end
               end
-              user
+
+              command_result[:ok]
             when "login"
               ability.authorize! :login, Decidim::RestFull::ApiClient
               user = Decidim::User.find_by(

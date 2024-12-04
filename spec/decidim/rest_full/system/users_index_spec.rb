@@ -63,7 +63,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
           end
         end
 
-        context "with filter[extra_cont]" do
+        context "with filter[extra_cont] results" do
           before do
             create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization: organization)
             create_list(:user, 5, organization: organization)
@@ -77,6 +77,22 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
             data = JSON.parse(example.body)["data"]
             expect(data.size).to eq(1)
             expect(data.first["attributes"]["nickname"]).to eq("specific-data")
+          end
+        end
+
+        context "with filter[extra_cont], no results" do
+          before do
+            create(:user, nickname: "specific-data", extended_data: { foo: "404" }, organization: organization)
+            create_list(:user, 5, organization: organization)
+          end
+
+          let(:"filter[extra_cont]") do
+            '"foo": "bar"'
+          end
+
+          run_test!(example_name: :filter_by_extended_data) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.size).to eq(0)
           end
         end
 

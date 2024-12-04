@@ -25,30 +25,34 @@ The ROPC flows allows two kind of authentication, use the auth_type attribute to
 
 Use the `grant_type=password` with user credentials to request an access token. Ensure your OAuth application has the correct client ID, client secret, and scopes.
 
-### Required Parameters
+### Parameters
 
-- **`grant_type`**: Must be `password`.
-- **`auth_type`**: Defines the impersonation type (`login` or `impersonate`).
-- **`username`**: The user's unique identifier (e.g., nickname or email).
-- **`password`**: The user's password.
-- **`client_id`**: Your OAuth application Client ID.
-- **`client_secret`**: Your OAuth application Client Secret.
-- **`scope`**: The permissions requested (e.g., `public proposals`).
+**login auth type**
+- required: **`grant_type`**: Must be `password`.
+- required: **`auth_type`**: Must be `login`.
+- required: **`username`**: The user's unique identifier (e.g., nickname or email).
+- required: **`password`**: The user's password.
+- required: **`client_id`**: Your OAuth application Client ID.
+- required: **`client_secret`**: Your OAuth application Client Secret.
+- required: **`scope`**: The permissions requested (e.g., `public proposals`).
 
-### Example with `curl`
+**impersonation auth type**
+- required: **`grant_type`**: Must be `password`.
+- required: **`auth_type`**: Must be `impersonate`
+- **`username`**: The user's unique identifier (e.g., nickname or email). Required if `id` is not present.
+- required: **`password`**: The user's password.
+- required: **`client_id`**: Your OAuth application Client ID.
+- required: **`client_secret`**: Your OAuth application Client Secret.
+- required: **`scope`**: The permissions requested (e.g., `public proposals`).
+- **`meta`**:
+  - **`register_on_missing`**: If user not found, create one
+  - **`accept_tos_on_register`**: If the user has already accepted the tos
+  - **`skip_confirmation_on_register`**: Don't send a confirmation email, and confirm it directly
+  - **`name`**: The profile public name, used only if `register_on_missing=true`
+  - **`email`**: The profile email, used only if `register_on_missing=true`
+- **`extra`**: Any extra fields for the user. Will be updated on found / creation.
 
-```bash
-curl -X POST https://<organization-host>/oauth/token \
--H "Content-Type: application/json" \
--d '{
-  "grant_type": "password",
-  "auth_type": "impersonate",
-  "username": "<user_nickname>",
-  "client_id": "<client_id>",
-  "client_secret": "<client_secret>",
-  "scope": "public proposals"
-}'
-```
+
 
 ### Example Reponse
 ```json
@@ -59,6 +63,7 @@ curl -X POST https://<organization-host>/oauth/token \
   "scope": "public proposals"
 }
 ```
+
 
 ## Error Handling
 ### Invalid Credentials

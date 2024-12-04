@@ -25,6 +25,7 @@ module Api
         grant_type: { type: :string, enum: ["password"], description: "Resource Owner Password Credentials (ROPC) Flow, for **user impersonation**" },
         auth_type: { type: :string, enum: ["impersonate"], description: "Type of ROPC" },
         username: { type: :string, description: "User nickname, unique and at least 6 alphanumeric chars." },
+        id: { type: :string, description: "User id, will find over id and ignore username. Fails if register_on_missing=true." },
         extra: {
           type: :object,
           title: "User extra data",
@@ -51,7 +52,7 @@ module Api
         scope: { type: :string, enum: Doorkeeper.configuration.scopes.to_a.reject { |scope| scope == "system" }, description: "Request scopes" }
       },
       additionalProperties: false,
-      required: %w(grant_type client_id client_secret scope username auth_type)
+      required: %w(grant_type client_id client_secret scope auth_type)
     }.freeze
   end
 end
