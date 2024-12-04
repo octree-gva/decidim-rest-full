@@ -5,10 +5,6 @@ module Decidim
   module Api
     module RestFull
       class IntrospectController < ApplicationController
-        before_action do
-          doorkeeper_authorize!
-        end
-
         # Introspect current token
         def show
           render json: {
