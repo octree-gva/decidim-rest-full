@@ -155,6 +155,14 @@ RSpec.configure do |config|
             },
             required: [:data]
           },
+          introspect_data: Api::Definitions::INTROSPECT_DATA,
+          introspect_response: {
+            type: :object,
+            properties: {
+              data: { "$ref" => "#/components/schemas/introspect_data" }
+            },
+            required: [:data]
+          },
           oauth_grant_param: {
             oneOf: [
               Api::Definitions::CLIENT_CREDENTIAL_GRANT,

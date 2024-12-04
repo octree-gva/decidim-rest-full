@@ -10,3 +10,8 @@ indent_size = 2
 charset = utf-8
 indent_style = space
 indent_size = 2
+
+[*.{rb,erb}]
+charset = utf-8
+indent_style = space
+indent_size = 2

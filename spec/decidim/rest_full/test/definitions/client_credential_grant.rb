@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# spec/support/api_schemas/organization_schema.rb
 module Api
   module Definitions
     CLIENT_CREDENTIAL_GRANT = {
