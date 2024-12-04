@@ -484,7 +484,13 @@ export interface Impersonation {
    * @type {string}
    * @memberof Impersonation
    */
-  username: string;
+  username?: string;
+  /**
+   * User id, will find over id and ignore username. Fails if register_on_missing=true.
+   * @type {string}
+   * @memberof Impersonation
+   */
+  id?: string;
   /**
    * Additional properties for the user (private)
    * @type {{ [key: string]: string; }}
@@ -541,6 +547,71 @@ export const ImpersonationScopeEnum = {
 export type ImpersonationScopeEnum =
   (typeof ImpersonationScopeEnum)[keyof typeof ImpersonationScopeEnum];
 
+/**
+ *
+ * @export
+ * @interface IntrospectData
+ */
+export interface IntrospectData {
+  /**
+   * Access token id
+   * @type {number}
+   * @memberof IntrospectData
+   */
+  sub: number;
+  /**
+   *
+   * @type {IntrospectDataResource}
+   * @memberof IntrospectData
+   */
+  resource?: IntrospectDataResource;
+}
+/**
+ *
+ * @export
+ * @interface IntrospectDataResource
+ */
+export interface IntrospectDataResource {
+  /**
+   * resource id
+   * @type {string}
+   * @memberof IntrospectDataResource
+   */
+  id: string;
+  /**
+   * resource type
+   * @type {string}
+   * @memberof IntrospectDataResource
+   */
+  type: IntrospectDataResourceTypeEnum;
+  /**
+   *
+   * @type {object}
+   * @memberof IntrospectDataResource
+   */
+  attributes?: object;
+}
+
+export const IntrospectDataResourceTypeEnum = {
+  User: "user",
+} as const;
+
+export type IntrospectDataResourceTypeEnum =
+  (typeof IntrospectDataResourceTypeEnum)[keyof typeof IntrospectDataResourceTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface IntrospectResponse
+ */
+export interface IntrospectResponse {
+  /**
+   *
+   * @type {IntrospectData}
+   * @memberof IntrospectResponse
+   */
+  data: IntrospectData;
+}
 /**
  *
  * @export
@@ -1493,6 +1564,53 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      *
+     * @summary Introspect a OAuth token
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    oauthIntrospectPost: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/oauth/introspect`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
      * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
@@ -1553,6 +1671,35 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @summary Introspect a OAuth token
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async oauthIntrospectPost(
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<IntrospectResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.oauthIntrospectPost(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OAuthApi.oauthIntrospectPost"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
      * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
@@ -1597,6 +1744,19 @@ export const OAuthApiFactory = function (
   return {
     /**
      *
+     * @summary Introspect a OAuth token
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    oauthIntrospectPost(
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<IntrospectResponse> {
+      return localVarFp
+        .oauthIntrospectPost(options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
      * @summary Request a OAuth token throught ROPC
      * @param {OAuthApiOauthTokenPostRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -1634,6 +1794,19 @@ export interface OAuthApiOauthTokenPostRequest {
  * @extends {BaseAPI}
  */
 export class OAuthApi extends BaseAPI {
+  /**
+   *
+   * @summary Introspect a OAuth token
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OAuthApi
+   */
+  public oauthIntrospectPost(options?: RawAxiosRequestConfig) {
+    return OAuthApiFp(this.configuration)
+      .oauthIntrospectPost(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    *
    * @summary Request a OAuth token throught ROPC
