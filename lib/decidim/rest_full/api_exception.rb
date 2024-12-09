@@ -4,8 +4,7 @@ module Decidim
   module RestFull
     module ApiException
       EXCEPTIONS = {
-        # Unknown error
-        "StandardError" => { status: 500, message: "An error occurred" },
+
         # ActiveRecord Exceptions
         "ActiveRecord::RecordInvalid" => { status: 400, message: "Invalid request" },
         "ActiveRecord::RecordNotSaved" => { status: 400, message: "Record could not be saved" },
@@ -22,35 +21,43 @@ module Decidim
         "ActionDispatch::Http::Parameters::ParseError" => { status: 400, message: "Malformed JSON request" },
         "CanCan::AccessDenied" => { status: 401, message: "Unauthorized access" },
         # Generic Application-Level Errors
-        "BadRequest" => { status: 400, message: "Bad request" },
-        "Unauthorized" => { status: 401, message: "Unauthorized access" },
-        "Forbidden" => { status: 403, message: "Forbidden" },
-        "NotFound" => { status: 404, message: "Resource not found" }
+        "Decidim::RestFull::ApiException::BadRequest" => { status: 400, message: "Bad request" },
+        "Decidim::RestFull::ApiException::Unauthorized" => { status: 401, message: "Unauthorized access" },
+        "Decidim::RestFull::ApiException::Forbidden" => { status: 403, message: "Forbidden" },
+        "Decidim::RestFull::ApiException::NotFound" => { status: 404, message: "Resource not found" }
       }.freeze
 
       class BaseError < StandardError; end
 
+      class BadRequest < StandardError; end
+
+      class Unauthorized < StandardError; end
+
+      class Forbidden < StandardError; end
+
+      class NotFound < StandardError; end
+
       module Handler
         def self.included(klass)
           klass.class_eval do
-            EXCEPTIONS.each do |exception_name, context|
-              rescue_from_name = if ApiException.const_defined?(exception_name)
-                                   exception_name
-                                 else
-                                   ApiException.const_set(exception_name, Class.new(BaseError))
-                                   "Decidim::RestFull::ApiException::#{exception_name}"
-                                 end
+            rescue_from StandardError do |exception|
+              render status: :internal_server_error,
+                     json: {
+                       error: "Server error",
+                       error_description: Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
+                     }.compact
+            end
 
-              rescue_from rescue_from_name.to_s do |exception|
+            EXCEPTIONS.each do |exception_name, context|
+              rescue_from exception_name do |exception|
                 render status: context[:status],
                        json: {
-                         error_code: context[:status],
-                         message: context[:message],
-                         detail: if context[:status] == 400
-                                   exception.message
-                                 else
-                                   Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
-                                 end
+                         error: "#{context[:status]}: #{context[:message]}",
+                         error_description: if context[:status] == 400
+                                              exception.message
+                                            else
+                                              Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
+                                            end
                        }.compact
               end
             end

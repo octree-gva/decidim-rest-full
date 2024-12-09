@@ -8,6 +8,7 @@ module Decidim
       config.to_prepare do
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
+        ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
       end
 
       initializer "rest_full.scopes" do
@@ -22,14 +23,14 @@ module Decidim
           # Authenticate resource owner
           resource_owner_from_credentials do |_routes|
             # forbid system scope, exclusive to credential flow
-            raise ::Doorkeeper::Errors::DoorkeeperError, "can not request system scope with ROPC flow" if (params["scope"] || "").include? "system"
+            raise ::Decidim::RestFull::ApiException::BadRequest, "can not request system scope with ROPC flow" if (params["scope"] || "").include? "system"
 
             auth_type = params.require(:auth_type)
             current_organization = request.env["decidim.current_organization"]
-            raise ::Doorkeeper::Errors::DoorkeeperError, "Invalid Organization. Check requested host." unless current_organization
+            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Organization. Check requested host." unless current_organization
 
             client_id = params.require("client_id")
-            raise ::Doorkeeper::Errors::DoorkeeperError, "Invalid Api Client, check client_id credentials" if client_id.size < 8
+            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Api Client, check client_id credentials" if client_id.size < 8
 
             api_client = Decidim::RestFull::ApiClient.find_by(
               uid: client_id,
@@ -56,7 +57,7 @@ module Decidim
                   user
                 end
                 on(:error) do |error_message|
-                  raise ::Doorkeeper::Errors::DoorkeeperError, error_message
+                  raise ::Decidim::RestFull::ApiException::BadRequest, error_message
                 end
               end
 
@@ -67,11 +68,11 @@ module Decidim
                 nickname: params.require("username"),
                 organization: current_organization
               )
-              raise ::Doorkeeper::Errors::DoorkeeperError, "User not found" unless user.valid_password?(params.require("password"))
+              raise ::Decidim::RestFull::ApiException::BadRequest, "User not found" unless user.valid_password?(params.require("password"))
 
               user
             else
-              raise ::Doorkeeper::Errors::DoorkeeperError, "Not allowed param auth_type='#{auth_type}'"
+              raise ::Decidim::RestFull::ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
             end
           end
         end

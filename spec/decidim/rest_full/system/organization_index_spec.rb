@@ -70,24 +70,27 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
           let(:"locales[]") { ["invalid_locale"] }
 
           run_test! do |example|
-            message = JSON.parse(example.body)["detail"]
-            expect(message).to start_with("Not allowed locales:")
+            error_description = JSON.parse(example.body)["error_description"]
+            expect(error_description).to start_with("Not allowed locales:")
           end
         end
       end
 
       response "500", "Internal Server Error" do
-        consumes "application/json"
         produces "application/json"
+
         before do
           controller = Decidim::Api::RestFull::System::OrganizationsController.new
-          allow(controller).to receive(:index).and_raise(StandardError)
-          allow(Decidim::Api::RestFull::System::OrganizationsController)
-            .to receive(:new).and_return(controller)
+          allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::System::OrganizationsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"
-        run_test!(example_name: :server_error)
+
+        run_test! do |response|
+          expect(response.status).to eq(500)
+          expect(response.body).to include("Intentional error for testing")
+        end
       end
     end
   end

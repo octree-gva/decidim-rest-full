@@ -11,7 +11,7 @@ RSpec.configure do |config|
         "application/json" => {
           examples: {
             example_name.to_sym => {
-              value: JSON.parse(response.body, symbolize_names: true)
+              value: response && response.body ? JSON.parse(response.body, symbolize_names: true) : {}
             }
           }
         }
@@ -139,6 +139,7 @@ RSpec.configure do |config|
             required: [:data]
           },
           spaces_response: {
+            description: "List of spaces",
             type: :object,
             properties: {
               data: {
@@ -149,6 +150,7 @@ RSpec.configure do |config|
             required: [:data]
           },
           space_response: {
+            description: "Definition of one specific space",
             type: :object,
             properties: {
               data: { "$ref" => "#/components/schemas/space" }
@@ -157,6 +159,7 @@ RSpec.configure do |config|
           },
           introspect_data: Api::Definitions::INTROSPECT_DATA,
           introspect_response: {
+            description: "Details about the token beeing used",
             type: :object,
             properties: {
               data: { "$ref" => "#/components/schemas/introspect_data" }

@@ -3,13 +3,13 @@
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :request do
   path "/public/{manifest_name}/{id}" do
-    get "Show Participatory Spaces" do
+    get "Show Participatory Space" do
       tags "Public"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: "id", in: :path, schema: { type: :integer }
-      parameter name: "manifest_name", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the space" }
+      parameter name: "manifest_name", in: :path, schema: { type: :string, description: "Type of space", enum: Decidim.participatory_space_registry.manifests.map(&:name) }
 
       let!(:organization) { create(:organization) }
       let!(:api_client) { create(:api_client, organization: organization) }
@@ -78,27 +78,29 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
           let(:manifest_name) { "assemblies" }
 
           run_test!(example_name: :not_found) do |example|
-            json_response = JSON.parse(example.body)
-            expect(json_response["error_code"]).to eq(404)
+            JSON.parse(example.body)
+            expect(example.status).to eq(404)
           end
         end
       end
 
       response "500", "Internal Server Error" do
-        consumes "application/json"
         produces "application/json"
-        before do
-          controller = Decidim::Api::RestFull::Public::SpacesController.new
-          allow(controller).to receive(:show).and_raise(StandardError)
-          allow(Decidim::Api::RestFull::Public::SpacesController)
-            .to receive(:new).and_return(controller)
-        end
-
         let(:id) { "500" }
         let(:manifest_name) { "assemblies" }
 
+        before do
+          controller = Decidim::Api::RestFull::Public::SpacesController.new
+          allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::Public::SpacesController).to receive(:new).and_return(controller)
+        end
+
         schema "$ref" => "#/components/schemas/api_error"
-        run_test!(example_name: :server_error)
+
+        run_test! do |response|
+          expect(response.status).to eq(500)
+          expect(response.body).to include("Intentional error for testing")
+        end
       end
     end
   end
