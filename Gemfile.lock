@@ -818,10 +818,12 @@ DEPENDENCIES
   pg
   puma (>= 5.5.1)
   rspec-rails (~> 6.0)
+  rspec_junit_formatter
   rswag-specs
   rubocop-faker
   rubocop-rspec
   selenium-webdriver
+  simplecov-cobertura
   spring (~> 4.0)
   spring-watcher-listen (~> 2.1)
   uglifier (~> 4.1)

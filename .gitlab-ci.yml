@@ -110,11 +110,6 @@ ruby::rspec:
   image: ruby:3.2.5
   stage: test
   extends: .development_rules
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/coverage.xml
   variables:
     DATABASE_HOST: "postgres"
     # trunk-ignore(gitleaks/generic-api-key)
@@ -127,8 +122,16 @@ ruby::rspec:
   before_script:
     - bin/setup-tests
   script:
-    - RAILS_ENV=test bundle exec rspec spec/decidim/
-
+    - RAILS_ENV=test bundle exec rspec spec/decidim/ --format progress --format RspecJunitFormatter --out rspec.xml
+  artifacts:
+    when: always
+    paths:
+      - rspec.xml
+    reports:
+      junit: rspec.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
 # Publish decidim rest full api package
 decidim-client::publish:
   image: node:18.20

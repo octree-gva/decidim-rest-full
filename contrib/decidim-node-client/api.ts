@@ -46,23 +46,17 @@ import {
  */
 export interface ApiError {
   /**
-   * Error code, starting with HTTP Code
-   * @type {number}
-   * @memberof ApiError
-   */
-  error_code: number;
-  /**
-   * Error message
+   * Error title, starting with HTTP Code, like 400: bad request
    * @type {string}
    * @memberof ApiError
    */
-  message: string;
+  error: string;
   /**
    * Error detail, mostly validation error
    * @type {string}
    * @memberof ApiError
    */
-  detail?: string;
+  error_description: string;
 }
 /**
  *
@@ -560,6 +554,12 @@ export interface IntrospectData {
    */
   sub: number;
   /**
+   * If the token can be used
+   * @type {boolean}
+   * @memberof IntrospectData
+   */
+  active: boolean;
+  /**
    *
    * @type {IntrospectDataResource}
    * @memberof IntrospectData
@@ -600,7 +600,7 @@ export type IntrospectDataResourceTypeEnum =
   (typeof IntrospectDataResourceTypeEnum)[keyof typeof IntrospectDataResourceTypeEnum];
 
 /**
- *
+ * Details about the token beeing used
  * @export
  * @interface IntrospectResponse
  */
@@ -949,7 +949,7 @@ export interface SpaceRelationships {
   components: AttachedComponents;
 }
 /**
- *
+ * Definition of one specific space
  * @export
  * @interface SpaceResponse
  */
@@ -962,7 +962,7 @@ export interface SpaceResponse {
   data: Space;
 }
 /**
- *
+ * List of spaces
  * @export
  * @interface SpacesResponse
  */
@@ -2040,7 +2040,7 @@ export const PublicApiAxiosParamCreator = function (
     },
     /**
      *
-     * @summary Show Participatory Spaces
+     * @summary Show Participatory Space
      * @param {number} id
      * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
      * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
@@ -2387,7 +2387,7 @@ export const PublicApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary Show Participatory Spaces
+     * @summary Show Participatory Space
      * @param {number} id
      * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
      * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
@@ -2567,7 +2567,7 @@ export const PublicApiFactory = function (
     },
     /**
      *
-     * @summary Show Participatory Spaces
+     * @summary Show Participatory Space
      * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2973,7 +2973,7 @@ export class PublicApi extends BaseAPI {
 
   /**
    *
-   * @summary Show Participatory Spaces
+   * @summary Show Participatory Space
    * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -29,9 +29,11 @@ end
 
 group :test do
   gem "capybara", "~> 3.40"
+  gem "rspec_junit_formatter", require: false
   gem "rspec-rails", "~> 6.0"
   gem "rubocop-faker"
   gem "selenium-webdriver"
+  gem "simplecov-cobertura"
 end
 
 group :development do
