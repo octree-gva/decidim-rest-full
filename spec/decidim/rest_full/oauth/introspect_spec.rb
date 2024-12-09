@@ -32,7 +32,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
         context "with client_credentials grant" do
           let(:Authorization) { "Bearer #{client_credential_token.token}" }
 
-          run_test! do |response|
+          run_test!(example_name: :bearer_client_credential) do |response|
             json_response = JSON.parse(response.body)["data"]
             expect(json_response["token"]["scope"]).to include("public")
           end
@@ -41,11 +41,27 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
         context "with password grant" do
           let(:Authorization) { "Bearer #{impersonation_token.token}" }
 
-          run_test! do |response|
+          run_test!(example_name: :bearer_ropc) do |response|
             json_response = JSON.parse(response.body)["data"]
             expect(json_response["resource"]["id"]).to eq(user.id.to_s)
             expect(json_response["resource"]["type"]).to eq("user")
             expect(json_response["token"]["scope"]).to include("public")
+          end
+        end
+      end
+
+      response "200", "When the token is invalid" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/introspect_response"
+
+        context "with expired token" do
+          let!(:client_credential_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client, created_at: 1.month.ago, expires_in: 1.minute) }
+
+          let(:Authorization) { "Bearer #{client_credential_token.token}" }
+
+          run_test!(example_name: :expired_token) do |response|
+            json_response = JSON.parse(response.body)["data"]
+            expect(json_response["active"]).to be_falsy
           end
         end
       end

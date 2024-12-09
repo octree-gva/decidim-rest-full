@@ -23,10 +23,11 @@ module Decidim
         end
 
         def active?
-          return doorkeeper_token.valid? unless has_user?
-          return false if !user || user.blocked? || user.locked_at.present?
+          token_valid = doorkeeper_token.valid? && !doorkeeper_token.expired?
+          return token_valid unless has_user?
 
-          true
+          user_valid = user && !user.blocked? && user.locked_at.blank?
+          user_valid && token_valid
         end
 
         def has_user?

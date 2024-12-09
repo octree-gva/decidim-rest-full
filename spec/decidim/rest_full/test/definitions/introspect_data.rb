@@ -10,6 +10,10 @@ module Api
           type: :integer,
           description: "Access token id"
         },
+        active: {
+          type: :boolean,
+          description: "If the token can be used"
+        },
         resource: {
           type: :object,
           properties: {
@@ -53,7 +57,7 @@ module Api
           required: [:id, :type]
         }
       },
-      required: [:sub]
+      required: [:sub, :active]
     }.freeze
   end
 end

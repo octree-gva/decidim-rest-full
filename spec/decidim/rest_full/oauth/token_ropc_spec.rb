@@ -240,6 +240,9 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       end
 
       response "400", "Bad Request" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
         context "when user does not exists" do
           context "with meta.register_on_missing=false" do
             let(:nickname) { uniq_nickname }
