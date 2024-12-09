@@ -22,6 +22,15 @@ Decidim::Core::Engine.routes.draw do
         namespace :public do
           resources :spaces, only: [:index]
           resources :components, only: [:index, :show]
+
+          Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
+            resources manifest_name.to_sym, only: [:show, :index], controller: "/decidim/api/rest_full/public/spaces" do
+              collection do
+                get "/", action: :index, defaults: { manifest_name: manifest_name }
+                get "/:id", action: :show, defaults: { manifest_name: manifest_name }
+              end
+            end
+          end
         end
       end
     end

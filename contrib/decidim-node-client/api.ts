@@ -2040,6 +2040,76 @@ export const PublicApiAxiosParamCreator = function (
     },
     /**
      *
+     * @summary Show Participatory Spaces
+     * @param {number} id
+     * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
+     * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    publicManifestNameIdGet: async (
+      id: number,
+      manifestName: PublicManifestNameIdGetManifestNameEnum,
+      locales?: Array<PublicManifestNameIdGetLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("publicManifestNameIdGet", "id", id);
+      // verify required parameter 'manifestName' is not null or undefined
+      assertParamExists(
+        "publicManifestNameIdGet",
+        "manifestName",
+        manifestName,
+      );
+      const localVarPath = `/public/{manifest_name}/{id}`
+        .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+        .replace(
+          `{${"manifest_name"}}`,
+          encodeURIComponent(String(manifestName)),
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
      * @summary List Participatory Spaces
      * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
      * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
@@ -2317,6 +2387,43 @@ export const PublicApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary Show Participatory Spaces
+     * @param {number} id
+     * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
+     * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async publicManifestNameIdGet(
+      id: number,
+      manifestName: PublicManifestNameIdGetManifestNameEnum,
+      locales?: Array<PublicManifestNameIdGetLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<SpaceResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.publicManifestNameIdGet(
+          id,
+          manifestName,
+          locales,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["PublicApi.publicManifestNameIdGet"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
      * @summary List Participatory Spaces
      * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
      * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
@@ -2453,6 +2560,26 @@ export const PublicApiFactory = function (
       return localVarFp
         .publicComponentsIdGet(
           requestParameters.id,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Show Participatory Spaces
+     * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    publicManifestNameIdGet(
+      requestParameters: PublicApiPublicManifestNameIdGetRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceResponse> {
+      return localVarFp
+        .publicManifestNameIdGet(
+          requestParameters.id,
+          requestParameters.manifestName,
           requestParameters.locales,
           options,
         )
@@ -2626,6 +2753,34 @@ export interface PublicApiPublicComponentsIdGetRequest {
    * @memberof PublicApiPublicComponentsIdGet
    */
   readonly locales?: Array<PublicComponentsIdGetLocalesEnum>;
+}
+
+/**
+ * Request parameters for publicManifestNameIdGet operation in PublicApi.
+ * @export
+ * @interface PublicApiPublicManifestNameIdGetRequest
+ */
+export interface PublicApiPublicManifestNameIdGetRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof PublicApiPublicManifestNameIdGet
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof PublicApiPublicManifestNameIdGet
+   */
+  readonly manifestName: PublicManifestNameIdGetManifestNameEnum;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof PublicApiPublicManifestNameIdGet
+   */
+  readonly locales?: Array<PublicManifestNameIdGetLocalesEnum>;
 }
 
 /**
@@ -2818,6 +2973,28 @@ export class PublicApi extends BaseAPI {
 
   /**
    *
+   * @summary Show Participatory Spaces
+   * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof PublicApi
+   */
+  public publicManifestNameIdGet(
+    requestParameters: PublicApiPublicManifestNameIdGetRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return PublicApiFp(this.configuration)
+      .publicManifestNameIdGet(
+        requestParameters.id,
+        requestParameters.manifestName,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
    * @summary List Participatory Spaces
    * @param {PublicApiPublicSpacesGetRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
@@ -2995,6 +3172,70 @@ export const PublicComponentsIdGetLocalesEnum = {
 } as const;
 export type PublicComponentsIdGetLocalesEnum =
   (typeof PublicComponentsIdGetLocalesEnum)[keyof typeof PublicComponentsIdGetLocalesEnum];
+/**
+ * @export
+ */
+export const PublicManifestNameIdGetManifestNameEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type PublicManifestNameIdGetManifestNameEnum =
+  (typeof PublicManifestNameIdGetManifestNameEnum)[keyof typeof PublicManifestNameIdGetManifestNameEnum];
+/**
+ * @export
+ */
+export const PublicManifestNameIdGetLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type PublicManifestNameIdGetLocalesEnum =
+  (typeof PublicManifestNameIdGetLocalesEnum)[keyof typeof PublicManifestNameIdGetLocalesEnum];
 /**
  * @export
  */
