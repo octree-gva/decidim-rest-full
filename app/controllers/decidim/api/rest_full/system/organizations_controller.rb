@@ -41,6 +41,8 @@ module Decidim
               :id,
               :name,
               :secondary_hosts,
+              :default_locale,
+              :available_locales,
               :host,
               :created_at,
               :updated_at

@@ -18,12 +18,14 @@ module Api
               example: { en: "Organization Name", fr: "Nom de l'organisation" }
             },
             host: { type: :string, example: "example.org" },
+            available_locales: { type: :array, items: { type: :string }, description: "available locales of the organization" },
+            default_locale: { type: :string, description: "defaut locale for the organization" },
             secondary_hosts: { type: :array, items: { type: :string, description: "Additional host, will redirect (301) to `host`" }, example: ["secondary.example.org"] },
             created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
             updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
           },
           additionalProperties: false,
-          required: [:created_at, :updated_at]
+          required: [:created_at, :updated_at, :host, :name, :available_locales, :default_locale]
         },
         meta: {
           type: :object,

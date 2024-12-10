@@ -19,7 +19,8 @@
     "docs:build": "yarn docs:compile_re_doc && cd website && yarn build",
     "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize -q -o website/static/openapi.json",
     "gen:node-client": "bin/gen-node-client",
-    "postcommit": "yarn docs:compile_re_doc && yarn gen:node-client",
+    "format": "docker compose run -u root -w /home/decidim/module --rm rest_full bundle exec rubocop -A .",
+    "postcommit": "yarn format && yarn docs:compile_re_doc && yarn gen:node-client",
     "postversion": "bin/postversion && yarn postcommit"
   }
 }

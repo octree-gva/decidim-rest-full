@@ -9,7 +9,7 @@ module Decidim
           (attributes_to_serialize.keys || []).reject { |k| [:meta, :id].include? k }
         end
 
-        attributes :host, :secondary_hosts
+        attributes :host, :secondary_hosts, :default_locale, :available_locales
 
         attribute :name do |org, params|
           translated_field(org.name, params[:locales])
