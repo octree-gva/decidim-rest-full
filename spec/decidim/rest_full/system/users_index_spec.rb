@@ -7,6 +7,8 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       tags "System"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
+      operationId "users"
+      description "List or search users of the organization"
 
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false

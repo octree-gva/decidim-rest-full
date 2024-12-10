@@ -1,7 +1,7 @@
 {
   "name": "decidim-rest_full",
   "private": true,
-  "version": "0.0.5",
+  "version": "0.0.6",
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.15.3",
@@ -17,9 +17,9 @@
     "docs:start": "cd website && yarn start -p 3232",
     "docs:compile_re_doc": "yarn gen:openapi-spec && npx @redocly/cli build-docs website/static/openapi.json -o website/static/api-docs.html",
     "docs:build": "yarn docs:compile_re_doc && cd website && yarn build",
-    "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize",
+    "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize -q -o website/static/openapi.json",
     "gen:node-client": "bin/gen-node-client",
     "postcommit": "yarn docs:compile_re_doc && yarn gen:node-client",
-    "postversion": "bin/postversion"
+    "postversion": "bin/postversion && yarn postcommit"
   }
 }

@@ -7,6 +7,9 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       tags "Public"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
+      operationId "space"
+      description "Get detail of a space given its manifest and id"
+
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the space" }
       parameter name: "manifest_name", in: :path, schema: { type: :string, description: "Type of space", enum: Decidim.participatory_space_registry.manifests.map(&:name) }

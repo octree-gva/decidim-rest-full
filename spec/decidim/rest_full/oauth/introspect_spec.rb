@@ -26,6 +26,8 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       consumes "application/json"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
+      operationId "introspectToken"
+      description "Get given oauth token details"
 
       response "200", "User details returned" do
         schema "$ref" => "#/components/schemas/introspect_response"
