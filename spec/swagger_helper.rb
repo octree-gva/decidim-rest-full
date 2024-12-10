@@ -160,11 +160,7 @@ RSpec.configure do |config|
           introspect_data: Api::Definitions::INTROSPECT_DATA,
           introspect_response: {
             description: "Details about the token beeing used",
-            type: :object,
-            properties: {
-              data: { "$ref" => "#/components/schemas/introspect_data" }
-            },
-            required: [:data]
+            "$ref" => "#/components/schemas/introspect_data"
           },
           oauth_grant_param: {
             oneOf: [

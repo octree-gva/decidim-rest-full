@@ -742,13 +742,25 @@ export interface OrganizationAttributes {
    * @type {{ [key: string]: string; }}
    * @memberof OrganizationAttributes
    */
-  name?: { [key: string]: string };
+  name: { [key: string]: string };
   /**
    *
    * @type {string}
    * @memberof OrganizationAttributes
    */
-  host?: string;
+  host: string;
+  /**
+   * available locales of the organization
+   * @type {Array<string>}
+   * @memberof OrganizationAttributes
+   */
+  available_locales: Array<string>;
+  /**
+   * defaut locale for the organization
+   * @type {string}
+   * @memberof OrganizationAttributes
+   */
+  default_locale: string;
   /**
    *
    * @type {Array<string>}

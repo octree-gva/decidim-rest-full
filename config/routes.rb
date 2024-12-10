@@ -14,7 +14,8 @@ Decidim::Core::Engine.routes.draw do
     namespace :rest_full do
       scope "v#{Decidim::RestFull.major_minor_version}" do
         post "/oauth/token", to: "/doorkeeper/tokens#create"
-        post "/oauth/introspect", to: "/decidim/api/rest_full/introspect#show"
+        post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
+
         namespace :system do
           resources :organizations, only: [:index]
           resources :users, only: [:index]

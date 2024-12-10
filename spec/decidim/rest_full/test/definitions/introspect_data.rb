@@ -14,6 +14,10 @@ module Api
           type: :boolean,
           description: "If the token can be used"
         },
+        aud: {
+          type: :string,
+          description: "Where this token can be used (organization host)"
+        },
         resource: {
           type: :object,
           properties: {
@@ -57,7 +61,7 @@ module Api
           required: [:id, :type]
         }
       },
-      required: [:sub, :active]
+      required: [:sub, :active, :aud, :exp]
     }.freeze
   end
 end
