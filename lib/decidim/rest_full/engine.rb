@@ -19,7 +19,35 @@ module Decidim
 
           # Enable resource owner password credentials
           grant_flows %w(password client_credentials)
+          custom_introspection_response do |token, _context|
+            current_organization = token.application.organization
+            user = (Decidim::User.find(token.resource_owner_id) if token.resource_owner_id)
+            user_details = if user
+                             {
+                               resource: Decidim::Api::RestFull::UserSerializer.new(
+                                 user,
+                                 params: { host: current_organization.host },
+                                 fields: { user: [:email, :name, :id, :created_at, :updated_at, :personal_url, :locale] }
+                               ).serializable_hash[:data]
+                             }
+                           else
+                             {}
+                           end
+            token_valid = token.valid? && !token.expired?
+            active = if user
+                       user_valid = !user.blocked? && user.locked_at.blank?
+                       token_valid && user_valid
+                     else
+                       token_valid
+                     end
 
+            {
+              sub: token.id,
+              # Current organization
+              aud: "https://#{current_organization.host}",
+              active: active
+            }.merge(user_details)
+          end
           # Authenticate resource owner
           resource_owner_from_credentials do |_routes|
             # forbid system scope, exclusive to credential flow

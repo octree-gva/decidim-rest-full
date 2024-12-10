@@ -28,43 +28,47 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
       operationId "introspectToken"
       description "Get given oauth token details"
+      # SEE https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
+      parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { token: { type: :string }, required: [:token] } }
 
       response "200", "User details returned" do
         schema "$ref" => "#/components/schemas/introspect_response"
         context "with client_credentials grant" do
+          let!(:client_credential_token_b) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+
           let(:Authorization) { "Bearer #{client_credential_token.token}" }
+          let(:body) { { token: client_credential_token_b.token } }
 
           run_test!(example_name: :bearer_client_credential) do |response|
-            json_response = JSON.parse(response.body)["data"]
-            expect(json_response["token"]["scope"]).to include("public")
+            json_response = JSON.parse(response.body)
+            expect(json_response["scope"]).to include("public")
           end
         end
 
         context "with password grant" do
-          let(:Authorization) { "Bearer #{impersonation_token.token}" }
+          let(:Authorization) { "Bearer #{client_credential_token.token}" }
+          let(:body) { { token: impersonation_token.token } }
 
           run_test!(example_name: :bearer_ropc) do |response|
-            json_response = JSON.parse(response.body)["data"]
+            json_response = JSON.parse(response.body)
             expect(json_response["resource"]["id"]).to eq(user.id.to_s)
             expect(json_response["resource"]["type"]).to eq("user")
-            expect(json_response["token"]["scope"]).to include("public")
+            expect(json_response["scope"]).to include("public")
           end
         end
       end
 
-      response "200", "When the token is invalid" do
+      response "401", "When the token is invalid" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/introspect_response"
+        schema "$ref" => "#/components/schemas/api_error"
 
         context "with expired token" do
           let!(:client_credential_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client, created_at: 1.month.ago, expires_in: 1.minute) }
 
           let(:Authorization) { "Bearer #{client_credential_token.token}" }
+          let(:body) { { token: client_credential_token.token } }
 
-          run_test!(example_name: :expired_token) do |response|
-            json_response = JSON.parse(response.body)["data"]
-            expect(json_response["active"]).to be_falsy
-          end
+          run_test!(example_name: :expired_token)
         end
       end
     end
