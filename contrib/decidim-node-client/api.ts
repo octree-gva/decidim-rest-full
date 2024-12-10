@@ -1563,12 +1563,62 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     *
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token throught ROPC
+     * @param {OauthGrantParam} oauthGrantParam
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createToken: async (
+      oauthGrantParam: OauthGrantParam,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'oauthGrantParam' is not null or undefined
+      assertParamExists("createToken", "oauthGrantParam", oauthGrantParam);
+      const localVarPath = `/oauth/token`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        oauthGrantParam,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get given oauth token details
      * @summary Introspect a OAuth token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    oauthIntrospectPost: async (
+    introspectToken: async (
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/oauth/introspect`;
@@ -1609,56 +1659,6 @@ export const OAuthApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
-    /**
-     *
-     * @summary Request a OAuth token throught ROPC
-     * @param {OauthGrantParam} oauthGrantParam
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    oauthTokenPost: async (
-      oauthGrantParam: OauthGrantParam,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'oauthGrantParam' is not null or undefined
-      assertParamExists("oauthTokenPost", "oauthGrantParam", oauthGrantParam);
-      const localVarPath = `/oauth/token`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        oauthGrantParam,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
   };
 };
 
@@ -1670,24 +1670,25 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     *
-     * @summary Introspect a OAuth token
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token throught ROPC
+     * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async oauthIntrospectPost(
+    async createToken(
+      oauthGrantParam: OauthGrantParam,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<IntrospectResponse>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.oauthIntrospectPost(options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createToken(
+        oauthGrantParam,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["OAuthApi.oauthIntrospectPost"]?.[
+        operationServerMap["OAuthApi.createToken"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -1699,25 +1700,24 @@ export const OAuthApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     *
-     * @summary Request a OAuth token throught ROPC
-     * @param {OauthGrantParam} oauthGrantParam
+     * Get given oauth token details
+     * @summary Introspect a OAuth token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async oauthTokenPost(
-      oauthGrantParam: OauthGrantParam,
+    async introspectToken(
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<IntrospectResponse>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.oauthTokenPost(
-        oauthGrantParam,
-        options,
-      );
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.introspectToken(options);
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["OAuthApi.oauthTokenPost"]?.[
+        operationServerMap["OAuthApi.introspectToken"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -1743,46 +1743,46 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     *
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token throught ROPC
+     * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createToken(
+      requestParameters: OAuthApiCreateTokenRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .createToken(requestParameters.oauthGrantParam, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get given oauth token details
      * @summary Introspect a OAuth token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    oauthIntrospectPost(
+    introspectToken(
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<IntrospectResponse> {
       return localVarFp
-        .oauthIntrospectPost(options)
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Request a OAuth token throught ROPC
-     * @param {OAuthApiOauthTokenPostRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    oauthTokenPost(
-      requestParameters: OAuthApiOauthTokenPostRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<void> {
-      return localVarFp
-        .oauthTokenPost(requestParameters.oauthGrantParam, options)
+        .introspectToken(options)
         .then((request) => request(axios, basePath));
     },
   };
 };
 
 /**
- * Request parameters for oauthTokenPost operation in OAuthApi.
+ * Request parameters for createToken operation in OAuthApi.
  * @export
- * @interface OAuthApiOauthTokenPostRequest
+ * @interface OAuthApiCreateTokenRequest
  */
-export interface OAuthApiOauthTokenPostRequest {
+export interface OAuthApiCreateTokenRequest {
   /**
    *
    * @type {OauthGrantParam}
-   * @memberof OAuthApiOauthTokenPost
+   * @memberof OAuthApiCreateToken
    */
   readonly oauthGrantParam: OauthGrantParam;
 }
@@ -1795,32 +1795,32 @@ export interface OAuthApiOauthTokenPostRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   *
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token throught ROPC
+   * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OAuthApi
+   */
+  public createToken(
+    requestParameters: OAuthApiCreateTokenRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OAuthApiFp(this.configuration)
+      .createToken(requestParameters.oauthGrantParam, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get given oauth token details
    * @summary Introspect a OAuth token
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof OAuthApi
    */
-  public oauthIntrospectPost(options?: RawAxiosRequestConfig) {
+  public introspectToken(options?: RawAxiosRequestConfig) {
     return OAuthApiFp(this.configuration)
-      .oauthIntrospectPost(options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Request a OAuth token throught ROPC
-   * @param {OAuthApiOauthTokenPostRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof OAuthApi
-   */
-  public oauthTokenPost(
-    requestParameters: OAuthApiOauthTokenPostRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return OAuthApiFp(this.configuration)
-      .oauthTokenPost(requestParameters.oauthGrantParam, options)
+      .introspectToken(options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
@@ -1834,11 +1834,71 @@ export const PublicApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     *
+     * Get details of a component
+     * @summary Show a Component
+     * @param {number} id
+     * @param {Array<ComponentLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    component: async (
+      id: number,
+      locales?: Array<ComponentLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("component", "id", id);
+      const localVarPath = `/public/components/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List or search components of the organization
      * @summary List Components
-     * @param {Array<PublicComponentsGetLocalesEnum>} [locales]
-     * @param {Array<PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<ComponentsLocalesEnum>} [locales]
+     * @param {Array<ComponentsFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<ComponentsFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterParticipatorySpaceIdIn]
@@ -1854,10 +1914,10 @@ export const PublicApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicComponentsGet: async (
-      locales?: Array<PublicComponentsGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>,
+    components: async (
+      locales?: Array<ComponentsLocalesEnum>,
+      filterManifestNameNotIn?: Array<ComponentsFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<ComponentsFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterParticipatorySpaceIdIn?: Array<string>,
@@ -1979,88 +2039,24 @@ export const PublicApiAxiosParamCreator = function (
       };
     },
     /**
-     *
-     * @summary Show a Component
-     * @param {number} id
-     * @param {Array<PublicComponentsIdGetLocalesEnum>} [locales]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    publicComponentsIdGet: async (
-      id: number,
-      locales?: Array<PublicComponentsIdGetLocalesEnum>,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("publicComponentsIdGet", "id", id);
-      const localVarPath = `/public/components/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (locales) {
-        localVarQueryParameter["locales[]"] = locales;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
+     * Get detail of a space given its manifest and id
      * @summary Show Participatory Space
      * @param {number} id
-     * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
-     * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
+     * @param {SpaceManifestNameEnum} manifestName
+     * @param {Array<SpaceLocalesEnum>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicManifestNameIdGet: async (
+    space: async (
       id: number,
-      manifestName: PublicManifestNameIdGetManifestNameEnum,
-      locales?: Array<PublicManifestNameIdGetLocalesEnum>,
+      manifestName: SpaceManifestNameEnum,
+      locales?: Array<SpaceLocalesEnum>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
-      assertParamExists("publicManifestNameIdGet", "id", id);
+      assertParamExists("space", "id", id);
       // verify required parameter 'manifestName' is not null or undefined
-      assertParamExists(
-        "publicManifestNameIdGet",
-        "manifestName",
-        manifestName,
-      );
+      assertParamExists("space", "manifestName", manifestName);
       const localVarPath = `/public/{manifest_name}/{id}`
         .replace(`{${"id"}}`, encodeURIComponent(String(id)))
         .replace(
@@ -2109,11 +2105,11 @@ export const PublicApiAxiosParamCreator = function (
       };
     },
     /**
-     *
+     * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
      * @summary List Participatory Spaces
-     * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
-     * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<SpacesLocalesEnum>} [locales]
+     * @param {Array<SpacesFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<SpacesFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
@@ -2124,17 +2120,17 @@ export const PublicApiAxiosParamCreator = function (
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {SpacesFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {SpacesFilterTitleBlankEnum} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicSpacesGet: async (
-      locales?: Array<PublicSpacesGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>,
+    spaces: async (
+      locales?: Array<SpacesLocalesEnum>,
+      filterManifestNameNotIn?: Array<SpacesFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<SpacesFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterTitleNotIn?: Array<string>,
@@ -2145,8 +2141,8 @@ export const PublicApiAxiosParamCreator = function (
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum,
-      filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum,
+      filterTitlePresent?: SpacesFilterTitlePresentEnum,
+      filterTitleBlank?: SpacesFilterTitleBlankEnum,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
@@ -2273,11 +2269,47 @@ export const PublicApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = PublicApiAxiosParamCreator(configuration);
   return {
     /**
-     *
+     * Get details of a component
+     * @summary Show a Component
+     * @param {number} id
+     * @param {Array<ComponentLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async component(
+      id: number,
+      locales?: Array<ComponentLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ComponentResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.component(
+        id,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["PublicApi.component"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List or search components of the organization
      * @summary List Components
-     * @param {Array<PublicComponentsGetLocalesEnum>} [locales]
-     * @param {Array<PublicComponentsGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<PublicComponentsGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<ComponentsLocalesEnum>} [locales]
+     * @param {Array<ComponentsFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<ComponentsFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterParticipatorySpaceIdIn]
@@ -2293,10 +2325,10 @@ export const PublicApiFp = function (configuration?: Configuration) {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async publicComponentsGet(
-      locales?: Array<PublicComponentsGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>,
+    async components(
+      locales?: Array<ComponentsLocalesEnum>,
+      filterManifestNameNotIn?: Array<ComponentsFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<ComponentsFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterParticipatorySpaceIdIn?: Array<string>,
@@ -2316,28 +2348,27 @@ export const PublicApiFp = function (configuration?: Configuration) {
         basePath?: string,
       ) => AxiosPromise<ComponentsResponse>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.publicComponentsGet(
-          locales,
-          filterManifestNameNotIn,
-          filterManifestNameIn,
-          filterManifestNameEq,
-          filterManifestNameNotEq,
-          filterParticipatorySpaceIdIn,
-          filterParticipatorySpaceIdEq,
-          filterParticipatorySpaceTypeIn,
-          filterParticipatorySpaceTypeEq,
-          filterNameStart,
-          filterNameEq,
-          filterNameNotEq,
-          filterNameMatches,
-          page,
-          perPage,
-          options,
-        );
+      const localVarAxiosArgs = await localVarAxiosParamCreator.components(
+        locales,
+        filterManifestNameNotIn,
+        filterManifestNameIn,
+        filterManifestNameEq,
+        filterManifestNameNotEq,
+        filterParticipatorySpaceIdIn,
+        filterParticipatorySpaceIdEq,
+        filterParticipatorySpaceTypeIn,
+        filterParticipatorySpaceTypeEq,
+        filterNameStart,
+        filterNameEq,
+        filterNameNotEq,
+        filterNameMatches,
+        page,
+        perPage,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.publicComponentsGet"]?.[
+        operationServerMap["PublicApi.components"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -2349,71 +2380,32 @@ export const PublicApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     *
-     * @summary Show a Component
-     * @param {number} id
-     * @param {Array<PublicComponentsIdGetLocalesEnum>} [locales]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async publicComponentsIdGet(
-      id: number,
-      locales?: Array<PublicComponentsIdGetLocalesEnum>,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<ComponentResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.publicComponentsIdGet(
-          id,
-          locales,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.publicComponentsIdGet"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     *
+     * Get detail of a space given its manifest and id
      * @summary Show Participatory Space
      * @param {number} id
-     * @param {PublicManifestNameIdGetManifestNameEnum} manifestName
-     * @param {Array<PublicManifestNameIdGetLocalesEnum>} [locales]
+     * @param {SpaceManifestNameEnum} manifestName
+     * @param {Array<SpaceLocalesEnum>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async publicManifestNameIdGet(
+    async space(
       id: number,
-      manifestName: PublicManifestNameIdGetManifestNameEnum,
-      locales?: Array<PublicManifestNameIdGetLocalesEnum>,
+      manifestName: SpaceManifestNameEnum,
+      locales?: Array<SpaceLocalesEnum>,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<SpaceResponse>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.publicManifestNameIdGet(
-          id,
-          manifestName,
-          locales,
-          options,
-        );
+      const localVarAxiosArgs = await localVarAxiosParamCreator.space(
+        id,
+        manifestName,
+        locales,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.publicManifestNameIdGet"]?.[
-          localVarOperationServerIndex
-        ]?.url;
+        operationServerMap["PublicApi.space"]?.[localVarOperationServerIndex]
+          ?.url;
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -2423,11 +2415,11 @@ export const PublicApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     *
+     * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
      * @summary List Participatory Spaces
-     * @param {Array<PublicSpacesGetLocalesEnum>} [locales]
-     * @param {Array<PublicSpacesGetFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<PublicSpacesGetFilterManifestNameInEnum>} [filterManifestNameIn]
+     * @param {Array<SpacesLocalesEnum>} [locales]
+     * @param {Array<SpacesFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
+     * @param {Array<SpacesFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {string} [filterManifestNameEq]
      * @param {string} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
@@ -2438,17 +2430,17 @@ export const PublicApiFp = function (configuration?: Configuration) {
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {PublicSpacesGetFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {PublicSpacesGetFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {SpacesFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {SpacesFilterTitleBlankEnum} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async publicSpacesGet(
-      locales?: Array<PublicSpacesGetLocalesEnum>,
-      filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>,
+    async spaces(
+      locales?: Array<SpacesLocalesEnum>,
+      filterManifestNameNotIn?: Array<SpacesFilterManifestNameNotInEnum>,
+      filterManifestNameIn?: Array<SpacesFilterManifestNameInEnum>,
       filterManifestNameEq?: string,
       filterManifestNameNotEq?: string,
       filterTitleNotIn?: Array<string>,
@@ -2459,15 +2451,15 @@ export const PublicApiFp = function (configuration?: Configuration) {
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum,
-      filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum,
+      filterTitlePresent?: SpacesFilterTitlePresentEnum,
+      filterTitleBlank?: SpacesFilterTitleBlankEnum,
       page?: number,
       perPage?: number,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<SpacesResponse>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.publicSpacesGet(
+      const localVarAxiosArgs = await localVarAxiosParamCreator.spaces(
         locales,
         filterManifestNameNotIn,
         filterManifestNameIn,
@@ -2489,9 +2481,8 @@ export const PublicApiFp = function (configuration?: Configuration) {
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.publicSpacesGet"]?.[
-          localVarOperationServerIndex
-        ]?.url;
+        operationServerMap["PublicApi.spaces"]?.[localVarOperationServerIndex]
+          ?.url;
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -2515,18 +2506,33 @@ export const PublicApiFactory = function (
   const localVarFp = PublicApiFp(configuration);
   return {
     /**
-     *
-     * @summary List Components
-     * @param {PublicApiPublicComponentsGetRequest} requestParameters Request parameters.
+     * Get details of a component
+     * @summary Show a Component
+     * @param {PublicApiComponentRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicComponentsGet(
-      requestParameters: PublicApiPublicComponentsGetRequest = {},
+    component(
+      requestParameters: PublicApiComponentRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ComponentResponse> {
+      return localVarFp
+        .component(requestParameters.id, requestParameters.locales, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List or search components of the organization
+     * @summary List Components
+     * @param {PublicApiComponentsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    components(
+      requestParameters: PublicApiComponentsRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ComponentsResponse> {
       return localVarFp
-        .publicComponentsGet(
+        .components(
           requestParameters.locales,
           requestParameters.filterManifestNameNotIn,
           requestParameters.filterManifestNameIn,
@@ -2547,37 +2553,18 @@ export const PublicApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
-     * @summary Show a Component
-     * @param {PublicApiPublicComponentsIdGetRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    publicComponentsIdGet(
-      requestParameters: PublicApiPublicComponentsIdGetRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<ComponentResponse> {
-      return localVarFp
-        .publicComponentsIdGet(
-          requestParameters.id,
-          requestParameters.locales,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     *
+     * Get detail of a space given its manifest and id
      * @summary Show Participatory Space
-     * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
+     * @param {PublicApiSpaceRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicManifestNameIdGet(
-      requestParameters: PublicApiPublicManifestNameIdGetRequest,
+    space(
+      requestParameters: PublicApiSpaceRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<SpaceResponse> {
       return localVarFp
-        .publicManifestNameIdGet(
+        .space(
           requestParameters.id,
           requestParameters.manifestName,
           requestParameters.locales,
@@ -2586,18 +2573,18 @@ export const PublicApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
+     * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
      * @summary List Participatory Spaces
-     * @param {PublicApiPublicSpacesGetRequest} requestParameters Request parameters.
+     * @param {PublicApiSpacesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    publicSpacesGet(
-      requestParameters: PublicApiPublicSpacesGetRequest = {},
+    spaces(
+      requestParameters: PublicApiSpacesRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<SpacesResponse> {
       return localVarFp
-        .publicSpacesGet(
+        .spaces(
           requestParameters.locales,
           requestParameters.filterManifestNameNotIn,
           requestParameters.filterManifestNameIn,
@@ -2623,288 +2610,288 @@ export const PublicApiFactory = function (
 };
 
 /**
- * Request parameters for publicComponentsGet operation in PublicApi.
+ * Request parameters for component operation in PublicApi.
  * @export
- * @interface PublicApiPublicComponentsGetRequest
+ * @interface PublicApiComponentRequest
  */
-export interface PublicApiPublicComponentsGetRequest {
+export interface PublicApiComponentRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof PublicApiComponent
+   */
+  readonly id: number;
+
   /**
    *
    * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponent
    */
-  readonly locales?: Array<PublicComponentsGetLocalesEnum>;
+  readonly locales?: Array<ComponentLocalesEnum>;
+}
+
+/**
+ * Request parameters for components operation in PublicApi.
+ * @export
+ * @interface PublicApiComponentsRequest
+ */
+export interface PublicApiComponentsRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof PublicApiComponents
+   */
+  readonly locales?: Array<ComponentsLocalesEnum>;
 
   /**
    *
    * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
-  readonly filterManifestNameNotIn?: Array<PublicComponentsGetFilterManifestNameNotInEnum>;
+  readonly filterManifestNameNotIn?: Array<ComponentsFilterManifestNameNotInEnum>;
 
   /**
    *
    * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
-  readonly filterManifestNameIn?: Array<PublicComponentsGetFilterManifestNameInEnum>;
+  readonly filterManifestNameIn?: Array<ComponentsFilterManifestNameInEnum>;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterManifestNameEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterManifestNameNotEq?: string;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterParticipatorySpaceIdIn?: Array<string>;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterParticipatorySpaceIdEq?: string;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterParticipatorySpaceTypeIn?: Array<string>;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterParticipatorySpaceTypeEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterNameStart?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterNameEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterNameNotEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly filterNameMatches?: string;
 
   /**
    * Page number for pagination
    * @type {number}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly page?: number;
 
   /**
    * Number of items per page
    * @type {number}
-   * @memberof PublicApiPublicComponentsGet
+   * @memberof PublicApiComponents
    */
   readonly perPage?: number;
 }
 
 /**
- * Request parameters for publicComponentsIdGet operation in PublicApi.
+ * Request parameters for space operation in PublicApi.
  * @export
- * @interface PublicApiPublicComponentsIdGetRequest
+ * @interface PublicApiSpaceRequest
  */
-export interface PublicApiPublicComponentsIdGetRequest {
+export interface PublicApiSpaceRequest {
   /**
    *
    * @type {number}
-   * @memberof PublicApiPublicComponentsIdGet
-   */
-  readonly id: number;
-
-  /**
-   *
-   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof PublicApiPublicComponentsIdGet
-   */
-  readonly locales?: Array<PublicComponentsIdGetLocalesEnum>;
-}
-
-/**
- * Request parameters for publicManifestNameIdGet operation in PublicApi.
- * @export
- * @interface PublicApiPublicManifestNameIdGetRequest
- */
-export interface PublicApiPublicManifestNameIdGetRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof PublicApiPublicManifestNameIdGet
+   * @memberof PublicApiSpace
    */
   readonly id: number;
 
   /**
    *
    * @type {'participatory_processes' | 'assemblies'}
-   * @memberof PublicApiPublicManifestNameIdGet
+   * @memberof PublicApiSpace
    */
-  readonly manifestName: PublicManifestNameIdGetManifestNameEnum;
+  readonly manifestName: SpaceManifestNameEnum;
 
   /**
    *
    * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof PublicApiPublicManifestNameIdGet
+   * @memberof PublicApiSpace
    */
-  readonly locales?: Array<PublicManifestNameIdGetLocalesEnum>;
+  readonly locales?: Array<SpaceLocalesEnum>;
 }
 
 /**
- * Request parameters for publicSpacesGet operation in PublicApi.
+ * Request parameters for spaces operation in PublicApi.
  * @export
- * @interface PublicApiPublicSpacesGetRequest
+ * @interface PublicApiSpacesRequest
  */
-export interface PublicApiPublicSpacesGetRequest {
+export interface PublicApiSpacesRequest {
   /**
    *
    * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
-  readonly locales?: Array<PublicSpacesGetLocalesEnum>;
+  readonly locales?: Array<SpacesLocalesEnum>;
 
   /**
    *
    * @type {Array<'participatory_processes' | 'assemblies'>}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
-  readonly filterManifestNameNotIn?: Array<PublicSpacesGetFilterManifestNameNotInEnum>;
+  readonly filterManifestNameNotIn?: Array<SpacesFilterManifestNameNotInEnum>;
 
   /**
    *
    * @type {Array<'participatory_processes' | 'assemblies'>}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
-  readonly filterManifestNameIn?: Array<PublicSpacesGetFilterManifestNameInEnum>;
+  readonly filterManifestNameIn?: Array<SpacesFilterManifestNameInEnum>;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterManifestNameEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterManifestNameNotEq?: string;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleNotIn?: Array<string>;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleIn?: Array<string>;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleStart?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleNotStart?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleNotEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleMatches?: string;
 
   /**
    *
    * @type {string}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly filterTitleDoesNotMatch?: string;
 
   /**
    *
    * @type {'1' | '0'}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
-  readonly filterTitlePresent?: PublicSpacesGetFilterTitlePresentEnum;
+  readonly filterTitlePresent?: SpacesFilterTitlePresentEnum;
 
   /**
    *
    * @type {'1' | '0'}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
-  readonly filterTitleBlank?: PublicSpacesGetFilterTitleBlankEnum;
+  readonly filterTitleBlank?: SpacesFilterTitleBlankEnum;
 
   /**
    * Page number for pagination
    * @type {number}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly page?: number;
 
   /**
    * Number of items per page
    * @type {number}
-   * @memberof PublicApiPublicSpacesGet
+   * @memberof PublicApiSpaces
    */
   readonly perPage?: number;
 }
@@ -2917,19 +2904,36 @@ export interface PublicApiPublicSpacesGetRequest {
  */
 export class PublicApi extends BaseAPI {
   /**
-   *
-   * @summary List Components
-   * @param {PublicApiPublicComponentsGetRequest} requestParameters Request parameters.
+   * Get details of a component
+   * @summary Show a Component
+   * @param {PublicApiComponentRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public publicComponentsGet(
-    requestParameters: PublicApiPublicComponentsGetRequest = {},
+  public component(
+    requestParameters: PublicApiComponentRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .publicComponentsGet(
+      .component(requestParameters.id, requestParameters.locales, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List or search components of the organization
+   * @summary List Components
+   * @param {PublicApiComponentsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof PublicApi
+   */
+  public components(
+    requestParameters: PublicApiComponentsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return PublicApiFp(this.configuration)
+      .components(
         requestParameters.locales,
         requestParameters.filterManifestNameNotIn,
         requestParameters.filterManifestNameIn,
@@ -2951,40 +2955,19 @@ export class PublicApi extends BaseAPI {
   }
 
   /**
-   *
-   * @summary Show a Component
-   * @param {PublicApiPublicComponentsIdGetRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof PublicApi
-   */
-  public publicComponentsIdGet(
-    requestParameters: PublicApiPublicComponentsIdGetRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return PublicApiFp(this.configuration)
-      .publicComponentsIdGet(
-        requestParameters.id,
-        requestParameters.locales,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
+   * Get detail of a space given its manifest and id
    * @summary Show Participatory Space
-   * @param {PublicApiPublicManifestNameIdGetRequest} requestParameters Request parameters.
+   * @param {PublicApiSpaceRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public publicManifestNameIdGet(
-    requestParameters: PublicApiPublicManifestNameIdGetRequest,
+  public space(
+    requestParameters: PublicApiSpaceRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .publicManifestNameIdGet(
+      .space(
         requestParameters.id,
         requestParameters.manifestName,
         requestParameters.locales,
@@ -2994,19 +2977,19 @@ export class PublicApi extends BaseAPI {
   }
 
   /**
-   *
+   * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
    * @summary List Participatory Spaces
-   * @param {PublicApiPublicSpacesGetRequest} requestParameters Request parameters.
+   * @param {PublicApiSpacesRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PublicApi
    */
-  public publicSpacesGet(
-    requestParameters: PublicApiPublicSpacesGetRequest = {},
+  public spaces(
+    requestParameters: PublicApiSpacesRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return PublicApiFp(this.configuration)
-      .publicSpacesGet(
+      .spaces(
         requestParameters.locales,
         requestParameters.filterManifestNameNotIn,
         requestParameters.filterManifestNameIn,
@@ -3033,7 +3016,7 @@ export class PublicApi extends BaseAPI {
 /**
  * @export
  */
-export const PublicComponentsGetLocalesEnum = {
+export const ComponentLocalesEnum = {
   En: "en",
   Bg: "bg",
   Ar: "ar",
@@ -3083,12 +3066,67 @@ export const PublicComponentsGetLocalesEnum = {
   ZhCn: "zh-CN",
   ZhTw: "zh-TW",
 } as const;
-export type PublicComponentsGetLocalesEnum =
-  (typeof PublicComponentsGetLocalesEnum)[keyof typeof PublicComponentsGetLocalesEnum];
+export type ComponentLocalesEnum =
+  (typeof ComponentLocalesEnum)[keyof typeof ComponentLocalesEnum];
 /**
  * @export
  */
-export const PublicComponentsGetFilterManifestNameNotInEnum = {
+export const ComponentsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type ComponentsLocalesEnum =
+  (typeof ComponentsLocalesEnum)[keyof typeof ComponentsLocalesEnum];
+/**
+ * @export
+ */
+export const ComponentsFilterManifestNameNotInEnum = {
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",
@@ -3099,12 +3137,12 @@ export const PublicComponentsGetFilterManifestNameNotInEnum = {
   Sortitions: "sortitions",
   Blogs: "blogs",
 } as const;
-export type PublicComponentsGetFilterManifestNameNotInEnum =
-  (typeof PublicComponentsGetFilterManifestNameNotInEnum)[keyof typeof PublicComponentsGetFilterManifestNameNotInEnum];
+export type ComponentsFilterManifestNameNotInEnum =
+  (typeof ComponentsFilterManifestNameNotInEnum)[keyof typeof ComponentsFilterManifestNameNotInEnum];
 /**
  * @export
  */
-export const PublicComponentsGetFilterManifestNameInEnum = {
+export const ComponentsFilterManifestNameInEnum = {
   Pages: "pages",
   Proposals: "proposals",
   Meetings: "meetings",
@@ -3115,12 +3153,21 @@ export const PublicComponentsGetFilterManifestNameInEnum = {
   Sortitions: "sortitions",
   Blogs: "blogs",
 } as const;
-export type PublicComponentsGetFilterManifestNameInEnum =
-  (typeof PublicComponentsGetFilterManifestNameInEnum)[keyof typeof PublicComponentsGetFilterManifestNameInEnum];
+export type ComponentsFilterManifestNameInEnum =
+  (typeof ComponentsFilterManifestNameInEnum)[keyof typeof ComponentsFilterManifestNameInEnum];
 /**
  * @export
  */
-export const PublicComponentsIdGetLocalesEnum = {
+export const SpaceManifestNameEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type SpaceManifestNameEnum =
+  (typeof SpaceManifestNameEnum)[keyof typeof SpaceManifestNameEnum];
+/**
+ * @export
+ */
+export const SpaceLocalesEnum = {
   En: "en",
   Bg: "bg",
   Ar: "ar",
@@ -3170,21 +3217,12 @@ export const PublicComponentsIdGetLocalesEnum = {
   ZhCn: "zh-CN",
   ZhTw: "zh-TW",
 } as const;
-export type PublicComponentsIdGetLocalesEnum =
-  (typeof PublicComponentsIdGetLocalesEnum)[keyof typeof PublicComponentsIdGetLocalesEnum];
+export type SpaceLocalesEnum =
+  (typeof SpaceLocalesEnum)[keyof typeof SpaceLocalesEnum];
 /**
  * @export
  */
-export const PublicManifestNameIdGetManifestNameEnum = {
-  ParticipatoryProcesses: "participatory_processes",
-  Assemblies: "assemblies",
-} as const;
-export type PublicManifestNameIdGetManifestNameEnum =
-  (typeof PublicManifestNameIdGetManifestNameEnum)[keyof typeof PublicManifestNameIdGetManifestNameEnum];
-/**
- * @export
- */
-export const PublicManifestNameIdGetLocalesEnum = {
+export const SpacesLocalesEnum = {
   En: "en",
   Bg: "bg",
   Ar: "ar",
@@ -3234,99 +3272,44 @@ export const PublicManifestNameIdGetLocalesEnum = {
   ZhCn: "zh-CN",
   ZhTw: "zh-TW",
 } as const;
-export type PublicManifestNameIdGetLocalesEnum =
-  (typeof PublicManifestNameIdGetLocalesEnum)[keyof typeof PublicManifestNameIdGetLocalesEnum];
+export type SpacesLocalesEnum =
+  (typeof SpacesLocalesEnum)[keyof typeof SpacesLocalesEnum];
 /**
  * @export
  */
-export const PublicSpacesGetLocalesEnum = {
-  En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
-  Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
-} as const;
-export type PublicSpacesGetLocalesEnum =
-  (typeof PublicSpacesGetLocalesEnum)[keyof typeof PublicSpacesGetLocalesEnum];
-/**
- * @export
- */
-export const PublicSpacesGetFilterManifestNameNotInEnum = {
+export const SpacesFilterManifestNameNotInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
 } as const;
-export type PublicSpacesGetFilterManifestNameNotInEnum =
-  (typeof PublicSpacesGetFilterManifestNameNotInEnum)[keyof typeof PublicSpacesGetFilterManifestNameNotInEnum];
+export type SpacesFilterManifestNameNotInEnum =
+  (typeof SpacesFilterManifestNameNotInEnum)[keyof typeof SpacesFilterManifestNameNotInEnum];
 /**
  * @export
  */
-export const PublicSpacesGetFilterManifestNameInEnum = {
+export const SpacesFilterManifestNameInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
 } as const;
-export type PublicSpacesGetFilterManifestNameInEnum =
-  (typeof PublicSpacesGetFilterManifestNameInEnum)[keyof typeof PublicSpacesGetFilterManifestNameInEnum];
+export type SpacesFilterManifestNameInEnum =
+  (typeof SpacesFilterManifestNameInEnum)[keyof typeof SpacesFilterManifestNameInEnum];
 /**
  * @export
  */
-export const PublicSpacesGetFilterTitlePresentEnum = {
+export const SpacesFilterTitlePresentEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type PublicSpacesGetFilterTitlePresentEnum =
-  (typeof PublicSpacesGetFilterTitlePresentEnum)[keyof typeof PublicSpacesGetFilterTitlePresentEnum];
+export type SpacesFilterTitlePresentEnum =
+  (typeof SpacesFilterTitlePresentEnum)[keyof typeof SpacesFilterTitlePresentEnum];
 /**
  * @export
  */
-export const PublicSpacesGetFilterTitleBlankEnum = {
+export const SpacesFilterTitleBlankEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type PublicSpacesGetFilterTitleBlankEnum =
-  (typeof PublicSpacesGetFilterTitleBlankEnum)[keyof typeof PublicSpacesGetFilterTitleBlankEnum];
+export type SpacesFilterTitleBlankEnum =
+  (typeof SpacesFilterTitleBlankEnum)[keyof typeof SpacesFilterTitleBlankEnum];
 
 /**
  * SystemApi - axios parameter creator
@@ -3337,16 +3320,16 @@ export const SystemApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     *
+     * List available organizations
      * @summary List available organizations
-     * @param {Array<SystemOrganizationsGetLocalesEnum>} [locales]
+     * @param {Array<OrganizationsLocalesEnum>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    systemOrganizationsGet: async (
-      locales?: Array<SystemOrganizationsGetLocalesEnum>,
+    organizations: async (
+      locales?: Array<OrganizationsLocalesEnum>,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
@@ -3398,7 +3381,7 @@ export const SystemApiAxiosParamCreator = function (
       };
     },
     /**
-     *
+     * List or search users of the organization
      * @summary List available Users
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -3410,13 +3393,13 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameNotEq]
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
-     * @param {SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
      * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    systemUsersGet: async (
+    users: async (
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -3427,8 +3410,8 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameNotEq?: string,
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum,
-      filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum,
+      filterNicknamePresent?: UsersFilterNicknamePresentEnum,
+      filterNicknameBlank?: UsersFilterNicknameBlankEnum,
       filterExtraCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -3534,16 +3517,16 @@ export const SystemApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = SystemApiAxiosParamCreator(configuration);
   return {
     /**
-     *
+     * List available organizations
      * @summary List available organizations
-     * @param {Array<SystemOrganizationsGetLocalesEnum>} [locales]
+     * @param {Array<OrganizationsLocalesEnum>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async systemOrganizationsGet(
-      locales?: Array<SystemOrganizationsGetLocalesEnum>,
+    async organizations(
+      locales?: Array<OrganizationsLocalesEnum>,
       page?: number,
       perPage?: number,
       options?: RawAxiosRequestConfig,
@@ -3553,16 +3536,15 @@ export const SystemApiFp = function (configuration?: Configuration) {
         basePath?: string,
       ) => AxiosPromise<OrganizationsResponse>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.systemOrganizationsGet(
-          locales,
-          page,
-          perPage,
-          options,
-        );
+      const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
+        locales,
+        page,
+        perPage,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.systemOrganizationsGet"]?.[
+        operationServerMap["SystemApi.organizations"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -3574,7 +3556,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     *
+     * List or search users of the organization
      * @summary List available Users
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -3586,13 +3568,13 @@ export const SystemApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameNotEq]
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
-     * @param {SystemUsersGetFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {SystemUsersGetFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
      * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async systemUsersGet(
+    async users(
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -3603,14 +3585,14 @@ export const SystemApiFp = function (configuration?: Configuration) {
       filterNicknameNotEq?: string,
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum,
-      filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum,
+      filterNicknamePresent?: UsersFilterNicknamePresentEnum,
+      filterNicknameBlank?: UsersFilterNicknameBlankEnum,
       filterExtraCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.systemUsersGet(
+      const localVarAxiosArgs = await localVarAxiosParamCreator.users(
         page,
         perPage,
         filterNicknameNotIn,
@@ -3628,9 +3610,8 @@ export const SystemApiFp = function (configuration?: Configuration) {
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.systemUsersGet"]?.[
-          localVarOperationServerIndex
-        ]?.url;
+        operationServerMap["SystemApi.users"]?.[localVarOperationServerIndex]
+          ?.url;
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -3654,18 +3635,18 @@ export const SystemApiFactory = function (
   const localVarFp = SystemApiFp(configuration);
   return {
     /**
-     *
+     * List available organizations
      * @summary List available organizations
-     * @param {SystemApiSystemOrganizationsGetRequest} requestParameters Request parameters.
+     * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    systemOrganizationsGet(
-      requestParameters: SystemApiSystemOrganizationsGetRequest = {},
+    organizations(
+      requestParameters: SystemApiOrganizationsRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<OrganizationsResponse> {
       return localVarFp
-        .systemOrganizationsGet(
+        .organizations(
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -3674,18 +3655,18 @@ export const SystemApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
+     * List or search users of the organization
      * @summary List available Users
-     * @param {SystemApiSystemUsersGetRequest} requestParameters Request parameters.
+     * @param {SystemApiUsersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    systemUsersGet(
-      requestParameters: SystemApiSystemUsersGetRequest = {},
+    users(
+      requestParameters: SystemApiUsersRequest = {},
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<UsersResponse> {
       return localVarFp
-        .systemUsersGet(
+        .users(
           requestParameters.page,
           requestParameters.perPage,
           requestParameters.filterNicknameNotIn,
@@ -3707,127 +3688,127 @@ export const SystemApiFactory = function (
 };
 
 /**
- * Request parameters for systemOrganizationsGet operation in SystemApi.
+ * Request parameters for organizations operation in SystemApi.
  * @export
- * @interface SystemApiSystemOrganizationsGetRequest
+ * @interface SystemApiOrganizationsRequest
  */
-export interface SystemApiSystemOrganizationsGetRequest {
+export interface SystemApiOrganizationsRequest {
   /**
    *
    * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof SystemApiSystemOrganizationsGet
+   * @memberof SystemApiOrganizations
    */
-  readonly locales?: Array<SystemOrganizationsGetLocalesEnum>;
+  readonly locales?: Array<OrganizationsLocalesEnum>;
 
   /**
    * Page number for pagination
    * @type {number}
-   * @memberof SystemApiSystemOrganizationsGet
+   * @memberof SystemApiOrganizations
    */
   readonly page?: number;
 
   /**
    * Number of items per page
    * @type {number}
-   * @memberof SystemApiSystemOrganizationsGet
+   * @memberof SystemApiOrganizations
    */
   readonly perPage?: number;
 }
 
 /**
- * Request parameters for systemUsersGet operation in SystemApi.
+ * Request parameters for users operation in SystemApi.
  * @export
- * @interface SystemApiSystemUsersGetRequest
+ * @interface SystemApiUsersRequest
  */
-export interface SystemApiSystemUsersGetRequest {
+export interface SystemApiUsersRequest {
   /**
    * Page number for pagination
    * @type {number}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly page?: number;
 
   /**
    * Number of items per page
    * @type {number}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly perPage?: number;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameNotIn?: Array<string>;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameIn?: Array<string>;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameStart?: string;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameNotStart?: string;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameNotEq?: string;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameMatches?: string;
 
   /**
    *
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterNicknameDoesNotMatch?: string;
 
   /**
    *
    * @type {'1' | '0'}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
-  readonly filterNicknamePresent?: SystemUsersGetFilterNicknamePresentEnum;
+  readonly filterNicknamePresent?: UsersFilterNicknamePresentEnum;
 
   /**
    *
    * @type {'1' | '0'}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
-  readonly filterNicknameBlank?: SystemUsersGetFilterNicknameBlankEnum;
+  readonly filterNicknameBlank?: UsersFilterNicknameBlankEnum;
 
   /**
    * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
    * @type {string}
-   * @memberof SystemApiSystemUsersGet
+   * @memberof SystemApiUsers
    */
   readonly filterExtraCont?: string;
 }
@@ -3840,19 +3821,19 @@ export interface SystemApiSystemUsersGetRequest {
  */
 export class SystemApi extends BaseAPI {
   /**
-   *
+   * List available organizations
    * @summary List available organizations
-   * @param {SystemApiSystemOrganizationsGetRequest} requestParameters Request parameters.
+   * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SystemApi
    */
-  public systemOrganizationsGet(
-    requestParameters: SystemApiSystemOrganizationsGetRequest = {},
+  public organizations(
+    requestParameters: SystemApiOrganizationsRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
-      .systemOrganizationsGet(
+      .organizations(
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -3862,19 +3843,19 @@ export class SystemApi extends BaseAPI {
   }
 
   /**
-   *
+   * List or search users of the organization
    * @summary List available Users
-   * @param {SystemApiSystemUsersGetRequest} requestParameters Request parameters.
+   * @param {SystemApiUsersRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SystemApi
    */
-  public systemUsersGet(
-    requestParameters: SystemApiSystemUsersGetRequest = {},
+  public users(
+    requestParameters: SystemApiUsersRequest = {},
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
-      .systemUsersGet(
+      .users(
         requestParameters.page,
         requestParameters.perPage,
         requestParameters.filterNicknameNotIn,
@@ -3897,7 +3878,7 @@ export class SystemApi extends BaseAPI {
 /**
  * @export
  */
-export const SystemOrganizationsGetLocalesEnum = {
+export const OrganizationsLocalesEnum = {
   En: "en",
   Bg: "bg",
   Ar: "ar",
@@ -3947,23 +3928,23 @@ export const SystemOrganizationsGetLocalesEnum = {
   ZhCn: "zh-CN",
   ZhTw: "zh-TW",
 } as const;
-export type SystemOrganizationsGetLocalesEnum =
-  (typeof SystemOrganizationsGetLocalesEnum)[keyof typeof SystemOrganizationsGetLocalesEnum];
+export type OrganizationsLocalesEnum =
+  (typeof OrganizationsLocalesEnum)[keyof typeof OrganizationsLocalesEnum];
 /**
  * @export
  */
-export const SystemUsersGetFilterNicknamePresentEnum = {
+export const UsersFilterNicknamePresentEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type SystemUsersGetFilterNicknamePresentEnum =
-  (typeof SystemUsersGetFilterNicknamePresentEnum)[keyof typeof SystemUsersGetFilterNicknamePresentEnum];
+export type UsersFilterNicknamePresentEnum =
+  (typeof UsersFilterNicknamePresentEnum)[keyof typeof UsersFilterNicknamePresentEnum];
 /**
  * @export
  */
-export const SystemUsersGetFilterNicknameBlankEnum = {
+export const UsersFilterNicknameBlankEnum = {
   _1: "1",
   _0: "0",
 } as const;
-export type SystemUsersGetFilterNicknameBlankEnum =
-  (typeof SystemUsersGetFilterNicknameBlankEnum)[keyof typeof SystemUsersGetFilterNicknameBlankEnum];
+export type UsersFilterNicknameBlankEnum =
+  (typeof UsersFilterNicknameBlankEnum)[keyof typeof UsersFilterNicknameBlankEnum];

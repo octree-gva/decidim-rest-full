@@ -7,6 +7,8 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
       tags "System"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
+      operationId "organizations"
+      description "List available organizations"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false

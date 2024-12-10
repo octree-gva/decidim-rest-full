@@ -1,6 +1,65 @@
-#! /bin/bash
+#!/bin/bash
 set -e
-echo -n "generating openapi spec .................................. "
-SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb --format Rswag::Specs::SwaggerFormatter --order defined  > /dev/null 2>&1
-mv -f spec/decidim_dummy_app/swagger/v1/swagger.json ./website/static/openapi.json  > /dev/null 2>&1
-echo "ok"
+
+# Default values for options
+QUIET=0
+OUTPUT_FILE="./openapi.json"
+
+# Print messages unless quiet mode is active
+log() {
+  if [[ $QUIET -eq 0 ]]; then
+    echo "$@"
+  fi
+}
+
+# Help menu
+show_help() {
+  cat <<EOF
+Usage: $0 [options]
+
+Options:
+  --quiet, -q       Suppress output messages.
+  --out, -o FILE    Specify the output file (default: $OUTPUT_FILE).
+  --help, -h        Display this help menu.
+EOF
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --quiet|-q)
+      QUIET=1
+      shift
+      ;;
+    --out|-o)
+      OUTPUT_FILE="$2"
+      shift 2
+      ;;
+    --help|-h)
+      show_help
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      show_help
+      exit 1
+      ;;
+  esac
+done
+
+log "Generating OpenAPI spec"
+log "~~~~~~~~~~~~~~~~~~~~~~~"
+log "quiet: $QUIET"
+log "output: $OUTPUT_FILE"
+log "~~~~~~~~~~~~~~~~~~~~~~~"
+
+if [[ $QUIET -eq 1 ]]; then
+  SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb \
+    --format Rswag::Specs::SwaggerFormatter --order defined > /dev/null 2>&1
+else
+  SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb \
+    --format Rswag::Specs::SwaggerFormatter --order defined
+fi
+
+mv -f spec/decidim_dummy_app/swagger/v1/swagger.json "$OUTPUT_FILE"
+log "done, $OUTPUT_FILE written."

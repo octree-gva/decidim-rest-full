@@ -7,6 +7,9 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       tags "Public"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
+      operationId "spaces"
+      description "List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space."
+
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       Api::Definitions::FILTER_PARAM.call(
         "manifest_name",

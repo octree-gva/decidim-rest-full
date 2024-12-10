@@ -34,6 +34,9 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       consumes "application/json"
       produces "application/json"
       security([])
+      operationId "createToken"
+      description "Create a oauth token for the given scopes"
+
       parameter name: :body, in: :body, required: true, schema: { "$ref" => "#/components/schemas/oauth_grant_param" }
       response "200", "Token returned" do
         context "when user does not exists" do

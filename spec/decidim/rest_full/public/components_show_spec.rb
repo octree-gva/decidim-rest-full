@@ -7,6 +7,9 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       tags "Public"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
+      operationId "component"
+      description "Get details of a component"
+
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: "id", in: :path, schema: { type: :integer }
 
