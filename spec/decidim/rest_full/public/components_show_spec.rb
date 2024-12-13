@@ -43,6 +43,48 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
           end
         end
 
+        context "with blog" do
+          let!(:blog_component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
+          let!(:blogs) { create_list(:post, 10, component: blog_component, author: create(:user, :confirmed, organization: organization), published_at: Time.zone.now) }
+          let(:id) { blog_component.id }
+
+          run_test!(example_name: :ok_blog) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["relationships"]["resources"]["data"].size).to eq(10)
+          end
+        end
+
+        context "with empty blog" do
+          let!(:blog_component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
+          let(:id) { blog_component.id }
+
+          run_test! do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["relationships"]["resources"]["data"].size).to eq(0)
+          end
+        end
+
+        context "with proposal" do
+          let!(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+          let!(:proposals) { create_list(:proposal, 10, component: proposal_component, published_at: Time.zone.now) }
+          let(:id) { proposal_component.id }
+
+          run_test!(example_name: :ok_proposal) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["relationships"]["resources"]["data"].size).to eq(10)
+          end
+        end
+
+        context "with empty proposal" do
+          let!(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+          let(:id) { proposal_component.id }
+
+          run_test! do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["relationships"]["resources"]["data"].size).to eq(0)
+          end
+        end
+
         context "with locales[]=fr" do
           let(:"locales[]") { %w(fr) }
 

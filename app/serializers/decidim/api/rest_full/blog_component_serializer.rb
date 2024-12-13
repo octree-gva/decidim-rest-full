@@ -5,7 +5,7 @@ module Decidim
     module RestFull
       class BlogComponentSerializer < ComponentSerializer
         def self.resources_for(component, act_as)
-          resources = ::Decidim::Blogs::Blog.where(component: component)
+          resources = ::Decidim::Blogs::Post.where(component: component)
           if act_as.nil?
             resources.published
           else
