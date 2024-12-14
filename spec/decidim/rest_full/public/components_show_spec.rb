@@ -21,8 +21,8 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       let(:"locales[]") { %w(en fr) }
 
       let!(:api_client) { create(:api_client, organization: organization) }
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:client_creds) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+      let(:Authorization) { "Bearer #{client_creds.token}" }
 
       before do
         host! organization.host

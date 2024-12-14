@@ -22,7 +22,9 @@ module Decidim
 
           def show
             component_id = params.require(:id).to_i
-            component = find_components(Decidim::Component.where(id: component_id)).first!
+            component = find_components(Decidim::Component.where(id: component_id)).first
+            raise Decidim::RestFull::ApiException::NotFound, "Component not found" unless component
+
             serializer = "Decidim::Api::RestFull::#{component.manifest_name.singularize.camelize}ComponentSerializer".constantize
 
             render json: serializer.new(

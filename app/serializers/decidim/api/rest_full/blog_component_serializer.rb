@@ -9,7 +9,7 @@ module Decidim
           if act_as.nil?
             resources.published
           else
-            resources.published.or(resources.where(published_at: nil, decidim_user_id: params[:act_as].id))
+            resources.published.or(resources.where(published_at: nil, decidim_user_id: act_as.id))
           end
         end
         has_many :resources, meta: (proc do |component, params|
