@@ -21,8 +21,10 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       let(:"locales[]") { %w(en fr) }
 
       let!(:api_client) { create(:api_client, organization: organization) }
-      let!(:client_creds) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-      let(:Authorization) { "Bearer #{client_creds.token}" }
+      let(:user) { create(:user, locale: "fr", organization: organization) }
+
+      let!(:impersonate_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
+      let(:Authorization) { "Bearer #{impersonate_token.token}" }
 
       before do
         host! organization.host
@@ -64,14 +66,20 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
           end
         end
 
-        context "with proposal" do
+        context "with published proposals, and drafted ones" do
           let!(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
           let!(:proposals) { create_list(:proposal, 10, component: proposal_component, published_at: Time.zone.now) }
+          let!(:draft_proposals) do
+            proposal = create(:proposal, component: proposal_component, published_at: nil)
+            proposal.coauthorships.create(decidim_author_id: user.id, decidim_author_type: "Decidim::UserBaseEntity")
+            proposal.save!
+            create(:proposal, component: proposal_component, published_at: nil)
+          end
           let(:id) { proposal_component.id }
 
           run_test!(example_name: :ok_proposal) do |example|
             data = JSON.parse(example.body)["data"]
-            expect(data["relationships"]["resources"]["data"].size).to eq(10)
+            expect(data["relationships"]["resources"]["data"].size).to eq(11)
           end
         end
 

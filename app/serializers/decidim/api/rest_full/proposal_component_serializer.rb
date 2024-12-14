@@ -9,7 +9,12 @@ module Decidim
           if act_as.nil?
             resources.published
           else
-            resources.published.or(resources.where(published_at: nil, decidim_user_id: act_as.id))
+            resources.joins(:coauthorships).published.or(
+              resources.joins(:coauthorships).where(
+                published_at: nil,
+                coauthorships: { decidim_author_id: act_as.id }
+              )
+            )
           end
         end
 
