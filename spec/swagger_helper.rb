@@ -121,8 +121,19 @@ RSpec.configure do |config|
           user: Api::Definitions::USER,
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,
+          blog: Api::Definitions::BLOG,
+          blog_response: {
+            type: :object,
+            description: "Details of a given Blog Post"
+            properties: {
+              data: { "$ref" => "#/components/schemas/blog" }
+            },
+            required: [:data]
+
+          },
           component_response: {
             type: :object,
+            description: "Details of a given component",
             properties: {
               data: { "$ref" => "#/components/schemas/component" }
             },
@@ -130,6 +141,7 @@ RSpec.configure do |config|
           },
           components_response: {
             type: :object,
+            description: "List of components",
             properties: {
               data: {
                 type: :array,

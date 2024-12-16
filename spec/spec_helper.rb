@@ -21,6 +21,7 @@ require "decidim/rest_full/test/definitions/locales_param"
 require "decidim/rest_full/test/definitions/space"
 require "decidim/rest_full/test/definitions/component"
 require "decidim/rest_full/test/definitions/filter_param"
+require "decidim/rest_full/test/definitions/blog"
 require "decidim/rest_full/test/definitions/introspect_data"
 
 require "rswag/specs"
