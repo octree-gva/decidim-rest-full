@@ -15,7 +15,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       Api::Definitions::FILTER_PARAM.call("nickname", { type: :string }, %w(lt gt)).each do |param|
         parameter(**param)
       end
-      parameter name: :"filter[extra_cont]",
+      parameter name: :"filter[extended_data_cont]",
                 schema: { type: :string },
                 in: :query,
                 required: false,
@@ -63,36 +63,62 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
           end
         end
 
-        context "with filter[extra_cont] results" do
-          before do
-            create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization: organization)
-            create_list(:user, 5, organization: organization)
-          end
+        context "without system.users.extended_data.read permission" do
+          context "and return empty extended_data" do
+            before do
+              create(:user, nickname: "specific-data", extended_data: { "key.path.is.awesome" => "bar" }, organization: organization)
+              create_list(:user, 5, organization: organization)
+            end
 
-          let(:"filter[extra_cont]") do
-            '"foo": "bar"'
-          end
-
-          run_test!(example_name: :filter_by_extended_data) do |example|
-            data = JSON.parse(example.body)["data"]
-            expect(data.size).to eq(1)
-            expect(data.first["attributes"]["nickname"]).to eq("specific-data")
+            run_test! do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.reject { |d| d["attributes"]["extended_data"].empty? }).to be_empty
+            end
           end
         end
 
-        context "with filter[extra_cont], no results" do
-          before do
-            create(:user, nickname: "specific-data", extended_data: { foo: "404" }, organization: organization)
-            create_list(:user, 5, organization: organization)
+        context "with system.users.extended_data.read permission" do
+          let(:api_client) do
+            api_client = create(:api_client, organization: organization, scopes: "system")
+            api_client.permissions = [
+              api_client.permissions.build(permission: "system.users.read"),
+              api_client.permissions.build(permission: "system.users.extended_data.read")
+            ]
+            api_client.save!
+            api_client
           end
 
-          let(:"filter[extra_cont]") do
-            '"foo": "bar"'
+          context "with filter[extended_data_cont] results" do
+            before do
+              create(:user, nickname: "specific-data", extended_data: { "key" => { "is" => "awesome" } }, organization: organization)
+              create_list(:user, 5, organization: organization)
+            end
+
+            let(:"filter[extended_data_cont]") do
+              '"key": {"is": "awesome"}'
+            end
+
+            run_test!(example_name: :filter_by_extended_data) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.size).to eq(1)
+              expect(data.first["attributes"]["nickname"]).to eq("specific-data")
+            end
           end
 
-          run_test!(example_name: :filter_by_extended_data) do |example|
-            data = JSON.parse(example.body)["data"]
-            expect(data.size).to eq(0)
+          context "with filter[extended_data_cont], no results" do
+            before do
+              create(:user, nickname: "specific-data", extended_data: { foo: "404" }, organization: organization)
+              create_list(:user, 5, organization: organization)
+            end
+
+            let(:"filter[extended_data_cont]") do
+              '"foo": "bar"'
+            end
+
+            run_test!(example_name: :filter_by_extended_data) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.size).to eq(0)
+            end
           end
         end
 
@@ -144,13 +170,31 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
           end
         end
 
-        context "with no system.users.read permission" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+        context "without system.users.extended_data.read permission" do
+          context "and list user" do
+            let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
+            let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
-          run_test! do |_example|
-            expect(response.status).to eq(403)
-            expect(response.body).to include("Forbidden")
+            run_test! do |_example|
+              expect(response.status).to eq(403)
+              expect(response.body).to include("Forbidden")
+            end
+          end
+
+          context "with extended_data_cont" do
+            before do
+              create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization: organization)
+              create_list(:user, 5, organization: organization)
+            end
+
+            let(:"filter[extended_data_cont]") do
+              '"foo": "bar"'
+            end
+
+            run_test! do |_example|
+              expect(response.status).to eq(403)
+              expect(response.body).to include("Forbidden")
+            end
           end
         end
       end
@@ -169,7 +213,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         run_test! do |response|
           expect(response.status).to eq(500)
-          expect(response.body).to include("Intentional error for testing")
+          expect(response.body).to include("Internal Server Error")
         end
       end
     end

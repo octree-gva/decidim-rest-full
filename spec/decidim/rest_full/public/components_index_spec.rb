@@ -182,7 +182,7 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
 
         run_test! do |response|
           expect(response.status).to eq(500)
-          expect(response.body).to include("Intentional error for testing")
+          expect(response.body).to include("Internal Server Error")
         end
       end
     end

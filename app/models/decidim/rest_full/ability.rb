@@ -48,6 +48,8 @@ module Decidim
       def perms_for_system
         can :read, ::Decidim::Organization if permissions.include? "system.organizations.read"
         can :read, ::Decidim::User if permissions.include? "system.users.read"
+        can :read_extended_data, ::Decidim::User if permissions.include? "system.users.extended_data.read"
+        can :update_extended_data, ::Decidim::User if permissions.include? "system.users.extended_data.update"
       end
 
       def perms_for_blogs

@@ -82,6 +82,18 @@ RSpec.configure do |config|
             description: "How to authenticate",
             url: "#{Decidim::RestFull.docs_url}/category/authentication"
           }
+        },
+        {
+          name: "System",
+          description: "Get information about the organization and the participants."
+        },
+        {
+          name: "Public",
+          description: "Discover informations about overall decidim (spaces and components)"
+        },
+        {
+          name: "Blogs",
+          description: "Get informations about blog posts"
         }
       ],
       components: {
@@ -121,10 +133,18 @@ RSpec.configure do |config|
                 type: :array,
                 items: { "$ref" => "#/components/schemas/user" }
               }
-
             },
             required: [:data]
           },
+          user_extended_data_response: {
+            type: :object,
+            description: "Extended data response for a given path",
+            properties: {
+              data: { "$ref" => "#/components/schemas/user_extended_data" }
+            },
+            required: [:data]
+          },
+          user_extended_data: Api::Definitions::USER_EXTENDED_DATA,
           user: Api::Definitions::USER,
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,

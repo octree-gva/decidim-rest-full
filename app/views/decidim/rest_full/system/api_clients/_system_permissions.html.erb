@@ -28,7 +28,7 @@
   <div class="mt-4">
     <div class="font-bold py-2"><%= t('.user_perm') %></div>
     <div class="flex gap-6 flex-wrap">
-      <% ["system.users.read", "system.users.update", "system.users.destroy"].each do |permission| %>
+      <% ["system.users.read", "system.users.update", "system.users.destroy", "system.users.extended_data.read", "system.users.extended_data.update"].each do |permission| %>
         <label>
           <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
           <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>

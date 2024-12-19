@@ -6,6 +6,11 @@ module Decidim
     module RestFull
       class UserSerializer < ApplicationSerializer
         attributes :name, :nickname, :personal_url, :email, :about
+
+        attribute :extended_data do |usr, params|
+          params[:includes_extended] ? usr.extended_data : {}
+        end
+
         attribute :locale do |usr|
           usr.locale || usr.organization.default_locale || Decidim.default_locale
         end
@@ -19,19 +24,14 @@ module Decidim
         end
 
         has_many :roles do |_usr|
-          # merge
-          #     Decidim::AssemblyUserRole.where(user: usr)
-          #     Decidim::ParticipatoryProcessUserRole
-          # other spaces...
           []
         end
 
         meta do |user|
-          extra = user.extended_data || {}
-          extra.merge({
-                        blocked: user.blocked_at.present?,
-                        locked: user.locked_at.present?
-                      })
+          {
+            blocked: user.blocked_at.present?,
+            locked: user.locked_at.present?
+          }
         end
       end
     end

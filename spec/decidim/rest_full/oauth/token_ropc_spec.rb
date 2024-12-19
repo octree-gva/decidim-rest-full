@@ -89,34 +89,6 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
             end
           end
 
-          context "with meta.register_on_missing=true and extra.foo=bar" do
-            let(:nickname) { uniq_nickname }
-
-            let(:body) do
-              {
-                grant_type: "password",
-                auth_type: "impersonate",
-                username: nickname,
-                client_id: api_client.client_id,
-                client_secret: api_client.client_secret,
-                meta: {
-                  register_on_missing: true
-                },
-                extra: {
-                  foo: "bar"
-                },
-                scope: "public"
-              }
-            end
-
-            run_test! do |_example|
-              created_user = Decidim::User.find_by(nickname: nickname)
-              expect(created_user).to be_truthy
-              expect(created_user.email).to end_with("example.org")
-              expect(created_user.extended_data).to eq({ "foo" => "bar" })
-            end
-          end
-
           context "with meta.register_on_missing=true and meta.name='My Name'" do
             let(:nickname) { uniq_nickname }
 
@@ -131,7 +103,6 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
                   register_on_missing: true,
                   name: "My Name"
                 },
-                extra: {},
                 scope: "public"
               }
             end
@@ -146,48 +117,6 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
         end
 
         context "when user does exists" do
-          context "with auth_type=impersonate and extra.foo=bar" do
-            let(:body) do
-              {
-                grant_type: "password",
-                auth_type: "impersonate",
-                username: user.nickname,
-                client_id: api_client.client_id,
-                client_secret: api_client.client_secret,
-                extra: {
-                  foo: "bar"
-                },
-                scope: "public"
-              }
-            end
-
-            run_test!(example_name: :ok_ropc_impersonate_with_extra) do |_response|
-              expect(user.reload.extended_data).to eq({ "foo" => "bar" })
-            end
-          end
-
-          context "with auth_type=impersonate and finding by id" do
-            let(:body) do
-              {
-                grant_type: "password",
-                auth_type: "impersonate",
-                id: user.id,
-                client_id: api_client.client_id,
-                client_secret: api_client.client_secret,
-                scope: "public"
-              }
-            end
-
-            run_test!(example_name: :ok_ropc_impersonate_with_extra) do |response|
-              json_response = JSON.parse(response.body)
-              expect(json_response["access_token"]).to be_present
-              access_token = Doorkeeper::AccessToken.find_by(token: json_response["access_token"])
-              expect(
-                access_token.resource_owner_id
-              ).to eq(user.id)
-            end
-          end
-
           context "with auth_type=impersonate" do
             let(:body) do
               {

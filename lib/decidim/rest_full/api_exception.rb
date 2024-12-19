@@ -50,7 +50,12 @@ module Decidim
               render status: :internal_server_error,
                      json: {
                        error: "Server error",
-                       error_description: Rails.env.test? ? "#{Rails.env}: #{exception.class.name} #{exception.message}" : nil
+                       error_description: if Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN",
+                                                                          "1") == "1"
+                                            "Internal Server Error (#{Rails.env}: #{exception.message || "unknown"})"
+                                          else
+                                            "Internal Server Error"
+                                          end
                      }.compact
             end
 
@@ -62,7 +67,7 @@ module Decidim
                          error_description: if context[:status] == 400
                                               exception.message
                                             else
-                                              Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
+                                              Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN", "1") == "1" ? "#{Rails.env}: #{exception.message}" : (context[:message]).to_s
                                             end
                        }.compact
               end

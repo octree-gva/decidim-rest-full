@@ -17,12 +17,7 @@ module Api
 
           },
           required: [:blocked, :locked],
-          additionalProperties: {
-            oneOf: [
-              { type: :boolean },
-              { type: :string }
-            ]
-          }
+          additionalProperties: false
         },
         relationships: {
           type: :object,
@@ -76,11 +71,17 @@ module Api
               description: "Email of the user. Private",
               type: :string
             },
+            extended_data: {
+              description: "Additional data. Private",
+              type: :object,
+              properties: {},
+              additionalProperties: true
+            },
             created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
             updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
           },
           additionalProperties: false,
-          required: [:created_at, :updated_at, :name, :nickname, :locale]
+          required: [:created_at, :updated_at, :name, :nickname, :locale, :extended_data]
         }
       },
       required: [:id, :type, :attributes],

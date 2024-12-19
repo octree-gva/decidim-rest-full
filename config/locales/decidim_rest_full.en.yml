@@ -27,6 +27,9 @@ en:
                 read: "read: List and detail of users"
                 update: "update: Update a user"
                 destroy: "destroy: Remove definitly a user"
+                extended_data:
+                  read: "read extended data: can read extended data"
+                  update: "write extended data: update and remove extended data"
               server:
                 restart: "restart: Soft restart the server"
                 exec: "exec: Execute jobs"

@@ -29,3 +29,4 @@ node_modules
 .npm
 .cache
 rspec.xml
+openapi.json

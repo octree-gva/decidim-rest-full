@@ -26,14 +26,6 @@ module Api
         auth_type: { type: :string, enum: ["impersonate"], description: "Type of ROPC" },
         username: { type: :string, description: "User nickname, unique and at least 6 alphanumeric chars." },
         id: { type: :string, description: "User id, will find over id and ignore username. Fails if register_on_missing=true." },
-        extra: {
-          type: :object,
-          title: "User extra data",
-          description: "Additional properties for the user (private)",
-          additionalProperties: {
-            type: "string"
-          }
-        },
         meta: {
           type: :object,
           title: "User impersonation settings",
