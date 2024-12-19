@@ -2,24 +2,24 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/blogs/{post_id}" do
+  path "/public/{space_manifest}/{space_id}/{component_id}/blogs" do
     get "Show a blog detail" do
       tags "Blog"
       produces "application/json"
       security [{ credentialFlowBearer: ["blogs"] }, { resourceOwnerFlowBearer: ["blogs"] }]
-      operationId "blog"
-      description "Get blog post details"
+      operationId "blogs"
+      description "Get blog post list"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-      parameter name: "post_id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
       let!(:blog_post) { create(:post, component: component, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization: organization)) }
+      let!(:blog_posts) { create_list(:post, 3, component: component, published_at: Time.zone.now - 1.day.ago, author: create(:user, :confirmed, organization: organization)) }
       let(:"locales[]") { %w(en fr) }
 
       let!(:api_client) do
@@ -34,7 +34,9 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
       let(:user) { create(:user, locale: "fr", organization: organization) }
 
       # Routing
-      let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: user.id, application: api_client) }
+      let!(:impersonate_token) do
+        create(:oauth_access_token, scopes: ["blogs"], resource_owner_id: user.id, application: api_client)
+      end
       let(:Authorization) { "Bearer #{impersonate_token.token}" }
       let(:space_manifest) { "participatory_processes" }
       let(:space_id) { participatory_process.id }
@@ -45,43 +47,11 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
         host! organization.host
       end
 
-      response "200", "Blog Found" do
+      response "200", "Blogs Found" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/blog_response"
+        schema "$ref" => "#/components/schemas/blogs_response"
 
-        context "when blog post is alone" do
-          run_test! do |example|
-            data = JSON.parse(example.body)["data"]
-            expect(data["id"]).to eq(blog_post.id.to_s)
-            expect(data["meta"]["has_more"]).to be(false)
-            expect(data["meta"]["next"]).to eq(blog_post.id.to_s)
-          end
-        end
-
-        context "when blog post is the last one" do
-          let!(:post_list) do
-            [
-              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
-              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
-              create(:post, component: component, author: create(:user, :confirmed, organization: organization))
-            ].each_with_index do |post, index|
-              post.published_at = (index + 1).minutes.ago
-              post.save!
-              post
-            end.reverse
-          end
-          let(:post_id) { blog_post.id }
-
-          run_test!(example_name: :ok_no_more) do |example|
-            data = JSON.parse(example.body)["data"]
-            posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
-            expect(data["id"]).to eq(posts.last.to_s)
-            expect(data["meta"]["has_more"]).to be(false)
-            expect(data["meta"]["next"]).to eq(posts.first.to_s)
-          end
-        end
-
-        context "when blog post is first one" do
+        context "when is ordered" do
           let!(:posts) do
             [
               create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
@@ -100,13 +70,12 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
             posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
-            expect(data["id"]).to eq(posts.first.to_s)
-            expect(data["meta"]["has_more"]).to be(true)
-            expect(data["meta"]["next"]).to eq(posts.second.to_s)
+            expect(data.first["id"]).to eq(posts.first.to_s)
+            expect(data.last["id"]).to eq(posts.last.to_s)
           end
         end
 
-        context "with draft" do
+        context "when list own drafts" do
           let!(:draft_post) do
             post = create(:post, component: component, published_at: nil, decidim_author_id: user.id)
             post.published_at = 1.year.from_now
@@ -116,10 +85,24 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
 
           let(:post_id) { draft_post.id }
 
-          run_test!(example_name: :ok_draft) do |example|
+          run_test!(example_name: :ok_drafts) do |example|
             data = JSON.parse(example.body)["data"]
-            expect(data["id"]).to eq(draft_post.id.to_s)
-            expect(data["meta"]["published"]).to be(false)
+            expect(data.find { |d| d["meta"]["published"] == false }["id"]).to eq(draft_post.id.to_s)
+          end
+        end
+      end
+
+      response "400", "Bad Request" do
+        consumes "application/json"
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
+        context "with invalid locales[] fields" do
+          let(:"locales[]") { ["invalid_locale"] }
+
+          run_test! do |example|
+            error_description = JSON.parse(example.body)["error_description"]
+            expect(error_description).to start_with("Not allowed locales:")
           end
         end
       end
@@ -149,45 +132,13 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
         end
       end
 
-      response "404", "Blog Not Found" do
-        produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
-
-        context "when post_id=bad_string" do
-          let(:post_id) { "bad_string" }
-
-          run_test!
-        end
-
-        context "when id=not_found" do
-          let(:post_id) { Decidim::Blogs::Post.last.id + 10 }
-
-          run_test!(example_name: :not_found)
-        end
-      end
-
-      response "400", "Bad Request" do
-        consumes "application/json"
-        produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
-
-        context "with invalid locales[] fields" do
-          let(:"locales[]") { ["invalid_locale"] }
-
-          run_test! do |example|
-            error_description = JSON.parse(example.body)["error_description"]
-            expect(error_description).to start_with("Not allowed locales:")
-          end
-        end
-      end
-
       response "500", "Internal Server Error" do
         consumes "application/json"
         produces "application/json"
 
         before do
           controller = Decidim::Api::RestFull::Blog::BlogsController.new
-          allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
+          allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
           allow(Decidim::Api::RestFull::Blog::BlogsController).to receive(:new).and_return(controller)
         end
 

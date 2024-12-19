@@ -46,7 +46,14 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       let!(:assembly) { create(:assembly, organization: organization) }
       let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "meetings", published_at: Time.zone.now) }
 
-      let!(:api_client) { create(:api_client, organization: organization) }
+      let!(:api_client) do
+        api_client = create(:api_client, scopes: ["public"], organization: organization)
+        api_client.permissions = [
+          api_client.permissions.build(permission: "public.component.read")
+        ]
+        api_client.save!
+        api_client.reload
+      end
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
 
@@ -117,6 +124,31 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
           run_test!(example_name: :paginated) do |example|
             json_response = JSON.parse(example.body)
             expect(json_response["data"].size).to eq(per_page)
+          end
+        end
+      end
+
+      response "403", "Forbidden" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
+        context "with no public scope" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+
+          run_test!(example_name: :forbidden) do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
+          end
+        end
+
+        context "with no public.component.read permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["public"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+
+          run_test! do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
           end
         end
       end

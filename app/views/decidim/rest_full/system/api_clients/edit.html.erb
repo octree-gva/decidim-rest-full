@@ -23,91 +23,17 @@
 </div>
 
 <%= form_for(@perm_form, method: :post, url: system_api_permissions_path ) do |form| %>
-<%= form.hidden_field :api_client_id, value: @api_client.id %>
-
-<% if @api_client.scopes.to_a.include?("system") %>
-<div class="border border-black ">
-        <h2 class="border-b-4 h5 p-4" id="system_permissions">
-            <%= t("scope_system", scope: "decidim.rest_full.models.api_client.fields") %>
-        </h2>
-        <div id="system_permissions" class="p-4 " >
-          <div class="mt-4">
-            <div class="font-bold py-2"><%= t('.auth_type') %></div>
-            <div class="flex gap-6 flex-wrap">
-              <label>
-                <% permission = "oauth.impersonate" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-              <label>
-                <% permission = "oauth.login" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-4">
-            <div class="font-bold py-2"><%= t('.organization_perm') %></div>
-            <div class="flex gap-6 flex-wrap">
-              <label>
-                <% permission = "system.organizations.read" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            
-              <label>
-                <% permission = "system.organizations.update" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-              <label>
-                <% permission = "system.organizations.destroy" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-4">
-            <div class="font-bold py-2"><%= t('.user_perm') %></div>
-            <div class="flex gap-6 flex-wrap">
-              <label>
-                <% permission = "system.users.read" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            
-              <label>
-                <% permission = "system.users.update" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-
-              <label>
-                <% permission = "system.users.destroy" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-4">
-            <div class="font-bold py-2"><%= t('.rails_perm') %></div>
-            <div class="flex gap-6 flex-wrap">
-              <label>
-                <% permission = "system.server.restart" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-              <label>
-                <% permission = "system.server.exec" %>
-                <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-                <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="my-4">
-        <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
-      </div>
-<% end %>
+  <%= form.hidden_field :api_client_id, value: @api_client.id %>
+  <% if @api_client.scopes.to_a.include?("system") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/system_permissions", locals: {form: form} %>
+  <% end %>
+  <% if @api_client.scopes.to_a.include?("public") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/public_permissions", locals: {form: form} %>
+  <% end %>
+  <% if @api_client.scopes.to_a.include?("blogs") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/blog_permissions", locals: {form: form} %>
+  <% end %>
+  <div class="my-4">
+    <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
+  </div>
 <% end %>

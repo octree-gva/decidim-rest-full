@@ -5,21 +5,13 @@ module Decidim
     module RestFull
       module Blog
         class BlogsController < ApplicationController
-          before_action { doorkeeper_authorize! :blog }
+          before_action { doorkeeper_authorize! :blogs }
+          before_action { ability.authorize! :read, ::Decidim::Blogs::Post }
 
           # Index all blog for the given component
           def index
-          end
-
-          def show
-            resource = model_class.find_by(
-              component: component,
-              id: resource_id
-            )
-            raise Decidim::RestFull::ApiException::NotFound, "Blog Post Not Found" unless resource
-
             render json: Decidim::Api::RestFull::BlogSerializer.new(
-              resource,
+              collection,
               params: {
                 only: [],
                 locales: available_locales,
@@ -29,7 +21,38 @@ module Decidim
             ).serializable_hash
           end
 
+          def show
+            resource = collection.find(resource_id)
+            raise Decidim::RestFull::ApiException::NotFound, "Blog Post Not Found" unless resource
+
+            next_item = collection.where("published_at > ? AND id != ?", resource.published_at, resource_id).first
+            first_item = collection.first
+
+            render json: Decidim::Api::RestFull::BlogSerializer.new(
+              resource,
+              params: {
+                only: [],
+                locales: available_locales,
+                host: current_organization.host,
+                act_as: act_as,
+                has_more: next_item.present?,
+                next: next_item || first_item,
+                count: collection.count
+              }
+            ).serializable_hash
+          end
+
           private
+
+          def collection
+            query = model_class.order(published_at: :asc).where(component: component)
+            now = Time.zone.now
+            if act_as.nil?
+              query.where(published_at: ...now)
+            else
+              query.where("published_at <= ? OR (published_at > ? AND decidim_author_id = ?)", now, now, act_as.id)
+            end
+          end
 
           def model_class
             Decidim::Blogs::Post

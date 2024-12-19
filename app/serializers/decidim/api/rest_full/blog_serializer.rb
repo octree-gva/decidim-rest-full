@@ -44,8 +44,13 @@ module Decidim
           blog_post.updated_at.iso8601
         end
 
-        meta do |blog_post|
-          default_meta(blog_post)
+        meta do |blog_post, params|
+          metas = default_meta(blog_post)
+          metas[:has_more] = params[:has_more] if params.has_key? :has_more
+          metas[:next] = params[:next].id.to_s if params.has_key?(:next) && params[:next]
+          metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
+          metas[:count] = params[:count] if params.has_key? :count
+          metas
         end
 
         link :self do |object, params|

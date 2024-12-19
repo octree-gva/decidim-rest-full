@@ -15,7 +15,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) do
-    api_client = create(:api_client, organization: organization)
+    api_client = create(:api_client, organization: organization, scopes: %w(oauth public))
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),
       api_client.permissions.build(permission: "oauth.login")
@@ -292,7 +292,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
 
         context "with client_id from another organization" do
           let(:organization_b) { create(:organization) }
-          let(:foreign_api_client) { create(:api_client, organization: organization_b) }
+          let(:foreign_api_client) { create(:api_client, organization: organization_b, scopes: %w(oauth public)) }
           let(:body) do
             {
               grant_type: "password",

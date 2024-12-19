@@ -27,8 +27,6 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       let(:api_client) do
         api_client = create(:api_client, organization: organization, scopes: "system")
         api_client.permissions = [
-          api_client.permissions.build(permission: "oauth.impersonate"),
-          api_client.permissions.build(permission: "oauth.login"),
           api_client.permissions.build(permission: "system.users.read")
         ]
         api_client.save!
@@ -128,6 +126,31 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
           run_test!(example_name: :paginated) do |example|
             json_response = JSON.parse(example.body)
             expect(json_response["data"].size).to eq(per_page)
+          end
+        end
+      end
+
+      response "403", "Forbidden" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
+        context "with no system scope" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
+
+          run_test!(example_name: :forbidden) do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
+          end
+        end
+
+        context "with no system.users.read permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+
+          run_test! do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
           end
         end
       end

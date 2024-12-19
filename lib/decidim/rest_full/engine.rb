@@ -13,10 +13,10 @@ module Decidim
 
       initializer "rest_full.scopes" do
         Doorkeeper.configure do
+          handle_auth_errors :raise
           # Define default and optional scopes
           default_scopes :public
-          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :public
-
+          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :public, :blogs
           # Enable resource owner password credentials
           grant_flows %w(password client_credentials)
           custom_introspection_response do |token, _context|
