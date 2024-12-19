@@ -6,7 +6,7 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
-        ransacker :extra do |_parent|
+        ransacker :extended_data do |_parent|
           Arel.sql(%{("decidim_users"."extended_data")::text})
         end
       end

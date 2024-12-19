@@ -23,6 +23,7 @@ require "decidim/rest_full/test/definitions/component"
 require "decidim/rest_full/test/definitions/filter_param"
 require "decidim/rest_full/test/definitions/blog"
 require "decidim/rest_full/test/definitions/introspect_data"
+require "decidim/rest_full/test/definitions/user_extended_data"
 
 require "rswag/specs"
 require "swagger_helper"

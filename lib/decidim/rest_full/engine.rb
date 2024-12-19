@@ -74,7 +74,6 @@ module Decidim
                 :id,
                 meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :name, :email]
               ).to_h
-              impersonation_payload.merge!({ extra: params[:extra].permit!.to_h }) if params.has_key? :extra
 
               command_result = ImpersonateResourceOwnerFromCredentials.call(
                 api_client,

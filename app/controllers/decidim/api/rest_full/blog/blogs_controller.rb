@@ -8,7 +8,6 @@ module Decidim
           before_action { doorkeeper_authorize! :blogs }
           before_action { ability.authorize! :read, ::Decidim::Blogs::Post }
 
-          # Index all blog for the given component
           def index
             render json: Decidim::Api::RestFull::BlogSerializer.new(
               collection,

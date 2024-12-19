@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request do
   path "/public/{space_manifest}/{space_id}/{component_id}/blogs" do
     get "Show a blog detail" do
-      tags "Blog"
+      tags "Blogs"
       produces "application/json"
       security [{ credentialFlowBearer: ["blogs"] }, { resourceOwnerFlowBearer: ["blogs"] }]
       operationId "blogs"
@@ -146,7 +146,7 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
 
         run_test! do |response|
           expect(response.status).to eq(500)
-          expect(response.body).to include("Intentional error for testing")
+          expect(response.body).to include("Internal Server Error")
         end
       end
     end
