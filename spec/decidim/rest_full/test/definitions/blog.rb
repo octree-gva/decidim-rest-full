@@ -94,7 +94,7 @@ module Api
               required: [:data]
             }
           },
-          required: [],
+          required: [:component, :space],
           additionalProperties: false
         }
       },

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# spec/integration/oauth_scopes_spec.rb
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :request do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
-  let!(:api_client) { create(:api_client, organization: organization, scopes: "oauth") }
+  let!(:api_client) { create(:api_client, organization: organization, scopes: "public") }
   let!(:permissions) do
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),
@@ -29,7 +28,7 @@ RSpec.describe "Decidim::Api::RestFull::System::ApplicationController", type: :r
       operationId "introspectToken"
       description "Get given oauth token details"
       # SEE https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
-      parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { token: { type: :string }, required: [:token] } }
+      parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { token: { type: :string } }, required: [:token] }
 
       response "200", "User details returned" do
         schema "$ref" => "#/components/schemas/introspect_response"

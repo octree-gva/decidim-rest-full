@@ -16,7 +16,8 @@ module Decidim
           handle_auth_errors :raise
           # Define default and optional scopes
           default_scopes :public
-          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :public, :blogs
+          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs
+
           # Enable resource owner password credentials
           grant_flows %w(password client_credentials)
           custom_introspection_response do |token, _context|
@@ -48,6 +49,7 @@ module Decidim
               active: active
             }.merge(user_details)
           end
+
           # Authenticate resource owner
           resource_owner_from_credentials do |_routes|
             # forbid system scope, exclusive to credential flow
@@ -104,6 +106,7 @@ module Decidim
           end
         end
       end
+
       initializer "rest_full.menu" do
         Decidim::RestFull::Menu.register_system_menu!
       end

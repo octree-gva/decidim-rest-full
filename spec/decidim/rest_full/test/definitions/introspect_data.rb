@@ -31,7 +31,7 @@ module Api
               description: "resource type"
             },
             attributes: {
-              type: :objet,
+              type: :object,
               properties: {
                 email: {
                   type: :string,

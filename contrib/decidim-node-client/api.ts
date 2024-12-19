@@ -57,6 +57,12 @@ export interface ApiError {
    * @memberof ApiError
    */
   error_description: string;
+  /**
+   * authentification state
+   * @type {string}
+   * @memberof ApiError
+   */
+  state?: string;
 }
 /**
  *
@@ -147,6 +153,255 @@ export interface AttachedComponentsMeta {
 /**
  *
  * @export
+ * @interface Blog
+ */
+export interface Blog {
+  /**
+   * Blog Post Id
+   * @type {string}
+   * @memberof Blog
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Blog
+   */
+  type: BlogTypeEnum;
+  /**
+   *
+   * @type {BlogAttributes}
+   * @memberof Blog
+   */
+  attributes: BlogAttributes;
+  /**
+   *
+   * @type {BlogPostMetadata}
+   * @memberof Blog
+   */
+  meta: BlogPostMetadata;
+  /**
+   *
+   * @type {BlogPostLinks}
+   * @memberof Blog
+   */
+  links: BlogPostLinks;
+  /**
+   *
+   * @type {BlogPostRelationships}
+   * @memberof Blog
+   */
+  relationships?: BlogPostRelationships;
+}
+
+export const BlogTypeEnum = {
+  Blog: "blog",
+} as const;
+
+export type BlogTypeEnum = (typeof BlogTypeEnum)[keyof typeof BlogTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface BlogAttributes
+ */
+export interface BlogAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogAttributes
+   */
+  title: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogAttributes
+   */
+  body: TranslatedProp;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof BlogAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof BlogAttributes
+   */
+  updated_at: string;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostLinks
+ */
+export interface BlogPostLinks {
+  /**
+   * API URL to the blog post
+   * @type {string}
+   * @memberof BlogPostLinks
+   */
+  self: string;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostMetadata
+ */
+export interface BlogPostMetadata {
+  [key: string]: ComponentMetadataValue | any;
+
+  /**
+   * Published blog post?
+   * @type {boolean}
+   * @memberof BlogPostMetadata
+   */
+  published: boolean;
+  /**
+   * Scope Id
+   * @type {number}
+   * @memberof BlogPostMetadata
+   */
+  scope?: number;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostRelationships
+ */
+export interface BlogPostRelationships {
+  /**
+   *
+   * @type {BlogPostRelationshipsSpace}
+   * @memberof BlogPostRelationships
+   */
+  space: BlogPostRelationshipsSpace;
+  /**
+   *
+   * @type {BlogPostRelationshipsComponent}
+   * @memberof BlogPostRelationships
+   */
+  component: BlogPostRelationshipsComponent;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostRelationshipsComponent
+ */
+export interface BlogPostRelationshipsComponent {
+  /**
+   *
+   * @type {BlogPostRelationshipsComponentData}
+   * @memberof BlogPostRelationshipsComponent
+   */
+  data: BlogPostRelationshipsComponentData;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostRelationshipsComponentData
+ */
+export interface BlogPostRelationshipsComponentData {
+  /**
+   * Component Id
+   * @type {string}
+   * @memberof BlogPostRelationshipsComponentData
+   */
+  id: string;
+  /**
+   * Component type
+   * @type {string}
+   * @memberof BlogPostRelationshipsComponentData
+   */
+  type: BlogPostRelationshipsComponentDataTypeEnum;
+}
+
+export const BlogPostRelationshipsComponentDataTypeEnum = {
+  PageComponent: "page_component",
+  ProposalComponent: "proposal_component",
+  MeetingComponent: "meeting_component",
+  BudgetComponent: "budget_component",
+  SurveyComponent: "survey_component",
+  AccountabilityComponent: "accountability_component",
+  DebateComponent: "debate_component",
+  SortitionComponent: "sortition_component",
+  BlogComponent: "blog_component",
+} as const;
+
+export type BlogPostRelationshipsComponentDataTypeEnum =
+  (typeof BlogPostRelationshipsComponentDataTypeEnum)[keyof typeof BlogPostRelationshipsComponentDataTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface BlogPostRelationshipsSpace
+ */
+export interface BlogPostRelationshipsSpace {
+  /**
+   *
+   * @type {BlogPostRelationshipsSpaceData}
+   * @memberof BlogPostRelationshipsSpace
+   */
+  data: BlogPostRelationshipsSpaceData;
+}
+/**
+ *
+ * @export
+ * @interface BlogPostRelationshipsSpaceData
+ */
+export interface BlogPostRelationshipsSpaceData {
+  /**
+   * Space Id
+   * @type {string}
+   * @memberof BlogPostRelationshipsSpaceData
+   */
+  id: string;
+  /**
+   * Space type
+   * @type {string}
+   * @memberof BlogPostRelationshipsSpaceData
+   */
+  type: BlogPostRelationshipsSpaceDataTypeEnum;
+}
+
+export const BlogPostRelationshipsSpaceDataTypeEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+
+export type BlogPostRelationshipsSpaceDataTypeEnum =
+  (typeof BlogPostRelationshipsSpaceDataTypeEnum)[keyof typeof BlogPostRelationshipsSpaceDataTypeEnum];
+
+/**
+ * Details of a given Blog Post
+ * @export
+ * @interface BlogResponse
+ */
+export interface BlogResponse {
+  /**
+   *
+   * @type {Blog}
+   * @memberof BlogResponse
+   */
+  data: Blog;
+}
+/**
+ * Details of a given Blog Post
+ * @export
+ * @interface BlogsResponse
+ */
+export interface BlogsResponse {
+  /**
+   *
+   * @type {Array<Blog>}
+   * @memberof BlogsResponse
+   */
+  data: Array<Blog>;
+}
+/**
+ *
+ * @export
  * @interface ClientCredential
  */
 export interface ClientCredential {
@@ -190,6 +445,7 @@ export const ClientCredentialScopeEnum = {
   Meetings: "meetings",
   Debates: "debates",
   Pages: "pages",
+  Blogs: "blogs",
 } as const;
 
 export type ClientCredentialScopeEnum =
@@ -430,7 +686,7 @@ export interface ComponentResourcesDescriptor {
   meta: ComponentResourceDescriptorMeta;
 }
 /**
- *
+ * Details of a given component
  * @export
  * @interface ComponentResponse
  */
@@ -443,7 +699,7 @@ export interface ComponentResponse {
   data: Component;
 }
 /**
- *
+ * List of components
  * @export
  * @interface ComponentsResponse
  */
@@ -485,12 +741,6 @@ export interface Impersonation {
    * @memberof Impersonation
    */
   id?: string;
-  /**
-   * Additional properties for the user (private)
-   * @type {{ [key: string]: string; }}
-   * @memberof Impersonation
-   */
-  extra?: { [key: string]: string };
   /**
    *
    * @type {UserImpersonationSettings}
@@ -536,6 +786,7 @@ export const ImpersonationScopeEnum = {
   Meetings: "meetings",
   Debates: "debates",
   Pages: "pages",
+  Blogs: "blogs",
 } as const;
 
 export type ImpersonationScopeEnum =
@@ -559,6 +810,12 @@ export interface IntrospectData {
    * @memberof IntrospectData
    */
   active: boolean;
+  /**
+   * Where this token can be used (organization host)
+   * @type {string}
+   * @memberof IntrospectData
+   */
+  aud: string;
   /**
    *
    * @type {IntrospectDataResource}
@@ -586,10 +843,10 @@ export interface IntrospectDataResource {
   type: IntrospectDataResourceTypeEnum;
   /**
    *
-   * @type {object}
+   * @type {IntrospectDataResourceAttributes}
    * @memberof IntrospectDataResource
    */
-  attributes?: object;
+  attributes?: IntrospectDataResourceAttributes;
 }
 
 export const IntrospectDataResourceTypeEnum = {
@@ -600,17 +857,109 @@ export type IntrospectDataResourceTypeEnum =
   (typeof IntrospectDataResourceTypeEnum)[keyof typeof IntrospectDataResourceTypeEnum];
 
 /**
- * Details about the token beeing used
+ *
  * @export
- * @interface IntrospectResponse
+ * @interface IntrospectDataResourceAttributes
  */
-export interface IntrospectResponse {
+export interface IntrospectDataResourceAttributes {
+  /**
+   * Email
+   * @type {string}
+   * @memberof IntrospectDataResourceAttributes
+   */
+  email: string;
+  /**
+   * Last update date
+   * @type {string}
+   * @memberof IntrospectDataResourceAttributes
+   */
+  updated_at: string;
+  /**
+   * Creation date
+   * @type {string}
+   * @memberof IntrospectDataResourceAttributes
+   */
+  created_at: string;
+  /**
+   * Personal url (social link, website, etc.)
+   * @type {string}
+   * @memberof IntrospectDataResourceAttributes
+   */
+  personal_url?: string;
+  /**
+   * Current prefered locale
+   * @type {string}
+   * @memberof IntrospectDataResourceAttributes
+   */
+  locale?: IntrospectDataResourceAttributesLocaleEnum;
+}
+
+export const IntrospectDataResourceAttributesLocaleEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+
+export type IntrospectDataResourceAttributesLocaleEnum =
+  (typeof IntrospectDataResourceAttributesLocaleEnum)[keyof typeof IntrospectDataResourceAttributesLocaleEnum];
+
+/**
+ *
+ * @export
+ * @interface IntrospectTokenRequest
+ */
+export interface IntrospectTokenRequest {
   /**
    *
-   * @type {IntrospectData}
-   * @memberof IntrospectResponse
+   * @type {string}
+   * @memberof IntrospectTokenRequest
    */
-  data: IntrospectData;
+  token: string;
 }
 /**
  *
@@ -681,6 +1030,7 @@ export const LoginScopeEnum = {
   Meetings: "meetings",
   Debates: "debates",
   Pages: "pages",
+  Blogs: "blogs",
 } as const;
 
 export type LoginScopeEnum =
@@ -812,6 +1162,19 @@ export interface OrganizationsResponse {
  */
 export type PasswordGrantParam = Impersonation | Login;
 
+/**
+ *
+ * @export
+ * @interface SetUserDataRequest
+ */
+export interface SetUserDataRequest {
+  /**
+   * New value for the extended data at the given path
+   * @type {object}
+   * @memberof SetUserDataRequest
+   */
+  data: object;
+}
 /**
  *
  * @export
@@ -1368,6 +1731,12 @@ export interface UserAttributes {
    */
   email?: string;
   /**
+   * Additional data. Private
+   * @type {{ [key: string]: any; }}
+   * @memberof UserAttributes
+   */
+  extended_data: { [key: string]: any };
+  /**
    *
    * @type {string}
    * @memberof UserAttributes
@@ -1436,6 +1805,19 @@ export type UserAttributesLocaleEnum =
   (typeof UserAttributesLocaleEnum)[keyof typeof UserAttributesLocaleEnum];
 
 /**
+ * Extended data response for a given path
+ * @export
+ * @interface UserExtendedDataResponse
+ */
+export interface UserExtendedDataResponse {
+  /**
+   * User extended data
+   * @type {{ [key: string]: any; }}
+   * @memberof UserExtendedDataResponse
+   */
+  data: { [key: string]: any };
+}
+/**
  * Impersonation Settings
  * @export
  * @interface UserImpersonationSettings
@@ -1478,8 +1860,6 @@ export interface UserImpersonationSettings {
  * @interface UserMeta
  */
 export interface UserMeta {
-  [key: string]: UserMetaValue | any;
-
   /**
    * If the user is blocked, and need to be unblocked to signin
    * @type {boolean}
@@ -1493,12 +1873,6 @@ export interface UserMeta {
    */
   locked: boolean;
 }
-/**
- * @type UserMetaValue
- * @export
- */
-export type UserMetaValue = boolean | string;
-
 /**
  *
  * @export
@@ -1567,6 +1941,579 @@ export interface UsersResponse {
 }
 
 /**
+ * BlogsApi - axios parameter creator
+ * @export
+ */
+export const BlogsApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Get blog post details
+     * @summary Show a blog detail
+     * @param {BlogSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {number} postId
+     * @param {Array<BlogLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blog: async (
+      spaceManifest: BlogSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      postId: number,
+      locales?: Array<BlogLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("blog", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("blog", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("blog", "componentId", componentId);
+      // verify required parameter 'postId' is not null or undefined
+      assertParamExists("blog", "postId", postId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/blogs/{post_id}`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          )
+          .replace(`{${"post_id"}}`, encodeURIComponent(String(postId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get blog post list
+     * @summary Show a blog detail
+     * @param {BlogsSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {Array<BlogsLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blogs: async (
+      spaceManifest: BlogsSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      locales?: Array<BlogsLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("blogs", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("blogs", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("blogs", "componentId", componentId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/blogs`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * BlogsApi - functional programming interface
+ * @export
+ */
+export const BlogsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = BlogsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Get blog post details
+     * @summary Show a blog detail
+     * @param {BlogSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {number} postId
+     * @param {Array<BlogLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async blog(
+      spaceManifest: BlogSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      postId: number,
+      locales?: Array<BlogLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<BlogResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.blog(
+        spaceManifest,
+        spaceId,
+        componentId,
+        postId,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["BlogsApi.blog"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Get blog post list
+     * @summary Show a blog detail
+     * @param {BlogsSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {Array<BlogsLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async blogs(
+      spaceManifest: BlogsSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      locales?: Array<BlogsLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<BlogsResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.blogs(
+        spaceManifest,
+        spaceId,
+        componentId,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["BlogsApi.blogs"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * BlogsApi - factory interface
+ * @export
+ */
+export const BlogsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = BlogsApiFp(configuration);
+  return {
+    /**
+     * Get blog post details
+     * @summary Show a blog detail
+     * @param {BlogsApiBlogRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blog(
+      requestParameters: BlogsApiBlogRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<BlogResponse> {
+      return localVarFp
+        .blog(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.postId,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get blog post list
+     * @summary Show a blog detail
+     * @param {BlogsApiBlogsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blogs(
+      requestParameters: BlogsApiBlogsRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<BlogsResponse> {
+      return localVarFp
+        .blogs(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for blog operation in BlogsApi.
+ * @export
+ * @interface BlogsApiBlogRequest
+ */
+export interface BlogsApiBlogRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof BlogsApiBlog
+   */
+  readonly spaceManifest: BlogSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlog
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlog
+   */
+  readonly componentId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlog
+   */
+  readonly postId: number;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof BlogsApiBlog
+   */
+  readonly locales?: Array<BlogLocalesEnum>;
+}
+
+/**
+ * Request parameters for blogs operation in BlogsApi.
+ * @export
+ * @interface BlogsApiBlogsRequest
+ */
+export interface BlogsApiBlogsRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof BlogsApiBlogs
+   */
+  readonly spaceManifest: BlogsSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlogs
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlogs
+   */
+  readonly componentId: number;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof BlogsApiBlogs
+   */
+  readonly locales?: Array<BlogsLocalesEnum>;
+}
+
+/**
+ * BlogsApi - object-oriented interface
+ * @export
+ * @class BlogsApi
+ * @extends {BaseAPI}
+ */
+export class BlogsApi extends BaseAPI {
+  /**
+   * Get blog post details
+   * @summary Show a blog detail
+   * @param {BlogsApiBlogRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof BlogsApi
+   */
+  public blog(
+    requestParameters: BlogsApiBlogRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return BlogsApiFp(this.configuration)
+      .blog(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.postId,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get blog post list
+   * @summary Show a blog detail
+   * @param {BlogsApiBlogsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof BlogsApi
+   */
+  public blogs(
+    requestParameters: BlogsApiBlogsRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return BlogsApiFp(this.configuration)
+      .blogs(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * @export
+ */
+export const BlogSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type BlogSpaceManifestEnum =
+  (typeof BlogSpaceManifestEnum)[keyof typeof BlogSpaceManifestEnum];
+/**
+ * @export
+ */
+export const BlogLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type BlogLocalesEnum =
+  (typeof BlogLocalesEnum)[keyof typeof BlogLocalesEnum];
+/**
+ * @export
+ */
+export const BlogsSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type BlogsSpaceManifestEnum =
+  (typeof BlogsSpaceManifestEnum)[keyof typeof BlogsSpaceManifestEnum];
+/**
+ * @export
+ */
+export const BlogsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type BlogsLocalesEnum =
+  (typeof BlogsLocalesEnum)[keyof typeof BlogsLocalesEnum];
+
+/**
  * OAuthApi - axios parameter creator
  * @export
  */
@@ -1627,12 +2574,20 @@ export const OAuthApiAxiosParamCreator = function (
     /**
      * Get given oauth token details
      * @summary Introspect a OAuth token
+     * @param {IntrospectTokenRequest} introspectTokenRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     introspectToken: async (
+      introspectTokenRequest: IntrospectTokenRequest,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'introspectTokenRequest' is not null or undefined
+      assertParamExists(
+        "introspectToken",
+        "introspectTokenRequest",
+        introspectTokenRequest,
+      );
       const localVarPath = `/oauth/introspect`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1657,6 +2612,8 @@ export const OAuthApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -1665,6 +2622,11 @@ export const OAuthApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        introspectTokenRequest,
+        localVarRequestOptions,
+        configuration,
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -1714,19 +2676,20 @@ export const OAuthApiFp = function (configuration?: Configuration) {
     /**
      * Get given oauth token details
      * @summary Introspect a OAuth token
+     * @param {IntrospectTokenRequest} introspectTokenRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async introspectToken(
+      introspectTokenRequest: IntrospectTokenRequest,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<IntrospectResponse>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<IntrospectData>
     > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.introspectToken(options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.introspectToken(
+        introspectTokenRequest,
+        options,
+      );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["OAuthApi.introspectToken"]?.[
@@ -1772,14 +2735,16 @@ export const OAuthApiFactory = function (
     /**
      * Get given oauth token details
      * @summary Introspect a OAuth token
+     * @param {OAuthApiIntrospectTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     introspectToken(
+      requestParameters: OAuthApiIntrospectTokenRequest,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<IntrospectResponse> {
+    ): AxiosPromise<IntrospectData> {
       return localVarFp
-        .introspectToken(options)
+        .introspectToken(requestParameters.introspectTokenRequest, options)
         .then((request) => request(axios, basePath));
     },
   };
@@ -1797,6 +2762,20 @@ export interface OAuthApiCreateTokenRequest {
    * @memberof OAuthApiCreateToken
    */
   readonly oauthGrantParam: OauthGrantParam;
+}
+
+/**
+ * Request parameters for introspectToken operation in OAuthApi.
+ * @export
+ * @interface OAuthApiIntrospectTokenRequest
+ */
+export interface OAuthApiIntrospectTokenRequest {
+  /**
+   *
+   * @type {IntrospectTokenRequest}
+   * @memberof OAuthApiIntrospectToken
+   */
+  readonly introspectTokenRequest: IntrospectTokenRequest;
 }
 
 /**
@@ -1826,13 +2805,17 @@ export class OAuthApi extends BaseAPI {
   /**
    * Get given oauth token details
    * @summary Introspect a OAuth token
+   * @param {OAuthApiIntrospectTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof OAuthApi
    */
-  public introspectToken(options?: RawAxiosRequestConfig) {
+  public introspectToken(
+    requestParameters: OAuthApiIntrospectTokenRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
     return OAuthApiFp(this.configuration)
-      .introspectToken(options)
+      .introspectToken(requestParameters.introspectTokenRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
@@ -3393,6 +4376,177 @@ export const SystemApiAxiosParamCreator = function (
       };
     },
     /**
+     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * @summary Update user extended data
+     * @param {number} userId
+     * @param {string} path
+     * @param {SetUserDataRequest} setUserDataRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    setUserData: async (
+      userId: number,
+      path: string,
+      setUserDataRequest: SetUserDataRequest,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'userId' is not null or undefined
+      assertParamExists("setUserData", "userId", userId);
+      // verify required parameter 'path' is not null or undefined
+      assertParamExists("setUserData", "path", path);
+      // verify required parameter 'setUserDataRequest' is not null or undefined
+      assertParamExists(
+        "setUserData",
+        "setUserDataRequest",
+        setUserDataRequest,
+      );
+      const localVarPath = `/system/users/{user_id}/extended_data/{path}`
+        .replace(`{${"user_id"}}`, encodeURIComponent(String(userId)))
+        .replace(`{${"path"}}`, encodeURIComponent(String(path)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        setUserDataRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get user extended data
+     * @param {number} userId
+     * @param {string} path
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userData: async (
+      userId: number,
+      path: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'userId' is not null or undefined
+      assertParamExists("userData", "userId", userId);
+      // verify required parameter 'path' is not null or undefined
+      assertParamExists("userData", "path", path);
+      const localVarPath = `/system/users/{user_id}/extended_data/{path}`
+        .replace(`{${"user_id"}}`, encodeURIComponent(String(userId)))
+        .replace(`{${"path"}}`, encodeURIComponent(String(path)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get All user extended data
+     * @param {number} userId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userDataRoot: async (
+      userId: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'userId' is not null or undefined
+      assertParamExists("userDataRoot", "userId", userId);
+      const localVarPath = `/system/users/{user_id}/extended_data`.replace(
+        `{${"user_id"}}`,
+        encodeURIComponent(String(userId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * List or search users of the organization
      * @summary List available Users
      * @param {number} [page] Page number for pagination
@@ -3407,7 +4561,7 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
      * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
-     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+     * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3424,7 +4578,7 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: UsersFilterNicknamePresentEnum,
       filterNicknameBlank?: UsersFilterNicknameBlankEnum,
-      filterExtraCont?: string,
+      filterExtendedDataCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/system/users`;
@@ -3500,8 +4654,9 @@ export const SystemApiAxiosParamCreator = function (
         localVarQueryParameter["filter[nickname_blank]"] = filterNicknameBlank;
       }
 
-      if (filterExtraCont !== undefined) {
-        localVarQueryParameter["filter[extra_cont]"] = filterExtraCont;
+      if (filterExtendedDataCont !== undefined) {
+        localVarQueryParameter["filter[extended_data_cont]"] =
+          filterExtendedDataCont;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -3568,6 +4723,113 @@ export const SystemApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
+     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * @summary Update user extended data
+     * @param {number} userId
+     * @param {string} path
+     * @param {SetUserDataRequest} setUserDataRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async setUserData(
+      userId: number,
+      path: string,
+      setUserDataRequest: SetUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.setUserData(
+        userId,
+        path,
+        setUserDataRequest,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SystemApi.setUserData"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get user extended data
+     * @param {number} userId
+     * @param {string} path
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async userData(
+      userId: number,
+      path: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
+        userId,
+        path,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SystemApi.userData"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get All user extended data
+     * @param {number} userId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async userDataRoot(
+      userId: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.userDataRoot(
+        userId,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SystemApi.userDataRoot"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * List or search users of the organization
      * @summary List available Users
      * @param {number} [page] Page number for pagination
@@ -3582,7 +4844,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
      * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
-     * @param {string} [filterExtraCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+     * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3599,7 +4861,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: UsersFilterNicknamePresentEnum,
       filterNicknameBlank?: UsersFilterNicknameBlankEnum,
-      filterExtraCont?: string,
+      filterExtendedDataCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
@@ -3617,7 +4879,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
         filterNicknameDoesNotMatch,
         filterNicknamePresent,
         filterNicknameBlank,
-        filterExtraCont,
+        filterExtendedDataCont,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -3667,6 +4929,56 @@ export const SystemApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * @summary Update user extended data
+     * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    setUserData(
+      requestParameters: SystemApiSetUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .setUserData(
+          requestParameters.userId,
+          requestParameters.path,
+          requestParameters.setUserDataRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get user extended data
+     * @param {SystemApiUserDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userData(
+      requestParameters: SystemApiUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .userData(requestParameters.userId, requestParameters.path, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get All user extended data
+     * @param {SystemApiUserDataRootRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userDataRoot(
+      requestParameters: SystemApiUserDataRootRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .userDataRoot(requestParameters.userId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * List or search users of the organization
      * @summary List available Users
      * @param {SystemApiUsersRequest} requestParameters Request parameters.
@@ -3691,7 +5003,7 @@ export const SystemApiFactory = function (
           requestParameters.filterNicknameDoesNotMatch,
           requestParameters.filterNicknamePresent,
           requestParameters.filterNicknameBlank,
-          requestParameters.filterExtraCont,
+          requestParameters.filterExtendedDataCont,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -3725,6 +5037,69 @@ export interface SystemApiOrganizationsRequest {
    * @memberof SystemApiOrganizations
    */
   readonly perPage?: number;
+}
+
+/**
+ * Request parameters for setUserData operation in SystemApi.
+ * @export
+ * @interface SystemApiSetUserDataRequest
+ */
+export interface SystemApiSetUserDataRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof SystemApiSetUserData
+   */
+  readonly userId: number;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiSetUserData
+   */
+  readonly path: string;
+
+  /**
+   *
+   * @type {SetUserDataRequest}
+   * @memberof SystemApiSetUserData
+   */
+  readonly setUserDataRequest: SetUserDataRequest;
+}
+
+/**
+ * Request parameters for userData operation in SystemApi.
+ * @export
+ * @interface SystemApiUserDataRequest
+ */
+export interface SystemApiUserDataRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof SystemApiUserData
+   */
+  readonly userId: number;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SystemApiUserData
+   */
+  readonly path: string;
+}
+
+/**
+ * Request parameters for userDataRoot operation in SystemApi.
+ * @export
+ * @interface SystemApiUserDataRootRequest
+ */
+export interface SystemApiUserDataRootRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof SystemApiUserDataRoot
+   */
+  readonly userId: number;
 }
 
 /**
@@ -3822,7 +5197,7 @@ export interface SystemApiUsersRequest {
    * @type {string}
    * @memberof SystemApiUsers
    */
-  readonly filterExtraCont?: string;
+  readonly filterExtendedDataCont?: string;
 }
 
 /**
@@ -3855,6 +5230,62 @@ export class SystemApi extends BaseAPI {
   }
 
   /**
+   *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+   * @summary Update user extended data
+   * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SystemApi
+   */
+  public setUserData(
+    requestParameters: SystemApiSetUserDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SystemApiFp(this.configuration)
+      .setUserData(
+        requestParameters.userId,
+        requestParameters.path,
+        requestParameters.setUserDataRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Fetch user extended data
+   * @summary Get user extended data
+   * @param {SystemApiUserDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SystemApi
+   */
+  public userData(
+    requestParameters: SystemApiUserDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SystemApiFp(this.configuration)
+      .userData(requestParameters.userId, requestParameters.path, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Fetch user extended data
+   * @summary Get All user extended data
+   * @param {SystemApiUserDataRootRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SystemApi
+   */
+  public userDataRoot(
+    requestParameters: SystemApiUserDataRootRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SystemApiFp(this.configuration)
+      .userDataRoot(requestParameters.userId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * List or search users of the organization
    * @summary List available Users
    * @param {SystemApiUsersRequest} requestParameters Request parameters.
@@ -3880,7 +5311,7 @@ export class SystemApi extends BaseAPI {
         requestParameters.filterNicknameDoesNotMatch,
         requestParameters.filterNicknamePresent,
         requestParameters.filterNicknameBlank,
-        requestParameters.filterExtraCont,
+        requestParameters.filterExtendedDataCont,
         options,
       )
       .then((request) => request(this.axios, this.basePath));

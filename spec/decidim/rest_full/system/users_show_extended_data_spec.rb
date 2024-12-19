@@ -7,7 +7,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       tags "System"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
-      operationId "userData"
+      operationId "userDataRoot"
       description "Fetch user extended data"
       parameter name: "user_id", in: :path, schema: { type: :integer, description: "User Id" }
 
