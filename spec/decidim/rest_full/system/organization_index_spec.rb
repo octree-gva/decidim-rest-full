@@ -17,8 +17,6 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
       let(:api_client) do
         api_client = create(:api_client, organization: organization, scopes: "system")
         api_client.permissions = [
-          api_client.permissions.build(permission: "oauth.impersonate"),
-          api_client.permissions.build(permission: "oauth.login"),
           api_client.permissions.build(permission: "system.organizations.read")
         ]
         api_client.save!
@@ -28,10 +26,6 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
 
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
-
-      before do
-        create(:rest_full_permission, api_client: api_client, permission: "system.organization.read")
-      end
 
       response "200", "Organizations listed" do
         consumes "application/json"
@@ -59,6 +53,31 @@ RSpec.describe "Decidim::Api::RestFull::System::OrganizationsController", type: 
           run_test!(example_name: :paginated) do |example|
             json_response = JSON.parse(example.body)
             expect(json_response["data"].size).to eq(per_page)
+          end
+        end
+      end
+
+      response "403", "Forbidden" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
+        context "with no system scope" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
+
+          run_test!(example_name: :forbidden) do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
+          end
+        end
+
+        context "with no system.organizations.read permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+
+          run_test! do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
           end
         end
       end

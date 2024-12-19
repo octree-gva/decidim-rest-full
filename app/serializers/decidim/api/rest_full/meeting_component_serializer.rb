@@ -19,9 +19,11 @@ module Decidim
           end
           default_meta(component).merge(additional_meta)
         end
+
         def self.resources_for(component, act_as)
           Decidim::Meetings::Meeting.visible_for(act_as).where(decidim_component_id: component.id)
         end
+
         has_many :resources, meta: (proc do |component, params|
           { count: resources_for(component, params[:act_as]).count }
         end) do |component, params|

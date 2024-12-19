@@ -7,11 +7,17 @@ RSpec.configure do |config|
     content = example.metadata[:response][:content] || {}
     example_name = example.metadata[:example_name]
     if example_name
+      response && response.body ? response.body : "{}"
+      json_data = begin
+        JSON.parse(response.body, symbolize_names: true)
+      rescue StandardError
+        {}
+      end
       example_spec = {
         "application/json" => {
           examples: {
             example_name.to_sym => {
-              value: response && response.body ? JSON.parse(response.body, symbolize_names: true) : {}
+              value: json_data
             }
           }
         }
@@ -115,14 +121,37 @@ RSpec.configure do |config|
                 type: :array,
                 items: { "$ref" => "#/components/schemas/user" }
               }
+
             },
             required: [:data]
           },
           user: Api::Definitions::USER,
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,
+          blog: Api::Definitions::BLOG,
+          blogs_response: {
+            type: :object,
+            description: "Details of a given Blog Post",
+            properties: {
+              data: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/blog" }
+              }
+            },
+            required: [:data]
+          },
+          blog_response: {
+            type: :object,
+            description: "Details of a given Blog Post",
+            properties: {
+              data: { "$ref" => "#/components/schemas/blog" }
+            },
+            required: [:data]
+
+          },
           component_response: {
             type: :object,
+            description: "Details of a given component",
             properties: {
               data: { "$ref" => "#/components/schemas/component" }
             },
@@ -130,6 +159,7 @@ RSpec.configure do |config|
           },
           components_response: {
             type: :object,
+            description: "List of components",
             properties: {
               data: {
                 type: :array,

@@ -24,7 +24,15 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
       let!(:organization) { create(:organization) }
-      let!(:api_client) { create(:api_client, organization: organization) }
+      let!(:api_client) do
+        api_client = create(:api_client, scopes: ["public"], organization: organization)
+        api_client.permissions = [
+          api_client.permissions.build(permission: "public.space.read")
+        ]
+        api_client.save!
+        api_client.reload
+      end
+
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
@@ -133,6 +141,31 @@ RSpec.describe "Decidim::Api::RestFull::Public::SpacesController", type: :reques
           run_test! do |example|
             error_description = JSON.parse(example.body)["error_description"]
             expect(error_description).to start_with("Not allowed locales:")
+          end
+        end
+      end
+
+      response "403", "Forbidden" do
+        produces "application/json"
+        schema "$ref" => "#/components/schemas/api_error"
+
+        context "with no public scope" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+
+          run_test!(example_name: :forbidden) do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
+          end
+        end
+
+        context "with no public.space.read permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["public"]) }
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+
+          run_test! do |_example|
+            expect(response.status).to eq(403)
+            expect(response.body).to include("Forbidden")
           end
         end
       end

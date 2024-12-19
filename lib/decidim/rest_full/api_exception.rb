@@ -19,7 +19,13 @@ module Decidim
 
         # Parsing Errors
         "ActionDispatch::Http::Parameters::ParseError" => { status: 400, message: "Malformed JSON request" },
-        "CanCan::AccessDenied" => { status: 401, message: "Unauthorized access" },
+
+        # Authorization errors
+        "CanCan::AccessDenied" => { status: 403, message: "Forbidden" },
+        "Doorkeeper::Errors::TokenForbidden" => { status: 403, message: "Forbidden" },
+        "Doorkeeper::Errors::TokenRevoked" => { status: 403, message: "Forbidden" },
+        "Doorkeeper::Errors::TokenExpired" => { status: 403, message: "Forbidden" },
+
         # Generic Application-Level Errors
         "Decidim::RestFull::ApiException::BadRequest" => { status: 400, message: "Bad request" },
         "Decidim::RestFull::ApiException::Unauthorized" => { status: 401, message: "Unauthorized access" },
@@ -44,7 +50,7 @@ module Decidim
               render status: :internal_server_error,
                      json: {
                        error: "Server error",
-                       error_description: Rails.env.test? ? "#{Rails.env}: #{exception.message}" : nil
+                       error_description: Rails.env.test? ? "#{Rails.env}: #{exception.class.name} #{exception.message}" : nil
                      }.compact
             end
 

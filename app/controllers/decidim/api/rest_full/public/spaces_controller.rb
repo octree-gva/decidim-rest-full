@@ -7,6 +7,7 @@ module Decidim
       module Public
         class SpacesController < ApplicationController
           before_action { doorkeeper_authorize! :public }
+          before_action { ability.authorize! :read, ::Decidim::ParticipatorySpaceManifest }
 
           # List Space resources
           def index

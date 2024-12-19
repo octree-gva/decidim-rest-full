@@ -6,6 +6,7 @@ module Decidim
       module Public
         class ComponentsController < ApplicationController
           before_action { doorkeeper_authorize! :public }
+          before_action { ability.authorize! :read, ::Decidim::Component }
 
           # Index all components
           def index

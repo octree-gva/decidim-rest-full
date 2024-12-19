@@ -8,10 +8,12 @@ en:
             client_id: Client ID
             created_at: Created At
             scope_system: "System: manage Organizations and Rails"
-            scope_proposals: "Proposal: manage proposal components"
-            scope_meetings: "Meeting: manage meeting components"
-            scope_debates: "Debate: manage debate components"
-            scope_pages: "Page: manage page components"
+            scope_proposals: "Proposal: manage proposals"
+            scope_blogs: "Blog: manage blog posts"
+            scope_meetings: "Meeting: manage meetings"
+            scope_debates: "Debate: manage debates"
+            scope_pages: "Page: manage pages"
+            scope_public: "Public: navigate components and spaces"
           permission:
             oauth:
               impersonate: "impersonate: Login as another user"
@@ -28,6 +30,13 @@ en:
               server:
                 restart: "restart: Soft restart the server"
                 exec: "exec: Execute jobs"
+            public:
+              component:
+                read: "read: list and details of a component"
+              space:
+                read: "read: list and details of a space"
+            blogs:
+              read: "read: list and details of a blog post"
       admin:
         menu:
           api_clients: "API Clients"
@@ -52,11 +61,17 @@ en:
             keys_label: "Credentials"
             client_id: "Client Id"
             client_secret: "Client Secret"
+            update_permissions: "Update permissions"
+          system_permissions:
             auth_type: "Auth Type"
             organization_perm: "Organization"
             user_perm: "User"
             rails_perm: "Ruby on Rails"
-            update_permissions: "Update permissions"
+          public_permissions:
+            component: "Components"
+            space: "Space"
+          blog_permissions:
+            blogs: Blogs
           show:
             go_back: "Back to the list"
           create:
