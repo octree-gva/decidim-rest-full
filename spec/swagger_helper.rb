@@ -35,21 +35,21 @@ RSpec.configure do |config|
           A RestFull API for Decidim, to be able to CRUD resources from Decidim.
 
           ## Authentication
-          [Get a token](#{Decidim::RestFull.docs_url}/category/authentication) from our `/oauth/token` routes,#{" "}
+          [Get a token](#{Decidim::RestFull.docs_url}/category/authentication) from our `/oauth/token` routes,
           following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.
 
           ### Permissions
-          A permission system is attached to the created OAuth application, that is designed in two levels:#{" "}
+          A permission system is attached to the created OAuth application, that is designed in two levels:
 
           - **scope**: a broad permission to access a collection of endpoints
-          - **abilities**: a fine grained permission system that allow actions.#{" "}
+          - **abilities**: a fine grained permission system that allow actions.
 
           The scopes and abilities are manageable in your System Admin Panel.
 
           ### Multi-tenant
           Decidim is multi-tenant, and this API supports it.
           - The **`system` scope** endpoints are available in any tenant
-          - The tenant `host` attribute will be used to guess which tenant you are requesting.#{" "}
+          - The tenant `host` attribute will be used to guess which tenant you are requesting.
             For example, given a tenant `example.org` and `foobar.org`, the endpoint
             * `example.org/oauth/token` will ask a token for the example.org organization
             * `foobar.org/oauth/token` for foobar.org.
@@ -72,29 +72,10 @@ RSpec.configure do |config|
         }
       ],
       tags: [
-        {
-          name: "OAuth",
-          description: "Use OAuth to get tokens and interact with the API. You can use machine-to-machine tokens, or user token directly with the API." \
-                       "\n* **Machine-to-machine**: Client Credential Flow" \
-                       "\n* **User**: Resource Owner Password Credential Flow, with **impersonation** or **login**",
-
-          externalDocs: {
-            description: "How to authenticate",
-            url: "#{Decidim::RestFull.docs_url}/category/authentication"
-          }
-        },
-        {
-          name: "System",
-          description: "Get information about the organization and the participants."
-        },
-        {
-          name: "Public",
-          description: "Discover informations about overall decidim (spaces and components)"
-        },
-        {
-          name: "Blogs",
-          description: "Get informations about blog posts"
-        }
+        Api::Definitions::Tags::OAUTH,
+        Api::Definitions::Tags::SYSTEM,
+        Api::Definitions::Tags::PUBLIC,
+        Api::Definitions::Tags::BLOG
       ],
       components: {
         securitySchemes: {
@@ -102,111 +83,57 @@ RSpec.configure do |config|
             type: :http,
             scheme: :bearer,
             bearerFormat: :JWT,
-            description: "Authorization via service-to-service credentials flow. Use this for machine clients. [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/client-credential-flow)"
+            description: <<~README
+              Authorization via service-to-service credentials flow.
+              Use this for machine clients.
+              [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/client-credential-flow)
+            README
           },
           resourceOwnerFlowBearer: {
             type: :http,
             scheme: :bearer,
             bearerFormat: :JWT,
-            description: "Authorization via resource owner flow. Use this for user-based authentication [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/user-credentials-flow)"
-
+            description: <<~README
+              Authorization via resource owner flow.
+              Use this for user-based authentication
+              [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/user-credentials-flow)
+            README
           }
         },
         schemas: {
+          # Reusable properties
           api_error: Api::Definitions::ERROR,
           translated_prop: Api::Definitions::TRANSLATED_PROP,
-          organizations_response: {
-            type: :object,
-            properties: {
-              data: {
-                type: :array,
-                items: { "$ref" => "#/components/schemas/organization" }
-              }
-            },
-            required: [:data]
-          },
+          component_type: Api::Definitions::COMPONENT_TYPE,
+          component_manifest: Api::Definitions::COMPONENT_MANIFEST,
+          space_manifest: Api::Definitions::SPACE_MANIFEST,
+          locales: Api::Definitions::LOCALES_PARAM,
+          locale: Api::Definitions::LOCALE_PARAM,
+          creation_date: Api::Definitions::CREATION_DATE,
+          edition_date: Api::Definitions::EDITION_DATE,
+
+          # System
           organization: Api::Definitions::ORGANIZATION,
-          users_response: {
-            type: :object,
-            properties: {
-              data: {
-                type: :array,
-                items: { "$ref" => "#/components/schemas/user" }
-              }
-            },
-            required: [:data]
-          },
-          user_extended_data_response: {
-            type: :object,
-            description: "Extended data response for a given path",
-            properties: {
-              data: { "$ref" => "#/components/schemas/user_extended_data" }
-            },
-            required: [:data]
-          },
-          user_extended_data: Api::Definitions::USER_EXTENDED_DATA,
           user: Api::Definitions::USER,
+          organizations_response: Api::Definitions.array_response("organization", "List of organizations"),
+          users_response: Api::Definitions.array_response("user", "List of users"),
+          user_extended_data_response: Api::Definitions.item_response("user_extended_data", "Extended data response for a given path"),
+          user_extended_data: Api::Definitions::USER_EXTENDED_DATA,
+
+          # Public
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,
-          blog: Api::Definitions::BLOG,
-          blogs_response: {
-            type: :object,
-            description: "Details of a given Blog Post",
-            properties: {
-              data: {
-                type: :array,
-                items: { "$ref" => "#/components/schemas/blog" }
-              }
-            },
-            required: [:data]
-          },
-          blog_response: {
-            type: :object,
-            description: "Details of a given Blog Post",
-            properties: {
-              data: { "$ref" => "#/components/schemas/blog" }
-            },
-            required: [:data]
+          component_response: Api::Definitions.item_response("component", "Details of a given component"),
+          components_response: Api::Definitions.array_response("component", "List of components"),
+          spaces_response: Api::Definitions.array_response("space", "List of spaces"),
+          space_response: Api::Definitions.item_response("space", "Details of a given space"),
 
-          },
-          component_response: {
-            type: :object,
-            description: "Details of a given component",
-            properties: {
-              data: { "$ref" => "#/components/schemas/component" }
-            },
-            required: [:data]
-          },
-          components_response: {
-            type: :object,
-            description: "List of components",
-            properties: {
-              data: {
-                type: :array,
-                items: { "$ref" => "#/components/schemas/component" }
-              }
-            },
-            required: [:data]
-          },
-          spaces_response: {
-            description: "List of spaces",
-            type: :object,
-            properties: {
-              data: {
-                type: :array,
-                items: { "$ref" => "#/components/schemas/space" }
-              }
-            },
-            required: [:data]
-          },
-          space_response: {
-            description: "Definition of one specific space",
-            type: :object,
-            properties: {
-              data: { "$ref" => "#/components/schemas/space" }
-            },
-            required: [:data]
-          },
+          # Blogs
+          blog: Api::Definitions::BLOG,
+          blogs_response: Api::Definitions.array_response("blog", "List of blog posts"),
+          blog_response: Api::Definitions.item_response("blog", "Details of a given blog post"),
+
+          # OAuth methods
           introspect_data: Api::Definitions::INTROSPECT_DATA,
           introspect_response: {
             description: "Details about the token beeing used",

@@ -7,8 +7,8 @@ module Api
       type: :object,
       title: "User",
       properties: {
-        id: { type: :string, example: "1" },
-        type: { type: :string, enum: ["user"], example: "user" },
+        id: { type: :string },
+        type: { type: :string, enum: ["user"] },
         meta: {
           type: :object,
           properties: {
@@ -63,22 +63,22 @@ module Api
               type: :string
             },
             locale: {
-              description: "User locale. Fallback to default locale of the organization. Private",
-              type: :string,
-              enum: Decidim.available_locales
+              "$ref" => "#/components/schemas/locale",
+              description: "User locale. Fallback to default locale of the organization. Private"
             },
             email: {
               description: "Email of the user. Private",
               type: :string
             },
             extended_data: {
-              description: "Additional data. Private",
               type: :object,
+              title: "User's additional data",
+              description: "Additional data. Private",
               properties: {},
               additionalProperties: true
             },
-            created_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" },
-            updated_at: { type: :string, format: :date_time, example: "2024-11-12T12:34:56Z" }
+            created_at: { "$ref" => "#/components/schemas/creation_date" },
+            updated_at: { "$ref" => "#/components/schemas/edition_date" }
           },
           additionalProperties: false,
           required: [:created_at, :updated_at, :name, :nickname, :locale, :extended_data]

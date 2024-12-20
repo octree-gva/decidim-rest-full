@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,  following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:   - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.   The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.    For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.0
  *
@@ -103,26 +103,11 @@ export interface AttachedComponentsDataInner {
   id: string;
   /**
    *
-   * @type {string}
+   * @type {ComponentType}
    * @memberof AttachedComponentsDataInner
    */
-  type: AttachedComponentsDataInnerTypeEnum;
+  type: ComponentType;
 }
-
-export const AttachedComponentsDataInnerTypeEnum = {
-  PageComponent: "page_component",
-  ProposalComponent: "proposal_component",
-  MeetingComponent: "meeting_component",
-  BudgetComponent: "budget_component",
-  SurveyComponent: "survey_component",
-  AccountabilityComponent: "accountability_component",
-  DebateComponent: "debate_component",
-  SortitionComponent: "sortition_component",
-  BlogComponent: "blog_component",
-} as const;
-
-export type AttachedComponentsDataInnerTypeEnum =
-  (typeof AttachedComponentsDataInnerTypeEnum)[keyof typeof AttachedComponentsDataInnerTypeEnum];
 
 /**
  *
@@ -219,13 +204,13 @@ export interface BlogAttributes {
    */
   body: TranslatedProp;
   /**
-   * Creation date of the component
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof BlogAttributes
    */
   created_at: string;
   /**
-   * Last update date of the component
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof BlogAttributes
    */
@@ -310,27 +295,12 @@ export interface BlogPostRelationshipsComponentData {
    */
   id: string;
   /**
-   * Component type
-   * @type {string}
+   *
+   * @type {ComponentType}
    * @memberof BlogPostRelationshipsComponentData
    */
-  type: BlogPostRelationshipsComponentDataTypeEnum;
+  type: ComponentType;
 }
-
-export const BlogPostRelationshipsComponentDataTypeEnum = {
-  PageComponent: "page_component",
-  ProposalComponent: "proposal_component",
-  MeetingComponent: "meeting_component",
-  BudgetComponent: "budget_component",
-  SurveyComponent: "survey_component",
-  AccountabilityComponent: "accountability_component",
-  DebateComponent: "debate_component",
-  SortitionComponent: "sortition_component",
-  BlogComponent: "blog_component",
-} as const;
-
-export type BlogPostRelationshipsComponentDataTypeEnum =
-  (typeof BlogPostRelationshipsComponentDataTypeEnum)[keyof typeof BlogPostRelationshipsComponentDataTypeEnum];
 
 /**
  *
@@ -374,7 +344,7 @@ export type BlogPostRelationshipsSpaceDataTypeEnum =
   (typeof BlogPostRelationshipsSpaceDataTypeEnum)[keyof typeof BlogPostRelationshipsSpaceDataTypeEnum];
 
 /**
- * Details of a given Blog Post
+ *
  * @export
  * @interface BlogResponse
  */
@@ -387,7 +357,7 @@ export interface BlogResponse {
   data: Blog;
 }
 /**
- * Details of a given Blog Post
+ *
  * @export
  * @interface BlogsResponse
  */
@@ -465,10 +435,10 @@ export interface Component {
   id: string;
   /**
    *
-   * @type {string}
+   * @type {ComponentType}
    * @memberof Component
    */
-  type: ComponentTypeEnum;
+  type: ComponentType;
   /**
    *
    * @type {ComponentAttributes}
@@ -495,21 +465,6 @@ export interface Component {
   relationships?: ComponentRelationships;
 }
 
-export const ComponentTypeEnum = {
-  PageComponent: "page_component",
-  ProposalComponent: "proposal_component",
-  MeetingComponent: "meeting_component",
-  BudgetComponent: "budget_component",
-  SurveyComponent: "survey_component",
-  AccountabilityComponent: "accountability_component",
-  DebateComponent: "debate_component",
-  SortitionComponent: "sortition_component",
-  BlogComponent: "blog_component",
-} as const;
-
-export type ComponentTypeEnum =
-  (typeof ComponentTypeEnum)[keyof typeof ComponentTypeEnum];
-
 /**
  *
  * @export
@@ -529,11 +484,11 @@ export interface ComponentAttributes {
    */
   global_announcement?: TranslatedProp;
   /**
-   * Manifest name of the component
-   * @type {string}
+   *
+   * @type {ComponentManifest}
    * @memberof ComponentAttributes
    */
-  manifest_name: ComponentAttributesManifestNameEnum;
+  manifest_name: ComponentManifest;
   /**
    * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
    * @type {string}
@@ -560,21 +515,6 @@ export interface ComponentAttributes {
   updated_at: string;
 }
 
-export const ComponentAttributesManifestNameEnum = {
-  Pages: "pages",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Budgets: "budgets",
-  Surveys: "surveys",
-  Accountability: "accountability",
-  Debates: "debates",
-  Sortitions: "sortitions",
-  Blogs: "blogs",
-} as const;
-
-export type ComponentAttributesManifestNameEnum =
-  (typeof ComponentAttributesManifestNameEnum)[keyof typeof ComponentAttributesManifestNameEnum];
-
 /**
  *
  * @export
@@ -594,6 +534,27 @@ export interface ComponentLinks {
    */
   related: string;
 }
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export const ComponentManifest = {
+  Pages: "pages",
+  Proposals: "proposals",
+  Meetings: "meetings",
+  Budgets: "budgets",
+  Surveys: "surveys",
+  Accountability: "accountability",
+  Debates: "debates",
+  Sortitions: "sortitions",
+  Blogs: "blogs",
+} as const;
+
+export type ComponentManifest =
+  (typeof ComponentManifest)[keyof typeof ComponentManifest];
+
 /**
  *
  * @export
@@ -686,7 +647,7 @@ export interface ComponentResourcesDescriptor {
   meta: ComponentResourceDescriptorMeta;
 }
 /**
- * Details of a given component
+ *
  * @export
  * @interface ComponentResponse
  */
@@ -699,7 +660,27 @@ export interface ComponentResponse {
   data: Component;
 }
 /**
- * List of components
+ *
+ * @export
+ * @enum {string}
+ */
+
+export const ComponentType = {
+  PageComponent: "page_component",
+  ProposalComponent: "proposal_component",
+  MeetingComponent: "meeting_component",
+  BudgetComponent: "budget_component",
+  SurveyComponent: "survey_component",
+  AccountabilityComponent: "accountability_component",
+  DebateComponent: "debate_component",
+  SortitionComponent: "sortition_component",
+  BlogComponent: "blog_component",
+} as const;
+
+export type ComponentType = (typeof ComponentType)[keyof typeof ComponentType];
+
+/**
+ *
  * @export
  * @interface ComponentsResponse
  */
@@ -818,83 +799,31 @@ export interface IntrospectData {
   aud: string;
   /**
    *
-   * @type {IntrospectDataResource}
+   * @type {ResourceDetails}
    * @memberof IntrospectData
    */
-  resource?: IntrospectDataResource;
+  resource?: ResourceDetails;
 }
 /**
  *
  * @export
- * @interface IntrospectDataResource
+ * @interface IntrospectTokenRequest
  */
-export interface IntrospectDataResource {
-  /**
-   * resource id
-   * @type {string}
-   * @memberof IntrospectDataResource
-   */
-  id: string;
-  /**
-   * resource type
-   * @type {string}
-   * @memberof IntrospectDataResource
-   */
-  type: IntrospectDataResourceTypeEnum;
+export interface IntrospectTokenRequest {
   /**
    *
-   * @type {IntrospectDataResourceAttributes}
-   * @memberof IntrospectDataResource
+   * @type {string}
+   * @memberof IntrospectTokenRequest
    */
-  attributes?: IntrospectDataResourceAttributes;
+  token: string;
 }
-
-export const IntrospectDataResourceTypeEnum = {
-  User: "user",
-} as const;
-
-export type IntrospectDataResourceTypeEnum =
-  (typeof IntrospectDataResourceTypeEnum)[keyof typeof IntrospectDataResourceTypeEnum];
-
 /**
  *
  * @export
- * @interface IntrospectDataResourceAttributes
+ * @enum {string}
  */
-export interface IntrospectDataResourceAttributes {
-  /**
-   * Email
-   * @type {string}
-   * @memberof IntrospectDataResourceAttributes
-   */
-  email: string;
-  /**
-   * Last update date
-   * @type {string}
-   * @memberof IntrospectDataResourceAttributes
-   */
-  updated_at: string;
-  /**
-   * Creation date
-   * @type {string}
-   * @memberof IntrospectDataResourceAttributes
-   */
-  created_at: string;
-  /**
-   * Personal url (social link, website, etc.)
-   * @type {string}
-   * @memberof IntrospectDataResourceAttributes
-   */
-  personal_url?: string;
-  /**
-   * Current prefered locale
-   * @type {string}
-   * @memberof IntrospectDataResourceAttributes
-   */
-  locale?: IntrospectDataResourceAttributesLocaleEnum;
-}
 
-export const IntrospectDataResourceAttributesLocaleEnum = {
+export const Locale = {
   En: "en",
   Bg: "bg",
   Ar: "ar",
@@ -945,22 +874,8 @@ export const IntrospectDataResourceAttributesLocaleEnum = {
   ZhTw: "zh-TW",
 } as const;
 
-export type IntrospectDataResourceAttributesLocaleEnum =
-  (typeof IntrospectDataResourceAttributesLocaleEnum)[keyof typeof IntrospectDataResourceAttributesLocaleEnum];
+export type Locale = (typeof Locale)[keyof typeof Locale];
 
-/**
- *
- * @export
- * @interface IntrospectTokenRequest
- */
-export interface IntrospectTokenRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof IntrospectTokenRequest
-   */
-  token: string;
-}
 /**
  *
  * @export
@@ -1100,11 +1015,11 @@ export interface OrganizationAttributes {
    */
   host: string;
   /**
-   * available locales of the organization
+   *
    * @type {Array<string>}
    * @memberof OrganizationAttributes
    */
-  available_locales: Array<string>;
+  available_locales: Array<OrganizationAttributesAvailableLocalesEnum>;
   /**
    * defaut locale for the organization
    * @type {string}
@@ -1118,18 +1033,73 @@ export interface OrganizationAttributes {
    */
   secondary_hosts?: Array<string>;
   /**
-   *
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof OrganizationAttributes
    */
   created_at: string;
   /**
-   *
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof OrganizationAttributes
    */
   updated_at: string;
 }
+
+export const OrganizationAttributesAvailableLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+
+export type OrganizationAttributesAvailableLocalesEnum =
+  (typeof OrganizationAttributesAvailableLocalesEnum)[keyof typeof OrganizationAttributesAvailableLocalesEnum];
+
 /**
  *
  * @export
@@ -1141,8 +1111,63 @@ export interface OrganizationMeta {
    * @type {Array<string>}
    * @memberof OrganizationMeta
    */
-  locales: Array<string>;
+  locales: Array<OrganizationMetaLocalesEnum>;
 }
+
+export const OrganizationMetaLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+
+export type OrganizationMetaLocalesEnum =
+  (typeof OrganizationMetaLocalesEnum)[keyof typeof OrganizationMetaLocalesEnum];
+
 /**
  *
  * @export
@@ -1161,6 +1186,131 @@ export interface OrganizationsResponse {
  * @export
  */
 export type PasswordGrantParam = Impersonation | Login;
+
+/**
+ *
+ * @export
+ * @interface ResourceDetails
+ */
+export interface ResourceDetails {
+  /**
+   * resource id
+   * @type {string}
+   * @memberof ResourceDetails
+   */
+  id: string;
+  /**
+   * resource type
+   * @type {string}
+   * @memberof ResourceDetails
+   */
+  type: ResourceDetailsTypeEnum;
+  /**
+   *
+   * @type {ResourceDetailsAttributes}
+   * @memberof ResourceDetails
+   */
+  attributes?: ResourceDetailsAttributes;
+}
+
+export const ResourceDetailsTypeEnum = {
+  User: "user",
+} as const;
+
+export type ResourceDetailsTypeEnum =
+  (typeof ResourceDetailsTypeEnum)[keyof typeof ResourceDetailsTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ResourceDetailsAttributes
+ */
+export interface ResourceDetailsAttributes {
+  /**
+   * Email
+   * @type {string}
+   * @memberof ResourceDetailsAttributes
+   */
+  email: string;
+  /**
+   * Last update date
+   * @type {string}
+   * @memberof ResourceDetailsAttributes
+   */
+  updated_at: string;
+  /**
+   * Creation date
+   * @type {string}
+   * @memberof ResourceDetailsAttributes
+   */
+  created_at: string;
+  /**
+   * Personal url (social link, website, etc.)
+   * @type {string}
+   * @memberof ResourceDetailsAttributes
+   */
+  personal_url?: string;
+  /**
+   * Current prefered locale
+   * @type {string}
+   * @memberof ResourceDetailsAttributes
+   */
+  locale?: ResourceDetailsAttributesLocaleEnum;
+}
+
+export const ResourceDetailsAttributesLocaleEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+
+export type ResourceDetailsAttributesLocaleEnum =
+  (typeof ResourceDetailsAttributesLocaleEnum)[keyof typeof ResourceDetailsAttributesLocaleEnum];
 
 /**
  *
@@ -1251,10 +1401,10 @@ export interface SpaceAttributes {
   description?: TranslatedProp;
   /**
    *
-   * @type {string}
+   * @type {SpaceManifest}
    * @memberof SpaceAttributes
    */
-  manifest_name: SpaceAttributesManifestNameEnum;
+  manifest_name: SpaceManifest;
   /**
    *
    * @type {string}
@@ -1268,26 +1418,19 @@ export interface SpaceAttributes {
    */
   visibility: SpaceAttributesVisibilityEnum;
   /**
-   * Space creation date
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof SpaceAttributes
    */
   created_at: string;
   /**
-   * Last update of the space
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof SpaceAttributes
    */
   updated_at: string;
 }
 
-export const SpaceAttributesManifestNameEnum = {
-  ParticipatoryProcesses: "participatory_processes",
-  Assemblies: "assemblies",
-} as const;
-
-export type SpaceAttributesManifestNameEnum =
-  (typeof SpaceAttributesManifestNameEnum)[keyof typeof SpaceAttributesManifestNameEnum];
 export const SpaceAttributesVisibilityEnum = {
   Public: "public",
   Transparent: "transparent",
@@ -1313,6 +1456,19 @@ export interface SpaceLinks {
 /**
  *
  * @export
+ * @enum {string}
+ */
+
+export const SpaceManifest = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+
+export type SpaceManifest = (typeof SpaceManifest)[keyof typeof SpaceManifest];
+
+/**
+ *
+ * @export
  * @interface SpaceRelationships
  */
 export interface SpaceRelationships {
@@ -1324,7 +1480,7 @@ export interface SpaceRelationships {
   components: AttachedComponents;
 }
 /**
- * Definition of one specific space
+ *
  * @export
  * @interface SpaceResponse
  */
@@ -1337,7 +1493,7 @@ export interface SpaceResponse {
   data: Space;
 }
 /**
- * List of spaces
+ *
  * @export
  * @interface SpacesResponse
  */
@@ -1719,11 +1875,11 @@ export interface UserAttributes {
    */
   about?: string;
   /**
-   * User locale. Fallback to default locale of the organization. Private
-   * @type {string}
+   *
+   * @type {Locale}
    * @memberof UserAttributes
    */
-  locale: UserAttributesLocaleEnum;
+  locale: Locale;
   /**
    * Email of the user. Private
    * @type {string}
@@ -1737,81 +1893,27 @@ export interface UserAttributes {
    */
   extended_data: { [key: string]: any };
   /**
-   *
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof UserAttributes
    */
   created_at: string;
   /**
-   *
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof UserAttributes
    */
   updated_at: string;
 }
 
-export const UserAttributesLocaleEnum = {
-  En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
-  Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
-} as const;
-
-export type UserAttributesLocaleEnum =
-  (typeof UserAttributesLocaleEnum)[keyof typeof UserAttributesLocaleEnum];
-
 /**
- * Extended data response for a given path
+ *
  * @export
  * @interface UserExtendedDataResponse
  */
 export interface UserExtendedDataResponse {
   /**
-   * User extended data
+   * Hash of values attached to a user. These values won\'t be displayed to admins or users, consider this as an internal data payload.
    * @type {{ [key: string]: any; }}
    * @memberof UserExtendedDataResponse
    */

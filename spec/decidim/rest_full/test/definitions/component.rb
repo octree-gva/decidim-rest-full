@@ -6,29 +6,25 @@ module Api
       type: :object,
       title: "Component",
       properties: {
-        id: { type: :string, example: "1", description: "Component Id" },
-        type: { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" } },
+        id: { type: :string, description: "Component Id" },
+        type: { "$ref" => "#/components/schemas/component_type" },
         attributes: {
           type: :object,
           properties: {
             name: {
               "$ref" => "#/components/schemas/translated_prop",
-              example: { en: "Component Name", fr: "Nom du composant" },
               description: "Component name"
             },
             global_announcement: {
               "$ref" => "#/components/schemas/translated_prop",
-              example: { en: "Welcome! You can create", fr: "Bienvenue! Vous pouvez" },
               description: "Component annoucement (intro)"
             },
             manifest_name: {
-              type: :string,
-              enum: Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy },
+              "$ref" => "#/components/schemas/component_manifest",
               description: "Manifest name of the component"
             },
             participatory_space_type: {
               type: :string,
-              example: "Decidim::Assembly",
               description: "Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)"
             },
             participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },

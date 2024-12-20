@@ -5,9 +5,14 @@ module Api
   module Definitions
     USER_EXTENDED_DATA = {
       type: :object,
-      description: "User extended data",
+      title: "User extended data",
       properties: {},
-      additionalProperties: true
+      additionalProperties: true,
+      description: <<~README
+        Hash of values attached to a user. These values won't be
+        displayed to admins or users, consider this as an internal
+        data payload.
+      README
     }.freeze
   end
 end
