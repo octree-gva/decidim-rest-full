@@ -41,6 +41,7 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
       end
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
+
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let!(:assembly) { create(:assembly, organization: organization) }

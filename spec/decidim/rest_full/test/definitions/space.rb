@@ -6,8 +6,8 @@ module Api
       type: :object,
       title: "Space",
       properties: {
-        id: { type: :string, example: "1", description: "Space Id" },
-        type: { type: :string, enum: ["space"], example: "space" },
+        id: { type: :string, description: "Space Id" },
+        type: { type: :string, enum: ["space"] },
         attributes: {
           title: "Space Attributes",
           type: :object,
@@ -15,7 +15,6 @@ module Api
             title: {
               "$ref" => "#/components/schemas/translated_prop",
               title: "Title translations",
-              example: { en: "Assembly Name", fr: "Nom de l'Assemblée" },
               description: "Space title"
             },
             subtitle: {
@@ -33,11 +32,11 @@ module Api
               title: "Description translations",
               description: "Space description"
             },
-            manifest_name: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
+            manifest_name: { "$ref" => "#/components/schemas/space_manifest" },
             participatory_space_type: { type: :string, example: "Decidim::Assembly" },
             visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" },
-            created_at: { type: :string, description: "Space creation date" },
-            updated_at: { type: :string, description: "Last update of the space" }
+            created_at: { "$ref" => "#/components/schemas/creation_date" },
+            updated_at: { "$ref" => "#/components/schemas/edition_date" }
           },
           required: [:title, :manifest_name, :visibility, :created_at, :updated_at],
           additionalProperties: false
@@ -57,8 +56,7 @@ module Api
                     properties: {
                       id: { type: :string },
                       type: {
-                        type: :string,
-                        enum: Decidim.component_registry.manifests.map { |manifest| "#{manifest.name.to_s.singularize}_component" }.reject { |manifest_name| manifest_name == "dummy_component" }
+                        "$ref" => "#/components/schemas/component_type"
                       }
                     },
                     additionalProperties: false,

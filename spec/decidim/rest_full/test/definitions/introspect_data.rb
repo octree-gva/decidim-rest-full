@@ -20,6 +20,7 @@ module Api
         },
         resource: {
           type: :object,
+          title: "Resource details",
           properties: {
             id: {
               type: :string,

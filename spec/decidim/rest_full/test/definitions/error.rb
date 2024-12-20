@@ -7,7 +7,7 @@ module Api
       title: "Api Error",
       properties: {
         error: { type: :string, description: "Error title, starting with HTTP Code, like 400: bad request" },
-        error_description: { type: :string, description: "Error detail, mostly validation error", example: "Title is required" },
+        error_description: { type: :string, description: "Error detail, mostly validation error" },
         state: { type: :string, description: "authentification state" }
       },
       additionalProperties: false,
