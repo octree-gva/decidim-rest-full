@@ -9,6 +9,9 @@ module Decidim
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
         ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
+
+        # Override mailer to avoid sending emails to @example.org
+        ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
       end
 
       initializer "rest_full.scopes" do
@@ -74,7 +77,7 @@ module Decidim
               impersonation_payload = params.permit(
                 :username,
                 :id,
-                meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :name, :email]
+                meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :send_welcome_message, :name, :email]
               ).to_h
 
               command_result = ImpersonateResourceOwnerFromCredentials.call(
