@@ -21,13 +21,8 @@ Decidim::Core::Engine.routes.draw do
           resources :users,
                     only: [:index],
                     controller: "/decidim/api/rest_full/system/users" do
-            get "/extended_data/*object_path", to: "/decidim/api/rest_full/system/user_extended_data#show", as: :extended_data,
-                                               constraints: { object_path: %r{([a-z]+[a-z0-9]*/?){1,5}} }
-            get "/extended_data", to: "/decidim/api/rest_full/system/user_extended_data#show", defaults: { object_path: "/" }
-
-            put "/extended_data/*object_path", to: "/decidim/api/rest_full/system/user_extended_data#update", as: :update_extended_data,
-                                               constraints: { object_path: %r{([a-z]+[a-z0-9]*/?){1,5}} }
-            put "/extended_data", to: "/decidim/api/rest_full/system/user_extended_data#update", defaults: { object_path: "/" }
+            get "/extended_data", to: "/decidim/api/rest_full/system/user_extended_data#show", as: :extended_data
+            put "/extended_data", to: "/decidim/api/rest_full/system/user_extended_data#update"
           end
         end
 

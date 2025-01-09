@@ -1,71 +1,102 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request do
-  path "/system/users/{user_id}/extended_data/{path}" do
+RSpec.describe "Decidim::Api::RestFull::OAuth::UserExtendedDataController", type: :request do
+  path "/system/users/{user_id}/extended_data" do
     put "Update user extended data" do
       tags "System"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
       operationId "setUserData"
       description <<~README
+        The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:
 
-        **Update all the data**<br />
-        To update all the extended_data of a user, use `path="/"` or `path=""`.
+        1. `data`: The value or hash you want to update.
+        2. `object_path`: The dot-style path to the key (e.g., access.this.key).
+
+        **Root path**<br />
+        To update data from root of the hash, use `object_path="."`.
+
+        Example:
+        ```
+          body={"data": {"name": "Jane"}, "object_path": "personnal"}
+        ```
+        This recursively merges data into the hash without removing existing keys.
 
         **Merge some data**<br />
-        The update operation here is a __merge__. For example, given:
+        Initial hash:
         ```json
           {
             "personnal": {"birthday": "1989-05-18"}
           }
         ```
-        if you patch `path="personnal"`, `body={"data": {"name": "Jane"}}`, you will get:
+        Patch payload:
         ```json
+          {
+            "data": {
+              "name": "Jane"
+            },
+            "object_path": "personnal"
+          }
+        ```
+        Result:
+        ```
           {
             "personnal": {"birthday": "1989-05-18", "name": "Jane"}
           }
         ```
 
         **Create new Paths**<br />
-        To make things easy, paths are already created. For example, given:
+        Paths are created as needed.
+        Exemple:
         ```json
-          {
-            "personnal": {"birthday": "1989-05-18"}
-          }
+          body = {"data": {"external_user_id": 12}, "object_path": "data-store.my-app.foo"}
         ```
-        if you patch `path="data-store/my-app/foo"`, `body={"data": {"external_user_id": "12"}}`, you will get:
+        Result:
         ```json
           {
-            "personnal": {"birthday": "1989-05-18", "name": "Jane"},
+            "personnal": {"birthday": "1989-05-18"},
             "data-store": {"my-app": {"foo": {"external_user_id": 12}}}
           }
         ```
-        Or you can also set `path="data-store/my-app/foo/external_user_id"`, `body={"data": 12}` for the same result
+        Alternatively:
+        ```
+          body = {"data": 12, "object_path": "data-store.my-app.foo.external_user_id"}
+        ```
 
         **Remove a key**<br />
-        To remove a key of a user extended_data, you need to set its value to a null or empty one.
+        Set a key to null or an empty value to remove it.
+
+        Example: Initial hash:
         ```json
           {
             "personnal": {"birthday": "1989-05-18", "name": "Jane"}
           }
         ```
-        Given this data, if you set `path="personnal/birthday"` and `body={"data": {"birthday": ""}}`, the key will be removed.
-        Same if you do `path="/"` and `body={"data": {"personal": {"birthday": null}}}`, the result will be:
+        Patch:
         ```json
-          {
-            "personnal": {"name": "Jane"}
-          }
+          body = {"data": {"birthday": ""}, "object_path": "personnal"}
         ```
 
-        **Return value**<br />
-        Update request gives back the actual value at the given path.#{" "}
+        Result:
+        ```
+        {
+          "personnal": {"name": "Jane"}
+        }
+        ```
+
+        **Return Value**<br />
+        The update request returns the updated value at the specified path.
 
       README
-
+      parameter name: :body, in: :body, required: true, schema: {
+        type: :object,
+        properties: {
+          data: { type: :object, description: "New value for the extended data at the given path" },
+          object_path: { type: :string, description: "object path, in dot style, like foo.bar. use '.' to update the whole user data" }
+        }, required: [:data]
+      }
       parameter name: :user_id, in: :path, schema: { type: :integer, description: "User Id" }
-      parameter name: :path, in: :path, required: false, schema: { type: :string, description: "object path, in path style, like foo/bar to access foo.bar. use empty string or '/' to update the whole user data" }
-      parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { data: { type: :object, description: "New value for the extended data at the given path" } }, required: [:data] }
 
       let!(:organization) { create(:organization) }
       let(:api_client) do
@@ -82,8 +113,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       let(:Authorization) { "Bearer #{credential_token.token}" }
 
       let!(:user_id) { user.id }
-      let!(:path) { "" }
-      let!(:body) { { data: { "foo" => "bar" } } }
+      let(:body) { { data: { "foo" => "bar" }, object_path: "." } }
 
       before do
         host! organization.host
@@ -94,9 +124,8 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
         produces "application/json"
         schema "$ref" => "#/components/schemas/user_extended_data"
 
-        context "with a empty path" do
+        context "with root path '.'" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "foo" => { "bar" => "true" } }) }
-          let!(:path) { "" }
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
@@ -107,8 +136,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         context "with a path given" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
-          let!(:path) { "personal/birthday" }
-          let!(:body) { { data: "1990-02-09" } }
+          let(:body) { { data: "1990-02-09", object_path: "personal.birthday" } }
 
           run_test! do |example|
             data = JSON.parse(example.body)["data"]
@@ -119,8 +147,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         context "with a path given and merging data" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
-          let!(:path) { "personal" }
-          let!(:body) { { data: { "name" => "Jeanne" } } }
+          let(:body) { { data: { "name" => "Jeanne" }, object_path: "personal" } }
 
           run_test! do |example|
             JSON.parse(example.body)["data"]
@@ -132,8 +159,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         context "with a path given and unsetting data" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28", "name" => "Jeanne" } }) }
-          let!(:path) { "personal" }
-          let!(:body) { { data: { "name" => nil } } }
+          let(:body) { { data: { "name" => nil }, object_path: "personal" } }
 
           run_test! do |example|
             JSON.parse(example.body)["data"]
@@ -145,8 +171,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
 
         context "with a path=unknown, upsert" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
-          let!(:path) { "unknown" }
-          let!(:body) { { data: { "whatever" => { "is" => { "stil" => "ok" } } } } }
+          let(:body) { { data: { "whatever" => { "is" => { "stil" => "ok" } } }, object_path: "unknown" } }
 
           run_test! do |example|
             user.reload
@@ -164,8 +189,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       response "403", "Forbidden" do
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
-        let!(:path) { "" }
-        let!(:body) { { data: "1990-02-09" } }
+        let(:body) { { data: "1990-02-09", object_path: "." } }
 
         context "with no system scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
@@ -180,6 +204,7 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
         context "with no system.users.extended_data.update permission" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+          let(:body) { { data: "1990-02-09", object_path: "." } }
 
           run_test! do |_example|
             expect(response.status).to eq(403)
@@ -191,12 +216,12 @@ RSpec.describe "Decidim::Api::RestFull::OAuth::UsersController", type: :request 
       response "500", "Internal Server Error" do
         consumes "application/json"
         produces "application/json"
-        let!(:path) { "" }
-        let!(:body) { { data: "1990-02-09" } }
+        let!(:user_id) { "500" }
+        let(:body) { { data: "1990-02-09", object_path: "." } }
 
         before do
           controller = Decidim::Api::RestFull::System::UserExtendedDataController.new
-          allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
+          allow(controller).to receive(:update).and_raise(StandardError.new("Intentional error for testing"))
           allow(Decidim::Api::RestFull::System::UserExtendedDataController).to receive(:new).and_return(controller)
         end
 

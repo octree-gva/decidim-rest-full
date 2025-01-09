@@ -1324,6 +1324,12 @@ export interface SetUserDataRequest {
    * @memberof SetUserDataRequest
    */
   data: object;
+  /**
+   * object path, in dot style, like foo.bar. use \'.\' to update the whole user data
+   * @type {string}
+   * @memberof SetUserDataRequest
+   */
+  object_path?: string;
 }
 /**
  *
@@ -4478,33 +4484,30 @@ export const SystemApiAxiosParamCreator = function (
       };
     },
     /**
-     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update user extended data
      * @param {number} userId
-     * @param {string} path
      * @param {SetUserDataRequest} setUserDataRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setUserData: async (
       userId: number,
-      path: string,
       setUserDataRequest: SetUserDataRequest,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'userId' is not null or undefined
       assertParamExists("setUserData", "userId", userId);
-      // verify required parameter 'path' is not null or undefined
-      assertParamExists("setUserData", "path", path);
       // verify required parameter 'setUserDataRequest' is not null or undefined
       assertParamExists(
         "setUserData",
         "setUserDataRequest",
         setUserDataRequest,
       );
-      const localVarPath = `/system/users/{user_id}/extended_data/{path}`
-        .replace(`{${"user_id"}}`, encodeURIComponent(String(userId)))
-        .replace(`{${"path"}}`, encodeURIComponent(String(path)));
+      const localVarPath = `/system/users/{user_id}/extended_data`.replace(
+        `{${"user_id"}}`,
+        encodeURIComponent(String(userId)),
+      );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -4548,69 +4551,20 @@ export const SystemApiAxiosParamCreator = function (
     /**
      * Fetch user extended data
      * @summary Get user extended data
+     * @param {string} objectPath
      * @param {number} userId
-     * @param {string} path
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     userData: async (
+      objectPath: string,
       userId: number,
-      path: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'objectPath' is not null or undefined
+      assertParamExists("userData", "objectPath", objectPath);
       // verify required parameter 'userId' is not null or undefined
       assertParamExists("userData", "userId", userId);
-      // verify required parameter 'path' is not null or undefined
-      assertParamExists("userData", "path", path);
-      const localVarPath = `/system/users/{user_id}/extended_data/{path}`
-        .replace(`{${"user_id"}}`, encodeURIComponent(String(userId)))
-        .replace(`{${"path"}}`, encodeURIComponent(String(path)));
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     * Fetch user extended data
-     * @summary Get All user extended data
-     * @param {number} userId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    userDataRoot: async (
-      userId: number,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'userId' is not null or undefined
-      assertParamExists("userDataRoot", "userId", userId);
       const localVarPath = `/system/users/{user_id}/extended_data`.replace(
         `{${"user_id"}}`,
         encodeURIComponent(String(userId)),
@@ -4633,6 +4587,10 @@ export const SystemApiAxiosParamCreator = function (
       // authentication credentialFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (objectPath !== undefined) {
+        localVarQueryParameter["object_path"] = objectPath;
+      }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -4825,17 +4783,15 @@ export const SystemApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update user extended data
      * @param {number} userId
-     * @param {string} path
      * @param {SetUserDataRequest} setUserDataRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async setUserData(
       userId: number,
-      path: string,
       setUserDataRequest: SetUserDataRequest,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -4846,7 +4802,6 @@ export const SystemApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.setUserData(
         userId,
-        path,
         setUserDataRequest,
         options,
       );
@@ -4866,14 +4821,14 @@ export const SystemApiFp = function (configuration?: Configuration) {
     /**
      * Fetch user extended data
      * @summary Get user extended data
+     * @param {string} objectPath
      * @param {number} userId
-     * @param {string} path
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async userData(
+      objectPath: string,
       userId: number,
-      path: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -4882,47 +4837,14 @@ export const SystemApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<{ [key: string]: any }>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
+        objectPath,
         userId,
-        path,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["SystemApi.userData"]?.[localVarOperationServerIndex]
           ?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * Fetch user extended data
-     * @summary Get All user extended data
-     * @param {number} userId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async userDataRoot(
-      userId: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<{ [key: string]: any }>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.userDataRoot(
-        userId,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.userDataRoot"]?.[
-          localVarOperationServerIndex
-        ]?.url;
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -5031,7 +4953,7 @@ export const SystemApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update user extended data
      * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -5044,7 +4966,6 @@ export const SystemApiFactory = function (
       return localVarFp
         .setUserData(
           requestParameters.userId,
-          requestParameters.path,
           requestParameters.setUserDataRequest,
           options,
         )
@@ -5062,22 +4983,11 @@ export const SystemApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
-        .userData(requestParameters.userId, requestParameters.path, options)
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     * Fetch user extended data
-     * @summary Get All user extended data
-     * @param {SystemApiUserDataRootRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    userDataRoot(
-      requestParameters: SystemApiUserDataRootRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<{ [key: string]: any }> {
-      return localVarFp
-        .userDataRoot(requestParameters.userId, options)
+        .userData(
+          requestParameters.objectPath,
+          requestParameters.userId,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -5156,13 +5066,6 @@ export interface SystemApiSetUserDataRequest {
 
   /**
    *
-   * @type {string}
-   * @memberof SystemApiSetUserData
-   */
-  readonly path: string;
-
-  /**
-   *
    * @type {SetUserDataRequest}
    * @memberof SystemApiSetUserData
    */
@@ -5177,29 +5080,15 @@ export interface SystemApiSetUserDataRequest {
 export interface SystemApiUserDataRequest {
   /**
    *
-   * @type {number}
-   * @memberof SystemApiUserData
-   */
-  readonly userId: number;
-
-  /**
-   *
    * @type {string}
    * @memberof SystemApiUserData
    */
-  readonly path: string;
-}
+  readonly objectPath: string;
 
-/**
- * Request parameters for userDataRoot operation in SystemApi.
- * @export
- * @interface SystemApiUserDataRootRequest
- */
-export interface SystemApiUserDataRootRequest {
   /**
    *
    * @type {number}
-   * @memberof SystemApiUserDataRoot
+   * @memberof SystemApiUserData
    */
   readonly userId: number;
 }
@@ -5332,7 +5221,7 @@ export class SystemApi extends BaseAPI {
   }
 
   /**
-   *  **Update all the data**<br /> To update all the extended_data of a user, use `path=\"/\"` or `path=\"\"`.  **Merge some data**<br /> The update operation here is a __merge__. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"personnal\"`, `body={\"data\": {\"name\": \"Jane\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> To make things easy, paths are already created. For example, given: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` if you patch `path=\"data-store/my-app/foo\"`, `body={\"data\": {\"external_user_id\": \"12\"}}`, you will get: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Or you can also set `path=\"data-store/my-app/foo/external_user_id\"`, `body={\"data\": 12}` for the same result  **Remove a key**<br /> To remove a key of a user extended_data, you need to set its value to a null or empty one. ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Given this data, if you set `path=\"personnal/birthday\"` and `body={\"data\": {\"birthday\": \"\"}}`, the key will be removed. Same if you do `path=\"/\"` and `body={\"data\": {\"personal\": {\"birthday\": null}}}`, the result will be: ```json   {     \"personnal\": {\"name\": \"Jane\"}   } ```  **Return value**<br /> Update request gives back the actual value at the given path.
+   * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
    * @summary Update user extended data
    * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
@@ -5346,7 +5235,6 @@ export class SystemApi extends BaseAPI {
     return SystemApiFp(this.configuration)
       .setUserData(
         requestParameters.userId,
-        requestParameters.path,
         requestParameters.setUserDataRequest,
         options,
       )
@@ -5366,24 +5254,7 @@ export class SystemApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return SystemApiFp(this.configuration)
-      .userData(requestParameters.userId, requestParameters.path, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * Fetch user extended data
-   * @summary Get All user extended data
-   * @param {SystemApiUserDataRootRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public userDataRoot(
-    requestParameters: SystemApiUserDataRootRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .userDataRoot(requestParameters.userId, options)
+      .userData(requestParameters.objectPath, requestParameters.userId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
