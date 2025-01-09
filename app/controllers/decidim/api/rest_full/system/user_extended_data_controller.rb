@@ -23,7 +23,11 @@ module Decidim
           def update
             data = params.require(:data)
             data.permit! if data.is_a?(ActionController::Parameters)
-            user.update(extended_data: merge_extended_data(data))
+            user.update(
+              extended_data: compact_blank_recursively(
+                merge_extended_data(data)
+              )
+            )
             user.reload
             render json: {
               data: extended_data_at_path
@@ -33,9 +37,9 @@ module Decidim
           private
 
           def extended_data_at_path
-            return extended_data if object_path == "/"
+            return extended_data if object_path == "."
 
-            object_path.split("/").reduce(extended_data) do |current, key|
+            object_path.split(".").reduce(extended_data) do |current, key|
               raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
               raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
 
@@ -45,9 +49,9 @@ module Decidim
 
           def merge_extended_data(obj)
             merged_extra = extended_data.deep_dup
-            return merged_extra.merge(obj) if object_path == "/"
+            return merged_extra.merge(obj) if object_path == "."
 
-            parts = object_path.split("/")
+            parts = object_path.split(".")
             selected = parts[..-2].reduce(merged_extra) do |current, key|
               raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
 
@@ -59,7 +63,7 @@ module Decidim
             else
               selected[parts.last] = obj
             end
-            compact_blank_recursively(merged_extra)
+            merged_extra
           end
 
           def compact_blank_recursively(hash)
@@ -72,7 +76,10 @@ module Decidim
           end
 
           def object_path
-            @object_path ||= params.require(:object_path)
+            @object_path ||= begin
+              obj_path = params.require(:object_path)
+              obj_path || "."
+            end
           end
 
           def extended_data
