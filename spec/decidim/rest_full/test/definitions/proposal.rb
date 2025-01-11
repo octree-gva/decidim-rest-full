@@ -95,7 +95,7 @@ module Api
               type: :object,
               properties: {
                 id: { type: :string, description: "User Id" },
-                type: { type: :string, enum: ["user", "user_group"] }
+                type: { type: :string, enum: %w(user user_group) }
               },
               required: [:data]
             },
@@ -104,11 +104,11 @@ module Api
               properties: {
                 data: {
                   type: :array,
-                  items: { 
+                  items: {
                     type: :object,
                     properties: {
                       id: { type: :string, description: "User Id" },
-                      type: { type: :string, enum: ["user", "user_group"] }    
+                      type: { type: :string, enum: %w(user user_group) }
                     },
                     required: [:id, :type]
                   }

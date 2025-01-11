@@ -1190,6 +1190,250 @@ export type PasswordGrantParam = Impersonation | Login;
 /**
  *
  * @export
+ * @interface Proposal
+ */
+export interface Proposal {
+  /**
+   * Proposal Id
+   * @type {string}
+   * @memberof Proposal
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Proposal
+   */
+  type: ProposalTypeEnum;
+  /**
+   *
+   * @type {BlogAttributes}
+   * @memberof Proposal
+   */
+  attributes: BlogAttributes;
+  /**
+   *
+   * @type {PropositionMetadata}
+   * @memberof Proposal
+   */
+  meta: PropositionMetadata;
+  /**
+   *
+   * @type {ProposalLinks}
+   * @memberof Proposal
+   */
+  links: ProposalLinks;
+  /**
+   *
+   * @type {ProposalRelationships}
+   * @memberof Proposal
+   */
+  relationships?: ProposalRelationships;
+}
+
+export const ProposalTypeEnum = {
+  Proposal: "proposal",
+} as const;
+
+export type ProposalTypeEnum =
+  (typeof ProposalTypeEnum)[keyof typeof ProposalTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalLinks
+ */
+export interface ProposalLinks {
+  /**
+   * API URL to the proposal
+   * @type {string}
+   * @memberof ProposalLinks
+   */
+  self: string;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationships
+ */
+export interface ProposalRelationships {
+  /**
+   *
+   * @type {ProposalRelationshipsSpace}
+   * @memberof ProposalRelationships
+   */
+  space: ProposalRelationshipsSpace;
+  /**
+   *
+   * @type {BlogPostRelationshipsComponent}
+   * @memberof ProposalRelationships
+   */
+  component: BlogPostRelationshipsComponent;
+  /**
+   *
+   * @type {ProposalRelationshipsAuthor}
+   * @memberof ProposalRelationships
+   */
+  author: ProposalRelationshipsAuthor;
+  /**
+   *
+   * @type {ProposalRelationshipsCoauthors}
+   * @memberof ProposalRelationships
+   */
+  coauthors?: ProposalRelationshipsCoauthors;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsAuthor
+ */
+export interface ProposalRelationshipsAuthor {
+  /**
+   * User Id
+   * @type {string}
+   * @memberof ProposalRelationshipsAuthor
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalRelationshipsAuthor
+   */
+  type?: ProposalRelationshipsAuthorTypeEnum;
+}
+
+export const ProposalRelationshipsAuthorTypeEnum = {
+  User: "user",
+  UserGroup: "user_group",
+} as const;
+
+export type ProposalRelationshipsAuthorTypeEnum =
+  (typeof ProposalRelationshipsAuthorTypeEnum)[keyof typeof ProposalRelationshipsAuthorTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsCoauthors
+ */
+export interface ProposalRelationshipsCoauthors {
+  /**
+   *
+   * @type {Array<ProposalRelationshipsCoauthorsDataInner>}
+   * @memberof ProposalRelationshipsCoauthors
+   */
+  data: Array<ProposalRelationshipsCoauthorsDataInner>;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsCoauthorsDataInner
+ */
+export interface ProposalRelationshipsCoauthorsDataInner {
+  /**
+   * User Id
+   * @type {string}
+   * @memberof ProposalRelationshipsCoauthorsDataInner
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalRelationshipsCoauthorsDataInner
+   */
+  type: ProposalRelationshipsCoauthorsDataInnerTypeEnum;
+}
+
+export const ProposalRelationshipsCoauthorsDataInnerTypeEnum = {
+  User: "user",
+  UserGroup: "user_group",
+} as const;
+
+export type ProposalRelationshipsCoauthorsDataInnerTypeEnum =
+  (typeof ProposalRelationshipsCoauthorsDataInnerTypeEnum)[keyof typeof ProposalRelationshipsCoauthorsDataInnerTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsSpace
+ */
+export interface ProposalRelationshipsSpace {
+  /**
+   *
+   * @type {ProposalRelationshipsSpaceData}
+   * @memberof ProposalRelationshipsSpace
+   */
+  data: ProposalRelationshipsSpaceData;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsSpaceData
+ */
+export interface ProposalRelationshipsSpaceData {
+  /**
+   * Space Id
+   * @type {string}
+   * @memberof ProposalRelationshipsSpaceData
+   */
+  id: string;
+  /**
+   *
+   * @type {SpaceType}
+   * @memberof ProposalRelationshipsSpaceData
+   */
+  type: SpaceType;
+}
+
+/**
+ *
+ * @export
+ * @interface ProposalResponse
+ */
+export interface ProposalResponse {
+  /**
+   *
+   * @type {Proposal}
+   * @memberof ProposalResponse
+   */
+  data: Proposal;
+}
+/**
+ *
+ * @export
+ * @interface ProposalsResponse
+ */
+export interface ProposalsResponse {
+  /**
+   *
+   * @type {Array<Proposal>}
+   * @memberof ProposalsResponse
+   */
+  data: Array<Proposal>;
+}
+/**
+ *
+ * @export
+ * @interface PropositionMetadata
+ */
+export interface PropositionMetadata {
+  [key: string]: ComponentMetadataValue | any;
+
+  /**
+   * Published blog post?
+   * @type {boolean}
+   * @memberof PropositionMetadata
+   */
+  published: boolean;
+  /**
+   * Scope Id
+   * @type {number}
+   * @memberof PropositionMetadata
+   */
+  scope?: number;
+}
+/**
+ *
+ * @export
  * @interface ResourceDetails
  */
 export interface ResourceDetails {
@@ -1498,6 +1742,19 @@ export interface SpaceResponse {
    */
   data: Space;
 }
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export const SpaceType = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+
+export type SpaceType = (typeof SpaceType)[keyof typeof SpaceType];
+
 /**
  *
  * @export
@@ -2211,6 +2468,81 @@ export const BlogsApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * Proposals list
+     * @summary Show a blog detail
+     * @param {ProposalsSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {Array<ProposalsLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    proposals: async (
+      spaceManifest: ProposalsSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      locales?: Array<ProposalsLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("proposals", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("proposals", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("proposals", "componentId", componentId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/proposals`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -2300,6 +2632,47 @@ export const BlogsApiFp = function (configuration?: Configuration) {
           configuration,
         )(axios, localVarOperationServerBasePath || basePath);
     },
+    /**
+     * Proposals list
+     * @summary Show a blog detail
+     * @param {ProposalsSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {Array<ProposalsLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async proposals(
+      spaceManifest: ProposalsSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      locales?: Array<ProposalsLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ProposalsResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.proposals(
+        spaceManifest,
+        spaceId,
+        componentId,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["BlogsApi.proposals"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
   };
 };
 
@@ -2349,6 +2722,27 @@ export const BlogsApiFactory = function (
     ): AxiosPromise<BlogsResponse> {
       return localVarFp
         .blogs(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Proposals list
+     * @summary Show a blog detail
+     * @param {BlogsApiProposalsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    proposals(
+      requestParameters: BlogsApiProposalsRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ProposalsResponse> {
+      return localVarFp
+        .proposals(
           requestParameters.spaceManifest,
           requestParameters.spaceId,
           requestParameters.componentId,
@@ -2438,6 +2832,41 @@ export interface BlogsApiBlogsRequest {
 }
 
 /**
+ * Request parameters for proposals operation in BlogsApi.
+ * @export
+ * @interface BlogsApiProposalsRequest
+ */
+export interface BlogsApiProposalsRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof BlogsApiProposals
+   */
+  readonly spaceManifest: ProposalsSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiProposals
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiProposals
+   */
+  readonly componentId: number;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof BlogsApiProposals
+   */
+  readonly locales?: Array<ProposalsLocalesEnum>;
+}
+
+/**
  * BlogsApi - object-oriented interface
  * @export
  * @class BlogsApi
@@ -2482,6 +2911,29 @@ export class BlogsApi extends BaseAPI {
   ) {
     return BlogsApiFp(this.configuration)
       .blogs(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Proposals list
+   * @summary Show a blog detail
+   * @param {BlogsApiProposalsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof BlogsApi
+   */
+  public proposals(
+    requestParameters: BlogsApiProposalsRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return BlogsApiFp(this.configuration)
+      .proposals(
         requestParameters.spaceManifest,
         requestParameters.spaceId,
         requestParameters.componentId,
@@ -2620,6 +3072,70 @@ export const BlogsLocalesEnum = {
 } as const;
 export type BlogsLocalesEnum =
   (typeof BlogsLocalesEnum)[keyof typeof BlogsLocalesEnum];
+/**
+ * @export
+ */
+export const ProposalsSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type ProposalsSpaceManifestEnum =
+  (typeof ProposalsSpaceManifestEnum)[keyof typeof ProposalsSpaceManifestEnum];
+/**
+ * @export
+ */
+export const ProposalsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type ProposalsLocalesEnum =
+  (typeof ProposalsLocalesEnum)[keyof typeof ProposalsLocalesEnum];
 
 /**
  * OAuthApi - axios parameter creator

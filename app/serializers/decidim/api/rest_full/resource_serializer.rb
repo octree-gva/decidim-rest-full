@@ -28,7 +28,6 @@ module Decidim
           component = object.component
           "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/#{participatory_space.manifest.name}/#{component.id}/#{component.manifest_name}/#{object.id}"
         end
-
       end
     end
   end

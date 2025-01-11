@@ -10,7 +10,7 @@ module Decidim
 
           def index
             render json: Decidim::Api::RestFull::BlogSerializer.new(
-              collection,
+              paginate(collection),
               params: {
                 only: [],
                 locales: available_locales,

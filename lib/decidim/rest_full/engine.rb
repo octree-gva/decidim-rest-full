@@ -13,7 +13,6 @@ module Decidim
         # Override mailer to avoid sending emails to @example.org
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
       end
-
       initializer "rest_full.scopes" do
         Doorkeeper.configure do
           handle_auth_errors :raise

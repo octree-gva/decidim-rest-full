@@ -10,7 +10,7 @@ module Decidim
 
           def index
             render json: Decidim::Api::RestFull::ProposalSerializer.new(
-              collection,
+              paginate(ordered(collection)),
               params: {
                 only: [],
                 locales: available_locales,
@@ -21,13 +21,13 @@ module Decidim
           end
 
           def show
-            resource = collection.find(resource_id)
+            resource = collection.find_by("decidim_proposals_proposals.id" => resource_id)
             raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless resource
 
-            next_item = collection.where("published_at > ? AND id != ?", resource.published_at, resource_id).first
+            next_item = collection.where("published_at > ? AND decidim_proposals_proposals.id != ?", resource.published_at, resource_id).first
             first_item = collection.first
 
-            render json: Decidim::Api::RestFull::BlogSerializer.new(
+            render json: Decidim::Api::RestFull::ProposalSerializer.new(
               resource,
               params: {
                 only: [],
@@ -43,11 +43,15 @@ module Decidim
 
           private
 
+          def ordered(collection)
+            collection.order(order)
+          end
+
           def collection
-            query = model_class.order(published_at: :asc).where(component: component)
+            query = model_class.where(component: component)
             now = Time.zone.now
             if act_as.nil?
-              query.where(published_at: ...now)
+              query.where("published_at" => ...now)
             else
               query.where("published_at <= ? OR (published_at is NULL AND decidim_coauthorships.decidim_author_id = ?)", now, act_as.id)
             end
@@ -55,6 +59,22 @@ module Decidim
 
           def model_class
             Decidim::Proposals::Proposal.joins(:coauthorships)
+          end
+
+          def order
+            @order ||= begin 
+              ord = params.permit(:order)[:order] || "published_at"
+              raise Decidim::RestFull::ApiException::BadRequest, "Unknown order #{ord}" unless ["published_at", "rand"].include?(ord)
+              ord === "rand" ? "RANDOM()" : {"#{ord}" => order_direction}
+            end
+          end
+
+          def order_direction
+            @order_direction ||= begin
+              ord_dir = params.permit(:order_direction)[:order_direction] || "asc"
+              raise Decidim::RestFull::ApiException::BadRequest, "Unknown order direction #{ord_dir}" unless ["asc", "desc"].include?(ord_dir)
+              ord_dir
+            end
           end
 
           def space_id

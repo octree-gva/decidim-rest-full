@@ -15,3 +15,7 @@ require "decidim/rest_full/test/definitions"
 
 require "rswag/specs"
 require "swagger_helper"
+
+if defined?(::Bullet)
+  ::Bullet.add_safelist :type => :counter_cache, :class_name => "Decidim::Proposals::Proposal", :association => :coauthorships
+end

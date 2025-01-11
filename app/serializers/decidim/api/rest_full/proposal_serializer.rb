@@ -4,7 +4,6 @@ module Decidim
   module Api
     module RestFull
       class ProposalSerializer < ResourceSerializer
-
         def self.default_meta(proposal)
           scope = proposal.component.scope || proposal.participatory_space.scope
           metas = {
@@ -22,7 +21,7 @@ module Decidim
           metas[:count] = params[:count] if params.has_key? :count
           metas
         end
-        
+
         attribute :title do |comp, params|
           translated_field(comp.title, params[:locales])
         end
@@ -31,17 +30,18 @@ module Decidim
           translated_field(comp.body, params[:locales])
         end
 
-        has_one :author do |proposal, params|
+        has_one :author do |proposal, _params|
           coauthorship = proposal.coauthorships.first
           coauthorship ? coauthorship.author : nil
         end
 
-        has_many :coauthors do |proposal, params|
-          proposal.coauthorships.map do |coauthorship, params|
+        has_many :coauthors, meta: (proc do |proposal, _params|
+          { count: proposal.coauthorships.count }
+        end) do |proposal, _params|
+          proposal.coauthorships.map do |coauthorship, _params|
             coauthorship.author
           end
         end
-
       end
     end
   end
