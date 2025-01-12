@@ -61,9 +61,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
         context "when own drafts" do
           let!(:draft_proposal) do
-            proposal = create(:proposal, component: proposal_component, published_at: nil, users: [user])
-            proposal.save!
-            proposal
+            create(:proposal, component: proposal_component, published_at: nil, users: [user])
           end
 
           let(:proposal_id) { draft_proposal.id }

@@ -7,7 +7,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "withdrawnProposalDraft"
+      operationId "withdrawnDraftProposal"
       description "Withdrawn a draft proposal. This action cannot be undone."
 
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }

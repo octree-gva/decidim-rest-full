@@ -39,7 +39,12 @@ module Api
           title: "Component Metadata",
           properties: {
             published: { type: :boolean, description: "Published component?" },
-            scopes_enabled: { type: :boolean, description: "Component handle scopes?" }
+            scopes_enabled: { type: :boolean, description: "Component handle scopes?" },
+            can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
+            can_vote: { type: :boolean, description: "If the current user can vote on the component" },
+            can_comment: { type: :boolean, description: "If the current user comment on the component" },
+            geocoding_enabled: { type: :boolean, description: "If the component needs a map to display its resources" },
+            attachments_allowed: { type: :boolean, description: "If the component allows to attach files to resources" }
           },
           additionalProperties: {
             oneOf: [

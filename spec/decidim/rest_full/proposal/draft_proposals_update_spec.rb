@@ -7,7 +7,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "updateProposalDraft"
+      operationId "updateDraftProposal"
       description <<~README
         This endpoint allows you to create or update a draft proposal associated with your application ID.
         Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API.
@@ -186,6 +186,22 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
           run_test!(:bad_request_validation_title) do |example|
             error_description = JSON.parse(example.body)["error_description"]
             expect(error_description).to start_with("Title ")
+          end
+        end
+
+        context "when posted too much proposals" do
+          let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now, settings: { proposal_limit: 2 }) }
+          let(:body) { { data: { title: "This is a valid title, but unfortunatly, I already posted too much stuff." } } }
+
+          before do
+            clean_drafts
+            create(:proposal, component: proposal_component, published_at: Time.now.utc, users: [user])
+            create(:proposal, component: proposal_component, published_at: Time.now.utc, users: [user])
+          end
+
+          run_test!(:bad_request_limit_reached) do |example|
+            error_description = JSON.parse(example.body)["error_description"]
+            expect(error_description).to include("you have exceeded the limit.")
           end
         end
       end

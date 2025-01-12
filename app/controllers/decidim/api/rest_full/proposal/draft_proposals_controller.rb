@@ -15,14 +15,22 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
 
             draft.update!(published_at: Time.now.utc)
-            render json: Decidim::Api::RestFull::ProposalSerializer.new(
-              draft,
-              params: {
-                locales: available_locales,
-                host: current_organization.host,
-                act_as: act_as
-              }
-            ).serializable_hash
+            Decidim::Proposals::PublishProposal.call(draft, current_user) do
+              on(:ok) do
+                render json: Decidim::Api::RestFull::ProposalSerializer.new(
+                  draft,
+                  params: {
+                    locales: available_locales,
+                    host: current_organization.host,
+                    act_as: act_as
+                  }
+                ).serializable_hash
+              end
+
+              on(:invalid) do
+                raise Decidim::RestFull::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+              end
+            end
           end
 
           def show
@@ -129,6 +137,8 @@ module Decidim
           end
 
           def create_new_draft
+            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached") if limit_reached?
+
             proposal = Decidim::Proposals::Proposal.new(component: component)
             coauthorship = proposal.coauthorships.build(author: current_user)
             proposal.coauthorships << coauthorship
@@ -137,6 +147,16 @@ module Decidim
               rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
             )
             proposal
+          end
+
+          def limit_reached?
+            proposal_limit = component.settings.proposal_limit
+
+            return false if proposal_limit.zero?
+
+            query = model_class.where(component: component)
+            current_user_proposals_count = query.where("published_at IS NOT NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id).count
+            current_user_proposals_count >= proposal_limit
           end
 
           def data

@@ -7,7 +7,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "publishProposalDraft"
+      operationId "publishDraftProposal"
       description "Publish a draft proposal"
 
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
