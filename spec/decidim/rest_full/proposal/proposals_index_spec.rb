@@ -3,8 +3,8 @@
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :request do
   path "/public/{space_manifest}/{space_id}/{component_id}/proposals" do
-    get "Show a blog detail" do
-      tags "Blogs"
+    get "Show proposal list" do
+      tags "Proposals"
       produces "application/json"
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
       operationId "proposals"
@@ -19,13 +19,12 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-
-      let!(:proposal) { create(:proposal) }
       let!(:page) { 1 }
       let!(:per_page) { 50 }
-      let!(:proposal_component) { proposal.component }
-      let!(:participatory_process) { proposal_component.participatory_space }
-      let!(:organization) { participatory_process.organization }
+      let!(:organization) { create(:organization) }
+      let!(:participatory_process) { create(:participatory_process, organization: organization) }
+      let!(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+      let!(:proposal) { create(:proposal, component: proposal_component) }
       let(:"locales[]") { %w(en fr) }
 
       let!(:api_client) do

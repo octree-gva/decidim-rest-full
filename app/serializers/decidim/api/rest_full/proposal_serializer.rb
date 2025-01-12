@@ -19,6 +19,8 @@ module Decidim
           metas[:next] = params[:next].id.to_s if params.has_key?(:next) && params[:next]
           metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
           metas[:count] = params[:count] if params.has_key? :count
+          metas[:publishable] = params[:publishable] if params.has_key? :publishable
+
           metas
         end
 

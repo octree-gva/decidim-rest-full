@@ -98,12 +98,11 @@ module Decidim
 
           def component
             @component = begin
-              raise Decidim::RestFull::ApiException::BadRequest, "Unkown component type #{component_manifest}" unless component_manifest_names.include? component_manifest
-
               match = Decidim::Component.find_by(
                 participatory_space_id: space_id,
                 participatory_space_type: space_model_from(space_manifest).name,
-                id: component_id
+                id: component_id,
+                manifest_name: "proposals"
               )
               raise Decidim::RestFull::ApiException::BadRequest, "Component not found" unless match
 
@@ -126,17 +125,10 @@ module Decidim
             @space_manifest_names ||= Decidim.participatory_space_registry.manifests.map(&:name)
           end
 
-          def component_manifest_names
-            @component_manifest_names ||= Decidim.component_registry.manifests.map(&:name)
-          end
-
           def component_id
             @component_id ||= params.require(:component_id).to_i
           end
 
-          def component_manifest
-            @component_manifest ||= params.require(:component_manifest_name)
-          end
 
           def resource_id
             @resource_id ||= params.require(:resource_id).to_i

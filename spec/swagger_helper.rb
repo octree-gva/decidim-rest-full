@@ -75,7 +75,8 @@ RSpec.configure do |config|
         Api::Definitions::Tags::OAUTH,
         Api::Definitions::Tags::SYSTEM,
         Api::Definitions::Tags::PUBLIC,
-        Api::Definitions::Tags::BLOG
+        Api::Definitions::Tags::BLOG,
+        Api::Definitions::Tags::PROPOSAL
       ],
       components: {
         securitySchemes: {
@@ -145,6 +146,7 @@ RSpec.configure do |config|
             description: "Details about the token beeing used",
             "$ref" => "#/components/schemas/introspect_data"
           },
+
           oauth_grant_param: {
             oneOf: [
               Api::Definitions::CLIENT_CREDENTIAL_GRANT,

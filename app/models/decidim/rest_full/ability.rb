@@ -58,6 +58,7 @@ module Decidim
 
       def perms_for_proposals
         can :read, ::Decidim::Proposals::Proposal if permissions.include? "proposals.read"
+        can :draft, ::Decidim::Proposals::Proposal if permissions.include? "proposals.draft"
       end
     end
   end
