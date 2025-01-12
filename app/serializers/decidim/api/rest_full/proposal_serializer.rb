@@ -20,6 +20,7 @@ module Decidim
           metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
           metas[:count] = params[:count] if params.has_key? :count
           metas[:publishable] = params[:publishable] if params.has_key? :publishable
+          metas[:client_id] = proposal.rest_full_application.api_client_id if proposal.rest_full_application
 
           metas
         end

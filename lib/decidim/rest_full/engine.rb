@@ -7,6 +7,9 @@ module Decidim
 
       config.to_prepare do
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
+        Decidim::Proposals::Proposal.include(Decidim::RestFull::ProposalClientIdOverride)
+        Decidim::Proposals::ProposalsController.include(Decidim::RestFull::ProposalsControllerOverride)
+
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
         ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
 

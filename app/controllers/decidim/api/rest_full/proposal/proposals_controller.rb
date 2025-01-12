@@ -42,22 +42,23 @@ module Decidim
           end
 
           protected
+
           def order_columns
-            ["rand", "published_at"]
+            %w(rand published_at)
           end
-          
+
           def default_order_column
             "published_at"
           end
-  
+
           def component_manifest
             "proposals"
           end
-  
+
           def model_class
             Decidim::Proposals::Proposal.joins(:coauthorships)
           end
-  
+
           def collection
             query = model_class.where(component: component)
             now = Time.zone.now

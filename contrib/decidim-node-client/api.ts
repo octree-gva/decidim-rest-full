@@ -3505,7 +3505,7 @@ export const ProposalsApiAxiosParamCreator = function (
       };
     },
     /**
-     * Update (or create) a draft proposal
+     * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {UpdateDraftSpaceManifestEnum} spaceManifest
      * @param {number} spaceId
@@ -3695,7 +3695,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     * Update (or create) a draft proposal
+     * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {UpdateDraftSpaceManifestEnum} spaceManifest
      * @param {number} spaceId
@@ -3798,7 +3798,7 @@ export const ProposalsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * Update (or create) a draft proposal
+     * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {ProposalsApiUpdateDraftRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -4020,7 +4020,7 @@ export class ProposalsApi extends BaseAPI {
   }
 
   /**
-   * Update (or create) a draft proposal
+   * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
    * @summary Upsert a draft proposal
    * @param {ProposalsApiUpdateDraftRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.

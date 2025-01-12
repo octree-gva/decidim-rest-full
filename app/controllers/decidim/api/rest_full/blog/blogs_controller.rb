@@ -60,7 +60,6 @@ module Decidim
           def component_manifest
             "blogs"
           end
-
         end
       end
     end

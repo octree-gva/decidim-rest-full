@@ -52,7 +52,6 @@ module Decidim
 
           private
 
-
           def order_columns
             ["rand"]
           end
@@ -60,26 +59,23 @@ module Decidim
           def default_order_column
             "rand"
           end
-  
+
           def component_manifest
             "proposals"
           end
-  
+
           def model_class
             Decidim::Proposals::Proposal.joins(:coauthorships)
           end
-  
+
           def collection
             query = model_class.where(component: component)
-            query.where("published_at is NULL AND decidim_coauthorships.decidim_author_id = ?",  act_as.id)
+            query.where("published_at is NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id)
           end
 
           def draft
             @draft ||= begin
-              match = Decidim::Proposals::Proposal.joins(:coauthorships).find_by(
-                "decidim_coauthorships.decidim_author_id = ? AND published_at IS NULL", current_user.id
-              )
-
+              match = collection.joins(:rest_full_application).find_by(rest_full_application: { api_client_id: client_id })
               match || create_new_draft
             end
           end
@@ -89,6 +85,9 @@ module Decidim
             coauthorship = proposal.coauthorships.build(author: current_user)
             proposal.coauthorships << coauthorship
             proposal.save(validate: false)
+            proposal.update(
+              rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
+            )
             proposal
           end
 
