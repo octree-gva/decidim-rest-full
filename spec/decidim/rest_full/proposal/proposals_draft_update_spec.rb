@@ -13,20 +13,20 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-      
+
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
         properties: {
-          data: { 
-            type: :object, 
+          data: {
+            type: :object,
             properties: {
-              title: {type: :string, description: "Title of the draft"},
-              body: {type: :string, description: "Content of the draft"},
-              locale: {type: :string, enum: Decidim.available_locales, description: "Locale of the draft. default to user locale"}
+              title: { type: :string, description: "Title of the draft" },
+              body: { type: :string, description: "Content of the draft" },
+              locale: { type: :string, enum: Decidim.available_locales, description: "Locale of the draft. default to user locale" }
             },
             required: [],
-            description: "Payload to update in the proposal" 
-          },
+            description: "Payload to update in the proposal"
+          }
         }, required: [:data]
       }
       let!(:organization) { create(:organization) }
@@ -58,7 +58,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       before do
         host! organization.host
         Decidim::Proposals::Proposal.where(
-          decidim_component_id: component_id,
+          decidim_component_id: component_id
         ).each(&:destroy)
       end
 
@@ -67,7 +67,8 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         schema "$ref" => "#/components/schemas/proposal_response"
 
         context "when update title" do
-          let(:body) { {data: { title: "This is a valid proposal title sample" }} }
+          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
+
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["attributes"]["title"]["fr"]).to eq("This is a valid proposal title sample")
@@ -77,15 +78,14 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
         context "when update body" do
           let(:text) { "I am quiet a valid proposal, with one sentence that is long enough to be valid I think." }
-          let(:body) { {data: { body: text }} }
-          run_test!do |example|
+          let(:body) { { data: { body: text } } }
+
+          run_test! do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["attributes"]["body"]["fr"]).to eq(text)
           end
         end
-
       end
-
 
       response "400", "Bad Request" do
         consumes "application/json"
@@ -93,7 +93,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         schema "$ref" => "#/components/schemas/api_error"
 
         context "with invalid title payload data" do
-          let(:body) { {data: { title: "lol!" } } }
+          let(:body) { { data: { title: "lol!" } } }
 
           run_test!(:bad_request_validation_title) do |example|
             error_description = JSON.parse(example.body)["error_description"]
@@ -108,7 +108,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         context "with client credentials" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
-          let(:body) { {data: { title: "This is a valid proposal title sample" }} }
+          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test!(example_name: :forbidden) do |_example|
             expect(response.status).to eq(403)
@@ -119,7 +119,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         context "with no proposals scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
-          let(:body) { {data: { title: "This is a valid proposal title sample" }} }
+          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test!(example_name: :forbidden) do |_example|
             expect(response.status).to eq(403)
@@ -130,7 +130,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         context "with no proposals.draft permission" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["proposals"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: user.id, application: api_client) }
-          let(:body) { {data: { title: "This is a valid proposal title sample" }} }
+          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test! do |_example|
             expect(response.status).to eq(403)
@@ -148,7 +148,8 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
           allow(controller).to receive(:update).and_raise(StandardError.new("Intentional error for testing"))
           allow(Decidim::Api::RestFull::Proposal::ProposalsDraftsController).to receive(:new).and_return(controller)
         end
-        let(:body) { {data: { title: "This is a valid proposal title sample" }} }
+
+        let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
         schema "$ref" => "#/components/schemas/api_error"
 

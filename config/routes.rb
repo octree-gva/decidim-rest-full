@@ -59,15 +59,15 @@ Decidim::Core::Engine.routes.draw do
                 end
 
                 # Special actions, like managing proposal's drafts
-                scope ":component_id" do 
-                  resources "proposals", 
-                    only: [], 
-                    param: :resource_id, 
-                    defaults: {manifest_name: manifest_name, component_manifest_name: "proposals"} do
-                      collection  do
-                        put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
-                        get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
-                      end
+                scope ":component_id" do
+                  resources "proposals",
+                            only: [],
+                            param: :resource_id,
+                            defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
+                    collection do
+                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
+                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
+                    end
                   end
                 end
               end

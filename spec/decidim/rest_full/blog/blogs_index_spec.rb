@@ -93,30 +93,28 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
           end
         end
 
-        
-          context "with per_page=2, list max two blog posts" do
-            let(:page) { 1 }
-            let(:per_page) { 2 }
-            let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
-            let!(:proposals) do
-              [
-                create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
-                create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
-                create(:post, component: component, author: create(:user, :confirmed, organization: organization))
-              ].each_with_index do |post, index|
-                post.published_at = (index + 1).minutes.ago
-                post.save!
-                post
-              end
-            end
-    
-            run_test!(example_name: :paginated) do |example|
-              json_response = JSON.parse(example.body)
-              expect(json_response["data"].size).to eq(per_page)
+        context "with per_page=2, list max two blog posts" do
+          let(:page) { 1 }
+          let(:per_page) { 2 }
+          let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
+          let!(:proposals) do
+            [
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization))
+            ].each_with_index do |post, index|
+              post.published_at = (index + 1).minutes.ago
+              post.save!
+              post
             end
           end
-      end
 
+          run_test!(example_name: :paginated) do |example|
+            json_response = JSON.parse(example.body)
+            expect(json_response["data"].size).to eq(per_page)
+          end
+        end
+      end
 
       response "400", "Bad Request" do
         consumes "application/json"

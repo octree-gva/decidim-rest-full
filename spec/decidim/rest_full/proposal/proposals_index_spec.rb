@@ -13,8 +13,8 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-      parameter name: :order, in: :query, schema: {type: :string, description: "field to order by", enum: ["published_at", "rand"]}, required: false
-      parameter name: :order_direction, in: :query, schema: {type: :string, description: "order direction", enum: ["desc", "asc"]}, required: false
+      parameter name: :order, in: :query, schema: { type: :string, description: "field to order by", enum: %w(published_at rand) }, required: false
+      parameter name: :order_direction, in: :query, schema: { type: :string, description: "order direction", enum: %w(desc asc) }, required: false
 
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
@@ -56,8 +56,8 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       response "200", "Proposal Found" do
         produces "application/json"
         schema "$ref" => "#/components/schemas/proposals_response"
-        context "when ordered" do 
-          before do 
+        context "when ordered" do
+          before do
             [
               create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
               create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
@@ -68,6 +68,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
               proposal
             end
           end
+
           let!(:impersonate_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
 
           context "with published_at asc (default)" do
@@ -81,6 +82,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
           context "with published_at desc" do
             let(:order_direction) { "desc" }
+
             run_test! do |example|
               data = JSON.parse(example.body)["data"]
               proposals = Decidim::Proposals::Proposal.where(component: proposal_component).order(published_at: :asc).ids
@@ -91,9 +93,9 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
           context "with rand" do
             let(:order) { "rand" }
+
             run_test!
           end
-          
         end
 
         context "with per_page=2, list max two proposals" do
@@ -111,6 +113,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
               proposal
             end
           end
+
           run_test!(example_name: :paginated) do |example|
             json_response = JSON.parse(example.body)
             expect(json_response["data"].size).to eq(per_page)

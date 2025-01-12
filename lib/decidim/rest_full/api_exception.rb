@@ -36,6 +36,8 @@ module Decidim
       class BaseError < StandardError; end
 
       class BadRequest < StandardError; end
+      
+      class NotImplemented < StandardError; end
 
       class Unauthorized < StandardError; end
 

@@ -31,7 +31,17 @@ module Decidim
         end
 
         def current_organization
-          request.env["decidim.current_organization"]
+          @current_organization ||= request.env["decidim.current_organization"]
+        end
+
+        def current_locale
+          @current_locale ||= begin
+            if current_user
+              current_user.locale
+            else
+              current_organization.default_locale
+            end
+          end
         end
 
         def populated_fields(default_fields, allowed_fields)

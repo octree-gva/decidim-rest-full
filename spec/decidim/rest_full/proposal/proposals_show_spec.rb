@@ -51,7 +51,6 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         produces "application/json"
         schema "$ref" => "#/components/schemas/proposal_response"
 
-
         context "when published" do
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
