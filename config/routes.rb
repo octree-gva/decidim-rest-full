@@ -41,7 +41,20 @@ Decidim::Core::Engine.routes.draw do
               member do
                 get "/", action: :show
 
-                # Dynamically add routes for components within each space
+                # Special actions, like managing proposal's drafts
+                scope ":component_id" do
+                  resources "proposals",
+                            only: [],
+                            param: :resource_id,
+                            defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
+                    collection do
+                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
+                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
+                    end
+                  end
+                end
+
+                # Basic get index and show on all components
                 Decidim.component_registry.manifests.each do |component|
                   component_manifest = component.name
                   scope ":component_id" do
@@ -54,19 +67,6 @@ Decidim::Core::Engine.routes.draw do
                       member do
                         get "/", action: :show
                       end
-                    end
-                  end
-                end
-
-                # Special actions, like managing proposal's drafts
-                scope ":component_id" do
-                  resources "proposals",
-                            only: [],
-                            param: :resource_id,
-                            defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
-                    collection do
-                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
-                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
                     end
                   end
                 end

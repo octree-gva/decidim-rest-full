@@ -137,8 +137,10 @@ RSpec.configure do |config|
 
           # Proposal
           proposal: Api::Definitions::PROPOSAL,
-          proposals_response: Api::Definitions.array_response("proposal", "List of proposal posts"),
-          proposal_response: Api::Definitions.item_response("proposal", "Details of a given proposal post"),
+          proposals_response: Api::Definitions.array_response("proposal", "List of proposals"),
+          proposal_response: Api::Definitions.item_response("proposal", "Details of a given proposal"),
+          proposal_draft: Api::Definitions::PROPOSAL_DRAFT,
+          proposal_draft_response: Api::Definitions.item_response("proposal_draft", "Details of a given proposal draft"),
 
           # OAuth methods
           introspect_data: Api::Definitions::INTROSPECT_DATA,

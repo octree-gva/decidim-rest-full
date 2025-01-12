@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :request do
+RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", type: :request do
   path "/public/{space_manifest}/{space_id}/{component_id}/proposals/draft" do
     put "Upsert a draft proposal" do
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "updateDraft"
+      operationId "updateProposalDraft"
       description <<~README
         This endpoint allows you to create or update a draft proposal associated with your application ID.
         Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API.
@@ -105,7 +105,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
       response "200", "Draft updated" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/proposal_response"
+        schema "$ref" => "#/components/schemas/proposal_draft_response"
 
         context "when update title" do
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
@@ -142,7 +142,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
             run_test! do |example|
               data = JSON.parse(example.body)["data"]
               proposal_id = data["id"]
-              expect(data["meta"]["client_id"]).to eq(api_clients.first.id)
+              expect(data["meta"]["client_id"]).to eq(api_clients.first.client_id)
             end
           end
 
@@ -153,7 +153,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
 
             run_test! do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data["meta"]["client_id"]).to eq(api_clients.last.id)
+              expect(data["meta"]["client_id"]).to eq(api_clients.last.client_id)
               expect(data["id"]).not_to eq(proposal_id)
               clean_drafts
             end

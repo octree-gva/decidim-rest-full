@@ -15,7 +15,7 @@ module Decidim
             .not_hidden
             .only_amendables
             .joins("LEFT OUTER JOIN proposal_application_ids ON proposal_application_ids.proposal_id = decidim_proposals_proposals.id")
-            .where(component: current_component, proposal_application_ids: {id: nil})
+            .where(component: current_component, proposal_application_ids: { id: nil })
             .find_by(published_at: nil)
         end
 

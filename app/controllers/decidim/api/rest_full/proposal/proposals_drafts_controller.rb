@@ -8,9 +8,29 @@ module Decidim
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
 
+          def show
+            raise Decidim::RestFull::ApiException::NotFound, "Proposal Draft Not Found" unless draft
+
+            form = Decidim::Proposals::ProposalForm.from_model(draft).with_context(
+              current_organization: current_organization,
+              current_participatory_space: space,
+              current_component: component
+            )
+
+            render json: Decidim::Api::RestFull::ProposalDraftSerializer.new(
+              draft,
+              params: {
+                only: [],
+                locales: [current_locale.to_sym],
+                publishable: form.valid?
+              }
+            ).serializable_hash
+          end
+
           def update
             payload = data.permit(:title, :body).to_h
-            form = Decidim::Proposals::ProposalForm.from_model(draft).with_context(
+            proposal_draft = draft || create_new_draft
+            form = Decidim::Proposals::ProposalForm.from_model(proposal_draft).with_context(
               current_organization: current_organization,
               current_participatory_space: space,
               current_component: component
@@ -19,7 +39,7 @@ module Decidim
             update_keys = payload.keys
             if update_keys.empty?
               return render json: Decidim::Api::RestFull::ProposalSerializer.new(
-                draft,
+                proposal_draft,
                 params: {
                   only: [],
                   publishable: form.valid?
@@ -34,14 +54,14 @@ module Decidim
             update_errors = form.errors.select { |err| update_keys.include? err.attribute.to_s }
             raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
 
-            draft.title = { current_locale.to_s => form.title }
-            draft.body = { current_locale.to_s => form.body }
+            proposal_draft.title = { current_locale.to_s => form.title }
+            proposal_draft.body = { current_locale.to_s => form.body }
 
-            draft.save(validate: false)
-            draft.reload
+            proposal_draft.save(validate: false)
+            proposal_draft.reload
 
-            render json: Decidim::Api::RestFull::ProposalSerializer.new(
-              draft,
+            render json: Decidim::Api::RestFull::ProposalDraftSerializer.new(
+              proposal_draft,
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
@@ -74,10 +94,7 @@ module Decidim
           end
 
           def draft
-            @draft ||= begin
-              match = collection.joins(:rest_full_application).find_by(rest_full_application: { api_client_id: client_id })
-              match || create_new_draft
-            end
+            @draft ||= collection.joins(:rest_full_application).find_by(rest_full_application: { api_client_id: client_id })
           end
 
           def create_new_draft
