@@ -2,12 +2,12 @@
 
 module Api
   module Definitions
-    PROPOSAL_DRAFT = {
+    DRAFT_PROPOSAL = {
       type: :object,
       title: "Proposal",
       properties: {
-        id: { type: :string, description: "Proposal Draft Id" },
-        type: { type: :string, enum: ["proposal_draft"] },
+        id: { type: :string, description: "Draft Proposal Id" },
+        type: { type: :string, enum: ["draft_proposal"] },
         attributes: {
           type: :object,
           properties: {

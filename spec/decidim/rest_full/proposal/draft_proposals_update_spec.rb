@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", type: :request do
+RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", type: :request do
   path "/public/{space_manifest}/{space_id}/{component_id}/proposals/draft" do
     put "Upsert a draft proposal" do
       tags "Proposals"
@@ -105,7 +105,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", ty
 
       response "200", "Draft updated" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/proposal_draft_response"
+        schema "$ref" => "#/components/schemas/draft_proposal_response"
 
         context "when update title" do
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
@@ -239,9 +239,9 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", ty
         after { clean_drafts }
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalsDraftsController.new
+          controller = Decidim::Api::RestFull::Proposal::DraftProposalsController.new
           allow(controller).to receive(:update).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalsDraftsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Proposal::DraftProposalsController).to receive(:new).and_return(controller)
         end
 
         let(:body) { { data: { title: "This is a valid proposal title sample" } } }

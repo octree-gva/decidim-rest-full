@@ -695,6 +695,126 @@ export interface ComponentsResponse {
 /**
  *
  * @export
+ * @interface DraftProposal
+ */
+export interface DraftProposal {
+  /**
+   * Draft Proposal Id
+   * @type {string}
+   * @memberof DraftProposal
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DraftProposal
+   */
+  type: DraftProposalTypeEnum;
+  /**
+   *
+   * @type {DraftProposalAttributes}
+   * @memberof DraftProposal
+   */
+  attributes: DraftProposalAttributes;
+  /**
+   *
+   * @type {PropositionMetadata1}
+   * @memberof DraftProposal
+   */
+  meta: PropositionMetadata1;
+  /**
+   *
+   * @type {ProposalLinks}
+   * @memberof DraftProposal
+   */
+  links: ProposalLinks;
+  /**
+   *
+   * @type {ProposalRelationships}
+   * @memberof DraftProposal
+   */
+  relationships?: ProposalRelationships;
+}
+
+export const DraftProposalTypeEnum = {
+  DraftProposal: "draft_proposal",
+} as const;
+
+export type DraftProposalTypeEnum =
+  (typeof DraftProposalTypeEnum)[keyof typeof DraftProposalTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface DraftProposalAttributes
+ */
+export interface DraftProposalAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof DraftProposalAttributes
+   */
+  title: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof DraftProposalAttributes
+   */
+  body: TranslatedProp;
+  /**
+   *
+   * @type {DraftProposalAttributesErrors}
+   * @memberof DraftProposalAttributes
+   */
+  errors?: DraftProposalAttributesErrors;
+  /**
+   * Creation date, in ISO8601 format.
+   * @type {string}
+   * @memberof DraftProposalAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date, in ISO8601 format.
+   * @type {string}
+   * @memberof DraftProposalAttributes
+   */
+  updated_at: string;
+}
+/**
+ * Draft current errors
+ * @export
+ * @interface DraftProposalAttributesErrors
+ */
+export interface DraftProposalAttributesErrors {
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof DraftProposalAttributesErrors
+   */
+  title: Array<string>;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof DraftProposalAttributesErrors
+   */
+  body: Array<string>;
+}
+/**
+ *
+ * @export
+ * @interface DraftProposalResponse
+ */
+export interface DraftProposalResponse {
+  /**
+   *
+   * @type {DraftProposal}
+   * @memberof DraftProposalResponse
+   */
+  data: DraftProposal;
+}
+/**
+ *
+ * @export
  * @interface Impersonation
  */
 export interface Impersonation {
@@ -1238,126 +1358,6 @@ export const ProposalTypeEnum = {
 export type ProposalTypeEnum =
   (typeof ProposalTypeEnum)[keyof typeof ProposalTypeEnum];
 
-/**
- *
- * @export
- * @interface ProposalDraft
- */
-export interface ProposalDraft {
-  /**
-   * Proposal Draft Id
-   * @type {string}
-   * @memberof ProposalDraft
-   */
-  id: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ProposalDraft
-   */
-  type: ProposalDraftTypeEnum;
-  /**
-   *
-   * @type {ProposalDraftAttributes}
-   * @memberof ProposalDraft
-   */
-  attributes: ProposalDraftAttributes;
-  /**
-   *
-   * @type {PropositionMetadata1}
-   * @memberof ProposalDraft
-   */
-  meta: PropositionMetadata1;
-  /**
-   *
-   * @type {ProposalLinks}
-   * @memberof ProposalDraft
-   */
-  links: ProposalLinks;
-  /**
-   *
-   * @type {ProposalRelationships}
-   * @memberof ProposalDraft
-   */
-  relationships?: ProposalRelationships;
-}
-
-export const ProposalDraftTypeEnum = {
-  ProposalDraft: "proposal_draft",
-} as const;
-
-export type ProposalDraftTypeEnum =
-  (typeof ProposalDraftTypeEnum)[keyof typeof ProposalDraftTypeEnum];
-
-/**
- *
- * @export
- * @interface ProposalDraftAttributes
- */
-export interface ProposalDraftAttributes {
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof ProposalDraftAttributes
-   */
-  title: TranslatedProp;
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof ProposalDraftAttributes
-   */
-  body: TranslatedProp;
-  /**
-   *
-   * @type {ProposalDraftAttributesErrors}
-   * @memberof ProposalDraftAttributes
-   */
-  errors?: ProposalDraftAttributesErrors;
-  /**
-   * Creation date, in ISO8601 format.
-   * @type {string}
-   * @memberof ProposalDraftAttributes
-   */
-  created_at: string;
-  /**
-   * Last update date, in ISO8601 format.
-   * @type {string}
-   * @memberof ProposalDraftAttributes
-   */
-  updated_at: string;
-}
-/**
- * Draft current errors
- * @export
- * @interface ProposalDraftAttributesErrors
- */
-export interface ProposalDraftAttributesErrors {
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ProposalDraftAttributesErrors
-   */
-  title: Array<string>;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ProposalDraftAttributesErrors
-   */
-  body: Array<string>;
-}
-/**
- *
- * @export
- * @interface ProposalDraftResponse
- */
-export interface ProposalDraftResponse {
-  /**
-   *
-   * @type {ProposalDraft}
-   * @memberof ProposalDraftResponse
-   */
-  data: ProposalDraft;
-}
 /**
  *
  * @export
@@ -3470,6 +3470,71 @@ export const ProposalsApiAxiosParamCreator = function (
 ) {
   return {
     /**
+     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
+     * @summary Display a draft proposal
+     * @param {DraftProposalSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    draftProposal: async (
+      spaceManifest: DraftProposalSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("draftProposal", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("draftProposal", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("draftProposal", "componentId", componentId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/proposals/draft`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Proposal detail
      * @summary Show a proposal detail
      * @param {ProposalSpaceManifestEnum} spaceManifest
@@ -3537,71 +3602,6 @@ export const ProposalsApiAxiosParamCreator = function (
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
       }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
-     * @summary Display a draft
-     * @param {ProposalDraftSpaceManifestEnum} spaceManifest
-     * @param {number} spaceId
-     * @param {number} componentId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    proposalDraft: async (
-      spaceManifest: ProposalDraftSpaceManifestEnum,
-      spaceId: number,
-      componentId: number,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'spaceManifest' is not null or undefined
-      assertParamExists("proposalDraft", "spaceManifest", spaceManifest);
-      // verify required parameter 'spaceId' is not null or undefined
-      assertParamExists("proposalDraft", "spaceId", spaceId);
-      // verify required parameter 'componentId' is not null or undefined
-      assertParamExists("proposalDraft", "componentId", componentId);
-      const localVarPath =
-        `/public/{space_manifest}/{space_id}/{component_id}/proposals/draft`
-          .replace(
-            `{${"space_manifest"}}`,
-            encodeURIComponent(String(spaceManifest)),
-          )
-          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
-          .replace(
-            `{${"component_id"}}`,
-            encodeURIComponent(String(componentId)),
-          );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -3717,6 +3717,71 @@ export const ProposalsApiAxiosParamCreator = function (
       };
     },
     /**
+     * Publish a draft proposal
+     * @summary Publish a draft proposal
+     * @param {PublishProposalDraftSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    publishProposalDraft: async (
+      spaceManifest: PublishProposalDraftSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("publishProposalDraft", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("publishProposalDraft", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("publishProposalDraft", "componentId", componentId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/proposals/draft/publish`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {UpdateProposalDraftSpaceManifestEnum} spaceManifest
@@ -3796,6 +3861,75 @@ export const ProposalsApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * Withdrawn a draft proposal. This action cannot be undone.
+     * @summary Withdrawn a draft proposal
+     * @param {WithdrawnProposalDraftSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    withdrawnProposalDraft: async (
+      spaceManifest: WithdrawnProposalDraftSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists(
+        "withdrawnProposalDraft",
+        "spaceManifest",
+        spaceManifest,
+      );
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("withdrawnProposalDraft", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("withdrawnProposalDraft", "componentId", componentId);
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/proposals/draft`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -3807,6 +3941,45 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator =
     ProposalsApiAxiosParamCreator(configuration);
   return {
+    /**
+     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
+     * @summary Display a draft proposal
+     * @param {DraftProposalSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async draftProposal(
+      spaceManifest: DraftProposalSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<DraftProposalResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.draftProposal(
+        spaceManifest,
+        spaceId,
+        componentId,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ProposalsApi.draftProposal"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
     /**
      * Proposal detail
      * @summary Show a proposal detail
@@ -3842,45 +4015,6 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["ProposalsApi.proposal"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
-     * @summary Display a draft
-     * @param {ProposalDraftSpaceManifestEnum} spaceManifest
-     * @param {number} spaceId
-     * @param {number} componentId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async proposalDraft(
-      spaceManifest: ProposalDraftSpaceManifestEnum,
-      spaceId: number,
-      componentId: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<ProposalDraftResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.proposalDraft(
-        spaceManifest,
-        spaceId,
-        componentId,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["ProposalsApi.proposalDraft"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -3946,6 +4080,46 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
+     * Publish a draft proposal
+     * @summary Publish a draft proposal
+     * @param {PublishProposalDraftSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async publishProposalDraft(
+      spaceManifest: PublishProposalDraftSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ProposalResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.publishProposalDraft(
+          spaceManifest,
+          spaceId,
+          componentId,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ProposalsApi.publishProposalDraft"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {UpdateProposalDraftSpaceManifestEnum} spaceManifest
@@ -3965,7 +4139,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       (
         axios?: AxiosInstance,
         basePath?: string,
-      ) => AxiosPromise<ProposalDraftResponse>
+      ) => AxiosPromise<DraftProposalResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.updateProposalDraft(
@@ -3978,6 +4152,46 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["ProposalsApi.updateProposalDraft"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Withdrawn a draft proposal. This action cannot be undone.
+     * @summary Withdrawn a draft proposal
+     * @param {WithdrawnProposalDraftSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async withdrawnProposalDraft(
+      spaceManifest: WithdrawnProposalDraftSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<DraftProposalResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.withdrawnProposalDraft(
+          spaceManifest,
+          spaceId,
+          componentId,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ProposalsApi.withdrawnProposalDraft"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -4003,6 +4217,26 @@ export const ProposalsApiFactory = function (
   const localVarFp = ProposalsApiFp(configuration);
   return {
     /**
+     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
+     * @summary Display a draft proposal
+     * @param {ProposalsApiDraftProposalRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    draftProposal(
+      requestParameters: ProposalsApiDraftProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<DraftProposalResponse> {
+      return localVarFp
+        .draftProposal(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Proposal detail
      * @summary Show a proposal detail
      * @param {ProposalsApiProposalRequest} requestParameters Request parameters.
@@ -4020,26 +4254,6 @@ export const ProposalsApiFactory = function (
           requestParameters.componentId,
           requestParameters.proposalId,
           requestParameters.locales,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
-     * @summary Display a draft
-     * @param {ProposalsApiProposalDraftRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    proposalDraft(
-      requestParameters: ProposalsApiProposalDraftRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<ProposalDraftResponse> {
-      return localVarFp
-        .proposalDraft(
-          requestParameters.spaceManifest,
-          requestParameters.spaceId,
-          requestParameters.componentId,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -4070,6 +4284,26 @@ export const ProposalsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * Publish a draft proposal
+     * @summary Publish a draft proposal
+     * @param {ProposalsApiPublishProposalDraftRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    publishProposalDraft(
+      requestParameters: ProposalsApiPublishProposalDraftRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ProposalResponse> {
+      return localVarFp
+        .publishProposalDraft(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Upsert a draft proposal
      * @param {ProposalsApiUpdateProposalDraftRequest} requestParameters Request parameters.
@@ -4079,7 +4313,7 @@ export const ProposalsApiFactory = function (
     updateProposalDraft(
       requestParameters: ProposalsApiUpdateProposalDraftRequest,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<ProposalDraftResponse> {
+    ): AxiosPromise<DraftProposalResponse> {
       return localVarFp
         .updateProposalDraft(
           requestParameters.spaceManifest,
@@ -4090,8 +4324,56 @@ export const ProposalsApiFactory = function (
         )
         .then((request) => request(axios, basePath));
     },
+    /**
+     * Withdrawn a draft proposal. This action cannot be undone.
+     * @summary Withdrawn a draft proposal
+     * @param {ProposalsApiWithdrawnProposalDraftRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    withdrawnProposalDraft(
+      requestParameters: ProposalsApiWithdrawnProposalDraftRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<DraftProposalResponse> {
+      return localVarFp
+        .withdrawnProposalDraft(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
   };
 };
+
+/**
+ * Request parameters for draftProposal operation in ProposalsApi.
+ * @export
+ * @interface ProposalsApiDraftProposalRequest
+ */
+export interface ProposalsApiDraftProposalRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof ProposalsApiDraftProposal
+   */
+  readonly spaceManifest: DraftProposalSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiDraftProposal
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiDraftProposal
+   */
+  readonly componentId: number;
+}
 
 /**
  * Request parameters for proposal operation in ProposalsApi.
@@ -4133,34 +4415,6 @@ export interface ProposalsApiProposalRequest {
    * @memberof ProposalsApiProposal
    */
   readonly locales?: Array<ProposalLocalesEnum>;
-}
-
-/**
- * Request parameters for proposalDraft operation in ProposalsApi.
- * @export
- * @interface ProposalsApiProposalDraftRequest
- */
-export interface ProposalsApiProposalDraftRequest {
-  /**
-   *
-   * @type {'participatory_processes' | 'assemblies'}
-   * @memberof ProposalsApiProposalDraft
-   */
-  readonly spaceManifest: ProposalDraftSpaceManifestEnum;
-
-  /**
-   *
-   * @type {number}
-   * @memberof ProposalsApiProposalDraft
-   */
-  readonly spaceId: number;
-
-  /**
-   *
-   * @type {number}
-   * @memberof ProposalsApiProposalDraft
-   */
-  readonly componentId: number;
 }
 
 /**
@@ -4227,6 +4481,34 @@ export interface ProposalsApiProposalsRequest {
 }
 
 /**
+ * Request parameters for publishProposalDraft operation in ProposalsApi.
+ * @export
+ * @interface ProposalsApiPublishProposalDraftRequest
+ */
+export interface ProposalsApiPublishProposalDraftRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof ProposalsApiPublishProposalDraft
+   */
+  readonly spaceManifest: PublishProposalDraftSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiPublishProposalDraft
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiPublishProposalDraft
+   */
+  readonly componentId: number;
+}
+
+/**
  * Request parameters for updateProposalDraft operation in ProposalsApi.
  * @export
  * @interface ProposalsApiUpdateProposalDraftRequest
@@ -4262,12 +4544,62 @@ export interface ProposalsApiUpdateProposalDraftRequest {
 }
 
 /**
+ * Request parameters for withdrawnProposalDraft operation in ProposalsApi.
+ * @export
+ * @interface ProposalsApiWithdrawnProposalDraftRequest
+ */
+export interface ProposalsApiWithdrawnProposalDraftRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof ProposalsApiWithdrawnProposalDraft
+   */
+  readonly spaceManifest: WithdrawnProposalDraftSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiWithdrawnProposalDraft
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiWithdrawnProposalDraft
+   */
+  readonly componentId: number;
+}
+
+/**
  * ProposalsApi - object-oriented interface
  * @export
  * @class ProposalsApi
  * @extends {BaseAPI}
  */
 export class ProposalsApi extends BaseAPI {
+  /**
+   * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
+   * @summary Display a draft proposal
+   * @param {ProposalsApiDraftProposalRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProposalsApi
+   */
+  public draftProposal(
+    requestParameters: ProposalsApiDraftProposalRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ProposalsApiFp(this.configuration)
+      .draftProposal(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    * Proposal detail
    * @summary Show a proposal detail
@@ -4287,28 +4619,6 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.componentId,
         requestParameters.proposalId,
         requestParameters.locales,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
-   * @summary Display a draft
-   * @param {ProposalsApiProposalDraftRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProposalsApi
-   */
-  public proposalDraft(
-    requestParameters: ProposalsApiProposalDraftRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return ProposalsApiFp(this.configuration)
-      .proposalDraft(
-        requestParameters.spaceManifest,
-        requestParameters.spaceId,
-        requestParameters.componentId,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -4342,6 +4652,28 @@ export class ProposalsApi extends BaseAPI {
   }
 
   /**
+   * Publish a draft proposal
+   * @summary Publish a draft proposal
+   * @param {ProposalsApiPublishProposalDraftRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProposalsApi
+   */
+  public publishProposalDraft(
+    requestParameters: ProposalsApiPublishProposalDraftRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ProposalsApiFp(this.configuration)
+      .publishProposalDraft(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * This endpoint allows you to create or update a draft proposal associated with your application ID. Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements     * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token). ## Error Handling     * Field Errors: Only errors related to the fields you\'re updating will be returned.     * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response. ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
    * @summary Upsert a draft proposal
    * @param {ProposalsApiUpdateProposalDraftRequest} requestParameters Request parameters.
@@ -4363,8 +4695,39 @@ export class ProposalsApi extends BaseAPI {
       )
       .then((request) => request(this.axios, this.basePath));
   }
+
+  /**
+   * Withdrawn a draft proposal. This action cannot be undone.
+   * @summary Withdrawn a draft proposal
+   * @param {ProposalsApiWithdrawnProposalDraftRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProposalsApi
+   */
+  public withdrawnProposalDraft(
+    requestParameters: ProposalsApiWithdrawnProposalDraftRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ProposalsApiFp(this.configuration)
+      .withdrawnProposalDraft(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
 }
 
+/**
+ * @export
+ */
+export const DraftProposalSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type DraftProposalSpaceManifestEnum =
+  (typeof DraftProposalSpaceManifestEnum)[keyof typeof DraftProposalSpaceManifestEnum];
 /**
  * @export
  */
@@ -4429,15 +4792,6 @@ export const ProposalLocalesEnum = {
 } as const;
 export type ProposalLocalesEnum =
   (typeof ProposalLocalesEnum)[keyof typeof ProposalLocalesEnum];
-/**
- * @export
- */
-export const ProposalDraftSpaceManifestEnum = {
-  ParticipatoryProcesses: "participatory_processes",
-  Assemblies: "assemblies",
-} as const;
-export type ProposalDraftSpaceManifestEnum =
-  (typeof ProposalDraftSpaceManifestEnum)[keyof typeof ProposalDraftSpaceManifestEnum];
 /**
  * @export
  */
@@ -4523,12 +4877,30 @@ export type ProposalsOrderDirectionEnum =
 /**
  * @export
  */
+export const PublishProposalDraftSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type PublishProposalDraftSpaceManifestEnum =
+  (typeof PublishProposalDraftSpaceManifestEnum)[keyof typeof PublishProposalDraftSpaceManifestEnum];
+/**
+ * @export
+ */
 export const UpdateProposalDraftSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
 } as const;
 export type UpdateProposalDraftSpaceManifestEnum =
   (typeof UpdateProposalDraftSpaceManifestEnum)[keyof typeof UpdateProposalDraftSpaceManifestEnum];
+/**
+ * @export
+ */
+export const WithdrawnProposalDraftSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type WithdrawnProposalDraftSpaceManifestEnum =
+  (typeof WithdrawnProposalDraftSpaceManifestEnum)[keyof typeof WithdrawnProposalDraftSpaceManifestEnum];
 
 /**
  * PublicApi - axios parameter creator

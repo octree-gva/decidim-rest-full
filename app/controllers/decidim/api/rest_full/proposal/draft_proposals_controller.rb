@@ -4,20 +4,33 @@ module Decidim
   module Api
     module RestFull
       module Proposal
-        class ProposalsDraftsController < ResourcesController
+        class DraftProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
 
+          def publish
+            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+
+            form = form_for(draft)
+            raise Decidim::RestFull::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+
+            draft.update!(published_at: Time.now.utc)
+            render json: Decidim::Api::RestFull::ProposalSerializer.new(
+              draft,
+              params: {
+                locales: available_locales,
+                host: current_organization.host,
+                act_as: act_as
+              }
+            ).serializable_hash
+          end
+
           def show
-            raise Decidim::RestFull::ApiException::NotFound, "Proposal Draft Not Found" unless draft
+            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
-            form = Decidim::Proposals::ProposalForm.from_model(draft).with_context(
-              current_organization: current_organization,
-              current_participatory_space: space,
-              current_component: component
-            )
+            form = form_for(draft)
 
-            render json: Decidim::Api::RestFull::ProposalDraftSerializer.new(
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
               draft,
               params: {
                 only: [],
@@ -29,17 +42,13 @@ module Decidim
 
           def update
             payload = data.permit(:title, :body).to_h
-            proposal_draft = draft || create_new_draft
-            form = Decidim::Proposals::ProposalForm.from_model(proposal_draft).with_context(
-              current_organization: current_organization,
-              current_participatory_space: space,
-              current_component: component
-            )
+            draft_proposal = draft || create_new_draft
+            form = form_for(draft_proposal)
 
             update_keys = payload.keys
             if update_keys.empty?
               return render json: Decidim::Api::RestFull::ProposalSerializer.new(
-                proposal_draft,
+                draft_proposal,
                 params: {
                   only: [],
                   publishable: form.valid?
@@ -54,14 +63,14 @@ module Decidim
             update_errors = form.errors.select { |err| update_keys.include? err.attribute.to_s }
             raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
 
-            proposal_draft.title = { current_locale.to_s => form.title }
-            proposal_draft.body = { current_locale.to_s => form.body }
+            draft_proposal.title = { current_locale.to_s => form.title }
+            draft_proposal.body = { current_locale.to_s => form.body }
 
-            proposal_draft.save(validate: false)
-            proposal_draft.reload
+            draft_proposal.save(validate: false)
+            draft_proposal.reload
 
-            render json: Decidim::Api::RestFull::ProposalDraftSerializer.new(
-              proposal_draft,
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+              draft_proposal,
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
@@ -70,7 +79,29 @@ module Decidim
             ).serializable_hash
           end
 
+          def destroy
+            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+
+            draft.destroy!
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+              draft,
+              params: {
+                only: [],
+                locales: [current_locale.to_sym],
+                publishable: false
+              }
+            ).serializable_hash
+          end
+
           private
+
+          def form_for(resource)
+            Decidim::Proposals::ProposalForm.from_model(resource).with_context(
+              current_organization: current_organization,
+              current_participatory_space: space,
+              current_component: component
+            )
+          end
 
           def order_columns
             ["rand"]

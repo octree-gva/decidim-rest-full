@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", type: :request do
+RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", type: :request do
   path "/public/{space_manifest}/{space_id}/{component_id}/proposals/draft" do
-    get "Display a draft" do
+    get "Display a draft proposal" do
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "proposalDraft"
+      operationId "draftProposal"
       description "Detail a draft proposal. Raise HTTP 404 error if no draft is created for now."
 
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
@@ -52,7 +52,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", ty
 
       response "200", "Draft Found" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/proposal_draft_response"
+        schema "$ref" => "#/components/schemas/draft_proposal_response"
 
         context "when some fields are invalid" do
           let!(:proposal) do
@@ -122,9 +122,9 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsDraftsController", ty
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalsDraftsController.new
+          controller = Decidim::Api::RestFull::Proposal::DraftProposalsController.new
           allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalsDraftsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Proposal::DraftProposalsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

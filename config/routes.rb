@@ -48,8 +48,10 @@ Decidim::Core::Engine.routes.draw do
                             param: :resource_id,
                             defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
                     collection do
-                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
-                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/proposals_drafts"
+                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      delete "/draft", action: :destroy, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      post "/draft/publish", action: :publish, controller: "/decidim/api/rest_full/proposal/draft_proposals"
                     end
                   end
                 end

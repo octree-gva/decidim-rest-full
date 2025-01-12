@@ -3,7 +3,7 @@
 module Decidim
   module Api
     module RestFull
-      class ProposalDraftSerializer < ProposalSerializer
+      class DraftProposalSerializer < ProposalSerializer
         attribute :errors do |proposal, _params|
           component = proposal.component
           participatory_space = component.participatory_space
