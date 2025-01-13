@@ -15,6 +15,9 @@ require "decidim/rest_full/api_exception"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
+require "decidim/rest_full/overrides/proposal_client_id_override"
+require "decidim/rest_full/overrides/proposals_controller_override"
+
 require "decidim/rest_full/overrides/user_extended_data_ransack"
 require "decidim/rest_full/overrides/application_mailer_override"
 

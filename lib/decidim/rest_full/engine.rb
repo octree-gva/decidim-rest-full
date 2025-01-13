@@ -7,13 +7,15 @@ module Decidim
 
       config.to_prepare do
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
+        Decidim::Proposals::Proposal.include(Decidim::RestFull::ProposalClientIdOverride)
+        Decidim::Proposals::ProposalsController.include(Decidim::RestFull::ProposalsControllerOverride)
+
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
         ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
 
         # Override mailer to avoid sending emails to @example.org
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
       end
-
       initializer "rest_full.scopes" do
         Doorkeeper.configure do
           handle_auth_errors :raise

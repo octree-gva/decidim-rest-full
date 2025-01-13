@@ -75,7 +75,8 @@ RSpec.configure do |config|
         Api::Definitions::Tags::OAUTH,
         Api::Definitions::Tags::SYSTEM,
         Api::Definitions::Tags::PUBLIC,
-        Api::Definitions::Tags::BLOG
+        Api::Definitions::Tags::BLOG,
+        Api::Definitions::Tags::PROPOSAL
       ],
       components: {
         securitySchemes: {
@@ -107,6 +108,7 @@ RSpec.configure do |config|
           component_type: Api::Definitions::COMPONENT_TYPE,
           component_manifest: Api::Definitions::COMPONENT_MANIFEST,
           space_manifest: Api::Definitions::SPACE_MANIFEST,
+          space_type: Api::Definitions::SPACE_TYPE,
           locales: Api::Definitions::LOCALES_PARAM,
           locale: Api::Definitions::LOCALE_PARAM,
           creation_date: Api::Definitions::CREATION_DATE,
@@ -133,12 +135,20 @@ RSpec.configure do |config|
           blogs_response: Api::Definitions.array_response("blog", "List of blog posts"),
           blog_response: Api::Definitions.item_response("blog", "Details of a given blog post"),
 
+          # Proposal
+          proposal: Api::Definitions::PROPOSAL,
+          proposals_response: Api::Definitions.array_response("proposal", "List of proposals"),
+          proposal_response: Api::Definitions.item_response("proposal", "Details of a given proposal"),
+          draft_proposal: Api::Definitions::DRAFT_PROPOSAL,
+          draft_proposal_response: Api::Definitions.item_response("draft_proposal", "Details of a given draft proposal"),
+
           # OAuth methods
           introspect_data: Api::Definitions::INTROSPECT_DATA,
           introspect_response: {
             description: "Details about the token beeing used",
             "$ref" => "#/components/schemas/introspect_data"
           },
+
           oauth_grant_param: {
             oneOf: [
               Api::Definitions::CLIENT_CREDENTIAL_GRANT,

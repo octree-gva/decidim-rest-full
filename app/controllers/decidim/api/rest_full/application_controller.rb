@@ -22,6 +22,10 @@ module Decidim
                       end
         end
 
+        def client_id
+          doorkeeper_token.application_id
+        end
+
         def service_token?
           doorkeeper_token.valid? && !doorkeeper_token.resource_owner_id
         end
@@ -31,7 +35,15 @@ module Decidim
         end
 
         def current_organization
-          request.env["decidim.current_organization"]
+          @current_organization ||= request.env["decidim.current_organization"]
+        end
+
+        def current_locale
+          @current_locale ||= if current_user
+                                current_user.locale
+                              else
+                                current_organization.default_locale
+                              end
         end
 
         def populated_fields(default_fields, allowed_fields)

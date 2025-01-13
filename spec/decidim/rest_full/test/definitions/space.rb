@@ -2,6 +2,10 @@
 
 module Api
   module Definitions
+    SPACE_TYPE = {
+      type: :string,
+      enum: Decidim.participatory_space_registry.manifests.map(&:name)
+    }.freeze
     SPACE = {
       type: :object,
       title: "Space",

@@ -1,7 +1,7 @@
 {
   "name": "decidim-rest_full",
   "private": true,
-  "version": "0.0.11",
+  "version": "0.0.12",
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.15.3",
@@ -15,12 +15,12 @@
   },
   "scripts": {
     "docs:start": "cd website && yarn start -p 3232",
-    "docs:compile_re_doc": "yarn gen:openapi-spec && yarn openapi-generator-cli validate -i website/static/openapi.json && npx @redocly/cli build-docs website/static/openapi.json -o website/static/api-docs.html",
+    "docs:compile_re_doc": "yarn openapi-generator-cli validate -i website/static/openapi.json && npx @redocly/cli build-docs website/static/openapi.json -o website/static/api-docs.html",
     "docs:build": "yarn docs:compile_re_doc && cd website && yarn build",
     "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize -o website/static/openapi.json",
     "gen:node-client": "bin/gen-node-client",
     "format": "docker compose run -u root -w /home/decidim/module --rm rest_full bundle exec rubocop -A .",
-    "postcommit": "yarn format && yarn docs:compile_re_doc && yarn gen:node-client",
+    "postcommit": "yarn format && yarn gen:node-client && yarn docs:compile_re_doc",
     "postversion": "bin/postversion && yarn postcommit"
   }
 }

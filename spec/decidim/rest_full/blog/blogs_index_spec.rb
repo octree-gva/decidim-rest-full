@@ -14,6 +14,8 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
+      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
@@ -88,6 +90,28 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
           run_test!(example_name: :ok_drafts) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data.find { |d| d["meta"]["published"] == false }["id"]).to eq(draft_post.id.to_s)
+          end
+        end
+
+        context "with per_page=2, list max two blog posts" do
+          let(:page) { 1 }
+          let(:per_page) { 2 }
+          let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
+          let!(:proposals) do
+            [
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization))
+            ].each_with_index do |post, index|
+              post.published_at = (index + 1).minutes.ago
+              post.save!
+              post
+            end
+          end
+
+          run_test!(example_name: :paginated) do |example|
+            json_response = JSON.parse(example.body)
+            expect(json_response["data"].size).to eq(per_page)
           end
         end
       end

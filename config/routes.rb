@@ -41,7 +41,22 @@ Decidim::Core::Engine.routes.draw do
               member do
                 get "/", action: :show
 
-                # Dynamically add routes for components within each space
+                # Special actions, like managing proposal's drafts
+                scope ":component_id" do
+                  resources "proposals",
+                            only: [],
+                            param: :resource_id,
+                            defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
+                    collection do
+                      get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      delete "/draft", action: :destroy, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                      post "/draft/publish", action: :publish, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                    end
+                  end
+                end
+
+                # Basic get index and show on all components
                 Decidim.component_registry.manifests.each do |component|
                   component_manifest = component.name
                   scope ":component_id" do

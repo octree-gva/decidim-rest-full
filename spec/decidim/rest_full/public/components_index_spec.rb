@@ -111,7 +111,7 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
           end
         end
 
-        context "with per_page=2, list max two organizations" do
+        context "with per_page=2, list max two components" do
           let(:page) { 1 }
           let(:per_page) { 2 }
 
