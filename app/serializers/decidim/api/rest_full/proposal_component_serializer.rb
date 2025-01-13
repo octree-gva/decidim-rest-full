@@ -19,7 +19,8 @@ module Decidim
         end
         meta do |component, params|
           metas = ComponentSerializer.default_meta(component)
-          proposal_limit = component.settings.proposal_limit
+          next metas unless component.is_a?(Decidim::Proposals::Proposal)
+
           settings_h = component.settings.to_h
           current_settings_h = component.current_settings.to_h
           settings_keys = %w(
@@ -44,14 +45,22 @@ module Decidim
           settings_keys.each do |key|
             metas[key.to_sym] = settings_h[key.to_sym]
           end
-          settings_keys = %w(endorsements_enabled votes_enabled creation_enabled proposal_answering_enabled amendment_creation_enabled amendment_reaction_enabled
-                             amendment_promotion_enabled)
+          settings_keys = %w(
+            endorsements_enabled
+            votes_enabled
+            creation_enabled
+            proposal_answering_enabled
+            amendment_creation_enabled
+            amendment_reaction_enabled
+            amendment_promotion_enabled
+          )
           settings_keys.each do |key|
             metas[key.to_sym] = current_settings_h[key.to_sym]
           end
 
           resources = ::Decidim::Proposals::Proposal.where(component: component)
           act_as = params[:act_as]
+          proposal_limit = metas[:proposal_limit]
           metas[:can_create_proposals] = false
           if metas[:creation_enabled] && act_as.present?
             metas[:can_create_proposals] = proposal_limit.zero? ||
@@ -60,6 +69,7 @@ module Decidim
                                            ).count < proposal_limit
           end
           metas[:can_vote] = metas[:votes_enabled]
+          metas[:can_endorse] = metas[:endorsements_enabled]
           metas[:can_comment] = metas[:comments_enabled]
           metas
         end

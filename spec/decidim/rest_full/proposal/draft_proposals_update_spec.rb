@@ -25,10 +25,14 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
         }
         ```
         ## Access Requirements
-            * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).
+
+        * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).
+
         ## Error Handling
-            * Field Errors: Only errors related to the fields you're updating will be returned.
-            * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.
+
+        * Field Errors: Only errors related to the fields you're updating will be returned.
+        * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.
+
         ### Example response
         ```json
         {
