@@ -123,6 +123,18 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
           end
         end
 
+        context "when update nothing" do
+          let(:body) { { data: {} } }
+
+          after { clean_drafts }
+
+          run_test!(example_name: :ok) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["attributes"]["title"]["fr"]).to eq("")
+            expect(data["meta"]["publishable"]).to be(false)
+          end
+        end
+
         context "when created from different client_id" do
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
           let!(:api_clients) do
