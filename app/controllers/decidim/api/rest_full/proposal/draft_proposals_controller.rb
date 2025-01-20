@@ -49,16 +49,17 @@ module Decidim
           end
 
           def update
-            payload = data.permit(:title, :body).to_h
+            payload = data
             draft_proposal = draft || create_new_draft
             form = form_for(draft_proposal)
 
             update_keys = payload.keys
             if update_keys.empty?
-              return render json: Decidim::Api::RestFull::ProposalSerializer.new(
+              return render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
                 draft_proposal,
                 params: {
                   only: [],
+                  locales: [current_locale.to_sym],
                   publishable: form.valid?
                 }
               ).serializable_hash
@@ -160,7 +161,18 @@ module Decidim
           end
 
           def data
-            params.require(:data)
+            @data ||= begin
+              data_payload = if params.has_key? :data
+                               params[:data].permit!.to_h
+                             else
+                               {}
+                             end
+              data_payload.select { |k| allowed_data_keys.include? k }
+            end
+          end
+
+          def allowed_data_keys
+            %w(title body)
           end
         end
       end
