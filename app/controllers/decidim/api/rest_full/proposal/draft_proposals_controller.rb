@@ -43,7 +43,8 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
-                publishable: form.valid?
+                publishable: form.valid?,
+                fields: allowed_data_keys
               }
             ).serializable_hash
           end
@@ -60,20 +61,23 @@ module Decidim
                 params: {
                   only: [],
                   locales: [current_locale.to_sym],
-                  publishable: form.valid?
+                  publishable: form.valid?,
+                  fields: allowed_data_keys
                 }
               ).serializable_hash
             end
-
-            form.title = Rails::Html::FullSanitizer.new.sanitize(payload[:title]) if update_keys.include? "title"
-            form.body = Rails::Html::FullSanitizer.new.sanitize(payload[:body]) if update_keys.include? "body"
+            allowed_data_keys.each do |field_name|
+              field_name_sym = field_name.to_sym
+              form.send("#{field_name}=", Rails::Html::FullSanitizer.new.sanitize(payload[field_name_sym])) if update_keys.include? field_name
+            end
 
             form.valid?
             update_errors = form.errors.select { |err| update_keys.include? err.attribute.to_s }
             raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
 
-            draft_proposal.title = { current_locale.to_s => form.title }
-            draft_proposal.body = { current_locale.to_s => form.body }
+            allowed_data_keys.each do |field_name|
+              draft_proposal.send("#{field_name}=", { current_locale.to_s => form.send(field_name) })
+            end
 
             draft_proposal.save(validate: false)
             draft_proposal.reload
@@ -83,7 +87,8 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
-                publishable: form.valid?
+                publishable: form.valid?,
+                fields: allowed_data_keys
               }
             ).serializable_hash
           end
@@ -97,7 +102,8 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
-                publishable: false
+                publishable: false,
+                fields: allowed_data_keys
               }
             ).serializable_hash
           end

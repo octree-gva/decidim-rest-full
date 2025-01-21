@@ -1607,6 +1607,12 @@ export interface PropositionMetadata1 {
    * @memberof PropositionMetadata1
    */
   scope?: number;
+  /**
+   * Editable field names
+   * @type {Array<string>}
+   * @memberof PropositionMetadata1
+   */
+  fields: Array<string>;
 }
 /**
  *
