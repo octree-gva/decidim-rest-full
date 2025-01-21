@@ -35,6 +35,9 @@ module Decidim
               body_text: Rails::Html::FullSanitizer.new.sanitize(message[:body])
             )
           end
+        rescue ActionView::MissingTemplate => e
+          Rails.logger.error("Missing template: #{e.message}")
+        ensure
           mail_without_example_org(headers, &block)
         end
 
