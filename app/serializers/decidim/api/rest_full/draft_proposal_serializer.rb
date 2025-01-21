@@ -20,6 +20,7 @@ module Decidim
             [key_sym, form.errors.select { |err| err.attribute == key_sym }.map(&:full_message)]
           end
         end
+
         def self.default_meta(proposal)
           scope = proposal.component.scope || proposal.participatory_space.scope
           metas = {}
