@@ -4,7 +4,8 @@ module Decidim
   module Api
     module RestFull
       class DraftProposalSerializer < ProposalSerializer
-        attribute :errors do |proposal, _params|
+        attribute :errors do |proposal, params|
+          fields = params[:fields] || []
           component = proposal.component
           participatory_space = component.participatory_space
           organization = participatory_space.organization
@@ -14,10 +15,10 @@ module Decidim
             current_component: component
           )
           form.valid?
-          {
-            title: form.errors.select { |err| err.attribute == :title }.map(&:full_message),
-            body: form.errors.select { |err| err.attribute == :body }.map(&:full_message)
-          }
+          fields.to_h do |key|
+            key_sym = :"#{key}"
+            [key_sym, form.errors.select { |err| err.attribute == key_sym }.map(&:full_message)]
+          end
         end
         def self.default_meta(proposal)
           scope = proposal.component.scope || proposal.participatory_space.scope
@@ -30,6 +31,7 @@ module Decidim
           metas = default_meta(proposal)
           metas[:publishable] = params[:publishable] if params.has_key? :publishable
           metas[:client_id] = proposal.rest_full_application.api_client.client_id if proposal.rest_full_application
+          metas[:fields] = params[:fields] || []
 
           metas
         end
