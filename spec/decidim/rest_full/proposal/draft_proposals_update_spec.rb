@@ -128,7 +128,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
 
           after { clean_drafts }
 
-          run_test!(example_name: :ok) do |example|
+          run_test!(example_name: :ok_empty) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["attributes"]["title"]["fr"]).to eq("")
             expect(data["meta"]["publishable"]).to be(false)
@@ -182,7 +182,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
 
           after { clean_drafts }
 
-          run_test! do |example|
+          run_test!(:ok_update_body) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["attributes"]["body"]["fr"]).to eq(text)
           end
@@ -245,7 +245,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
 
           after { clean_drafts }
 
-          run_test!(example_name: :forbidden) do |_example|
+          run_test!(example_name: :forbidden_scope) do |_example|
             expect(response.status).to eq(403)
             expect(response.body).to include("Forbidden")
           end
@@ -280,7 +280,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
 
         schema "$ref" => "#/components/schemas/api_error"
 
-        run_test! do |response|
+        run_test!(:server_error) do |response|
           expect(response.status).to eq(500)
           expect(response.body).to include("Internal Server Error")
         end

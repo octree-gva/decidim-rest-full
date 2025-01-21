@@ -46,7 +46,8 @@ module Api
           properties: {
             publishable: { type: :boolean, description: "Draft is published as it is now?" },
             client_id: { type: :string, description: "Attached client_id" },
-            scope: { type: :integer, description: "Scope Id" }
+            scope: { type: :integer, description: "Scope Id" },
+            fields: { type: :array, description: "Editable field names", items: { type: :string } }
           },
           additionalProperties: {
             oneOf: [
@@ -64,7 +65,7 @@ module Api
               }
             ]
           },
-          required: [:publishable, :client_id]
+          required: [:publishable, :client_id, :fields]
         },
         links: {
           type: :object,
