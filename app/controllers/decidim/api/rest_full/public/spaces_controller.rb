@@ -31,6 +31,7 @@ module Decidim
                 "#{model.table_name}.description",
                 "#{model.table_name}.short_description",
                 "#{model.table_name}.private_space",
+                "#{model.table_name}.decidim_organization_id",
                 select_transparent,
                 "'#{manifest}' AS manifest_name",
                 "'#{data[:model]}' AS class_name"
@@ -67,6 +68,7 @@ module Decidim
               "#{model.table_name}.subtitle",
               "#{model.table_name}.description",
               "#{model.table_name}.short_description",
+              "#{model.table_name}.decidim_organization_id",
               "#{model.table_name}.private_space",
               select_transparent,
               "'#{manifest_name}' AS manifest_name",

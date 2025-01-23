@@ -80,13 +80,11 @@ module Api
                   type: :object,
                   title: "Attached Components Links",
                   properties: {
-                    related: {
-                      type: :string,
-                      description: "Complete list"
-                    }
+                    self: Api::Definitions.link("Space Detail"),
+                    related: Api::Definitions.link("Component List")
                   },
                   additionalProperties: false,
-                  required: [:related]
+                  required: [:self]
                 }
               },
               required: [:data, :meta, :links],
@@ -100,11 +98,10 @@ module Api
           type: :object,
           title: "Space Links",
           properties: {
-            self: {
-              type: :string
-            }
+            self: Api::Definitions.link("Space Detail"),
+            related: Api::Definitions.link("Organization Detail")
           },
-          required: [:self],
+          required: [:self, :related],
           additionalProperties: false
         }
       },

@@ -53,8 +53,8 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
           run_test! do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["id"]).to eq(blog_post.id.to_s)
-            expect(data["meta"]["has_more"]).to be(false)
-            expect(data["meta"]["next"]).to eq(blog_post.id.to_s)
+            expect(data["links"]["next"]).to be_nil
+            expect(data["links"]["prev"]).to be_nil
           end
         end
 
@@ -76,8 +76,9 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
             data = JSON.parse(example.body)["data"]
             posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
             expect(data["id"]).to eq(posts.last.to_s)
-            expect(data["meta"]["has_more"]).to be(false)
-            expect(data["meta"]["next"]).to eq(posts.first.to_s)
+            expect(data["links"]["next"]).to be_nil
+            expect(data["links"]["prev"]).to be_present
+            expect(data["links"]["prev"]["meta"]["resource_id"]).to eq(posts.last(2).first.to_s)
           end
         end
 
@@ -101,8 +102,36 @@ RSpec.describe "Decidim::Api::RestFull::Blog::BlogsController", type: :request d
             data = JSON.parse(example.body)["data"]
             posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
             expect(data["id"]).to eq(posts.first.to_s)
-            expect(data["meta"]["has_more"]).to be(true)
-            expect(data["meta"]["next"]).to eq(posts.second.to_s)
+            expect(data["links"]["prev"]).to be_nil
+            expect(data["links"]["next"]).to be_present
+            expect(data["links"]["next"]["meta"]["resource_id"]).to eq(posts.second.to_s)
+          end
+        end
+
+        context "when second blog post in a collectin of 3" do
+          let!(:posts) do
+            [
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization)),
+              create(:post, component: component, author: create(:user, :confirmed, organization: organization))
+            ].each_with_index do |post, index|
+              post.published_at = (index + 1).minutes.ago
+              post.save!
+              post
+            end
+          end
+          let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
+
+          let!(:post_id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).second.id }
+
+          run_test!(example_name: :ok) do |example|
+            data = JSON.parse(example.body)["data"]
+            posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
+            expect(data["id"]).to eq(posts.second.to_s)
+            expect(data["links"]["next"]).to be_present
+            expect(data["links"]["next"]["meta"]["resource_id"]).to eq(posts.third.to_s)
+            expect(data["links"]["prev"]).to be_present
+            expect(data["links"]["prev"]["meta"]["resource_id"]).to eq(posts.first.to_s)
           end
         end
 

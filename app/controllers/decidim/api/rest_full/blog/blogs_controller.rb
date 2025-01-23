@@ -24,8 +24,21 @@ module Decidim
             resource = collection.find(resource_id)
             raise Decidim::RestFull::ApiException::NotFound, "Blog Post Not Found" unless resource
 
-            next_item = collection.where("published_at > ? AND id != ?", resource.published_at, resource_id).first
-            first_item = collection.first
+            subquery = collection.select(
+              :id,
+              "LAG(id) OVER (ORDER BY published_at ASC) AS previous_id",
+              "LEAD(id) OVER (ORDER BY published_at ASC) AS next_id"
+            ).to_sql
+            aliased_subquery = "(#{subquery}) AS subquery"
+            pagination_match = model_class.select("subquery.id, subquery.previous_id as previous_id, subquery.next_id as next_id").from(aliased_subquery).find_by(
+              "subquery.id = ? ", resource_id
+            )
+
+            next_item = pagination_match.next_id
+            prev_item = pagination_match.previous_id
+            pagination_match.previous_id
+            first_item = collection.ids.first
+            last_item = collection.ids.last
 
             render json: Decidim::Api::RestFull::BlogSerializer.new(
               resource,
@@ -34,9 +47,11 @@ module Decidim
                 locales: available_locales,
                 host: current_organization.host,
                 act_as: act_as,
-                has_more: next_item.present?,
-                next: next_item || first_item,
-                count: collection.count
+                first: first_item,
+                last: first_item,
+                next: next_item,
+                prev: prev_item,
+                count: last_item
               }
             ).serializable_hash
           end

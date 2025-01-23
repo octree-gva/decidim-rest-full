@@ -45,8 +45,17 @@ module Decidim
         end), meta: (proc do |space, _params|
           { count: Decidim::Component.where(participatory_space_type: space.class_name, participatory_space_id: space.id).count }
         end), links: {
-          related: lambda { |object, params|
-            "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/components?filter[participatory_space_type_eq]=#{object.class_name}&filter[participatory_space_id_eq]=#{object.id}"
+          self: lambda { |object, params|
+            {
+              href: "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/public/components?filter[participatory_space_type_eq]=#{object.class_name}&filter[participatory_space_id_eq]=#{object.id}",
+              title: "Component list for this space",
+              rel: "resource",
+              meta: {
+                space_manifest: object.manifest_name,
+                space_id: object.id.to_s,
+                action_method: "GET"
+              }
+            }
           }
         } do |space, _params|
           Decidim::Component.where(
@@ -64,8 +73,29 @@ module Decidim
           org.updated_at.iso8601
         end
 
-        link :self do |object, params|
-          "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/#{object.manifest_name}/#{object.id}"
+        link :self do |space, params|
+          {
+            href: "https://#{params[:host]}/public/#{space.manifest_name}/#{space.id}",
+            title: space.title[I18n.locale.to_s] || "Space Details",
+            rel: "resource",
+            meta: {
+              space_id: space.id.to_s,
+              space_manifest: space.manifest_name,
+              action_method: "GET"
+            }
+          }
+        end
+
+        link :related do |space, params|
+          organization = Decidim::Organization.find(space.decidim_organization_id.to_i)
+          {
+            href: "https://#{params[:host]}/system/organizations/#{organization.id}",
+            title: organization.name[I18n.locale.to_s] || "Organization Details",
+            rel: "resource",
+            meta: {
+              action_method: "GET"
+            }
+          }
         end
       end
     end

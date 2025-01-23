@@ -17,9 +17,10 @@ module Decidim
             )
           end
         end
+
         meta do |component, params|
           metas = ComponentSerializer.default_meta(component)
-          next metas unless component.is_a?(Decidim::Proposals::Proposal)
+          component = Decidim::Component.find(component.id) unless component.is_a?(Decidim::Component)
 
           settings_h = component.settings.to_h
           current_settings_h = component.current_settings.to_h

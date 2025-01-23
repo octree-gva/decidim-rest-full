@@ -2,7 +2,7 @@
 
 module Api
   module Definitions
-    COMPONENT = {
+    GENERIC_COMPONENT = {
       type: :object,
       title: "Component",
       properties: {
@@ -18,10 +18,6 @@ module Api
             global_announcement: {
               "$ref" => "#/components/schemas/translated_prop",
               description: "Component annoucement (intro)"
-            },
-            manifest_name: {
-              "$ref" => "#/components/schemas/component_manifest",
-              description: "Manifest name of the component"
             },
             participatory_space_type: {
               type: :string,
@@ -39,12 +35,7 @@ module Api
           title: "Component Metadata",
           properties: {
             published: { type: :boolean, description: "Published component?" },
-            scopes_enabled: { type: :boolean, description: "Component handle scopes?" },
-            can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
-            can_vote: { type: :boolean, description: "If the current user can vote on the component" },
-            can_comment: { type: :boolean, description: "If the current user comment on the component" },
-            geocoding_enabled: { type: :boolean, description: "If the component needs a map to display its resources" },
-            attachments_allowed: { type: :boolean, description: "If the component allows to attach files to resources" }
+            scopes_enabled: { type: :boolean, description: "Component handle scopes?" }
           },
           additionalProperties: {
             oneOf: [
@@ -68,11 +59,11 @@ module Api
           type: :object,
           title: "Component Links",
           properties: {
-            self: { type: :string, description: "API URL to the component" },
-            related: { type: :string, description: "Component details API URL" }
+            self: Api::Definitions.link("API URL to the component"),
+            related: Api::Definitions.link("Space details API URL")
           },
           additionalProperties: false,
-          required: [:self, :related]
+          required: [:self]
         },
         relationships: {
           type: :object,
@@ -112,6 +103,82 @@ module Api
         }
       },
       required: [:id, :type, :attributes, :meta, :links]
+    }.freeze
+
+    PROPOSAL_COMPONENT = begin
+      proposal_component = Api::Definitions::GENERIC_COMPONENT.deep_dup
+      proposal_component[:title] = "Proposal Component"
+      proposal_component[:title] = <<~README
+        A proposal component can host proposals from participants, and official proposals (proposals from the organization).
+        This component have many metadatas that explain what are the restrictions regarding proposing, voting, commenting, amending or endorsing.#{" "}
+
+        Features toggles:#{" "}
+        - `can_create_proposals`: If participants can create proposals
+        - `can_vote`: If participants can vote
+        - `can_comment`: If participants can comments
+        - .... and some more
+
+
+      README
+      proposal_component[:properties][:type] = { type: :string, enum: ["proposal_component"] }
+      proposal_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["proposals"] }
+      additional_properties = {
+        can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
+        can_vote: { type: :boolean, description: "If the current user can vote on the component" },
+        can_comment: { type: :boolean, description: "If the current user comment on the component" },
+        geocoding_enabled: { type: :boolean, description: "If the component needs a map to display its resources" },
+        attachments_allowed: { type: :boolean, description: "If the component allows to attach files to resources" },
+        collaborative_drafts_enabled: { type: :boolean, description: "If you can create collaborative draft for the proposal" },
+        comments_enabled: { type: :boolean, description: "If you can comment on proposals" },
+        comments_max_length: { type: :integer, description: "Characters limit for comment" },
+        default_sort_order: { type: :string, enum: %w(
+          random recent most_voted most_endorsed most_commented most_followed with_more_authors automatic
+        ), description: "Default order of proposals" },
+        official_proposals_enabled: { type: :boolean, description: "If proposals can be official" },
+        participatory_texts_enabled: { type: :boolean, description: "If proposals are based on a text modification" },
+        proposal_edit_before_minutes: { type: :integer, description: "Time in minute participant can edit the proposal" },
+        proposal_edit_time: { type: :string, enum: %w(infinite limited), description: "Type of restriction for proposal edition" },
+        proposal_limit: { type: :integer, description: "Max proposal per participant. No maximum if value is 0" },
+        resources_permissions_enabled: { type: :boolean, description: "If authorizations can be defined per proposal" },
+        threshold_per_proposal: { type: :integer, description: "Threshold to compare similar proposals" },
+        vote_limit: { type: :integer, description: "Max Number of vote per participant. 0 if no limit" },
+        endorsements_enabled: { type: :boolean, description: "If endorsements are enabled" },
+        votes_enabled: { type: :boolean, description: "If votes on proposal are enabled" },
+        creation_enabled: { type: :boolean, description: "If participant can create proposal are enabled" },
+        proposal_answering_enabled: { type: :boolean, description: "If officials can answer proposals" },
+        amendment_creation_enabled: { type: :boolean, description: "If participant can propose an amendment to a proposal" },
+        amendment_reaction_enabled: { type: :boolean, description: "If participant can react to an amendment of a proposal" },
+        amendment_promotion_enabled: { type: :boolean, description: "If participant choose an amendment to replace their initial proposal" }
+      }
+      proposal_component[:properties][:meta][:properties].merge!(additional_properties)
+      proposal_component[:properties][:meta][:required].push(:can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit)
+      proposal_component
+    end
+    BLOG_COMPONENT = begin
+      blog_component = Api::Definitions::GENERIC_COMPONENT.deep_dup
+      blog_component[:title] = "Blog Post Component"
+      blog_component[:properties][:type] = { type: :string, enum: ["blog_component"] }
+      blog_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["blogs"] }
+      blog_component
+    end
+    used = %w(proposals blogs)
+    others = Decidim.component_registry.manifests.map { |manifest| manifest.name.to_s }.reject { |manifest_name| manifest_name.to_s == "dummy" || used.include?(manifest_name) }
+    other_types = others.map { |manifest_name| "#{manifest_name.singularize}_component" }
+    other_manifest_name = others.map(&:to_s)
+    OTHER_COMPONENT = begin
+      component = Api::Definitions::GENERIC_COMPONENT.deep_dup
+      component[:title] = "Generic Component"
+      component[:properties][:type] = { type: :string, enum: other_types }
+      component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: other_manifest_name }
+
+      component
+    end
+    COMPONENT = {
+      oneOf: [
+        PROPOSAL_COMPONENT,
+        BLOG_COMPONENT,
+        OTHER_COMPONENT
+      ]
     }.freeze
   end
 end

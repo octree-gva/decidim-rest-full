@@ -67,7 +67,6 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::DraftProposalsController", typ
               body: { type: :string, description: "Content of the draft" },
               locale: { type: :string, enum: Decidim.available_locales, description: "Locale of the draft. default to user locale" }
             },
-            required: [],
             description: "Payload to update in the proposal"
           }
         }, required: [:data]
