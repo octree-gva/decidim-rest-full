@@ -125,22 +125,22 @@ RSpec.configure do |config|
           # Public
           space: Api::Definitions::SPACE,
           component: Api::Definitions::COMPONENT,
-          component_response: Api::Definitions.item_response("component", "Details of a given component"),
-          components_response: Api::Definitions.array_response("component", "List of components"),
-          spaces_response: Api::Definitions.array_response("space", "List of spaces"),
-          space_response: Api::Definitions.item_response("space", "Details of a given space"),
+          component_response: Api::Definitions.item_response("component", "Component Detail"),
+          components_response: Api::Definitions.array_response("component", "Components List"),
+          spaces_response: Api::Definitions.array_response("space", "Participatory Spaces List"),
+          space_response: Api::Definitions.item_response("space", "Participatory Space Detail"),
 
           # Blogs
           blog: Api::Definitions::BLOG,
-          blogs_response: Api::Definitions.array_response("blog", "List of blog posts"),
-          blog_response: Api::Definitions.item_response("blog", "Details of a given blog post"),
+          blogs_response: Api::Definitions.array_response("blog", "Blog Post List"),
+          blog_response: Api::Definitions.item_response("blog", "Blog Post Detail"),
 
           # Proposal
           proposal: Api::Definitions::PROPOSAL,
-          proposals_response: Api::Definitions.array_response("proposal", "List of proposals"),
-          proposal_response: Api::Definitions.item_response("proposal", "Details of a given proposal"),
+          proposals_response: Api::Definitions.array_response("proposal", "Proposals List"),
+          proposal_response: Api::Definitions.item_response("proposal", "Proposal Detail"),
           draft_proposal: Api::Definitions::DRAFT_PROPOSAL,
-          draft_proposal_response: Api::Definitions.item_response("draft_proposal", "Details of a given draft proposal"),
+          draft_proposal_response: Api::Definitions.item_response("draft_proposal", "Draft Proposal Detail"),
 
           # OAuth methods
           introspect_data: Api::Definitions::INTROSPECT_DATA,

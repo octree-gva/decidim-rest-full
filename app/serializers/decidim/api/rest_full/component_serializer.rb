@@ -59,12 +59,31 @@ module Decidim
         end
 
         link :self do |object, params|
-          "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/components/#{object.id}"
+          space = object.participatory_space_type.constantize.find(object.participatory_space_id)
+          {
+            href: "https://#{params[:host]}/public/components/#{object.id}",
+            title: object.name[I18n.locale.to_s] || "Component Details",
+            rel: "resource",
+            meta: {
+              space_id: space.id.to_s,
+              space_manifest: space.manifest.name,
+              action_method: "GET"
+            }
+          }
         end
 
         link :related do |object, params|
           space = object.participatory_space_type.constantize.find(object.participatory_space_id)
-          "https://#{params[:host]}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/#{space.manifest.name}/#{space.id}/#{object.manifest_name}/#{object.id}"
+          {
+            href: "https://#{params[:host]}/public/#{space.manifest.name}/#{space.id}",
+            title: space.title[I18n.locale.to_s] || "Space Details",
+            rel: "resource",
+            meta: {
+              space_id: space.id.to_s,
+              space_manifest: space.manifest.name,
+              action_method: "GET"
+            }
+          }
         end
       end
     end

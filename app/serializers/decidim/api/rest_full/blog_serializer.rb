@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+require_relative "helpers/resource_links_helper"
 module Decidim
   module Api
     module RestFull
       class BlogSerializer < ResourceSerializer
+        extend Helpers::ResourceLinksHelper
+
         def self.default_meta(blog_post)
           scope = blog_post.component.scope || blog_post.participatory_space.scope
           metas = {
@@ -13,13 +16,42 @@ module Decidim
           metas
         end
 
-        meta do |proposal, params|
-          metas = default_meta(proposal)
-          metas[:has_more] = params[:has_more] if params.has_key? :has_more
-          metas[:next] = params[:next].id.to_s if params.has_key?(:next) && params[:next]
-          metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
-          metas[:count] = params[:count] if params.has_key? :count
-          metas
+        link :next do |object, params|
+          next nil unless params.has_key?(:next) && params[:next]
+
+          next_id = params[:next]
+          infos = link_infos_from_resource(object)
+          {
+            href: link_for_resource(params[:host], infos, next_id),
+            title: "Next Blog Post",
+            rel: "resource",
+            meta: {
+              **infos,
+              resource_id: next_id.to_s,
+              action_method: "GET"
+            }
+          }
+        end
+
+        link :prev do |object, params|
+          next nil unless params.has_key?(:prev) && params[:prev]
+
+          prev_id = params[:prev]
+          infos = link_infos_from_resource(object)
+          {
+            href: link_for_resource(params[:host], infos, prev_id),
+            title: "Previous Blog Post",
+            rel: "resource",
+            meta: {
+              **infos,
+              resource_id: prev_id.to_s,
+              action_method: "GET"
+            }
+          }
+        end
+
+        meta do |proposal, _params|
+          default_meta(proposal)
         end
 
         attribute :title do |comp, params|

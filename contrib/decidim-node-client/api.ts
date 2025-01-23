@@ -42,6 +42,63 @@ import {
 /**
  *
  * @export
+ * @interface ActionURL
+ */
+export interface ActionURL {
+  /**
+   * Action Name
+   * @type {string}
+   * @memberof ActionURL
+   */
+  title: string;
+  /**
+   * Full URL
+   * @type {string}
+   * @memberof ActionURL
+   */
+  href: string;
+  /**
+   * JSONSchema URL describing the request
+   * @type {string}
+   * @memberof ActionURL
+   */
+  describedby?: string;
+  /**
+   * Available locales
+   * @type {Array<string>}
+   * @memberof ActionURL
+   */
+  hreflang?: Array<string>;
+  /**
+   *
+   * @type {string}
+   * @memberof ActionURL
+   */
+  rel: ActionURLRelEnum;
+  /**
+   *
+   * @type {ActionURLMeta}
+   * @memberof ActionURL
+   */
+  meta: ActionURLMeta;
+}
+
+export const ActionURLRelEnum = {
+  Action: "action",
+} as const;
+
+export type ActionURLRelEnum =
+  (typeof ActionURLRelEnum)[keyof typeof ActionURLRelEnum];
+
+/**
+ * @type ActionURLMeta
+ * @export
+ */
+export type ActionURLMeta = MetaForReadRequest | MetaForWriteRequest;
+
+/**
+ *
+ * @export
  * @interface ApiError
  */
 export interface ApiError {
@@ -116,12 +173,32 @@ export interface AttachedComponentsDataInner {
  */
 export interface AttachedComponentsLinks {
   /**
-   * Complete list
-   * @type {string}
+   *
+   * @type {AttachedComponentsLinksSelf}
    * @memberof AttachedComponentsLinks
    */
-  related: string;
+  self: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {AttachedComponentsLinksRelated}
+   * @memberof AttachedComponentsLinks
+   */
+  related?: AttachedComponentsLinksRelated;
 }
+/**
+ * @type AttachedComponentsLinksRelated
+ * Component List
+ * @export
+ */
+export type AttachedComponentsLinksRelated = ActionURL | ResourceURL;
+
+/**
+ * @type AttachedComponentsLinksSelf
+ * Space Detail
+ * @export
+ */
+export type AttachedComponentsLinksSelf = ActionURL | ResourceURL;
+
 /**
  *
  * @export
@@ -219,16 +296,183 @@ export interface BlogAttributes {
 /**
  *
  * @export
+ * @interface BlogPostComponent
+ */
+export interface BlogPostComponent {
+  /**
+   * Component Id
+   * @type {string}
+   * @memberof BlogPostComponent
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof BlogPostComponent
+   */
+  type: BlogPostComponentTypeEnum;
+  /**
+   *
+   * @type {BlogPostComponentAttributes}
+   * @memberof BlogPostComponent
+   */
+  attributes: BlogPostComponentAttributes;
+  /**
+   *
+   * @type {ComponentMetadata1}
+   * @memberof BlogPostComponent
+   */
+  meta: ComponentMetadata1;
+  /**
+   *
+   * @type {ComponentLinks}
+   * @memberof BlogPostComponent
+   */
+  links: ComponentLinks;
+  /**
+   *
+   * @type {ComponentRelationships}
+   * @memberof BlogPostComponent
+   */
+  relationships?: ComponentRelationships;
+}
+
+export const BlogPostComponentTypeEnum = {
+  BlogComponent: "blog_component",
+} as const;
+
+export type BlogPostComponentTypeEnum =
+  (typeof BlogPostComponentTypeEnum)[keyof typeof BlogPostComponentTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface BlogPostComponentAttributes
+ */
+export interface BlogPostComponentAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogPostComponentAttributes
+   */
+  name: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogPostComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  participatory_space_type: string;
+  /**
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  updated_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  manifest_name: BlogPostComponentAttributesManifestNameEnum;
+}
+
+export const BlogPostComponentAttributesManifestNameEnum = {
+  Blogs: "blogs",
+} as const;
+
+export type BlogPostComponentAttributesManifestNameEnum =
+  (typeof BlogPostComponentAttributesManifestNameEnum)[keyof typeof BlogPostComponentAttributesManifestNameEnum];
+
+/**
+ *
+ * @export
  * @interface BlogPostLinks
  */
 export interface BlogPostLinks {
   /**
-   * API URL to the blog post
-   * @type {string}
+   *
+   * @type {BlogPostLinksSelf}
    * @memberof BlogPostLinks
    */
-  self: string;
+  self: BlogPostLinksSelf;
+  /**
+   *
+   * @type {BlogPostLinksCollection}
+   * @memberof BlogPostLinks
+   */
+  collection: BlogPostLinksCollection;
+  /**
+   *
+   * @type {BlogPostLinksRelated}
+   * @memberof BlogPostLinks
+   */
+  related: BlogPostLinksRelated;
+  /**
+   *
+   * @type {BlogPostLinksPrev}
+   * @memberof BlogPostLinks
+   */
+  prev: BlogPostLinksPrev | null;
+  /**
+   *
+   * @type {BlogPostLinksNext}
+   * @memberof BlogPostLinks
+   */
+  next: BlogPostLinksNext | null;
 }
+/**
+ * @type BlogPostLinksCollection
+ * Associate blog post list
+ * @export
+ */
+export type BlogPostLinksCollection = ActionURL | ResourceURL;
+
+/**
+ * @type BlogPostLinksNext
+ * Next blog post entry
+ * @export
+ */
+export type BlogPostLinksNext = ActionURL | ResourceURL;
+
+/**
+ * @type BlogPostLinksPrev
+ * Prev blog post entry
+ * @export
+ */
+export type BlogPostLinksPrev = ActionURL | ResourceURL;
+
+/**
+ * @type BlogPostLinksRelated
+ * Related Component
+ * @export
+ */
+export type BlogPostLinksRelated = ActionURL | ResourceURL;
+
+/**
+ * @type BlogPostLinksSelf
+ * Blog Post
+ * @export
+ */
+export type BlogPostLinksSelf = ActionURL | ResourceURL;
+
 /**
  *
  * @export
@@ -422,98 +666,13 @@ export type ClientCredentialScopeEnum =
   (typeof ClientCredentialScopeEnum)[keyof typeof ClientCredentialScopeEnum];
 
 /**
- *
+ * @type Component
  * @export
- * @interface Component
  */
-export interface Component {
-  /**
-   * Component Id
-   * @type {string}
-   * @memberof Component
-   */
-  id: string;
-  /**
-   *
-   * @type {ComponentType}
-   * @memberof Component
-   */
-  type: ComponentType;
-  /**
-   *
-   * @type {ComponentAttributes}
-   * @memberof Component
-   */
-  attributes: ComponentAttributes;
-  /**
-   *
-   * @type {ComponentMetadata}
-   * @memberof Component
-   */
-  meta: ComponentMetadata;
-  /**
-   *
-   * @type {ComponentLinks}
-   * @memberof Component
-   */
-  links: ComponentLinks;
-  /**
-   *
-   * @type {ComponentRelationships}
-   * @memberof Component
-   */
-  relationships?: ComponentRelationships;
-}
-
-/**
- *
- * @export
- * @interface ComponentAttributes
- */
-export interface ComponentAttributes {
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof ComponentAttributes
-   */
-  name: TranslatedProp;
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof ComponentAttributes
-   */
-  global_announcement?: TranslatedProp;
-  /**
-   *
-   * @type {ComponentManifest}
-   * @memberof ComponentAttributes
-   */
-  manifest_name: ComponentManifest;
-  /**
-   * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
-   * @type {string}
-   * @memberof ComponentAttributes
-   */
-  participatory_space_type: string;
-  /**
-   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
-   * @type {string}
-   * @memberof ComponentAttributes
-   */
-  participatory_space_id: string;
-  /**
-   * Creation date of the component
-   * @type {string}
-   * @memberof ComponentAttributes
-   */
-  created_at: string;
-  /**
-   * Last update date of the component
-   * @type {string}
-   * @memberof ComponentAttributes
-   */
-  updated_at: string;
-}
+export type Component =
+  | BlogPostComponent
+  | GenericComponent
+  | ProposalComponent;
 
 /**
  *
@@ -522,18 +681,32 @@ export interface ComponentAttributes {
  */
 export interface ComponentLinks {
   /**
-   * API URL to the component
-   * @type {string}
+   *
+   * @type {ComponentLinksSelf}
    * @memberof ComponentLinks
    */
-  self: string;
+  self: ComponentLinksSelf;
   /**
-   * Component details API URL
-   * @type {string}
+   *
+   * @type {ComponentLinksRelated}
    * @memberof ComponentLinks
    */
-  related: string;
+  related?: ComponentLinksRelated;
 }
+/**
+ * @type ComponentLinksRelated
+ * Space details API URL
+ * @export
+ */
+export type ComponentLinksRelated = ActionURL | ResourceURL;
+
+/**
+ * @type ComponentLinksSelf
+ * API URL to the component
+ * @export
+ */
+export type ComponentLinksSelf = ActionURL | ResourceURL;
+
 /**
  *
  * @export
@@ -580,31 +753,188 @@ export interface ComponentMetadata {
    * @type {boolean}
    * @memberof ComponentMetadata
    */
-  can_create_proposals?: boolean;
+  can_create_proposals: boolean;
   /**
    * If the current user can vote on the component
    * @type {boolean}
    * @memberof ComponentMetadata
    */
-  can_vote?: boolean;
+  can_vote: boolean;
   /**
    * If the current user comment on the component
    * @type {boolean}
    * @memberof ComponentMetadata
    */
-  can_comment?: boolean;
+  can_comment: boolean;
   /**
    * If the component needs a map to display its resources
    * @type {boolean}
    * @memberof ComponentMetadata
    */
-  geocoding_enabled?: boolean;
+  geocoding_enabled: boolean;
   /**
    * If the component allows to attach files to resources
    * @type {boolean}
    * @memberof ComponentMetadata
    */
-  attachments_allowed?: boolean;
+  attachments_allowed: boolean;
+  /**
+   * If you can create collaborative draft for the proposal
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  collaborative_drafts_enabled?: boolean;
+  /**
+   * If you can comment on proposals
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  comments_enabled?: boolean;
+  /**
+   * Characters limit for comment
+   * @type {number}
+   * @memberof ComponentMetadata
+   */
+  comments_max_length?: number;
+  /**
+   * Default order of proposals
+   * @type {string}
+   * @memberof ComponentMetadata
+   */
+  default_sort_order?: ComponentMetadataDefaultSortOrderEnum;
+  /**
+   * If proposals can be official
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  official_proposals_enabled?: boolean;
+  /**
+   * If proposals are based on a text modification
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  participatory_texts_enabled?: boolean;
+  /**
+   * Time in minute participant can edit the proposal
+   * @type {number}
+   * @memberof ComponentMetadata
+   */
+  proposal_edit_before_minutes?: number;
+  /**
+   * Type of restriction for proposal edition
+   * @type {string}
+   * @memberof ComponentMetadata
+   */
+  proposal_edit_time?: ComponentMetadataProposalEditTimeEnum;
+  /**
+   * Max proposal per participant. No maximum if value is 0
+   * @type {number}
+   * @memberof ComponentMetadata
+   */
+  proposal_limit?: number;
+  /**
+   * If authorizations can be defined per proposal
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  resources_permissions_enabled?: boolean;
+  /**
+   * Threshold to compare similar proposals
+   * @type {number}
+   * @memberof ComponentMetadata
+   */
+  threshold_per_proposal?: number;
+  /**
+   * Max Number of vote per participant. 0 if no limit
+   * @type {number}
+   * @memberof ComponentMetadata
+   */
+  vote_limit: number;
+  /**
+   * If endorsements are enabled
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  endorsements_enabled?: boolean;
+  /**
+   * If votes on proposal are enabled
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  votes_enabled?: boolean;
+  /**
+   * If participant can create proposal are enabled
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  creation_enabled?: boolean;
+  /**
+   * If officials can answer proposals
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  proposal_answering_enabled?: boolean;
+  /**
+   * If participant can propose an amendment to a proposal
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  amendment_creation_enabled?: boolean;
+  /**
+   * If participant can react to an amendment of a proposal
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  amendment_reaction_enabled?: boolean;
+  /**
+   * If participant choose an amendment to replace their initial proposal
+   * @type {boolean}
+   * @memberof ComponentMetadata
+   */
+  amendment_promotion_enabled?: boolean;
+}
+
+export const ComponentMetadataDefaultSortOrderEnum = {
+  Random: "random",
+  Recent: "recent",
+  MostVoted: "most_voted",
+  MostEndorsed: "most_endorsed",
+  MostCommented: "most_commented",
+  MostFollowed: "most_followed",
+  WithMoreAuthors: "with_more_authors",
+  Automatic: "automatic",
+} as const;
+
+export type ComponentMetadataDefaultSortOrderEnum =
+  (typeof ComponentMetadataDefaultSortOrderEnum)[keyof typeof ComponentMetadataDefaultSortOrderEnum];
+export const ComponentMetadataProposalEditTimeEnum = {
+  Infinite: "infinite",
+  Limited: "limited",
+} as const;
+
+export type ComponentMetadataProposalEditTimeEnum =
+  (typeof ComponentMetadataProposalEditTimeEnum)[keyof typeof ComponentMetadataProposalEditTimeEnum];
+
+/**
+ *
+ * @export
+ * @interface ComponentMetadata1
+ */
+export interface ComponentMetadata1 {
+  [key: string]: ComponentMetadataValue | any;
+
+  /**
+   * Published component?
+   * @type {boolean}
+   * @memberof ComponentMetadata1
+   */
+  published: boolean;
+  /**
+   * Component handle scopes?
+   * @type {boolean}
+   * @memberof ComponentMetadata1
+   */
+  scopes_enabled: boolean;
 }
 /**
  * @type ComponentMetadataValue
@@ -748,16 +1078,16 @@ export interface DraftProposal {
   attributes: DraftProposalAttributes;
   /**
    *
-   * @type {PropositionMetadata1}
+   * @type {DraftPropositionMetadata}
    * @memberof DraftProposal
    */
-  meta: PropositionMetadata1;
+  meta: DraftPropositionMetadata;
   /**
    *
-   * @type {ProposalLinks}
+   * @type {ProposalLinks1}
    * @memberof DraftProposal
    */
-  links: ProposalLinks;
+  links: ProposalLinks1;
   /**
    *
    * @type {ProposalRelationships}
@@ -842,6 +1172,159 @@ export interface DraftProposalResponse {
    */
   data: DraftProposal;
 }
+/**
+ *
+ * @export
+ * @interface DraftPropositionMetadata
+ */
+export interface DraftPropositionMetadata {
+  [key: string]: ComponentMetadataValue | any;
+
+  /**
+   * Draft is published as it is now?
+   * @type {boolean}
+   * @memberof DraftPropositionMetadata
+   */
+  publishable: boolean;
+  /**
+   * Attached client_id
+   * @type {string}
+   * @memberof DraftPropositionMetadata
+   */
+  client_id: string;
+  /**
+   * Scope Id
+   * @type {number}
+   * @memberof DraftPropositionMetadata
+   */
+  scope?: number;
+  /**
+   * Editable field names
+   * @type {Array<string>}
+   * @memberof DraftPropositionMetadata
+   */
+  fields: Array<string>;
+}
+/**
+ *
+ * @export
+ * @interface GenericComponent
+ */
+export interface GenericComponent {
+  /**
+   * Component Id
+   * @type {string}
+   * @memberof GenericComponent
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof GenericComponent
+   */
+  type: GenericComponentTypeEnum;
+  /**
+   *
+   * @type {GenericComponentAttributes}
+   * @memberof GenericComponent
+   */
+  attributes: GenericComponentAttributes;
+  /**
+   *
+   * @type {ComponentMetadata1}
+   * @memberof GenericComponent
+   */
+  meta: ComponentMetadata1;
+  /**
+   *
+   * @type {ComponentLinks}
+   * @memberof GenericComponent
+   */
+  links: ComponentLinks;
+  /**
+   *
+   * @type {ComponentRelationships}
+   * @memberof GenericComponent
+   */
+  relationships?: ComponentRelationships;
+}
+
+export const GenericComponentTypeEnum = {
+  PageComponent: "page_component",
+  MeetingComponent: "meeting_component",
+  BudgetComponent: "budget_component",
+  SurveyComponent: "survey_component",
+  AccountabilityComponent: "accountability_component",
+  DebateComponent: "debate_component",
+  SortitionComponent: "sortition_component",
+} as const;
+
+export type GenericComponentTypeEnum =
+  (typeof GenericComponentTypeEnum)[keyof typeof GenericComponentTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface GenericComponentAttributes
+ */
+export interface GenericComponentAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof GenericComponentAttributes
+   */
+  name: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof GenericComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  participatory_space_type: string;
+  /**
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  updated_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  manifest_name: GenericComponentAttributesManifestNameEnum;
+}
+
+export const GenericComponentAttributesManifestNameEnum = {
+  Pages: "pages",
+  Meetings: "meetings",
+  Budgets: "budgets",
+  Surveys: "surveys",
+  Accountability: "accountability",
+  Debates: "debates",
+  Sortitions: "sortitions",
+} as const;
+
+export type GenericComponentAttributesManifestNameEnum =
+  (typeof GenericComponentAttributesManifestNameEnum)[keyof typeof GenericComponentAttributesManifestNameEnum];
+
 /**
  *
  * @export
@@ -1100,6 +1583,129 @@ export const LoginScopeEnum = {
 
 export type LoginScopeEnum =
   (typeof LoginScopeEnum)[keyof typeof LoginScopeEnum];
+
+/**
+ *
+ * @export
+ * @interface MetaForReadRequest
+ */
+export interface MetaForReadRequest {
+  /**
+   * Component ID
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  component_id?: string;
+  /**
+   * Component manifest
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  component_manifest?: string;
+  /**
+   * Space ID
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  space_id?: string;
+  /**
+   * Space Manifest
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  space_manifest?: string;
+  /**
+   * Resource ID
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  resource_id?: string;
+  /**
+   * Action HTTP method
+   * @type {string}
+   * @memberof MetaForReadRequest
+   */
+  action_method: MetaForReadRequestActionMethodEnum;
+}
+
+export const MetaForReadRequestActionMethodEnum = {
+  Get: "GET",
+} as const;
+
+export type MetaForReadRequestActionMethodEnum =
+  (typeof MetaForReadRequestActionMethodEnum)[keyof typeof MetaForReadRequestActionMethodEnum];
+
+/**
+ *
+ * @export
+ * @interface MetaForWriteRequest
+ */
+export interface MetaForWriteRequest {
+  /**
+   * Component ID
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  component_id?: string;
+  /**
+   * Component manifest
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  component_manifest?: string;
+  /**
+   * Space ID
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  space_id?: string;
+  /**
+   * Space Manifest
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  space_manifest?: string;
+  /**
+   * Resource ID
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  resource_id?: string;
+  /**
+   * Action HTTP method
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  action_method: MetaForWriteRequestActionMethodEnum;
+  /**
+   * Encoding of the payload
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  action_enctype: MetaForWriteRequestActionEnctypeEnum;
+  /**
+   * URL to goes after submitting a valid request
+   * @type {string}
+   * @memberof MetaForWriteRequest
+   */
+  action_target?: string;
+}
+
+export const MetaForWriteRequestActionMethodEnum = {
+  Post: "POST",
+  Delete: "DELETE",
+  Put: "PUT",
+} as const;
+
+export type MetaForWriteRequestActionMethodEnum =
+  (typeof MetaForWriteRequestActionMethodEnum)[keyof typeof MetaForWriteRequestActionMethodEnum];
+export const MetaForWriteRequestActionEnctypeEnum = {
+  ApplicationXWwwFormUrlencoded: "application/x-www-form-urlencoded",
+  MultipartFormData: "multipart/form-data",
+} as const;
+
+export type MetaForWriteRequestActionEnctypeEnum =
+  (typeof MetaForWriteRequestActionEnctypeEnum)[keyof typeof MetaForWriteRequestActionEnctypeEnum];
 
 /**
  * @type OauthGrantParam
@@ -1389,18 +1995,198 @@ export type ProposalTypeEnum =
   (typeof ProposalTypeEnum)[keyof typeof ProposalTypeEnum];
 
 /**
+ * A proposal component can host proposals from participants, and official proposals (proposals from the organization). This component have many metadatas that explain what are the restrictions regarding proposing, voting, commenting, amending or endorsing.   Features toggles:  - `can_create_proposals`: If participants can create proposals - `can_vote`: If participants can vote - `can_comment`: If participants can comments - .... and some more
+ * @export
+ * @interface ProposalComponent
+ */
+export interface ProposalComponent {
+  /**
+   * Component Id
+   * @type {string}
+   * @memberof ProposalComponent
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalComponent
+   */
+  type: ProposalComponentTypeEnum;
+  /**
+   *
+   * @type {ProposalComponentAttributes}
+   * @memberof ProposalComponent
+   */
+  attributes: ProposalComponentAttributes;
+  /**
+   *
+   * @type {ComponentMetadata}
+   * @memberof ProposalComponent
+   */
+  meta: ComponentMetadata;
+  /**
+   *
+   * @type {ComponentLinks}
+   * @memberof ProposalComponent
+   */
+  links: ComponentLinks;
+  /**
+   *
+   * @type {ComponentRelationships}
+   * @memberof ProposalComponent
+   */
+  relationships?: ComponentRelationships;
+}
+
+export const ProposalComponentTypeEnum = {
+  ProposalComponent: "proposal_component",
+} as const;
+
+export type ProposalComponentTypeEnum =
+  (typeof ProposalComponentTypeEnum)[keyof typeof ProposalComponentTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalComponentAttributes
+ */
+export interface ProposalComponentAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ProposalComponentAttributes
+   */
+  name: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ProposalComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   * Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof ProposalComponentAttributes
+   */
+  participatory_space_type: string;
+  /**
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof ProposalComponentAttributes
+   */
+  participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof ProposalComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof ProposalComponentAttributes
+   */
+  updated_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalComponentAttributes
+   */
+  manifest_name: ProposalComponentAttributesManifestNameEnum;
+}
+
+export const ProposalComponentAttributesManifestNameEnum = {
+  Proposals: "proposals",
+} as const;
+
+export type ProposalComponentAttributesManifestNameEnum =
+  (typeof ProposalComponentAttributesManifestNameEnum)[keyof typeof ProposalComponentAttributesManifestNameEnum];
+
+/**
  *
  * @export
  * @interface ProposalLinks
  */
 export interface ProposalLinks {
   /**
-   * API URL to the proposal
-   * @type {string}
+   *
+   * @type {ProposalLinksSelf}
    * @memberof ProposalLinks
    */
-  self: string;
+  self: ProposalLinksSelf;
+  /**
+   *
+   * @type {ProposalLinksCollection}
+   * @memberof ProposalLinks
+   */
+  collection: ProposalLinksCollection;
+  /**
+   *
+   * @type {ProposalLinksRelated}
+   * @memberof ProposalLinks
+   */
+  related: ProposalLinksRelated;
 }
+/**
+ *
+ * @export
+ * @interface ProposalLinks1
+ */
+export interface ProposalLinks1 {
+  /**
+   *
+   * @type {ProposalLinks1Self}
+   * @memberof ProposalLinks1
+   */
+  self: ProposalLinks1Self;
+  /**
+   *
+   * @type {ProposalLinks1Collection}
+   * @memberof ProposalLinks1
+   */
+  collection: ProposalLinks1Collection;
+  /**
+   *
+   * @type {ProposalLinksRelated}
+   * @memberof ProposalLinks1
+   */
+  related: ProposalLinksRelated;
+}
+/**
+ * @type ProposalLinks1Collection
+ * Proposal List
+ * @export
+ */
+export type ProposalLinks1Collection = ActionURL | ResourceURL;
+
+/**
+ * @type ProposalLinks1Self
+ * Draft Proposal Details
+ * @export
+ */
+export type ProposalLinks1Self = ActionURL | ResourceURL;
+
+/**
+ * @type ProposalLinksCollection
+ * Proposal Lists
+ * @export
+ */
+export type ProposalLinksCollection = ActionURL | ResourceURL;
+
+/**
+ * @type ProposalLinksRelated
+ * Component Details
+ * @export
+ */
+export type ProposalLinksRelated = ActionURL | ResourceURL;
+
+/**
+ * @type ProposalLinksSelf
+ * Proposal Detail
+ * @export
+ */
+export type ProposalLinksSelf = ActionURL | ResourceURL;
+
 /**
  *
  * @export
@@ -1584,39 +2370,6 @@ export interface PropositionMetadata {
 /**
  *
  * @export
- * @interface PropositionMetadata1
- */
-export interface PropositionMetadata1 {
-  [key: string]: ComponentMetadataValue | any;
-
-  /**
-   * Draft is published as it is now?
-   * @type {boolean}
-   * @memberof PropositionMetadata1
-   */
-  publishable: boolean;
-  /**
-   * Attached client_id
-   * @type {string}
-   * @memberof PropositionMetadata1
-   */
-  client_id: string;
-  /**
-   * Scope Id
-   * @type {number}
-   * @memberof PropositionMetadata1
-   */
-  scope?: number;
-  /**
-   * Editable field names
-   * @type {Array<string>}
-   * @memberof PropositionMetadata1
-   */
-  fields: Array<string>;
-}
-/**
- *
- * @export
  * @interface ResourceDetails
  */
 export interface ResourceDetails {
@@ -1739,6 +2492,95 @@ export const ResourceDetailsAttributesLocaleEnum = {
 export type ResourceDetailsAttributesLocaleEnum =
   (typeof ResourceDetailsAttributesLocaleEnum)[keyof typeof ResourceDetailsAttributesLocaleEnum];
 
+/**
+ *
+ * @export
+ * @interface ResourceURL
+ */
+export interface ResourceURL {
+  /**
+   * Full URL
+   * @type {string}
+   * @memberof ResourceURL
+   */
+  href: string;
+  /**
+   * Page Title
+   * @type {string}
+   * @memberof ResourceURL
+   */
+  title: string;
+  /**
+   * Available locales
+   * @type {Array<string>}
+   * @memberof ResourceURL
+   */
+  hreflang?: Array<string>;
+  /**
+   * JSONSchema URL describing the request
+   * @type {string}
+   * @memberof ResourceURL
+   */
+  describedby?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ResourceURL
+   */
+  rel: ResourceURLRelEnum;
+  /**
+   *
+   * @type {ResourceURLMeta}
+   * @memberof ResourceURL
+   */
+  meta: ResourceURLMeta;
+}
+
+export const ResourceURLRelEnum = {
+  PublicPage: "public_page",
+  Resource: "resource",
+} as const;
+
+export type ResourceURLRelEnum =
+  (typeof ResourceURLRelEnum)[keyof typeof ResourceURLRelEnum];
+
+/**
+ *
+ * @export
+ * @interface ResourceURLMeta
+ */
+export interface ResourceURLMeta {
+  /**
+   * Component ID
+   * @type {string}
+   * @memberof ResourceURLMeta
+   */
+  component_id?: string;
+  /**
+   * Component manifest
+   * @type {string}
+   * @memberof ResourceURLMeta
+   */
+  component_manifest?: string;
+  /**
+   * Space ID
+   * @type {string}
+   * @memberof ResourceURLMeta
+   */
+  space_id?: string;
+  /**
+   * Space Manifest
+   * @type {string}
+   * @memberof ResourceURLMeta
+   */
+  space_manifest?: string;
+  /**
+   * Resource ID
+   * @type {string}
+   * @memberof ResourceURLMeta
+   */
+  resource_id?: string;
+}
 /**
  *
  * @export
@@ -1881,11 +2723,24 @@ export type SpaceAttributesVisibilityEnum =
 export interface SpaceLinks {
   /**
    *
-   * @type {string}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof SpaceLinks
    */
-  self: string;
+  self: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {SpaceLinksRelated}
+   * @memberof SpaceLinks
+   */
+  related: SpaceLinksRelated;
 }
+/**
+ * @type SpaceLinksRelated
+ * Organization Detail
+ * @export
+ */
+export type SpaceLinksRelated = ActionURL | ResourceURL;
+
 /**
  *
  * @export

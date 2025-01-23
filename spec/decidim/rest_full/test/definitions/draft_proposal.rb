@@ -4,7 +4,7 @@ module Api
   module Definitions
     DRAFT_PROPOSAL = {
       type: :object,
-      title: "Proposal",
+      title: "Draft Proposal",
       properties: {
         id: { type: :string, description: "Draft Proposal Id" },
         type: { type: :string, enum: ["draft_proposal"] },
@@ -13,11 +13,11 @@ module Api
           properties: {
             title: {
               "$ref" => "#/components/schemas/translated_prop",
-              description: "Proposal title"
+              description: "Draft Proposal title"
             },
             body: {
               "$ref" => "#/components/schemas/translated_prop",
-              description: "Proposal content"
+              description: "Draft Proposal content"
             },
             errors: {
               type: :object,
@@ -42,7 +42,7 @@ module Api
         },
         meta: {
           type: :object,
-          title: "Proposition Metadata",
+          title: "Draft Proposition Metadata",
           properties: {
             publishable: { type: :boolean, description: "Draft is published as it is now?" },
             client_id: { type: :string, description: "Attached client_id" },
@@ -71,10 +71,12 @@ module Api
           type: :object,
           title: "Proposal Links",
           properties: {
-            self: { type: :string, description: "API URL to the proposal" }
+            self: Api::Definitions.link("Draft Proposal Details"),
+            collection: Api::Definitions.link("Proposal List"),
+            related: Api::Definitions.link("Component Details")
           },
           additionalProperties: false,
-          required: [:self]
+          required: [:self, :related, :collection]
         },
         relationships: {
           type: :object,

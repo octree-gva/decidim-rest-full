@@ -54,10 +54,12 @@ module Api
           type: :object,
           title: "Proposal Links",
           properties: {
-            self: { type: :string, description: "API URL to the proposal" }
+            self: Api::Definitions.link("Proposal Detail"),
+            collection: Api::Definitions.link("Proposal Lists"),
+            related: Api::Definitions.link("Component Details")
           },
           additionalProperties: false,
-          required: [:self]
+          required: [:self, :collection, :related]
         },
         relationships: {
           type: :object,
