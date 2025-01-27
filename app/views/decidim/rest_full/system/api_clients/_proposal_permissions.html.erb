@@ -1,12 +1,12 @@
 <div class="border border-black my-2">
-  <h2 class="border-b-4 h5 p-4" id="blog_permissions">
-      <%= t("scope_blogs", scope: "decidim.rest_full.models.api_client.fields") %>
+  <h2 class="border-b-4 h5 p-4" id="proposals_permission">
+      <%= t("scope_proposals", scope: "decidim.rest_full.models.api_client.fields") %>
   </h2>
-  <div id="blog_permissions" class="p-4 " >
+  <div id="proposals_permission" class="p-4 " >
     <div class="mt-4">
-      <div class="font-bold py-2"><%= t('.blogs') %></div>
+      <div class="font-bold py-2"><%= t('.proposals') %></div>
       <div class="flex gap-6 flex-wrap">
-        <% ["blogs.read"].each do |permission| %>
+        <% ["proposals.read", "proposals.draft", "proposals.vote"].each do |permission| %>
           <label>
             <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
             <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>

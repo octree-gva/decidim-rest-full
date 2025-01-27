@@ -118,7 +118,6 @@ RSpec.describe "Decidim::Api::RestFull::Public::ComponentsController", type: :re
 
         context "when id=bad_string" do
           let(:id) { "bad_string" }
-
           run_test!
         end
 

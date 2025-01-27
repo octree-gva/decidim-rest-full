@@ -18,7 +18,7 @@ gem "deface", ">= 1.9.0"
 gem "pg"
 gem "puma", ">= 5.5.1"
 gem "uglifier", "~> 4.1"
-
+gem "decidim-decidim_awesome", git: "https://github.com/decidim-ice/decidim-module-decidim_awesome", branch: "upgrade-0.29"
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version

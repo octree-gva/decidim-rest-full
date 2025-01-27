@@ -33,6 +33,9 @@
   <% if @api_client.scopes.to_a.include?("blogs") %>
     <%= render partial: "/decidim/rest_full/system/api_clients/blog_permissions", locals: {form: form} %>
   <% end %>
+  <% if @api_client.scopes.to_a.include?("proposals") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/proposal_permissions", locals: {form: form} %>
+  <% end %>
   <div class="my-4">
     <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
   </div>
