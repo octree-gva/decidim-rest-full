@@ -40,6 +40,10 @@ en:
                 read: "read: list and details of a space"
             blogs:
               read: "read: list and details of a blog post"
+            proposals:
+              read: "read: list and details of a proposal"
+              draft: "draft: create, update, publish and see a draft proposal"
+              vote: "vote: vote on proposals"
       admin:
         menu:
           api_clients: "API Clients"
@@ -73,6 +77,8 @@ en:
           public_permissions:
             component: "Components"
             space: "Space"
+          proposal_permissions:
+            proposals: Proposals
           blog_permissions:
             blogs: Blogs
           show:

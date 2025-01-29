@@ -30,7 +30,16 @@ module Api
           title: "Proposition Metadata",
           properties: {
             published: { type: :boolean, description: "Published blog post?" },
-            scope: { type: :integer, description: "Scope Id" }
+            scope: { type: :integer, description: "Scope Id" },
+            voted: {
+              type: :object,
+              properties: {
+                weight: { type: :integer, description: "Vote weight" }
+              },
+              required: [:weight],
+              additionalProperties: false,
+              nullable: true
+            }
           },
           additionalProperties: {
             oneOf: [

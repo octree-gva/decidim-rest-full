@@ -28,7 +28,11 @@ Decidim::Core::Engine.routes.draw do
 
         namespace :public do
           resources :spaces, only: [:index]
-          resources :components, only: [:index, :show]
+          resources :components, only: [:index, :show] do
+            collection do
+              get "/proposals", action: :index, controller: "/decidim/api/rest_full/component/proposal_components"
+            end
+          end
 
           Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
             resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/public/spaces", defaults: { manifest_name: manifest_name } do
@@ -52,6 +56,9 @@ Decidim::Core::Engine.routes.draw do
                       put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/draft_proposals"
                       delete "/draft", action: :destroy, controller: "/decidim/api/rest_full/proposal/draft_proposals"
                       post "/draft/publish", action: :publish, controller: "/decidim/api/rest_full/proposal/draft_proposals"
+                    end
+                    member do
+                      post "/votes", action: :create, controller: "/decidim/api/rest_full/proposal/proposal_votes"
                     end
                   end
                 end
