@@ -1,14 +1,90 @@
-#! /bin/bash
+#!/bin/bash
+set -e
 
-# Regenerate the openapi spec
-yarn gen:openapi-spec
-yarn openapi-generator-cli validate -i ./website/static/openapi.json || exit 1
-# Regenerate the node client (typescript+axios)
-yarn openapi-generator-cli generate -i ./website/static/openapi.json -o ./contrib/decidim-node-client -g typescript-axios --additional-properties=useSingleRequestParameter=true,paramNaming=camelCase,axiosVersion=1.7.7 
+# Default values for options
+QUIET=0
+VALIDATE=0
+INPUT_FILE="./openapi.json"
+AXIOS_VERSION="1.7.7"
 
-# Build node client
-cd contrib/decidim-node-client 
+# Print messages unless quiet mode is active
+log() {
+  if [[ $QUIET -eq 0 ]]; then
+    echo "$@"
+  fi
+}
+
+# Help menu
+show_help() {
+  cat <<EOF
+Usage: $0 --input FILE [options]
+
+Options:
+  --quiet, -q       Suppress output messages.
+  --validate, -v    Run OpenAPI JSON validation.
+  --out, -o FILE    Specify the output file (default: $INPUT_FILE).
+  --axios VERSION   Specify Axios version (default: $AXIOS_VERSION).
+  --input FILE      Specify an existing OpenAPI JSON file (default: generate a new one).
+  --help, -h        Display this help menu.
+EOF
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --quiet|-q)
+      QUIET=1
+      shift
+      ;;
+    --validate|-v)
+      VALIDATE=1
+      shift
+      ;;
+    --axios)
+      AXIOS_VERSION="$2"
+      shift 2
+      ;;
+    --input)
+      INPUT_FILE="$2"
+      shift 2
+      ;;
+    --help|-h)
+      show_help
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      show_help
+      exit 1
+      ;;
+  esac
+done
+
+log "OpenAPI Processing"
+log "~~~~~~~~~~~~~~~~~~~~~~~"
+log "quiet: $QUIET"
+log "validate: $VALIDATE"
+log "input file: $INPUT_FILE"
+log "axios version: $AXIOS_VERSION"
+log "~~~~~~~~~~~~~~~~~~~~~~~"
+
+# Validate OpenAPI spec if requested
+if [[ $VALIDATE -eq 1 ]]; then
+  log "Validating OpenAPI spec"
+  yarn openapi-generator-cli validate -i "$INPUT_FILE" || exit 1
+fi
+
+# Generate the TypeScript Axios client
+log "Generating TypeScript Axios client"
+yarn openapi-generator-cli generate -i "$INPUT_FILE" \
+  -o ./contrib/decidim-node-client \
+  -g typescript-axios \
+  --additional-properties=useSingleRequestParameter=true,paramNaming=camelCase,axiosVersion=$AXIOS_VERSION 
+
+# Build the client
+cd contrib/decidim-node-client || exit 1
 rm -rf ./dist
 yarn format
 yarn build
 
+log "Node client successfully built."

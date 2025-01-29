@@ -19,11 +19,20 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+
+      Api::Definitions::FILTER_PARAM.call(
+        "voted_weight",
+        { type: :string },
+        %w(not_in not_eq lt gt start not_start matches does_not_match present)
+      ).each do |param|
+        parameter(**param)
+      end
+
       let!(:page) { 1 }
       let!(:per_page) { 50 }
       let!(:organization) { create(:organization) }
-      let!(:participatory_process) { create(:participatory_process, organization: organization) }
-      let!(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+      let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
       let!(:proposal) { create(:proposal, component: proposal_component) }
       let(:"locales[]") { %w(en fr) }
 
@@ -77,6 +86,75 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
               proposals = Decidim::Proposals::Proposal.where(component: proposal_component).order(published_at: :asc).ids
               expect(data.first["id"]).to eq(proposals.first.to_s)
               expect(data.last["id"]).to eq(proposals.last.to_s)
+            end
+          end
+
+          context "when voting_cards is enabled" do
+            let!(:impersonate_token) do
+              create(:oauth_access_token, scopes: ["proposals"], resource_owner_id: user.id, application: api_client)
+            end
+            let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+            let!(:proposal_component) do
+              component = create(
+                :proposal_component,
+                :with_votes_enabled,
+                participatory_space: participatory_process,
+                settings: { awesome_voting_manifest: :voting_cards, voting_cards_show_abstain: true }
+              )
+              component
+            end
+            let!(:proposal) { create(:proposal, component: proposal_component) }
+            let!(:liked_proposal) { create(:proposal, component: proposal_component) }
+            let!(:loved_proposal) { create(:proposal, component: proposal_component) }
+            let!(:unseen_proposal) { create(:proposal, component: proposal_component) }
+            let!(:abstention_proposal) { create(:proposal, component: proposal_component) }
+
+            before do
+              normal_vote = create(:proposal_vote, proposal: proposal, author: user)
+              normal_vote1 = create(:proposal_vote, proposal: liked_proposal, author: user)
+              love_vote = create(:proposal_vote, proposal: loved_proposal, author: user)
+              abstention_vote = create(:proposal_vote, proposal: abstention_proposal, author: user)
+
+              normal_vote.weight = 1
+              normal_vote1.weight = 1
+              love_vote.weight = 2
+              abstention_vote.weight = 0
+            end
+
+            context "with filter voted_weight_eq 1, filter only the vote_weight=1" do
+              let(:"filter[voted_weight_eq]") { 1.to_s }
+
+              run_test!(example_name: :voted) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  expect(d["meta"]["voted"]).to eq({ "weight" => 1 })
+                end
+                expect(data.size).to eq(2)
+              end
+            end
+
+            context "with filter voted_weight_eq 0, filter only the abstention" do
+              let(:"filter[voted_weight_eq]") { 0.to_s }
+
+              run_test!(example_name: :abstentions) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  expect(d["meta"]["voted"]).to eq({ "weight" => 0 })
+                end
+                expect(data.size).to eq(1)
+              end
+            end
+
+            context "with filter voted_weight_blank, filter only the non-voted proposals" do
+              let(:"filter[voted_weight_blank]") { 1.to_s }
+
+              run_test!(example_name: :abstentions) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  expect(d["meta"]["voted"]).to be_blank
+                end
+                expect(data.last["id"]).to eq(unseen_proposal.id.to_s)
+              end
             end
           end
 

@@ -132,7 +132,7 @@ module Api
         comments_enabled: { type: :boolean, description: "If you can comment on proposals" },
         comments_max_length: { type: :integer, description: "Characters limit for comment" },
         default_sort_order: { type: :string, enum: %w(
-          random recent most_voted most_endorsed most_commented most_followed with_more_authors automatic
+          random recent most_voted most_endorsed most_commented most_followed with_more_authors automatic default
         ), description: "Default order of proposals" },
         official_proposals_enabled: { type: :boolean, description: "If proposals can be official" },
         participatory_texts_enabled: { type: :boolean, description: "If proposals are based on a text modification" },
@@ -148,7 +148,20 @@ module Api
         proposal_answering_enabled: { type: :boolean, description: "If officials can answer proposals" },
         amendment_creation_enabled: { type: :boolean, description: "If participant can propose an amendment to a proposal" },
         amendment_reaction_enabled: { type: :boolean, description: "If participant can react to an amendment of a proposal" },
-        amendment_promotion_enabled: { type: :boolean, description: "If participant choose an amendment to replace their initial proposal" }
+        amendment_promotion_enabled: { type: :boolean, description: "If participant choose an amendment to replace their initial proposal" },
+        votes: {
+          title: "Available votes in this proposal component",
+          description: "Vote weight, if can_vote is true.",
+          type: :array,
+          items: {
+            type: :object,
+            properties: {
+              label: { type: :string, description: "Label to voting button" },
+              weight: { type: :integer, description: "Value to add to the vote. 0 for abstention" }
+            },
+            required: [:label, :weight]
+          }
+        }
       }
       proposal_component[:properties][:meta][:properties].merge!(additional_properties)
       proposal_component[:properties][:meta][:required].push(:can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit)
