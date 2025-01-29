@@ -215,6 +215,25 @@ export interface AttachedComponentsMeta {
 /**
  *
  * @export
+ * @interface AvailableVotesInThisProposalComponentInner
+ */
+export interface AvailableVotesInThisProposalComponentInner {
+  /**
+   * Label to voting button
+   * @type {string}
+   * @memberof AvailableVotesInThisProposalComponentInner
+   */
+  label: string;
+  /**
+   * Value to add to the vote. 0 for abstention
+   * @type {number}
+   * @memberof AvailableVotesInThisProposalComponentInner
+   */
+  weight: number;
+}
+/**
+ *
+ * @export
  * @interface Blog
  */
 export interface Blog {
@@ -723,6 +742,8 @@ export const ComponentManifest = {
   Debates: "debates",
   Sortitions: "sortitions",
   Blogs: "blogs",
+  AwesomeMap: "awesome_map",
+  AwesomeIframe: "awesome_iframe",
 } as const;
 
 export type ComponentManifest =
@@ -892,6 +913,12 @@ export interface ComponentMetadata {
    * @memberof ComponentMetadata
    */
   amendment_promotion_enabled?: boolean;
+  /**
+   * Vote weight, if can_vote is true.
+   * @type {Array<AvailableVotesInThisProposalComponentInner>}
+   * @memberof ComponentMetadata
+   */
+  votes?: Array<AvailableVotesInThisProposalComponentInner>;
 }
 
 export const ComponentMetadataDefaultSortOrderEnum = {
@@ -903,6 +930,7 @@ export const ComponentMetadataDefaultSortOrderEnum = {
   MostFollowed: "most_followed",
   WithMoreAuthors: "with_more_authors",
   Automatic: "automatic",
+  Default: "default",
 } as const;
 
 export type ComponentMetadataDefaultSortOrderEnum =
@@ -1035,6 +1063,8 @@ export const ComponentType = {
   DebateComponent: "debate_component",
   SortitionComponent: "sortition_component",
   BlogComponent: "blog_component",
+  AwesomeMapComponent: "awesome_map_component",
+  AwesomeIframeComponent: "awesome_iframe_component",
 } as const;
 
 export type ComponentType = (typeof ComponentType)[keyof typeof ComponentType];
@@ -1257,6 +1287,8 @@ export const GenericComponentTypeEnum = {
   AccountabilityComponent: "accountability_component",
   DebateComponent: "debate_component",
   SortitionComponent: "sortition_component",
+  AwesomeMapComponent: "awesome_map_component",
+  AwesomeIframeComponent: "awesome_iframe_component",
 } as const;
 
 export type GenericComponentTypeEnum =
@@ -1320,6 +1352,8 @@ export const GenericComponentAttributesManifestNameEnum = {
   Accountability: "accountability",
   Debates: "debates",
   Sortitions: "sortitions",
+  AwesomeMap: "awesome_map",
+  AwesomeIframe: "awesome_iframe",
 } as const;
 
 export type GenericComponentAttributesManifestNameEnum =
@@ -2105,6 +2139,32 @@ export type ProposalComponentAttributesManifestNameEnum =
 /**
  *
  * @export
+ * @interface ProposalComponentResponse
+ */
+export interface ProposalComponentResponse {
+  /**
+   *
+   * @type {ProposalComponent}
+   * @memberof ProposalComponentResponse
+   */
+  data: ProposalComponent;
+}
+/**
+ *
+ * @export
+ * @interface ProposalComponentsResponse
+ */
+export interface ProposalComponentsResponse {
+  /**
+   *
+   * @type {Array<ProposalComponent>}
+   * @memberof ProposalComponentsResponse
+   */
+  data: Array<ProposalComponent>;
+}
+/**
+ *
+ * @export
  * @interface ProposalLinks
  */
 export interface ProposalLinks {
@@ -2366,6 +2426,25 @@ export interface PropositionMetadata {
    * @memberof PropositionMetadata
    */
   scope?: number;
+  /**
+   *
+   * @type {PropositionMetadataVoted}
+   * @memberof PropositionMetadata
+   */
+  voted?: PropositionMetadataVoted | null;
+}
+/**
+ *
+ * @export
+ * @interface PropositionMetadataVoted
+ */
+export interface PropositionMetadataVoted {
+  /**
+   * Vote weight
+   * @type {number}
+   * @memberof PropositionMetadataVoted
+   */
+  weight: number;
 }
 /**
  *
@@ -3435,6 +3514,32 @@ export interface UsersResponse {
    */
   data: Array<User>;
 }
+/**
+ *
+ * @export
+ * @interface VoteProposalRequest
+ */
+export interface VoteProposalRequest {
+  /**
+   *
+   * @type {VoteProposalRequestData}
+   * @memberof VoteProposalRequest
+   */
+  data: VoteProposalRequestData;
+}
+/**
+ * Payload to send your vote
+ * @export
+ * @interface VoteProposalRequestData
+ */
+export interface VoteProposalRequestData {
+  /**
+   * Weight for your vote
+   * @type {number}
+   * @memberof VoteProposalRequestData
+   */
+  weight: number;
+}
 
 /**
  * BlogsApi - axios parameter creator
@@ -4046,6 +4151,429 @@ export type BlogsLocalesEnum =
   (typeof BlogsLocalesEnum)[keyof typeof BlogsLocalesEnum];
 
 /**
+ * ComponentsApi - axios parameter creator
+ * @export
+ */
+export const ComponentsApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * List or search proposal components of the organization
+     * @summary List Proposal Components
+     * @param {Array<ProposalComponentsLocalesEnum>} [locales]
+     * @param {Array<string>} [filterParticipatorySpaceIdIn]
+     * @param {string} [filterParticipatorySpaceIdEq]
+     * @param {Array<string>} [filterParticipatorySpaceTypeIn]
+     * @param {string} [filterParticipatorySpaceTypeEq]
+     * @param {string} [filterNameStart]
+     * @param {string} [filterNameEq]
+     * @param {string} [filterNameNotEq]
+     * @param {string} [filterNameMatches]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    proposalComponents: async (
+      locales?: Array<ProposalComponentsLocalesEnum>,
+      filterParticipatorySpaceIdIn?: Array<string>,
+      filterParticipatorySpaceIdEq?: string,
+      filterParticipatorySpaceTypeIn?: Array<string>,
+      filterParticipatorySpaceTypeEq?: string,
+      filterNameStart?: string,
+      filterNameEq?: string,
+      filterNameNotEq?: string,
+      filterNameMatches?: string,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/public/components/proposals`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (filterParticipatorySpaceIdIn) {
+        localVarQueryParameter["filter[participatory_space_id_in][]"] =
+          filterParticipatorySpaceIdIn;
+      }
+
+      if (filterParticipatorySpaceIdEq !== undefined) {
+        localVarQueryParameter["filter[participatory_space_id_eq]"] =
+          filterParticipatorySpaceIdEq;
+      }
+
+      if (filterParticipatorySpaceTypeIn) {
+        localVarQueryParameter["filter[participatory_space_type_in][]"] =
+          filterParticipatorySpaceTypeIn;
+      }
+
+      if (filterParticipatorySpaceTypeEq !== undefined) {
+        localVarQueryParameter["filter[participatory_space_type_eq]"] =
+          filterParticipatorySpaceTypeEq;
+      }
+
+      if (filterNameStart !== undefined) {
+        localVarQueryParameter["filter[name_start]"] = filterNameStart;
+      }
+
+      if (filterNameEq !== undefined) {
+        localVarQueryParameter["filter[name_eq]"] = filterNameEq;
+      }
+
+      if (filterNameNotEq !== undefined) {
+        localVarQueryParameter["filter[name_not_eq]"] = filterNameNotEq;
+      }
+
+      if (filterNameMatches !== undefined) {
+        localVarQueryParameter["filter[name_matches]"] = filterNameMatches;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * ComponentsApi - functional programming interface
+ * @export
+ */
+export const ComponentsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    ComponentsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * List or search proposal components of the organization
+     * @summary List Proposal Components
+     * @param {Array<ProposalComponentsLocalesEnum>} [locales]
+     * @param {Array<string>} [filterParticipatorySpaceIdIn]
+     * @param {string} [filterParticipatorySpaceIdEq]
+     * @param {Array<string>} [filterParticipatorySpaceTypeIn]
+     * @param {string} [filterParticipatorySpaceTypeEq]
+     * @param {string} [filterNameStart]
+     * @param {string} [filterNameEq]
+     * @param {string} [filterNameNotEq]
+     * @param {string} [filterNameMatches]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async proposalComponents(
+      locales?: Array<ProposalComponentsLocalesEnum>,
+      filterParticipatorySpaceIdIn?: Array<string>,
+      filterParticipatorySpaceIdEq?: string,
+      filterParticipatorySpaceTypeIn?: Array<string>,
+      filterParticipatorySpaceTypeEq?: string,
+      filterNameStart?: string,
+      filterNameEq?: string,
+      filterNameNotEq?: string,
+      filterNameMatches?: string,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ProposalComponentsResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.proposalComponents(
+          locales,
+          filterParticipatorySpaceIdIn,
+          filterParticipatorySpaceIdEq,
+          filterParticipatorySpaceTypeIn,
+          filterParticipatorySpaceTypeEq,
+          filterNameStart,
+          filterNameEq,
+          filterNameNotEq,
+          filterNameMatches,
+          page,
+          perPage,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ComponentsApi.proposalComponents"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * ComponentsApi - factory interface
+ * @export
+ */
+export const ComponentsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = ComponentsApiFp(configuration);
+  return {
+    /**
+     * List or search proposal components of the organization
+     * @summary List Proposal Components
+     * @param {ComponentsApiProposalComponentsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    proposalComponents(
+      requestParameters: ComponentsApiProposalComponentsRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ProposalComponentsResponse> {
+      return localVarFp
+        .proposalComponents(
+          requestParameters.locales,
+          requestParameters.filterParticipatorySpaceIdIn,
+          requestParameters.filterParticipatorySpaceIdEq,
+          requestParameters.filterParticipatorySpaceTypeIn,
+          requestParameters.filterParticipatorySpaceTypeEq,
+          requestParameters.filterNameStart,
+          requestParameters.filterNameEq,
+          requestParameters.filterNameNotEq,
+          requestParameters.filterNameMatches,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for proposalComponents operation in ComponentsApi.
+ * @export
+ * @interface ComponentsApiProposalComponentsRequest
+ */
+export interface ComponentsApiProposalComponentsRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly locales?: Array<ProposalComponentsLocalesEnum>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterParticipatorySpaceIdIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterParticipatorySpaceIdEq?: string;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterParticipatorySpaceTypeIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterParticipatorySpaceTypeEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterNameStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterNameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterNameNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly filterNameMatches?: string;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * ComponentsApi - object-oriented interface
+ * @export
+ * @class ComponentsApi
+ * @extends {BaseAPI}
+ */
+export class ComponentsApi extends BaseAPI {
+  /**
+   * List or search proposal components of the organization
+   * @summary List Proposal Components
+   * @param {ComponentsApiProposalComponentsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ComponentsApi
+   */
+  public proposalComponents(
+    requestParameters: ComponentsApiProposalComponentsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ComponentsApiFp(this.configuration)
+      .proposalComponents(
+        requestParameters.locales,
+        requestParameters.filterParticipatorySpaceIdIn,
+        requestParameters.filterParticipatorySpaceIdEq,
+        requestParameters.filterParticipatorySpaceTypeIn,
+        requestParameters.filterParticipatorySpaceTypeEq,
+        requestParameters.filterNameStart,
+        requestParameters.filterNameEq,
+        requestParameters.filterNameNotEq,
+        requestParameters.filterNameMatches,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * @export
+ */
+export const ProposalComponentsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type ProposalComponentsLocalesEnum =
+  (typeof ProposalComponentsLocalesEnum)[keyof typeof ProposalComponentsLocalesEnum];
+
+/**
  * OAuthApi - axios parameter creator
  * @export
  */
@@ -4519,6 +5047,9 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {number} [perPage] Number of items per page
      * @param {ProposalsOrderEnum} [order]
      * @param {ProposalsOrderDirectionEnum} [orderDirection]
+     * @param {Array<string>} [filterVotedWeightIn]
+     * @param {string} [filterVotedWeightEq]
+     * @param {ProposalsFilterVotedWeightBlankEnum} [filterVotedWeightBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -4531,6 +5062,9 @@ export const ProposalsApiAxiosParamCreator = function (
       perPage?: number,
       order?: ProposalsOrderEnum,
       orderDirection?: ProposalsOrderDirectionEnum,
+      filterVotedWeightIn?: Array<string>,
+      filterVotedWeightEq?: string,
+      filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'spaceManifest' is not null or undefined
@@ -4591,6 +5125,20 @@ export const ProposalsApiAxiosParamCreator = function (
 
       if (orderDirection !== undefined) {
         localVarQueryParameter["order_direction"] = orderDirection;
+      }
+
+      if (filterVotedWeightIn) {
+        localVarQueryParameter["filter[voted_weight_in][]"] =
+          filterVotedWeightIn;
+      }
+
+      if (filterVotedWeightEq !== undefined) {
+        localVarQueryParameter["filter[voted_weight_eq]"] = filterVotedWeightEq;
+      }
+
+      if (filterVotedWeightBlank !== undefined) {
+        localVarQueryParameter["filter[voted_weight_blank]"] =
+          filterVotedWeightBlank;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -4743,6 +5291,104 @@ export const ProposalsApiAxiosParamCreator = function (
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
         updateDraftProposalRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Vote on a proposal
+     * @summary Vote
+     * @param {VoteProposalSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {number} proposalId
+     * @param {VoteProposalRequest} voteProposalRequest
+     * @param {Array<VoteProposalLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    voteProposal: async (
+      spaceManifest: VoteProposalSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      proposalId: number,
+      voteProposalRequest: VoteProposalRequest,
+      locales?: Array<VoteProposalLocalesEnum>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'spaceManifest' is not null or undefined
+      assertParamExists("voteProposal", "spaceManifest", spaceManifest);
+      // verify required parameter 'spaceId' is not null or undefined
+      assertParamExists("voteProposal", "spaceId", spaceId);
+      // verify required parameter 'componentId' is not null or undefined
+      assertParamExists("voteProposal", "componentId", componentId);
+      // verify required parameter 'proposalId' is not null or undefined
+      assertParamExists("voteProposal", "proposalId", proposalId);
+      // verify required parameter 'voteProposalRequest' is not null or undefined
+      assertParamExists(
+        "voteProposal",
+        "voteProposalRequest",
+        voteProposalRequest,
+      );
+      const localVarPath =
+        `/public/{space_manifest}/{space_id}/{component_id}/proposals/{proposal_id}/votes`
+          .replace(
+            `{${"space_manifest"}}`,
+            encodeURIComponent(String(spaceManifest)),
+          )
+          .replace(`{${"space_id"}}`, encodeURIComponent(String(spaceId)))
+          .replace(
+            `{${"component_id"}}`,
+            encodeURIComponent(String(componentId)),
+          )
+          .replace(
+            `{${"proposal_id"}}`,
+            encodeURIComponent(String(proposalId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        voteProposalRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -4927,6 +5573,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {number} [perPage] Number of items per page
      * @param {ProposalsOrderEnum} [order]
      * @param {ProposalsOrderDirectionEnum} [orderDirection]
+     * @param {Array<string>} [filterVotedWeightIn]
+     * @param {string} [filterVotedWeightEq]
+     * @param {ProposalsFilterVotedWeightBlankEnum} [filterVotedWeightBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -4939,6 +5588,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       perPage?: number,
       order?: ProposalsOrderEnum,
       orderDirection?: ProposalsOrderDirectionEnum,
+      filterVotedWeightIn?: Array<string>,
+      filterVotedWeightEq?: string,
+      filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -4955,6 +5607,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         perPage,
         order,
         orderDirection,
+        filterVotedWeightIn,
+        filterVotedWeightEq,
+        filterVotedWeightBlank,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -5043,6 +5698,54 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["ProposalsApi.updateDraftProposal"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Vote on a proposal
+     * @summary Vote
+     * @param {VoteProposalSpaceManifestEnum} spaceManifest
+     * @param {number} spaceId
+     * @param {number} componentId
+     * @param {number} proposalId
+     * @param {VoteProposalRequest} voteProposalRequest
+     * @param {Array<VoteProposalLocalesEnum>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async voteProposal(
+      spaceManifest: VoteProposalSpaceManifestEnum,
+      spaceId: number,
+      componentId: number,
+      proposalId: number,
+      voteProposalRequest: VoteProposalRequest,
+      locales?: Array<VoteProposalLocalesEnum>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ProposalResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.voteProposal(
+        spaceManifest,
+        spaceId,
+        componentId,
+        proposalId,
+        voteProposalRequest,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ProposalsApi.voteProposal"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -5170,6 +5873,9 @@ export const ProposalsApiFactory = function (
           requestParameters.perPage,
           requestParameters.order,
           requestParameters.orderDirection,
+          requestParameters.filterVotedWeightIn,
+          requestParameters.filterVotedWeightEq,
+          requestParameters.filterVotedWeightBlank,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -5211,6 +5917,29 @@ export const ProposalsApiFactory = function (
           requestParameters.spaceId,
           requestParameters.componentId,
           requestParameters.updateDraftProposalRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Vote on a proposal
+     * @summary Vote
+     * @param {ProposalsApiVoteProposalRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    voteProposal(
+      requestParameters: ProposalsApiVoteProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ProposalResponse> {
+      return localVarFp
+        .voteProposal(
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.proposalId,
+          requestParameters.voteProposalRequest,
+          requestParameters.locales,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -5369,6 +6098,27 @@ export interface ProposalsApiProposalsRequest {
    * @memberof ProposalsApiProposals
    */
   readonly orderDirection?: ProposalsOrderDirectionEnum;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterVotedWeightIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterVotedWeightEq?: string;
+
+  /**
+   *
+   * @type {'1' | '0'}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum;
 }
 
 /**
@@ -5432,6 +6182,55 @@ export interface ProposalsApiUpdateDraftProposalRequest {
    * @memberof ProposalsApiUpdateDraftProposal
    */
   readonly updateDraftProposalRequest: UpdateDraftProposalRequest;
+}
+
+/**
+ * Request parameters for voteProposal operation in ProposalsApi.
+ * @export
+ * @interface ProposalsApiVoteProposalRequest
+ */
+export interface ProposalsApiVoteProposalRequest {
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly spaceManifest: VoteProposalSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly spaceId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly componentId: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly proposalId: number;
+
+  /**
+   *
+   * @type {VoteProposalRequest}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly voteProposalRequest: VoteProposalRequest;
+
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly locales?: Array<VoteProposalLocalesEnum>;
 }
 
 /**
@@ -5537,6 +6336,9 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.perPage,
         requestParameters.order,
         requestParameters.orderDirection,
+        requestParameters.filterVotedWeightIn,
+        requestParameters.filterVotedWeightEq,
+        requestParameters.filterVotedWeightBlank,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -5582,6 +6384,31 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.spaceId,
         requestParameters.componentId,
         requestParameters.updateDraftProposalRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Vote on a proposal
+   * @summary Vote
+   * @param {ProposalsApiVoteProposalRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProposalsApi
+   */
+  public voteProposal(
+    requestParameters: ProposalsApiVoteProposalRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ProposalsApiFp(this.configuration)
+      .voteProposal(
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.proposalId,
+        requestParameters.voteProposalRequest,
+        requestParameters.locales,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -5768,6 +6595,15 @@ export type ProposalsOrderDirectionEnum =
 /**
  * @export
  */
+export const ProposalsFilterVotedWeightBlankEnum = {
+  _1: "1",
+  _0: "0",
+} as const;
+export type ProposalsFilterVotedWeightBlankEnum =
+  (typeof ProposalsFilterVotedWeightBlankEnum)[keyof typeof ProposalsFilterVotedWeightBlankEnum];
+/**
+ * @export
+ */
 export const PublishDraftProposalSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
@@ -5783,6 +6619,70 @@ export const UpdateDraftProposalSpaceManifestEnum = {
 } as const;
 export type UpdateDraftProposalSpaceManifestEnum =
   (typeof UpdateDraftProposalSpaceManifestEnum)[keyof typeof UpdateDraftProposalSpaceManifestEnum];
+/**
+ * @export
+ */
+export const VoteProposalSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type VoteProposalSpaceManifestEnum =
+  (typeof VoteProposalSpaceManifestEnum)[keyof typeof VoteProposalSpaceManifestEnum];
+/**
+ * @export
+ */
+export const VoteProposalLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type VoteProposalLocalesEnum =
+  (typeof VoteProposalLocalesEnum)[keyof typeof VoteProposalLocalesEnum];
 /**
  * @export
  */
@@ -6613,14 +7513,14 @@ export interface PublicApiComponentsRequest {
 
   /**
    *
-   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
+   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs' | 'awesome_map' | 'awesome_iframe'>}
    * @memberof PublicApiComponents
    */
   readonly filterManifestNameNotIn?: Array<ComponentsFilterManifestNameNotInEnum>;
 
   /**
    *
-   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs'>}
+   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs' | 'awesome_map' | 'awesome_iframe'>}
    * @memberof PublicApiComponents
    */
   readonly filterManifestNameIn?: Array<ComponentsFilterManifestNameInEnum>;
@@ -7104,6 +8004,8 @@ export const ComponentsFilterManifestNameNotInEnum = {
   Debates: "debates",
   Sortitions: "sortitions",
   Blogs: "blogs",
+  AwesomeMap: "awesome_map",
+  AwesomeIframe: "awesome_iframe",
 } as const;
 export type ComponentsFilterManifestNameNotInEnum =
   (typeof ComponentsFilterManifestNameNotInEnum)[keyof typeof ComponentsFilterManifestNameNotInEnum];
@@ -7120,6 +8022,8 @@ export const ComponentsFilterManifestNameInEnum = {
   Debates: "debates",
   Sortitions: "sortitions",
   Blogs: "blogs",
+  AwesomeMap: "awesome_map",
+  AwesomeIframe: "awesome_iframe",
 } as const;
 export type ComponentsFilterManifestNameInEnum =
   (typeof ComponentsFilterManifestNameInEnum)[keyof typeof ComponentsFilterManifestNameInEnum];

@@ -60,7 +60,6 @@ module Decidim
         can :read, ::Decidim::Proposals::Proposal if permissions.include? "proposals.read"
         can :draft, ::Decidim::Proposals::Proposal if permissions.include? "proposals.draft"
         can :vote, ::Decidim::Proposals::Proposal if permissions.include? "proposals.vote"
-        
       end
     end
   end

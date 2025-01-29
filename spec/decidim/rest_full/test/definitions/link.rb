@@ -2,7 +2,7 @@
 
 module Api
   module Definitions
-    LINK_NULL = { type: :null }.freeze
+    LINK_NULL = { type: "null" }.freeze
     LINK_STRING = { type: :string }.freeze
     LINK_OBJECT = {
       oneOf: [

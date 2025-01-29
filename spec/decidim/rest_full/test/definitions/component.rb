@@ -152,13 +152,14 @@ module Api
         votes: {
           title: "Available votes in this proposal component",
           description: "Vote weight, if can_vote is true.",
-          type: :array, 
+          type: :array,
           items: {
-            type: :object, 
+            type: :object,
             properties: {
-              label: {type: :string, description: "Label to voting button"}, 
-              weight: {type: :integer, description: "Value to add to the vote. 0 for abstention"}
-            }
+              label: { type: :string, description: "Label to voting button" },
+              weight: { type: :integer, description: "Value to add to the vote. 0 for abstention" }
+            },
+            required: [:label, :weight]
           }
         }
       }

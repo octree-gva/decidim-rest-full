@@ -73,27 +73,32 @@ module Decidim
           metas[:can_endorse] = metas[:endorsements_enabled]
           metas[:can_comment] = metas[:comments_enabled]
 
-          has_abstain = current_settings_h[:voting_cards_show_abstain];
-          metas[:votes] = begin
-            vote_manifest = current_settings_h[:awesome_voting_manifest]
-            i18n_key = "decidim.decidim_awesome.voting.#{vote_manifest}.weights"
-            default_votes = [
-              {
-                label: I18n.t("decidim.components.proposals.actions.vote"),
-                weight: 1
-              }
-            ]
-            default_votes << {
-                label: I18n.t("decidim.decidim_awesome.voting.voting_cards.weights.weight_0"),
-                weight: 0
-            } if has_abstain
+          has_abstain = settings_h[:voting_cards_show_abstain]
+          if metas[:can_vote]
+            metas[:votes] = begin
+              vote_manifest = settings_h[:awesome_voting_manifest]
+              i18n_key = "decidim.decidim_awesome.voting.#{vote_manifest}.weights"
+              default_votes = [
+                {
+                  label: I18n.t("decidim.components.proposals.actions.vote"),
+                  weight: 1
+                }
+              ]
+              if has_abstain
+                default_votes << {
+                  label: I18n.t("decidim.decidim_awesome.voting.voting_cards.weights.weight_0"),
+                  weight: 0
+                }
+              end
 
-            if current_settings_h.include?(:awesome_voting_manifest) && I18n.exists?(i18n_key)
-              i18n_values = I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights", object: true)
-              next default_votes if i18n_values.empty?
-              weight_labels = i18n_values.select {|k| !k.end_with? "short"}.map {|k, v| {value: "#{k}".split("_").last.to_i, label: v} }
-            else 
-              default_votes
+              if settings_h.include?(:awesome_voting_manifest) && I18n.exists?(i18n_key)
+                i18n_values = I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights", object: true)
+                next default_votes if i18n_values.empty?
+
+                i18n_values.reject { |k| k.end_with? "short" }.map { |k, v| { weight: k.to_s.split("_").last.to_i, label: v } }
+              else
+                default_votes
+              end
             end
           end
 

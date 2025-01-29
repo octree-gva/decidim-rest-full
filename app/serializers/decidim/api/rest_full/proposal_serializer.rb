@@ -20,6 +20,18 @@ module Decidim
           metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
           metas[:count] = params[:count] if params.has_key? :count
           metas[:client_id] = proposal.rest_full_application.api_client_id if proposal.rest_full_application
+          vote_manifest = proposal.component.settings[:awesome_voting_manifest]
+
+          if params[:act_as]
+            vote = proposal.votes.where(decidim_author_id: params[:act_as].id).last
+            metas[:voted] = if vote_manifest && vote && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+                              match = Decidim::DecidimAwesome::VoteWeight.find_by(proposal_vote_id: vote.id)
+                              weight_value = match ? match.weight : 1
+                              { weight: weight_value }
+                            elsif vote
+                              { weight: 1 }
+                            end
+          end
 
           metas
         end

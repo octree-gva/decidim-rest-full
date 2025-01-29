@@ -2,12 +2,12 @@
 
 require "swagger_helper"
 RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/{proposal_id}/vote" do
+  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/{proposal_id}/votes" do
     post "Vote" do
       tags "Proposals"
       produces "application/json"
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
-      operationId "proposal"
+      operationId "voteProposal"
       description "Vote on a proposal"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
@@ -15,12 +15,30 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
       parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
       parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
       parameter name: "proposal_id", in: :path, schema: { type: :integer, description: "Proposal Id" }
+      parameter name: :body, in: :body, required: true, schema: {
+        type: :object,
+        properties: {
+          data: {
+            type: :object,
+            properties: {
+              weight: { type: :integer, description: "Weight for your vote" }
+            },
+            required: [:weight],
+            description: "Payload to send your vote"
+          }
+        }, required: [:data]
+      }
 
       let!(:organization) { create(:organization) }
-      let!(:participatory_process) { create(:participatory_process, organization: organization) }
-      let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+      let!(:proposal_component) { create(:proposal_component, :with_votes_enabled, participatory_space: participatory_process) }
       let!(:proposal) { create(:proposal, component: proposal_component) }
       let(:"locales[]") { %w(en fr) }
+      let!(:body) do
+        {
+          data: { weight: 1 }
+        }
+      end
 
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
@@ -48,29 +66,90 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         host! organization.host
       end
 
-      response "200", "Proposal Found" do
+      response "200", "Vote created" do
         produces "application/json"
         schema "$ref" => "#/components/schemas/proposal_response"
 
-        context "when published" do
-          run_test!(example_name: :ok) do |example|
+        context "when vote is active" do
+          let!(:proposal) { create(:proposal, component: proposal_component) }
+
+          run_test!(example_name: :default) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data["id"]).to eq(proposal_id.to_s)
             expect(data["meta"]["published"]).to be_truthy
+            expect(data["meta"]["voted"]).to eq({ "weight" => 1 })
           end
         end
 
-        context "when own drafts" do
-          let!(:draft_proposal) do
-            create(:proposal, component: proposal_component, published_at: nil, users: [user])
+        context "when vote is voting_cards" do
+          let!(:proposal_component) do
+            create(
+              :proposal_component,
+              :with_votes_enabled,
+              participatory_space: participatory_process,
+              settings: { awesome_voting_manifest: :voting_cards }
+            )
+          end
+          let!(:proposal) { create(:proposal, component: proposal_component) }
+          let!(:body) do
+            {
+              data: { weight: 2 }
+            }
           end
 
-          let(:proposal_id) { draft_proposal.id }
-
-          run_test!(example_name: :ok_drafts) do |example|
+          run_test!(example_name: :voting_cards) do |example|
             data = JSON.parse(example.body)["data"]
-            expect(data).to be_truthy
-            expect(data["id"]).to eq(draft_proposal.id.to_s)
+            expect(data["id"]).to eq(proposal_id.to_s)
+            expect(data["meta"]["published"]).to be_truthy
+            expect(data["meta"]["voted"]).to eq({ "weight" => 2 })
+          end
+        end
+
+        context "when vote is voting_cards with abstention" do
+          let!(:proposal_component) do
+            create(
+              :proposal_component,
+              :with_votes_enabled,
+              participatory_space: participatory_process,
+              settings: { awesome_voting_manifest: :voting_cards, voting_cards_show_abstain: true }
+            )
+          end
+          let!(:proposal) { create(:proposal, component: proposal_component) }
+          let!(:body) do
+            {
+              data: { weight: 0 }
+            }
+          end
+
+          run_test!(example_name: :voting_cards_with_abstention) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["id"]).to eq(proposal_id.to_s)
+            expect(data["meta"]["published"]).to be_truthy
+            expect(data["meta"]["voted"]).to eq({ "weight" => 0 })
+          end
+        end
+
+        context "when vote is decidim default with abstention" do
+          let!(:proposal_component) do
+            create(
+              :proposal_component,
+              :with_votes_enabled,
+              participatory_space: participatory_process,
+              settings: { voting_cards_show_abstain: true }
+            )
+          end
+          let!(:proposal) { create(:proposal, component: proposal_component) }
+          let!(:body) do
+            {
+              data: { weight: 0 }
+            }
+          end
+
+          run_test!(example_name: :default_with_abstention) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["id"]).to eq(proposal_id.to_s)
+            expect(data["meta"]["published"]).to be_truthy
+            expect(data["meta"]["voted"]).to eq({ "weight" => 0 })
           end
         end
       end
@@ -79,17 +158,16 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         consumes "application/json"
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
-
-        context "with draft that did not co-authored" do
+        context "when vote on draft" do
           let!(:draft_proposal) do
-            proposal = create(:proposal, component: proposal_component, published_at: nil, users: [create(:user, :confirmed, organization: organization)])
+            proposal = create(:proposal, component: proposal_component, published_at: nil, users: [user])
             proposal.save!
             proposal
           end
 
           let(:proposal_id) { draft_proposal.id }
 
-          run_test!(example_name: :not_found)
+          run_test!
         end
       end
 
@@ -97,6 +175,12 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         consumes "application/json"
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
+
+        context "when vote is disabled" do
+          let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
+
+          run_test!(example_name: :forbidden)
+        end
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }
@@ -122,7 +206,7 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
           end
         end
 
-        context "with no proposals.read permission" do
+        context "with no proposals.vote permission" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["proposals"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
 
@@ -138,9 +222,9 @@ RSpec.describe "Decidim::Api::RestFull::Proposal::ProposalsController", type: :r
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalsController.new
-          allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalsController).to receive(:new).and_return(controller)
+          controller = Decidim::Api::RestFull::Proposal::ProposalVotesController.new
+          allow(controller).to receive(:create).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::Proposal::ProposalVotesController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"
