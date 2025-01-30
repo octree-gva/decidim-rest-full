@@ -7,6 +7,9 @@ module Decidim
         class DraftProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
+          before_action do
+            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
+          end
 
           def publish
             raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
@@ -55,6 +58,7 @@ module Decidim
             form = form_for(draft_proposal)
 
             update_keys = payload.keys
+
             if update_keys.empty?
               return render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
                 draft_proposal,
@@ -144,15 +148,16 @@ module Decidim
           end
 
           def create_new_draft
-            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached") if limit_reached?
+            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?
 
-            proposal = Decidim::Proposals::Proposal.new(component: component)
+            proposal = Decidim::Proposals::Proposal.new(component: component, published_at: nil)
+            raise ::ActiveRecord::RecordNotSaved, "Could not add new draft" unless proposal.save!(validate: false)
+
             coauthorship = proposal.coauthorships.build(author: current_user)
             proposal.coauthorships << coauthorship
-            proposal.save(validate: false)
-            proposal.update(
-              rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
-            )
+            proposal.rest_full_application = Decidim::RestFull::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
+            raise ::ActiveRecord::RecordNotSaved, "Could not save draft relationships" unless proposal.save!(validate: false)
+
             proposal
           end
 
