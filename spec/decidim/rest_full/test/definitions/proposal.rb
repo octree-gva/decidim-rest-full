@@ -95,7 +95,7 @@ module Api
                   type: :object,
                   properties: {
                     id: { type: :string, description: "Component Id" },
-                    type: { "$ref" => "#/components/schemas/component_type" }
+                    type: { type: :string, enum: ["proposal_component"] }
                   },
                   required: [:id, :type]
                 }

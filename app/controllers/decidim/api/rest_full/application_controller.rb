@@ -40,7 +40,7 @@ module Decidim
 
         def current_locale
           @current_locale ||= if current_user
-                                current_user.locale
+                                current_user.locale || current_organization.default_locale
                               else
                                 current_organization.default_locale
                               end
