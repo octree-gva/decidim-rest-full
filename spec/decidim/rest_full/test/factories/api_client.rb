@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# spec/factories/oauth_applications.rb
 FactoryBot.define do
   factory :rest_full_permission, class: "Decidim::RestFull::Permission" do
     api_client { create(:api_client) }

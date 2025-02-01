@@ -14,6 +14,7 @@ gem "decidim", DECIDIM_VERSION
 gem "decidim-rest_full", path: base_path
 
 gem "bootsnap", "~> 1.4"
+gem "concurrent-ruby", "1.3.4"
 gem "decidim-decidim_awesome", git: "https://github.com/decidim-ice/decidim-module-decidim_awesome", branch: "upgrade-0.29"
 gem "deface", ">= 1.9.0"
 gem "pg"

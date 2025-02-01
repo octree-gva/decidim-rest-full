@@ -679,6 +679,7 @@ export const ClientCredentialScopeEnum = {
   Debates: "debates",
   Pages: "pages",
   Blogs: "blogs",
+  Oauth: "oauth",
 } as const;
 
 export type ClientCredentialScopeEnum =
@@ -1120,10 +1121,10 @@ export interface DraftProposal {
   links: ProposalLinks1;
   /**
    *
-   * @type {ProposalRelationships}
+   * @type {ProposalRelationships1}
    * @memberof DraftProposal
    */
-  relationships?: ProposalRelationships;
+  relationships?: ProposalRelationships1;
 }
 
 export const DraftProposalTypeEnum = {
@@ -1435,6 +1436,7 @@ export const ImpersonationScopeEnum = {
   Debates: "debates",
   Pages: "pages",
   Blogs: "blogs",
+  Oauth: "oauth",
 } as const;
 
 export type ImpersonationScopeEnum =
@@ -1613,11 +1615,232 @@ export const LoginScopeEnum = {
   Debates: "debates",
   Pages: "pages",
   Blogs: "blogs",
+  Oauth: "oauth",
 } as const;
 
 export type LoginScopeEnum =
   (typeof LoginScopeEnum)[keyof typeof LoginScopeEnum];
 
+/**
+ *
+ * @export
+ * @interface MagicLink
+ */
+export interface MagicLink {
+  /**
+   * Magic Token ID
+   * @type {string}
+   * @memberof MagicLink
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MagicLink
+   */
+  type: MagicLinkTypeEnum;
+  /**
+   *
+   * @type {MagicLinkAttributes}
+   * @memberof MagicLink
+   */
+  attributes: MagicLinkAttributes;
+  /**
+   *
+   * @type {MagicLinkLinks}
+   * @memberof MagicLink
+   */
+  links: MagicLinkLinks;
+}
+
+export const MagicLinkTypeEnum = {
+  MagicLink: "magic_link",
+} as const;
+
+export type MagicLinkTypeEnum =
+  (typeof MagicLinkTypeEnum)[keyof typeof MagicLinkTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface MagicLinkAttributes
+ */
+export interface MagicLinkAttributes {
+  /**
+   * Magic Link Token
+   * @type {string}
+   * @memberof MagicLinkAttributes
+   */
+  token: string;
+  /**
+   * Magic Link description
+   * @type {string}
+   * @memberof MagicLinkAttributes
+   */
+  label: string;
+}
+/**
+ *
+ * @export
+ * @interface MagicLinkAttributes1
+ */
+export interface MagicLinkAttributes1 {
+  /**
+   * Redirection destination
+   * @type {string}
+   * @memberof MagicLinkAttributes1
+   */
+  redirect_url: string;
+  /**
+   * Magic Link description
+   * @type {string}
+   * @memberof MagicLinkAttributes1
+   */
+  label: string;
+}
+/**
+ *
+ * @export
+ * @interface MagicLinkLinks
+ */
+export interface MagicLinkLinks {
+  /**
+   *
+   * @type {MagicLinkLinksSelf}
+   * @memberof MagicLinkLinks
+   */
+  self: MagicLinkLinksSelf;
+  /**
+   *
+   * @type {MagicLinkLinksSignIn}
+   * @memberof MagicLinkLinks
+   */
+  sign_in: MagicLinkLinksSignIn;
+}
+/**
+ *
+ * @export
+ * @interface MagicLinkLinks1
+ */
+export interface MagicLinkLinks1 {
+  /**
+   *
+   * @type {MagicLinkLinksSignIn}
+   * @memberof MagicLinkLinks1
+   */
+  self: MagicLinkLinksSignIn;
+  /**
+   *
+   * @type {MagicLinkLinksSelf}
+   * @memberof MagicLinkLinks1
+   */
+  magic_link: MagicLinkLinksSelf;
+}
+/**
+ * @type MagicLinkLinksSelf
+ * Magic Link Creation
+ * @export
+ */
+export type MagicLinkLinksSelf = ActionURL | ResourceURL;
+
+/**
+ * @type MagicLinkLinksSignIn
+ * Sign in
+ * @export
+ */
+export type MagicLinkLinksSignIn = ActionURL | ResourceURL;
+
+/**
+ *
+ * @export
+ * @interface MagicLinkRedirect
+ */
+export interface MagicLinkRedirect {
+  /**
+   * Magic Token ID
+   * @type {string}
+   * @memberof MagicLinkRedirect
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MagicLinkRedirect
+   */
+  type: MagicLinkRedirectTypeEnum;
+  /**
+   *
+   * @type {MagicLinkAttributes1}
+   * @memberof MagicLinkRedirect
+   */
+  attributes: MagicLinkAttributes1;
+  /**
+   *
+   * @type {MagicLinkLinks1}
+   * @memberof MagicLinkRedirect
+   */
+  links: MagicLinkLinks1;
+}
+
+export const MagicLinkRedirectTypeEnum = {
+  MagicLinkRedirect: "magic_link_redirect",
+} as const;
+
+export type MagicLinkRedirectTypeEnum =
+  (typeof MagicLinkRedirectTypeEnum)[keyof typeof MagicLinkRedirectTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface MagicLinkRedirectResponse
+ */
+export interface MagicLinkRedirectResponse {
+  /**
+   *
+   * @type {MagicLinkRedirect}
+   * @memberof MagicLinkRedirectResponse
+   */
+  data: MagicLinkRedirect;
+}
+/**
+ *
+ * @export
+ * @interface MagicLinkResponse
+ */
+export interface MagicLinkResponse {
+  /**
+   *
+   * @type {MagicLink}
+   * @memberof MagicLinkResponse
+   */
+  data: MagicLink;
+}
+/**
+ *
+ * @export
+ * @interface MagickLinkConfigurationPayload
+ */
+export interface MagickLinkConfigurationPayload {
+  /**
+   *
+   * @type {MagickLinkConfigurationPayloadData}
+   * @memberof MagickLinkConfigurationPayload
+   */
+  data?: MagickLinkConfigurationPayloadData;
+}
+/**
+ * Optional payload to configure the magic link
+ * @export
+ * @interface MagickLinkConfigurationPayloadData
+ */
+export interface MagickLinkConfigurationPayloadData {
+  /**
+   * Redirect url after sign-in
+   * @type {string}
+   * @memberof MagickLinkConfigurationPayloadData
+   */
+  redirect_url: string;
+}
 /**
  *
  * @export
@@ -2261,10 +2484,10 @@ export interface ProposalRelationships {
   space: ProposalRelationshipsSpace;
   /**
    *
-   * @type {BlogPostRelationshipsComponent}
+   * @type {ProposalRelationshipsComponent}
    * @memberof ProposalRelationships
    */
-  component: BlogPostRelationshipsComponent;
+  component: ProposalRelationshipsComponent;
   /**
    *
    * @type {ProposalRelationshipsAuthor}
@@ -2275,6 +2498,37 @@ export interface ProposalRelationships {
    *
    * @type {ProposalRelationshipsCoauthors}
    * @memberof ProposalRelationships
+   */
+  coauthors?: ProposalRelationshipsCoauthors;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationships1
+ */
+export interface ProposalRelationships1 {
+  /**
+   *
+   * @type {ProposalRelationshipsSpace}
+   * @memberof ProposalRelationships1
+   */
+  space: ProposalRelationshipsSpace;
+  /**
+   *
+   * @type {BlogPostRelationshipsComponent}
+   * @memberof ProposalRelationships1
+   */
+  component: BlogPostRelationshipsComponent;
+  /**
+   *
+   * @type {ProposalRelationshipsAuthor}
+   * @memberof ProposalRelationships1
+   */
+  author: ProposalRelationshipsAuthor;
+  /**
+   *
+   * @type {ProposalRelationshipsCoauthors}
+   * @memberof ProposalRelationships1
    */
   coauthors?: ProposalRelationshipsCoauthors;
 }
@@ -2346,6 +2600,46 @@ export const ProposalRelationshipsCoauthorsDataInnerTypeEnum = {
 
 export type ProposalRelationshipsCoauthorsDataInnerTypeEnum =
   (typeof ProposalRelationshipsCoauthorsDataInnerTypeEnum)[keyof typeof ProposalRelationshipsCoauthorsDataInnerTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsComponent
+ */
+export interface ProposalRelationshipsComponent {
+  /**
+   *
+   * @type {ProposalRelationshipsComponentData}
+   * @memberof ProposalRelationshipsComponent
+   */
+  data: ProposalRelationshipsComponentData;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsComponentData
+ */
+export interface ProposalRelationshipsComponentData {
+  /**
+   * Component Id
+   * @type {string}
+   * @memberof ProposalRelationshipsComponentData
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalRelationshipsComponentData
+   */
+  type: ProposalRelationshipsComponentDataTypeEnum;
+}
+
+export const ProposalRelationshipsComponentDataTypeEnum = {
+  ProposalComponent: "proposal_component",
+} as const;
+
+export type ProposalRelationshipsComponentDataTypeEnum =
+  (typeof ProposalRelationshipsComponentDataTypeEnum)[keyof typeof ProposalRelationshipsComponentDataTypeEnum];
 
 /**
  *
@@ -4583,7 +4877,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -4705,7 +4999,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -4779,7 +5073,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -4847,7 +5141,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token throught ROPC
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -9133,3 +9427,310 @@ export const UsersFilterNicknameBlankEnum = {
 } as const;
 export type UsersFilterNicknameBlankEnum =
   (typeof UsersFilterNicknameBlankEnum)[keyof typeof UsersFilterNicknameBlankEnum];
+
+/**
+ * UsersApi - axios parameter creator
+ * @export
+ */
+export const UsersApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
+     * @summary Create a magic-lick
+     * @param {MagickLinkConfigurationPayload} [magickLinkConfigurationPayload]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    generateMagicLink: async (
+      magickLinkConfigurationPayload?: MagickLinkConfigurationPayload,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/me/magic-links`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        magickLinkConfigurationPayload,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Challenge given token, open and a session and redirect
+     * @summary Use a magic-lick
+     * @param {string} magicToken
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    magicLinkSignin: async (
+      magicToken: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'magicToken' is not null or undefined
+      assertParamExists("magicLinkSignin", "magicToken", magicToken);
+      const localVarPath = `/me/magic-links/{magic_token}`.replace(
+        `{${"magic_token"}}`,
+        encodeURIComponent(String(magicToken)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * UsersApi - functional programming interface
+ * @export
+ */
+export const UsersApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = UsersApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
+     * @summary Create a magic-lick
+     * @param {MagickLinkConfigurationPayload} [magickLinkConfigurationPayload]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async generateMagicLink(
+      magickLinkConfigurationPayload?: MagickLinkConfigurationPayload,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<MagicLinkResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.generateMagicLink(
+          magickLinkConfigurationPayload,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["UsersApi.generateMagicLink"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Challenge given token, open and a session and redirect
+     * @summary Use a magic-lick
+     * @param {string} magicToken
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async magicLinkSignin(
+      magicToken: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.magicLinkSignin(
+        magicToken,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["UsersApi.magicLinkSignin"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * UsersApi - factory interface
+ * @export
+ */
+export const UsersApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = UsersApiFp(configuration);
+  return {
+    /**
+     * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
+     * @summary Create a magic-lick
+     * @param {UsersApiGenerateMagicLinkRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    generateMagicLink(
+      requestParameters: UsersApiGenerateMagicLinkRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<MagicLinkResponse> {
+      return localVarFp
+        .generateMagicLink(
+          requestParameters.magickLinkConfigurationPayload,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Challenge given token, open and a session and redirect
+     * @summary Use a magic-lick
+     * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    magicLinkSignin(
+      requestParameters: UsersApiMagicLinkSigninRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .magicLinkSignin(requestParameters.magicToken, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for generateMagicLink operation in UsersApi.
+ * @export
+ * @interface UsersApiGenerateMagicLinkRequest
+ */
+export interface UsersApiGenerateMagicLinkRequest {
+  /**
+   *
+   * @type {MagickLinkConfigurationPayload}
+   * @memberof UsersApiGenerateMagicLink
+   */
+  readonly magickLinkConfigurationPayload?: MagickLinkConfigurationPayload;
+}
+
+/**
+ * Request parameters for magicLinkSignin operation in UsersApi.
+ * @export
+ * @interface UsersApiMagicLinkSigninRequest
+ */
+export interface UsersApiMagicLinkSigninRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiMagicLinkSignin
+   */
+  readonly magicToken: string;
+}
+
+/**
+ * UsersApi - object-oriented interface
+ * @export
+ * @class UsersApi
+ * @extends {BaseAPI}
+ */
+export class UsersApi extends BaseAPI {
+  /**
+   * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
+   * @summary Create a magic-lick
+   * @param {UsersApiGenerateMagicLinkRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UsersApi
+   */
+  public generateMagicLink(
+    requestParameters: UsersApiGenerateMagicLinkRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return UsersApiFp(this.configuration)
+      .generateMagicLink(
+        requestParameters.magickLinkConfigurationPayload,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Challenge given token, open and a session and redirect
+   * @summary Use a magic-lick
+   * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UsersApi
+   */
+  public magicLinkSignin(
+    requestParameters: UsersApiMagicLinkSigninRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return UsersApiFp(this.configuration)
+      .magicLinkSignin(requestParameters.magicToken, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}

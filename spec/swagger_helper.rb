@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require "spec_helper"
+require "rswag/specs"
 # spec/swagger_helper.rb
 RSpec.configure do |config|
   config.openapi_root = Rails.root.join("swagger").to_s
   config.after do |example|
+    next unless example.metadata[:type] == :request
+
     content = example.metadata[:response][:content] || {}
     example_name = example.metadata[:example_name]
     if example_name
@@ -145,6 +149,10 @@ RSpec.configure do |config|
             description: "Details about the token beeing used",
             "$ref" => "#/components/schemas/introspect_data"
           },
+          magic_link: Api::Definitions::MAGIC_LINK,
+          magic_link_response: Api::Definitions.item_response("magic_link", "Magick Link Response"),
+          magic_link_redirect: Api::Definitions::MAGIC_LINK_REDIRECT,
+          magic_link_redirect_response: Api::Definitions.item_response("magic_link_redirect", "Magick Link Redirect"),
 
           oauth_grant_param: {
             oneOf: [

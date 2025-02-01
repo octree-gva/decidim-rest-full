@@ -18,6 +18,11 @@ module Decidim
         can :login, Decidim::RestFull::ApiClient if permissions.include? "oauth.login"
         # Switch scopes and compose permissions
         scopes = api_client.scopes.to_a if scopes.nil?
+        apply_permissions!(scopes)
+      end
+
+      def apply_permissions!(scopes)
+        perms_for_users if scopes.include? "oauth"
         perms_for_public if scopes.include? "public"
         perms_for_system if scopes.include? "system"
         perms_for_proposals if scopes.include? "proposals"
@@ -39,6 +44,10 @@ module Decidim
       end
 
       private
+
+      def perms_for_users
+        can :login, ::Decidim::User if permissions.include? "oauth.login"
+      end
 
       def perms_for_public
         can :read, ::Decidim::ParticipatorySpaceManifest if permissions.include? "public.space.read"
