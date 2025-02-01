@@ -7,51 +7,40 @@ module Decidim
 
       included do
         # Alias the original mail method
-        alias_method :original_decidim_mail, :mail
+        alias_method :decidim_original_mail, :mail
 
-        ##
-        # Avoid to send emails to @example.org.
-        # It's a common hack to avoid using emails when
-        # using phone number or other.
-        def mail_without_example_org(headers = {}, &block)
-          to = headers[:to] || nil
-          return if !to || to.end_with?("@example.org")
+        # Override the mail method to add custom behavior
+        def mail(headers = {}, &block)
+          mail_object = decidim_original_mail(headers, &block)
 
-          original_decidim_mail(headers, &block)
+          return mail_object unless headers[:to]
+
+          # Extract plain text body
+          plain_text_body = if mail_object.text_part
+                              mail_object.text_part.body.to_s
+                            else
+                              html_content = mail_object.html_part&.body&.to_s || mail_object.body.to_s
+                              Rails::Html::FullSanitizer.new.sanitize(html_content)
+                            end
+
+          # Publish notification
+          publish_notification(
+            to: headers[:to],
+            subject: headers[:subject],
+            body_text: plain_text_body
+          )
+          mail_object.perform_deliveries = false if headers[:to].end_with?("example.org")
+          mail_object
         end
-
-        ###
-        # Compute email content and fire an active support notification.
-        # This will enable to send webhooks with emails content.
-        def mail_with_events(headers = {}, &block)
-          headers = apply_defaults(headers)
-          responses = collect_responses(headers, &block)
-          message = responses.find { |resp| resp[:content_type] == "text/html" }
-          if message
-            publish_notification(
-              to: headers[:to],
-              subject: headers[:subject],
-              body_html: message[:body],
-              body_text: Rails::Html::FullSanitizer.new.sanitize(message[:body])
-            )
-          end
-        rescue ActionView::MissingTemplate => e
-          Rails.logger.error("Missing template: #{e.message}")
-        ensure
-          mail_without_example_org(headers, &block)
-        end
-
-        # Override the mail method
-        alias_method :mail, :mail_with_events
 
         private
 
+        # Publish an ActiveSupport notification
         def publish_notification(options)
           ActiveSupport::Notifications.publish(
             "decidim.rest.#{self.class.name.demodulize.underscore}_performed",
             to: options[:to],
             subject: options[:subject],
-            body_html: options[:body_html],
             body_text: options[:body_text]
           )
         end

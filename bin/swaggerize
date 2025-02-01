@@ -54,10 +54,10 @@ log "output: $OUTPUT_FILE"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
 
 if [[ $QUIET -eq 1 ]]; then
-  SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb \
+  SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
     --format Rswag::Specs::SwaggerFormatter --order defined > /dev/null 2>&1
 else
-  SWAGGER_DRY_RUN=0 bundle exec rspec spec/decidim/rest_full/**/*_spec.rb \
+  SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
     --format Rswag::Specs::SwaggerFormatter --order defined
 fi
 

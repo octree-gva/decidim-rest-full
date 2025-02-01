@@ -11,9 +11,11 @@ module Decidim
         Decidim::Proposals::ProposalsController.include(Decidim::RestFull::ProposalsControllerOverride)
 
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
+        Decidim::User.include(Decidim::RestFull::UserMagicTokenOverride)
         ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
 
         # Override mailer to avoid sending emails to @example.org
+        # and send notifications (webhooks)
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
       end
       initializer "rest_full.scopes" do
@@ -21,7 +23,7 @@ module Decidim
           handle_auth_errors :raise
           # Define default and optional scopes
           default_scopes :public
-          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs
+          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth
 
           # Enable resource owner password credentials
           grant_flows %w(password client_credentials)

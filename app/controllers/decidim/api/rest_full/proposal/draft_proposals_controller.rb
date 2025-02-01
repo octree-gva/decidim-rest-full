@@ -46,6 +46,7 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
+                host: current_organization.host,
                 publishable: form.valid?,
                 fields: allowed_data_keys
               }
@@ -65,6 +66,7 @@ module Decidim
                 params: {
                   only: [],
                   locales: [current_locale.to_sym],
+                  host: current_organization.host,
                   publishable: form.valid?,
                   fields: allowed_data_keys
                 }
@@ -91,6 +93,7 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
+                host: current_organization.host,
                 publishable: form.valid?,
                 fields: allowed_data_keys
               }
@@ -106,6 +109,7 @@ module Decidim
               params: {
                 only: [],
                 locales: [current_locale.to_sym],
+                host: current_organization.host,
                 publishable: false,
                 fields: allowed_data_keys
               }

@@ -13,6 +13,7 @@ module Decidim
                     "Vote are disabled"
             end
           end
+
           before_action do
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
           end

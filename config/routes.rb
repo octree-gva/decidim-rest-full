@@ -15,6 +15,12 @@ Decidim::Core::Engine.routes.draw do
       scope "v#{Decidim::RestFull.major_minor_version}" do
         post "/oauth/token", to: "/doorkeeper/tokens#create"
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
+        resources :me, only: [:index] do
+          collection do
+            post "/magic-links", to: "/decidim/api/rest_full/user/me#create_magic_link"
+            get "/magic-links/:magic_token", to: "/decidim/api/rest_full/user/me#signin_magic_link"
+          end
+        end
 
         namespace :system do
           resources :organizations, only: [:index]
