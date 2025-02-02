@@ -6,9 +6,8 @@
                     { multiple: false,  disabled: } %>
     <div>
         <h3 class="h5"><%= t('.scopes_label') %></h3>
-        <% scope_options = %w[system proposals meetings debates pages blogs] %>
-        <% scope_options.each do |scope| %>
-            <label class="block py-2 <%= disabled && !form.object.scopes.to_a.include?(scope.to_s) ? "hidden" : "" %>">
+        <% [:system, :proposals, :meetings, :debates, :pages, :blogs, :oauth].each do |scope| %>
+            <label class="block py-2  <%= "hidden" if disabled &&  !form.object.scopes.to_a.include?(scope.to_s) %></label>">
                 <%= form.check_box :scopes, { multiple: true, label: "", disabled: disabled, checked: form.object.scopes.to_a.include?(scope.to_s) }, scope, nil %>
                 <span class="font-normal"><%= t("scope_#{scope}", scope: "decidim.rest_full.models.api_client.fields") %></span>
             </label>
