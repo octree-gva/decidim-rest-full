@@ -106,7 +106,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
             let!(:proposal) { create(:proposal, component: proposal_component) }
             let!(:liked_proposal) { create(:proposal, component: proposal_component) }
             let!(:loved_proposal) { create(:proposal, component: proposal_component) }
-            let!(:unseen_proposal) { create(:proposal, component: proposal_component) }
+            let!(:unseen_proposals) { create_list(:proposal,5,  component: proposal_component) }
             let!(:abstention_proposal) { create(:proposal, component: proposal_component) }
 
             before do
@@ -146,16 +146,31 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
             end
 
             context "with filter voted_weight_blank, filter only the non-voted proposals" do
-              let(:"filter[voted_weight_blank]") { 1.to_s }
-
+              let(:"filter[voted_weight_blank]") { true }
+              
               run_test!(example_name: :abstentions) do |example|
                 data = JSON.parse(example.body)["data"]
                 data.each do |d|
                   expect(d["meta"]["voted"]).to be_blank
                 end
-                expect(data.last["id"]).to eq(unseen_proposal.id.to_s)
+                expect(data.last["id"]).to eq(unseen_proposals.last.id.to_s)
+                expect(data.count).to eq(8)
               end
             end
+            context "with filter voted_weight_blank, and per_page=1, order=rand get one non-voted proposal" do
+              let(:"filter[voted_weight_blank]") { true }
+              let(:"per_page") { 1 }
+              let(:"order") { "rand" }
+              
+              run_test!(example_name: :abstentions) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  expect(d["meta"]["voted"]).to be_blank
+                end
+                expect(data.count).to eq(1)
+              end
+            end
+
           end
 
           context "with published_at desc" do

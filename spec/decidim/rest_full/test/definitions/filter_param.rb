@@ -87,11 +87,9 @@ module Api
         },
         {
           name: "filter[#{filter}_blank]", in: :query, schema: {
-            type: :string,
+            type: :boolean,
             title: "#{filter} blank filter",
-            description: "_#{filter}_ is null or empty",
-            enum: %w(1 0),
-            example: "1"
+            description: "_#{filter}_ is null or empty"
           }, required: false
         }
       ].reject do |filter_param|
