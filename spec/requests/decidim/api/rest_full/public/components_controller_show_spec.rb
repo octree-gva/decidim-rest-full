@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :request do
-  path "/public/components/{id}" do
+RSpec.describe Decidim::Api::RestFull::ComponentsController, type: :request do
+  path "/components/{id}" do
     get "Show a Component" do
       tags "Public"
       produces "application/json"

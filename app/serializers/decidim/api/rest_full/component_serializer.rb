@@ -61,7 +61,7 @@ module Decidim
         link :self do |object, params|
           space = object.participatory_space_type.constantize.find(object.participatory_space_id)
           {
-            href: "https://#{params[:host]}/public/components/#{object.id}",
+            href: "https://#{params[:host]}/components/#{object.manifest_name.singularize}_components/#{object.id}",
             title: object.name[I18n.locale.to_s] || "Component Details",
             rel: "resource",
             meta: {
@@ -75,7 +75,7 @@ module Decidim
         link :related do |object, params|
           space = object.participatory_space_type.constantize.find(object.participatory_space_id)
           {
-            href: "https://#{params[:host]}/public/#{space.manifest.name}/#{space.id}",
+            href: "https://#{params[:host]}/spaces/#{space.manifest.name}/#{space.id}",
             title: space.title[I18n.locale.to_s] || "Space Details",
             rel: "resource",
             meta: {

@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :request do
-  path "/public/components" do
-    get "List Components" do
-      tags "Public"
+RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController, type: :request do
+  path "/components/proposal_components" do
+    get "Proposal Components" do
+      tags "Components"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
-      operationId "components"
-      description "List or search components of the organization"
+      operationId "proposal_components"
+      description "List or search proposal components of the organization"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      Api::Definitions::FILTER_PARAM.call(
-        "manifest_name",
-        { type: :string, enum: Decidim.component_registry.manifests.map { |manifest| manifest.name.to_s }.reject { |manifest_name| manifest_name == "dummy" } },
-        %w(lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
+
       Api::Definitions::FILTER_PARAM.call(
         "participatory_space_id",
         { type: :string },
@@ -45,7 +39,7 @@ RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :requ
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
       let!(:assembly) { create(:assembly, organization: organization) }
-      let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "meetings", published_at: Time.zone.now) }
+      let(:component) { create(:proposal_component) }
 
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["public"], organization: organization)
@@ -60,8 +54,6 @@ RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :requ
 
       before do
         host! organization.host
-        create(:meeting, component: component)
-        create(:meeting, component: component)
 
         proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
         create(:proposal, component: proposals)
@@ -73,15 +65,11 @@ RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :requ
           participatory_space: participatory_process,
           settings: { awesome_voting_manifest: :voting_cards }
         )
-
-        accountabilities = create(:accountability_component, participatory_space: participatory_process, published_at: Time.zone.now)
-        create(:result, component: accountabilities)
-        create(:result, component: accountabilities)
       end
 
-      response "200", "List of components" do
+      response "200", "List of proposal components" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/components_response"
+        schema "$ref" => "#/components/schemas/proposal_components_response"
 
         context "with no filter params" do
           let(:"locales[]") { %w(en fr) }
@@ -89,19 +77,6 @@ RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :requ
           let(:per_page) { 10 }
 
           run_test!(example_name: :ok)
-        end
-
-        context "with filter[manifest_name_in][] filter" do
-          let(:"filter[manifest_name_in][]") { %w(meetings) }
-          let(:"locales[]") { %w(en fr) }
-          let(:page) { 1 }
-          let(:per_page) { 10 }
-
-          run_test!(example_name: :manifest_name_in_Meetings) do |example|
-            data = JSON.parse(example.body)["data"]
-            expect(data).to eq(data.select { |resp| resp["attributes"]["manifest_name"] == "meetings" })
-            expect(data).to eq(data.select { |resp| resp["type"] == "meeting_component" })
-          end
         end
 
         context "with filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess and filter[participatory_space_type_id_eq]=processId filters" do
@@ -181,9 +156,9 @@ RSpec.describe Decidim::Api::RestFull::Public::ComponentsController, type: :requ
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Public::ComponentsController.new
+          controller = Decidim::Api::RestFull::Components::ProposalComponentsController.new
           allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Public::ComponentsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Components::ProposalComponentsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

@@ -6,6 +6,11 @@ module Api
       type: :string,
       enum: Decidim.participatory_space_registry.manifests.map(&:name)
     }.freeze
+    SPACE_CLASSES = {
+      type: :string,
+      description: "space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)",
+      enum: Decidim.participatory_space_registry.manifests.map(&:model_class_name)
+    }.freeze
     SPACE = {
       type: :object,
       title: "Space",
