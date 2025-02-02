@@ -14,10 +14,12 @@ en:
             scope_debates: "Debate: manage debates"
             scope_pages: "Page: manage pages"
             scope_public: "Public: navigate components and spaces"
+            scope_oauth: "Oauth: Manage user"
           permission:
             oauth:
               impersonate: "impersonate: Login as another user"
               login: "login: login with username/password"
+              magic_link: "magic_link: Create and sign-in through magic link"
             system: 
               organizations:
                 read: "read: List and detail of organizations"
@@ -81,6 +83,8 @@ en:
             proposals: Proposals
           blog_permissions:
             blogs: Blogs
+          user_permissions:
+            oauth: User Management
           show:
             go_back: "Back to the list"
           create:

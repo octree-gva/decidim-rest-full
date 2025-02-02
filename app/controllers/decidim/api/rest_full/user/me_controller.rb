@@ -6,7 +6,7 @@ module Decidim
       module User
         class MeController < ResourcesController
           before_action { doorkeeper_authorize! :oauth }
-          before_action { ability.authorize! :login, ::Decidim::User }
+          before_action { ability.authorize! :magic_link, ::Decidim::User }
           before_action do
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
             raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at

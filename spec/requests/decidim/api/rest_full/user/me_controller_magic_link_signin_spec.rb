@@ -20,7 +20,7 @@ RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["oauth"], organization: organization)
         api_client.permissions = [
-          api_client.permissions.build(permission: "oauth.login")
+          api_client.permissions.build(permission: "oauth.magic_link")
         ]
         api_client.save!
         api_client.reload
@@ -105,7 +105,7 @@ RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
           end
         end
 
-        context "with no oauth.login permission" do
+        context "with no oauth.magic_link permission" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["oauth"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: user.id, application: api_client) }
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }

@@ -46,7 +46,7 @@ module Decidim
       private
 
       def perms_for_users
-        can :login, ::Decidim::User if permissions.include? "oauth.login"
+        can :magic_link, ::Decidim::User if permissions.include? "oauth.magic_link"
       end
 
       def perms_for_public
