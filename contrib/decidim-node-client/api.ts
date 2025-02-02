@@ -5343,7 +5343,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {ProposalsOrderDirectionEnum} [orderDirection]
      * @param {Array<string>} [filterVotedWeightIn]
      * @param {string} [filterVotedWeightEq]
-     * @param {ProposalsFilterVotedWeightBlankEnum} [filterVotedWeightBlank]
+     * @param {boolean} [filterVotedWeightBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -5358,7 +5358,7 @@ export const ProposalsApiAxiosParamCreator = function (
       orderDirection?: ProposalsOrderDirectionEnum,
       filterVotedWeightIn?: Array<string>,
       filterVotedWeightEq?: string,
-      filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum,
+      filterVotedWeightBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'spaceManifest' is not null or undefined
@@ -5869,7 +5869,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {ProposalsOrderDirectionEnum} [orderDirection]
      * @param {Array<string>} [filterVotedWeightIn]
      * @param {string} [filterVotedWeightEq]
-     * @param {ProposalsFilterVotedWeightBlankEnum} [filterVotedWeightBlank]
+     * @param {boolean} [filterVotedWeightBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -5884,7 +5884,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       orderDirection?: ProposalsOrderDirectionEnum,
       filterVotedWeightIn?: Array<string>,
       filterVotedWeightEq?: string,
-      filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum,
+      filterVotedWeightBlank?: boolean,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -6409,10 +6409,10 @@ export interface ProposalsApiProposalsRequest {
 
   /**
    *
-   * @type {'1' | '0'}
+   * @type {boolean}
    * @memberof ProposalsApiProposals
    */
-  readonly filterVotedWeightBlank?: ProposalsFilterVotedWeightBlankEnum;
+  readonly filterVotedWeightBlank?: boolean;
 }
 
 /**
@@ -6889,15 +6889,6 @@ export type ProposalsOrderDirectionEnum =
 /**
  * @export
  */
-export const ProposalsFilterVotedWeightBlankEnum = {
-  _1: "1",
-  _0: "0",
-} as const;
-export type ProposalsFilterVotedWeightBlankEnum =
-  (typeof ProposalsFilterVotedWeightBlankEnum)[keyof typeof ProposalsFilterVotedWeightBlankEnum];
-/**
- * @export
- */
 export const PublishDraftProposalSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
@@ -7283,7 +7274,7 @@ export const PublicApiAxiosParamCreator = function (
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
      * @param {SpacesFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {SpacesFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {boolean} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
@@ -7304,7 +7295,7 @@ export const PublicApiAxiosParamCreator = function (
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
       filterTitlePresent?: SpacesFilterTitlePresentEnum,
-      filterTitleBlank?: SpacesFilterTitleBlankEnum,
+      filterTitleBlank?: boolean,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
@@ -7593,7 +7584,7 @@ export const PublicApiFp = function (configuration?: Configuration) {
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
      * @param {SpacesFilterTitlePresentEnum} [filterTitlePresent]
-     * @param {SpacesFilterTitleBlankEnum} [filterTitleBlank]
+     * @param {boolean} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {*} [options] Override http request option.
@@ -7614,7 +7605,7 @@ export const PublicApiFp = function (configuration?: Configuration) {
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
       filterTitlePresent?: SpacesFilterTitlePresentEnum,
-      filterTitleBlank?: SpacesFilterTitleBlankEnum,
+      filterTitleBlank?: boolean,
       page?: number,
       perPage?: number,
       options?: RawAxiosRequestConfig,
@@ -8038,10 +8029,10 @@ export interface PublicApiSpacesRequest {
 
   /**
    *
-   * @type {'1' | '0'}
+   * @type {boolean}
    * @memberof PublicApiSpaces
    */
-  readonly filterTitleBlank?: SpacesFilterTitleBlankEnum;
+  readonly filterTitleBlank?: boolean;
 
   /**
    * Page number for pagination
@@ -8467,15 +8458,6 @@ export const SpacesFilterTitlePresentEnum = {
 } as const;
 export type SpacesFilterTitlePresentEnum =
   (typeof SpacesFilterTitlePresentEnum)[keyof typeof SpacesFilterTitlePresentEnum];
-/**
- * @export
- */
-export const SpacesFilterTitleBlankEnum = {
-  _1: "1",
-  _0: "0",
-} as const;
-export type SpacesFilterTitleBlankEnum =
-  (typeof SpacesFilterTitleBlankEnum)[keyof typeof SpacesFilterTitleBlankEnum];
 
 /**
  * SystemApi - axios parameter creator
@@ -8683,7 +8665,7 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {boolean} [filterNicknameBlank]
      * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8700,7 +8682,7 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: UsersFilterNicknamePresentEnum,
-      filterNicknameBlank?: UsersFilterNicknameBlankEnum,
+      filterNicknameBlank?: boolean,
       filterExtendedDataCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -8930,7 +8912,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {UsersFilterNicknameBlankEnum} [filterNicknameBlank]
+     * @param {boolean} [filterNicknameBlank]
      * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8947,7 +8929,7 @@ export const SystemApiFp = function (configuration?: Configuration) {
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: UsersFilterNicknamePresentEnum,
-      filterNicknameBlank?: UsersFilterNicknameBlankEnum,
+      filterNicknameBlank?: boolean,
       filterExtendedDataCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -9241,10 +9223,10 @@ export interface SystemApiUsersRequest {
 
   /**
    *
-   * @type {'1' | '0'}
+   * @type {boolean}
    * @memberof SystemApiUsers
    */
-  readonly filterNicknameBlank?: UsersFilterNicknameBlankEnum;
+  readonly filterNicknameBlank?: boolean;
 
   /**
    * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
@@ -9418,15 +9400,6 @@ export const UsersFilterNicknamePresentEnum = {
 } as const;
 export type UsersFilterNicknamePresentEnum =
   (typeof UsersFilterNicknamePresentEnum)[keyof typeof UsersFilterNicknamePresentEnum];
-/**
- * @export
- */
-export const UsersFilterNicknameBlankEnum = {
-  _1: "1",
-  _0: "0",
-} as const;
-export type UsersFilterNicknameBlankEnum =
-  (typeof UsersFilterNicknameBlankEnum)[keyof typeof UsersFilterNicknameBlankEnum];
 
 /**
  * UsersApi - axios parameter creator

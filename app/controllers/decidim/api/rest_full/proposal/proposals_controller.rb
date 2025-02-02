@@ -12,21 +12,21 @@ module Decidim
             if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
               Decidim::Proposals::Proposal.ransacker :voted_weight do |_r|
                 Arel.sql(<<~SQL.squish
-                (
-                  SELECT
-                    COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
-                  FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
-                  LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
-                    ON tvote.id = tweight.proposal_vote_id
-                  WHERE
-                    tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
-                    tvote.decidim_author_id = #{current_user.id.to_i}
-                  LIMIT 1
-                )
-              SQL
-              )
+                  (
+                    SELECT
+                      COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
+                    FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
+                    LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
+                      ON tvote.id = tweight.proposal_vote_id
+                    WHERE
+                      tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
+                      tvote.decidim_author_id = #{current_user.id.to_i}
+                    LIMIT 1
+                  )
+                SQL
+                        )
               end
-              
+
             end
             query = ordered(collection).ransack(params[:filter])
             results = query.result
