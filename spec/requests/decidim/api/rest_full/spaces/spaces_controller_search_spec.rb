@@ -12,6 +12,14 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       Api::Definitions::FILTER_PARAM.call(
+        "id",
+        { type: :integer },
+        %w(lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+
+      Api::Definitions::FILTER_PARAM.call(
         "manifest_name",
         { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) },
         %w(lt gt start not_start matches does_not_match present blank)
@@ -39,10 +47,12 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
       let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
 
       let!(:space_list) do
-        3.times do
-          create(:assembly, organization: organization)
-          create(:participatory_process, organization: organization)
-        end
+        3.times.map do
+          [
+            create(:assembly, organization: organization),
+            create(:participatory_process, organization: organization)
+          ]
+        end.flatten
       end
 
       let!(:component_list) do
@@ -99,6 +109,19 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           end
         end
 
+        context "with filter[id_in][] filter" do
+          let(:"filter[id_in][]") { space_list.last(2).map(&:id) }
+          let(:"locales[]") { %w(en fr) }
+          let(:page) { 1 }
+          let(:per_page) { 10 }
+
+          run_test!(example_name: :filter_byId) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.size).to eq(2)
+            expect(data.map { |d| d["id"] }).to match_array(space_list.last(2).map { |s| s.id.to_s })
+          end
+        end
+
         context "with filter[title_eq] filter" do
           let(:"filter[title_eq]") { "My assembly for testing purpose" }
           let(:"locales[]") { %w(en fr) }
@@ -113,7 +136,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           end
         end
 
-        context "with per_page=2, list max two organizations" do
+        context "with per_page=2, list max two spaces" do
           let(:page) { 1 }
           let(:per_page) { 2 }
 

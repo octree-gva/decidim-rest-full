@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, type: :request do
   path "/organizations" do
     get "List available organizations" do
-      tags "System"
+      tags "Organizations"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
       operationId "organizations"

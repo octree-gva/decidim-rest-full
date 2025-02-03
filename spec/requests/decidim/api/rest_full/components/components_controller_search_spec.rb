@@ -151,6 +151,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
           end
 
           run_test!(example_name: :paginated) do |example|
+            y
             json_response = JSON.parse(example.body)
             expect(json_response["data"].size).to eq(per_page)
           end
