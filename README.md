@@ -54,7 +54,7 @@ git tag v0.0.<yourpatch>
 
 Release a minor
 ```
-yarn version minor
+yarn version --new-version minor --no-git-tag-version
 yarn postversion
 git add .
 git tag $(yarn postversion)

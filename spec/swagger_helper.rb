@@ -107,6 +107,7 @@ RSpec.configure do |config|
           component_manifest: Api::Definitions::COMPONENT_MANIFEST,
           space_manifest: Api::Definitions::SPACE_MANIFEST,
           space_type: Api::Definitions::SPACE_TYPE,
+          space_classes: Api::Definitions::SPACE_CLASSES,
           locales: Api::Definitions::LOCALES_PARAM,
           locale: Api::Definitions::LOCALE_PARAM,
           creation_date: Api::Definitions::CREATION_DATE,
@@ -122,14 +123,16 @@ RSpec.configure do |config|
 
           # Public
           space: Api::Definitions::SPACE,
-          proposal_component: Api::Definitions::PROPOSAL_COMPONENT,
           component: Api::Definitions::COMPONENT,
           component_response: Api::Definitions.item_response("component", "Component Detail"),
           components_response: Api::Definitions.array_response("component", "Components List"),
-          proposal_component_response: Api::Definitions.item_response("proposal_component", "Proposal Component Detail"),
-          proposal_components_response: Api::Definitions.array_response("proposal_component", "Proposal Components List"),
           spaces_response: Api::Definitions.array_response("space", "Participatory Spaces List"),
           space_response: Api::Definitions.item_response("space", "Participatory Space Detail"),
+
+          # Proposals
+          proposal_component: Api::Definitions::PROPOSAL_COMPONENT,
+          proposal_component_response: Api::Definitions.item_response("proposal_component", "Proposal Component Detail"),
+          proposal_components_response: Api::Definitions.array_response("proposal_component", "Proposal Components List"),
 
           # Blogs
           blog: Api::Definitions::BLOG,
