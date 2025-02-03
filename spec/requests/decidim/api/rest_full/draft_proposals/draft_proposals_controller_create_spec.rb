@@ -91,7 +91,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
         context "with invalid component ID" do
           let(:body) { { data: { component_id: Decidim::Component.maximum(:id).to_i + 1 } } }
-          
+
           after { clean_drafts }
 
           run_test!(:component_not_found)
