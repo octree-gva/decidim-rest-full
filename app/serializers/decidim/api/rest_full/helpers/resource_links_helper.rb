@@ -26,7 +26,7 @@ module Decidim
           def link_for_collection(host, link_infos)
             raise "link_for_collection: missing host" unless host
 
-            link_join(host, link_infos[:space_manifest], link_infos[:space_id], link_infos[:component_id], link_infos[:component_manifest])
+            link_join(host, link_infos[:component_manifest])
           end
 
           def link_join(host, *url_parts)

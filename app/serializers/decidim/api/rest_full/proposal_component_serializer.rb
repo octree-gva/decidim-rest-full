@@ -4,6 +4,8 @@ module Decidim
   module Api
     module RestFull
       class ProposalComponentSerializer < ComponentSerializer
+        extend Helpers::ResourceLinksHelper
+
         def self.resources_for(component, act_as)
           resources = ::Decidim::Proposals::Proposal.where(component: component)
           if act_as.nil?
@@ -103,6 +105,30 @@ module Decidim
           end
 
           metas
+        end
+
+        link :draft do |_object, params|
+          next nil unless params[:act_as]
+
+          draft = Decidim::Proposals::Proposal.joins(
+            :rest_full_application,
+            :coauthorships
+          ).where(
+            rest_full_application: { api_client_id: params[:client_id] }
+          ).where("published_at is NULL AND decidim_coauthorships.decidim_author_id = ?", params[:act_as].id).first
+
+          next nil unless draft
+
+          infos = link_infos_from_resource(draft)
+          {
+            href: link_join(params[:host], "draft_proposals", draft.id),
+            title: "Draft Details",
+            rel: "resource",
+            meta: {
+              **infos,
+              action_method: "GET"
+            }
+          }
         end
 
         has_many :resources, meta: (proc do |component, params|

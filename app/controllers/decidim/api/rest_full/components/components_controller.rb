@@ -14,7 +14,16 @@ module Decidim
             data = paginate(ActiveRecord::Base.connection.exec_query(query.result.to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
               serializer = "Decidim::Api::RestFull::#{result.manifest_name.singularize.camelize}ComponentSerializer".constantize
-              serializer.new(result, params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }).serializable_hash[:data]
+              serializer.new(
+                result,
+                params: {
+                  only: [],
+                  locales: available_locales,
+                  host: current_organization.host,
+                  act_as: act_as,
+                  client_id: client_id
+                }
+              ).serializable_hash[:data]
             end)
 
             render json: { data: data }
@@ -29,7 +38,13 @@ module Decidim
 
             render json: serializer.new(
               component,
-              params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
+              params: {
+                only: [],
+                locales: available_locales,
+                host: current_organization.host,
+                act_as: act_as,
+                client_id: client_id
+              }
             ).serializable_hash
           end
 

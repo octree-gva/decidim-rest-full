@@ -16,7 +16,8 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
       let!(:assembly) { create(:assembly, organization: organization) }
-      let(:component) { create(:proposal_component) }
+      let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+      let(:user) { create(:user, locale: "fr", organization: organization) }
 
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["public"], organization: organization)
@@ -26,23 +27,12 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
         api_client.save!
         api_client.reload
       end
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+      let(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
       let(:id) { component.id }
 
       before do
         host! organization.host
-
-        proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
-        create(:proposal, component: proposals)
-        create(:proposal, component: proposals)
-
-        create(
-          :proposal_component,
-          :with_votes_enabled,
-          participatory_space: participatory_process,
-          settings: { awesome_voting_manifest: :voting_cards }
-        )
       end
 
       response "200", "Proposal Component" do
@@ -55,6 +45,34 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
           let(:per_page) { 10 }
 
           run_test!(example_name: :ok)
+        end
+
+        context "with impersonation and an active draft" do
+          let(:user) { create(:user, locale: "fr", organization: organization) }
+
+          let!(:draft) do
+            prop = create(:proposal, published_at: nil, component: component, users: [user])
+            prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+            prop
+          end
+          let(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: draft.authors.first.id, application: api_client) }
+          let(:Authorization) { "Bearer #{impersonation_token.token}" }
+
+          run_test!(example_name: :ok_with_draft) do |example|
+            json_response = JSON.parse(example.body)
+            comp = json_response["data"]
+            expect(comp["links"]["draft"]).to be_present
+            expect(comp["links"]["draft"]["meta"]).to eq(
+              {
+                "component_id" => draft.decidim_component_id.to_s,
+                "component_manifest" => "proposals",
+                "space_id" => draft.component.participatory_space_id.to_s,
+                "space_manifest" => "participatory_processes",
+                "resource_id" => draft.id.to_s,
+                "action_method" => "GET"
+              }
+            )
+          end
         end
       end
 

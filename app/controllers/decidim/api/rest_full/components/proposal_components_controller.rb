@@ -15,7 +15,13 @@ module Decidim
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
               Decidim::Api::RestFull::ProposalComponentSerializer.new(
                 result,
-                params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
+                params: {
+                  only: [],
+                  locales: available_locales,
+                  host: current_organization.host,
+                  act_as: act_as,
+                  client_id: client_id
+                }
               ).serializable_hash[:data]
             end)
             render json: { data: data }
@@ -24,10 +30,15 @@ module Decidim
           def show
             resource_id = params.require(:id).to_i
             match = collection.find(resource_id)
-
             render json: Decidim::Api::RestFull::ProposalComponentSerializer.new(
               match,
-              params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
+              params: {
+                only: [],
+                locales: available_locales,
+                host: current_organization.host,
+                act_as: act_as,
+                client_id: client_id
+              }
             ).serializable_hash
           end
 

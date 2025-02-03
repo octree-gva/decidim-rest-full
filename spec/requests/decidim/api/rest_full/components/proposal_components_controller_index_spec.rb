@@ -40,7 +40,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
       let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
       let!(:assembly) { create(:assembly, organization: organization) }
       let(:component) { create(:proposal_component) }
-
+      let(:user) { create(:user, locale: "fr", organization: organization) }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["public"], organization: organization)
         api_client.permissions = [
@@ -90,6 +90,33 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
             data = JSON.parse(example.body)["data"]
             not_in_process = data.select { |component| component["attributes"]["participatory_space_type"] != "Decidim::ParticipatoryProcess" && component["attributes"]["participatory_space_id"] != participatory_process.id.to_s }
             expect(not_in_process).to be_empty
+          end
+        end
+
+        context "with impersonation and an active draft" do
+          let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
+          let(:Authorization) { "Bearer #{impersonation_token.token}" }
+          let!(:draft) do
+            proposal_component = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
+            prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
+            prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+            prop
+          end
+
+          run_test!(example_name: :ok_with_draft) do |example|
+            json_response = JSON.parse(example.body)
+            comp = json_response["data"].find { |d| d["id"] == draft.decidim_component_id.to_s }
+            expect(comp["links"]["draft"]).to be_present
+            expect(comp["links"]["draft"]["meta"]).to eq(
+              {
+                "component_id" => draft.decidim_component_id.to_s,
+                "component_manifest" => "proposals",
+                "space_id" => draft.component.participatory_space_id.to_s,
+                "space_manifest" => "participatory_processes",
+                "resource_id" => draft.id.to_s,
+                "action_method" => "GET"
+              }
+            )
           end
         end
 

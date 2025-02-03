@@ -39,6 +39,7 @@ module Decidim
                 only: [],
                 locales: available_locales,
                 host: current_organization.host,
+                client_id: client_id,
                 act_as: act_as
               }
             ).serializable_hash
@@ -57,6 +58,7 @@ module Decidim
                 only: [],
                 locales: available_locales,
                 host: current_organization.host,
+                client_id: client_id,
                 act_as: act_as,
                 has_more: next_item.present?,
                 next: next_item || first_item,
