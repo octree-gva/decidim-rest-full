@@ -20,8 +20,7 @@ module Api
               description: "Component annoucement (intro)"
             },
             participatory_space_type: {
-              type: :string,
-              description: "Associate space class name. Part of the polymorphic association (participatory_space_type,participatory_space_id)"
+              "$ref" => "#/components/schemas/space_classes"
             },
             participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },
             created_at: { type: :string, description: "Creation date of the component" },
@@ -122,6 +121,8 @@ module Api
       README
       proposal_component[:properties][:type] = { type: :string, enum: ["proposal_component"] }
       proposal_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["proposals"] }
+      proposal_component[:properties][:links][:properties].merge!({ draft: Api::Definitions.link("Link to the Draft proposal", [nil, {}]) })
+      proposal_component[:properties][:links][:required] << :draft
       additional_properties = {
         can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
         can_vote: { type: :boolean, description: "If the current user can vote on the component" },
