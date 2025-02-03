@@ -17,7 +17,7 @@ Decidim::Core::Engine.routes.draw do
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
 
         # components
-        resources :components do 
+        resources :components, only: [] do 
           collection do 
             get "/search", to: "/decidim/api/rest_full/components/components#search"
             resources :proposal_components,
@@ -28,6 +28,41 @@ Decidim::Core::Engine.routes.draw do
                     controller: "/decidim/api/rest_full/components/blog_components" 
           end
         end
+
+        # spaces
+        resources :spaces, only: [] do 
+          collection do 
+            get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
+            Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
+                resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: manifest_name }
+            end
+          end
+        end
+
+        # proposals
+        resources :proposals,
+        only: [:index, :show],
+        controller: "/decidim/api/rest_full/proposals/proposals" 
+
+        # draft proposals
+        resources :draft_proposals,
+        only: [:index, :show, :destroy, :update, :create],
+        controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do 
+          member do 
+            post "/publish", action: :publish
+          end
+        end
+
+        # blogs
+        resources :blogs,
+        only: [:index, :show],
+        controller: "/decidim/api/rest_full/blogs/blogs" 
+
+        # proposal votes
+        resources :proposal_votes,
+        only: [:create],
+        controller: "/decidim/api/rest_full/proposal_votes/proposal_votes" 
+        
         
         resources :me, only: [:index] do
           collection do

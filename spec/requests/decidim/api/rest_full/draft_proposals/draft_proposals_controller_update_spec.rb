@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/draft" do
-    put "Upsert a draft proposal" do
+RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController, type: :request do
+  path "/draft_proposals/{id}" do
+    put "Update draft proposal" do
       tags "Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
       operationId "updateDraftProposal"
       description <<~README
-        This endpoint allows you to create or update a draft proposal associated with your application ID.
-        Drafts created via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API.
+        This endpoint allows you to  update a draft proposal associated with your application ID.
+        Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API.
         Therefore, any draft you create here is new and tied to your application's credentials.
 
         ### Example Request
@@ -53,9 +53,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
         However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
       README
 
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Draft Id" }, required: true
 
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
@@ -74,8 +72,15 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
-      let!(:proposal) { create(:proposal, component: proposal_component) }
-
+      let!(:proposal) do
+        prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
+        prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+        prop.body = nil
+        prop.title = nil
+        prop.save(validate:false )
+        prop
+      end
+      let(:id) {proposal.id}
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
         api_client.permissions = [
@@ -124,6 +129,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
 
         context "when update nothing" do
           let(:body) { { data: {} } }
+          let(:id) {proposal.id}
 
           after { clean_drafts }
 
@@ -134,51 +140,10 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
           end
         end
 
-        context "when created from different client_id" do
-          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
-          let!(:api_clients) do
-            2.times.map do
-              api_client = create(:api_client, scopes: ["proposals"], organization: organization)
-              api_client.permissions = [
-                api_client.permissions.build(permission: "proposals.draft")
-              ]
-              api_client.save!
-              api_client.reload
-              api_client
-            end
-          end
-
-          proposal_id = nil
-          context "when first query" do
-            let!(:impersonate_token) do
-              create(:oauth_access_token, scopes: ["proposals"], resource_owner_id: user.id, application: api_clients.first)
-            end
-
-            run_test! do |example|
-              data = JSON.parse(example.body)["data"]
-              proposal_id = data["id"]
-              expect(data["meta"]["client_id"]).to eq(api_clients.first.client_id)
-            end
-          end
-
-          context "when second query" do
-            let!(:impersonate_token) do
-              create(:oauth_access_token, scopes: ["proposals"], resource_owner_id: user.id, application: api_clients.last)
-            end
-
-            run_test! do |example|
-              data = JSON.parse(example.body)["data"]
-              expect(data["meta"]["client_id"]).to eq(api_clients.last.client_id)
-              expect(data["id"]).not_to eq(proposal_id)
-              clean_drafts
-            end
-          end
-        end
-
         context "when update body" do
           let(:text) { "I am quiet a valid proposal, with one sentence that is long enough to be valid I think." }
           let(:body) { { data: { body: text } } }
-
+          let(:id) {proposal.id}
           after { clean_drafts }
 
           run_test!(:ok_update_body) do |example|
@@ -201,22 +166,6 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
           run_test!(:bad_request_validation_title) do |example|
             error_description = JSON.parse(example.body)["error_description"]
             expect(error_description).to start_with("Title ")
-          end
-        end
-
-        context "when posted too much proposals" do
-          let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now, settings: { proposal_limit: 2 }) }
-          let(:body) { { data: { title: "This is a valid title, but unfortunatly, I already posted too much stuff." } } }
-
-          before do
-            clean_drafts
-            create(:proposal, component: proposal_component, published_at: Time.now.utc, users: [user])
-            create(:proposal, component: proposal_component, published_at: Time.now.utc, users: [user])
-          end
-
-          run_test!(:bad_request_limit_reached) do |example|
-            error_description = JSON.parse(example.body)["error_description"]
-            expect(error_description).to include("you have exceeded the limit.")
           end
         end
       end
@@ -270,9 +219,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
         after { clean_drafts }
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::DraftProposalsController.new
+          controller = Decidim::Api::RestFull::DraftProposals::DraftProposalsController.new
           allow(controller).to receive(:update).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::DraftProposalsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::DraftProposals::DraftProposalsController).to receive(:new).and_return(controller)
         end
 
         let(:body) { { data: { title: "This is a valid proposal title sample" } } }

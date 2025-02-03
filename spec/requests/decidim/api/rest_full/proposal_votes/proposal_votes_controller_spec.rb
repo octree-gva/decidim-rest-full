@@ -1,32 +1,28 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/{proposal_id}/votes" do
+RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, type: :request do
+  path "/proposal_votes" do
     post "Vote" do
-      tags "Proposals"
+      tags "Proposals Vote"
       produces "application/json"
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
       operationId "voteProposal"
       description "Vote on a proposal"
 
-      parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-      parameter name: "proposal_id", in: :path, schema: { type: :integer, description: "Proposal Id" }
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
         properties: {
+          proposal_id:  { type: :integer, description: "Proposal Id" },
           data: {
             type: :object,
             properties: {
               weight: { type: :integer, description: "Weight for your vote" }
             },
-            required: [:weight],
+            required: [ :weight],
             description: "Payload to send your vote"
           }
-        }, required: [:data]
+        }, required: [:data, :proposal_id]
       }
 
       let!(:organization) { create(:organization) }
@@ -36,7 +32,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
       let(:"locales[]") { %w(en fr) }
       let!(:body) do
         {
-          data: { weight: 1 }
+          data: { weight: 1} , proposal_id: proposal.id 
         }
       end
 
@@ -93,7 +89,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 2 }
+              data: { weight: 2} , proposal_id: proposal.id 
             }
           end
 
@@ -117,7 +113,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 0 }
+              data: { weight: 0} , proposal_id: proposal.id 
             }
           end
 
@@ -141,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 0 }
+              data: { weight: 0} , proposal_id: proposal.id 
             }
           end
 
@@ -164,9 +160,11 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
             proposal.save!
             proposal
           end
-
-          let(:proposal_id) { draft_proposal.id }
-
+          let!(:body) do
+            {
+              data: { weight: 1} , proposal_id: draft_proposal.id
+            }
+          end
           run_test!
         end
       end
@@ -187,15 +185,6 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
           let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
 
           run_test!(example_name: :vote_disabled)
-        end
-
-        context "with invalid locales[] fields" do
-          let(:"locales[]") { ["invalid_locale"] }
-
-          run_test!(example_name: :invalid_locales) do |example|
-            error_description = JSON.parse(example.body)["error_description"]
-            expect(error_description).to start_with("Not allowed locales:")
-          end
         end
       end
 
@@ -229,9 +218,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalVotesController.new
+          controller = Decidim::Api::RestFull::ProposalVotes::ProposalVotesController.new
           allow(controller).to receive(:create).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalVotesController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::ProposalVotes::ProposalVotesController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

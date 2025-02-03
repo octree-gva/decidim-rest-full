@@ -9,7 +9,50 @@ module Decidim
 
         protected
 
-        ##
+          def space_class_from_name(manifest_name)
+            Decidim.participatory_space_registry.manifests.find do |manifest|
+              manifest.name === "#{manifest_name}".to_sym
+            end.model_class_name
+          end
+          ##
+          # Find components that are published in a visible space.
+          # exemple: if the user has no view on Decidim::Assembly#2
+          #          THEN should not be able to query any Decidim::Assembly#2 components
+          def find_components(context = Decidim::Component.all)
+            if visible_spaces.size.positive?
+              first_visible_space = visible_spaces.first
+              query_manifest = context
+              query = query_manifest.where(**first_visible_space)
+              visible_spaces[1..].each do |visible_space|
+                query = query.or(query_manifest.where(**visible_space))
+              end
+              query
+            else
+              context.where("1=0")
+            end
+          end
+
+          ##
+          # All the spaces (assembly, participatory process) visible
+          # for the current actor.
+          # @returns participatory_space_type, participatory_space_id values
+          def visible_spaces
+            @visible_spaces ||= begin
+              spaces = Decidim.participatory_space_registry.manifests.map do |space|
+                model = space.model_class_name
+                query = model.constantize.visible_for(act_as).where(organization: current_organization)
+                {
+                  participatory_space_type: model,
+                  participatory_space_id: query.ids
+                }
+              end
+              spaces.reject do |space_params|
+                space_params[:participatory_space_id].empty?
+              end
+            end
+          end
+
+          ##
         # Give the current API actor.
         # if acting as a service (machine-to-machine): Act as you where the first available admin
         # if having a resource owner: as the resource owner

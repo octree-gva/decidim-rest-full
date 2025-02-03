@@ -4,13 +4,13 @@
 module Decidim
   module Api
     module RestFull
-      module Public
+      module Spaces
         class SpacesController < ApplicationController
           before_action { doorkeeper_authorize! :public }
           before_action { ability.authorize! :read, ::Decidim::ParticipatorySpaceManifest }
 
-          # List Space resources
-          def index
+          # Search Space resources
+          def search
             sql_queries = spaces_resources.map do |data|
               model = data[:model].constantize
               manifest = data[:manifest]

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/blogs/{post_id}" do
+RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController, type: :request do
+  path "/blogs/{id}" do
     get "Show a blog detail" do
       tags "Blogs"
       produces "application/json"
@@ -11,10 +11,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
       description "Get blog post details"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-      parameter name: "post_id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
@@ -39,7 +36,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
       let(:space_manifest) { "participatory_processes" }
       let(:space_id) { participatory_process.id }
       let(:component_id) { component.id }
-      let(:post_id) { blog_post.id }
+      let(:id) { blog_post.id }
 
       before do
         host! organization.host
@@ -70,7 +67,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
               post
             end.reverse
           end
-          let(:post_id) { blog_post.id }
+          let(:id) { blog_post.id }
 
           run_test!(example_name: :ok_no_more) do |example|
             data = JSON.parse(example.body)["data"]
@@ -96,7 +93,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
           end
           let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
-          let!(:post_id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).first.id }
+          let!(:id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).first.id }
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
@@ -122,7 +119,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
           end
           let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
-          let!(:post_id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).second.id }
+          let!(:id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).second.id }
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
@@ -143,7 +140,7 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
             post
           end
 
-          let(:post_id) { draft_post.id }
+          let(:id) { draft_post.id }
 
           run_test!(example_name: :ok_draft) do |example|
             data = JSON.parse(example.body)["data"]
@@ -182,14 +179,14 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
 
-        context "when post_id=bad_string" do
-          let(:post_id) { "bad_string" }
+        context "when id=bad_string" do
+          let(:id) { "bad_string" }
 
           run_test!
         end
 
         context "when id=not_found" do
-          let(:post_id) { Decidim::Blogs::Post.last.id + 10 }
+          let(:id) { Decidim::Blogs::Post.last.id + 10 }
 
           run_test!(example_name: :not_found)
         end
@@ -215,9 +212,9 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Blog::BlogsController.new
+          controller = Decidim::Api::RestFull::Blogs::BlogsController.new
           allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Blog::BlogsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Blogs::BlogsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

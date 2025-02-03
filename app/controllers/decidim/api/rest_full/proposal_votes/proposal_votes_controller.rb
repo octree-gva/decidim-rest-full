@@ -3,12 +3,12 @@
 module Decidim
   module Api
     module RestFull
-      module Proposal
+      module ProposalVotes
         class ProposalVotesController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :vote, ::Decidim::Proposals::Proposal }
           before_action do
-            if (proposal && !component.current_settings.try(:votes_enabled)) || !component.current_settings[:votes_enabled]
+            if (proposal && !proposal_component.current_settings.try(:votes_enabled)) || !proposal_component.current_settings[:votes_enabled]
               raise Decidim::RestFull::ApiException::BadRequest,
                     "Vote are disabled"
             end
@@ -52,11 +52,11 @@ module Decidim
           end
 
           def support_abstention?
-            awesome? && component.settings[:voting_cards_show_abstain]
+            awesome? && proposal_component.settings[:voting_cards_show_abstain]
           end
 
           def voting_manifest
-            @voting_manifest ||= component.settings[:awesome_voting_manifest]
+            @voting_manifest ||= proposal_component.settings[:awesome_voting_manifest]
           end
 
           def weight
@@ -80,7 +80,7 @@ module Decidim
           end
 
           def proposal
-            @proposal ||= collection.find(params.require(:resource_id))
+            @proposal ||= collection.find(params.require(:proposal_id))
           end
 
           def proposal_component
@@ -104,7 +104,7 @@ module Decidim
           end
 
           def collection
-            model_class.where(component: component)
+            filter_for_context(model_class)
           end
         end
       end

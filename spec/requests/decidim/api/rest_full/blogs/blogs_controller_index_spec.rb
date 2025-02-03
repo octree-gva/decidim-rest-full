@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/blogs" do
-    get "Show a blog detail" do
+RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController, type: :request do
+  path "/blogs" do
+    get "Blog Post Lists" do
       tags "Blogs"
       produces "application/json"
       security [{ credentialFlowBearer: ["blogs"] }, { resourceOwnerFlowBearer: ["blogs"] }]
@@ -11,9 +11,9 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
       description "Get blog post list"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+      parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
+      parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
       parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
 
@@ -161,9 +161,9 @@ RSpec.describe Decidim::Api::RestFull::Blog::BlogsController, type: :request do
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Blog::BlogsController.new
+          controller = Decidim::Api::RestFull::Blogs::BlogsController.new
           allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Blog::BlogsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Blogs::BlogsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

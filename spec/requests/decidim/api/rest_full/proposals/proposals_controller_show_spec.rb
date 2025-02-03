@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/{proposal_id}" do
-    get "Show a proposal detail" do
+RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :request do
+  path "/proposals/{id}" do
+    get "Proposal Details" do
       tags "Proposals"
       produces "application/json"
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
@@ -11,10 +11,11 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
       description "Proposal detail"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
-      parameter name: "proposal_id", in: :path, schema: { type: :integer, description: "Proposal Id" }
+      parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
+      parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Proposal Id" }, required: true
+
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
@@ -41,7 +42,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
       let(:space_manifest) { "participatory_processes" }
       let(:space_id) { participatory_process.id }
       let(:component_id) { proposal_component.id }
-      let(:proposal_id) { proposal.id }
+      let(:id) { proposal.id }
 
       before do
         host! organization.host
@@ -54,7 +55,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
         context "when published" do
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
-            expect(data["id"]).to eq(proposal_id.to_s)
+            expect(data["id"]).to eq(id.to_s)
             expect(data["meta"]["published"]).to be_truthy
           end
         end
@@ -64,7 +65,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
             create(:proposal, component: proposal_component, published_at: nil, users: [user])
           end
 
-          let(:proposal_id) { draft_proposal.id }
+          let(:id) { draft_proposal.id }
 
           run_test!(example_name: :ok_drafts) do |example|
             data = JSON.parse(example.body)["data"]
@@ -86,7 +87,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
             proposal
           end
 
-          let(:proposal_id) { draft_proposal.id }
+          let(:id) { draft_proposal.id }
 
           run_test!(example_name: :not_found)
         end
@@ -137,9 +138,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalsController.new
+          controller = Decidim::Api::RestFull::Proposals::ProposalsController.new
           allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Proposals::ProposalsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Public::SpacesController, type: :request do
-  path "/public/spaces" do
-    get "List Participatory Spaces" do
-      tags "Public"
+RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request do
+  path "/spaces/search" do
+    get "Search Participatory Spaces" do
+      tags "Spaces"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
-      operationId "spaces"
+      operationId "searchSpaces"
       description "List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space."
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
@@ -175,9 +175,9 @@ RSpec.describe Decidim::Api::RestFull::Public::SpacesController, type: :request 
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Public::SpacesController.new
-          allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Public::SpacesController).to receive(:new).and_return(controller)
+          controller = Decidim::Api::RestFull::Spaces::SpacesController.new
+          allow(controller).to receive(:search).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::Spaces::SpacesController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

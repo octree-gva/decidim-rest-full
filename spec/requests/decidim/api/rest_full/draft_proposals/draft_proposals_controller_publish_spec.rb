@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals/draft/publish" do
+RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController, type: :request do
+  path "/draft_proposals/{id}/publish" do
     post "Publish a draft proposal" do
-      tags "Proposals"
+      tags "Draft Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
       operationId "publishDraftProposal"
       description "Publish a draft proposal"
 
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Draft Id" }, required: true
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
@@ -39,7 +37,8 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
       let(:space_manifest) { "participatory_processes" }
       let(:space_id) { participatory_process.id }
       let(:component_id) { proposal_component.id }
-
+      let!(:proposal) { create(:proposal, component: proposal_component) }
+      let(:id) {proposal.id}
       def clean_drafts
         Decidim::Proposals::Proposal.where(
           decidim_component_id: component_id
@@ -61,6 +60,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
             prop
           end
           let!(:Authorization) { "Bearer #{impersonate_token.token}" }
+          let(:id) {proposal.id}
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
@@ -80,6 +80,8 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
             prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
             prop
           end
+          let(:id) {proposal.id}
+
           let!(:Authorization) { "Bearer #{impersonate_token.token}" }
 
           before do
@@ -100,6 +102,7 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
 
         context "with no draft" do
           before { clean_drafts }
+          let(:id) {Decidim::Proposals::Proposal.last.id + 1}
 
           run_test!(example_name: :not_found)
         end
@@ -135,9 +138,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::DraftProposalsController, type:
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::DraftProposalsController.new
+          controller = Decidim::Api::RestFull::DraftProposals::DraftProposalsController.new
           allow(controller).to receive(:publish).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::DraftProposalsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::DraftProposals::DraftProposalsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

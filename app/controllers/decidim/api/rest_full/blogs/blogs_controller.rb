@@ -3,7 +3,7 @@
 module Decidim
   module Api
     module RestFull
-      module Blog
+      module Blogs
         class BlogsController < ResourcesController
           before_action { doorkeeper_authorize! :blogs }
           before_action { ability.authorize! :read, ::Decidim::Blogs::Post }
@@ -59,7 +59,7 @@ module Decidim
           private
 
           def collection
-            query = model_class.order(published_at: :asc).where(component: component)
+            query = filter_for_context(model_class.order(published_at: :asc))
             now = Time.zone.now
             if act_as.nil?
               query.where(published_at: ...now)

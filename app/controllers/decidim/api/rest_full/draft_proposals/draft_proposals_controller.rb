@@ -3,12 +3,30 @@
 module Decidim
   module Api
     module RestFull
-      module Proposal
+      module DraftProposals
         class DraftProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
           before_action do
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
+          end
+
+          def create
+            component_id = params.require(:data).require(:component_id)
+            raise Decidim::RestFull::ApiException::BadRequest, "Draft Proposal already exists for this component" if collection.find_by(decidim_component_id: component_id)
+
+            draft_proposal = create_new_draft(component_id)
+            form = form_for(draft_proposal)
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+              draft_proposal,
+              params: {
+                only: [],
+                locales: [current_locale.to_sym],
+                host: current_organization.host,
+                publishable: form.valid?,
+                fields: allowed_data_keys
+              }
+            ).serializable_hash
           end
 
           def publish
@@ -54,8 +72,10 @@ module Decidim
           end
 
           def update
+            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+
             payload = data
-            draft_proposal = draft || create_new_draft
+            draft_proposal = draft 
             form = form_for(draft_proposal)
 
             update_keys = payload.keys
@@ -121,8 +141,7 @@ module Decidim
           def form_for(resource)
             Decidim::Proposals::ProposalForm.from_model(resource).with_context(
               current_organization: current_organization,
-              current_participatory_space: space,
-              current_component: component
+              current_component: resource.component
             )
           end
 
@@ -143,17 +162,17 @@ module Decidim
           end
 
           def collection
-            query = model_class.where(component: component)
+            query = filter_for_context(model_class)
             query.where("published_at is NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id)
           end
 
           def draft
-            @draft ||= collection.joins(:rest_full_application).find_by(rest_full_application: { api_client_id: client_id })
+            @draft ||= collection.joins(:rest_full_application).where(rest_full_application: { api_client_id: client_id }).find(params.require(:id))
           end
 
-          def create_new_draft
-            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?
-
+          def create_new_draft(component_id)
+            component = find_components(Decidim::Component.all).find(component_id)
+            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
             proposal = Decidim::Proposals::Proposal.new(component: component, published_at: nil)
             raise ::ActiveRecord::RecordNotSaved, "Could not add new draft" unless proposal.save!(validate: false)
 
@@ -165,7 +184,7 @@ module Decidim
             proposal
           end
 
-          def limit_reached?
+          def limit_reached?(component)
             proposal_limit = component.settings.proposal_limit
 
             return false if proposal_limit.zero?

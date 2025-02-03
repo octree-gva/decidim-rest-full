@@ -5,6 +5,16 @@ module Decidim
     module RestFull
       class ResourcesController < ApplicationController
         protected
+        def filter_for_context(query)
+          components_filters = find_components(Decidim::Component.all)
+          if params.key? :space_manifest
+            components_filters = components_filters.where(participatory_space_type: space_class_from_name(params.require(:space_manifest)))
+            if params.key? :space_id
+              components_filters = components_filters.where(participatory_space_id: params.require(:space_id))
+            end
+          end
+          query.where(decidim_component_id: components_filters.ids)
+        end
 
         def order_columns
           ["rand"]
@@ -105,7 +115,7 @@ module Decidim
         end
 
         def resource_id
-          @resource_id ||= params.require(:resource_id).to_i
+          @resource_id ||= params.require(:id).to_i
         end
       end
     end

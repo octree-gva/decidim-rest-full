@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :request do
-  path "/public/{space_manifest}/{space_id}/{component_id}/proposals" do
-    get "Show proposal list" do
+RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :request do
+  path "/proposals" do
+    get "Proposals" do
       tags "Proposals"
       produces "application/json"
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
       operationId "proposals"
-      description "Proposals list"
+      description "Search proposals"
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
@@ -16,9 +16,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
       parameter name: :order, in: :query, schema: { type: :string, description: "field to order by", enum: %w(published_at rand) }, required: false
       parameter name: :order_direction, in: :query, schema: { type: :string, description: "order direction", enum: %w(desc asc) }, required: false
 
-      parameter name: "space_manifest", in: :path, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }
-      parameter name: "space_id", in: :path, schema: { type: :integer, description: "Space Id" }
-      parameter name: "component_id", in: :path, schema: { type: :integer, description: "Component Id" }
+      parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
+      parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
 
       Api::Definitions::FILTER_PARAM.call(
         "voted_weight",
@@ -261,9 +261,9 @@ RSpec.describe Decidim::Api::RestFull::Proposal::ProposalsController, type: :req
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::Proposal::ProposalsController.new
+          controller = Decidim::Api::RestFull::Proposals::ProposalsController.new
           allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::Proposal::ProposalsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Proposals::ProposalsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

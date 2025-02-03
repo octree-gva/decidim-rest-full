@@ -3,7 +3,7 @@
 module Decidim
   module Api
     module RestFull
-      module Proposal
+      module Proposals
         class ProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :read, ::Decidim::Proposals::Proposal }
@@ -82,9 +82,13 @@ module Decidim
           def model_class
             Decidim::Proposals::Proposal.joins(:coauthorships)
           end
-
+                    
           def collection
-            query = model_class.where(component: component)
+            query = filter_for_context(model_class)
+            if params.key? :component_id
+              query = query.where(decidim_component_id: params.require(:component_id))
+            end
+
             now = Time.zone.now
             if act_as.nil?
               query.where("published_at" => ...now)
