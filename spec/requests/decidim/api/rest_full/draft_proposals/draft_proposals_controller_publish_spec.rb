@@ -37,8 +37,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
       let(:space_manifest) { "participatory_processes" }
       let(:space_id) { participatory_process.id }
       let(:component_id) { proposal_component.id }
-      let!(:proposal) { create(:proposal, component: proposal_component) }
-      let(:id) {proposal.id}
+      let(:id) { proposal.id }
+
       def clean_drafts
         Decidim::Proposals::Proposal.where(
           decidim_component_id: component_id
@@ -60,7 +60,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
             prop
           end
           let!(:Authorization) { "Bearer #{impersonate_token.token}" }
-          let(:id) {proposal.id}
+          let(:id) { proposal.id }
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
@@ -80,7 +80,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
             prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
             prop
           end
-          let(:id) {proposal.id}
+          let(:id) { proposal.id }
 
           let!(:Authorization) { "Bearer #{impersonate_token.token}" }
 
@@ -102,7 +102,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
         context "with no draft" do
           before { clean_drafts }
-          let(:id) {Decidim::Proposals::Proposal.last.id + 1}
+
+          let(:id) { Decidim::Proposals::Proposal.last.id + 1 }
 
           run_test!(example_name: :not_found)
         end

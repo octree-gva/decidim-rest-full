@@ -3,18 +3,22 @@
 module Decidim
   module Api
     module RestFull
-      module System
+      module Users
         class UserExtendedDataController < ApplicationController
           before_action -> { doorkeeper_authorize! :system }
-          before_action only: [:show] do
+          before_action only: [:index] do
             authorize! :read_extended_data, ::Decidim::User
           end
           before_action only: [:update] do
             authorize! :update_extended_data, ::Decidim::User
           end
-
+          before_action do
+            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
+            raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at
+            raise Decidim::RestFull::ApiException::BadRequest, "User locked" if current_user.locked_at
+          end
           # display an extended data
-          def show
+          def index
             render json: {
               data: extended_data_at_path
             }
@@ -87,7 +91,7 @@ module Decidim
           end
 
           def user
-            @user ||= Decidim::User.find(params.require(:user_id))
+            current_user
           end
         end
       end

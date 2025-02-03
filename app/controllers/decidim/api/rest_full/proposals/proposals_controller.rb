@@ -82,12 +82,10 @@ module Decidim
           def model_class
             Decidim::Proposals::Proposal.joins(:coauthorships)
           end
-                    
+
           def collection
             query = filter_for_context(model_class)
-            if params.key? :component_id
-              query = query.where(decidim_component_id: params.require(:component_id))
-            end
+            query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
 
             now = Time.zone.now
             if act_as.nil?

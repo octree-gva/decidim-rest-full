@@ -1,21 +1,33 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
-  path "/me/magic-links/{magic_token}" do
-    get "Use a magic-lick" do
+RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :request do
+  path "/me/magic_links" do
+    post "Create a magic-lick" do
       tags "Users"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["oauth"] }]
-      operationId "magicLinkSignin"
+      operationId "generateMagicLink"
       description <<~README
-        Challenge given token, open and a session and redirect
+        Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
       README
 
-      parameter name: "magic_token", in: :path, schema: { type: :string, description: "A token received for magic link" }
+      parameter name: :body, in: :body, schema: {
+        title: "Magick Link Configuration Payload",
+        type: :object,
+        properties: {
+          data: {
+            type: :object,
+            properties: {
+              redirect_url: { type: :string, description: "Redirect url after sign-in" }
+            },
+            required: [:redirect_url],
+            description: "Optional payload to configure the magic link"
+          }
+        }
+      }
 
       let!(:organization) { create(:organization) }
-      let(:magic_token) { user.rest_full_generate_magic_token.magic_token }
 
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["oauth"], organization: organization)
@@ -39,15 +51,16 @@ RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
         host! organization.host
       end
 
-      response "302", "Signed in" do
+      response "201", "Magick link created" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/magic_link_redirect_response"
+        schema "$ref" => "#/components/schemas/magic_link_response"
 
-        context "when token is valid" do
+        context "when user is valid" do
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
-            token = user.rest_full_magic_token.magic_token
-            expect(data["links"]["self"]["href"]).to eq("https://#{organization.host}/api/rest_full/v0.0/me/magic-links/#{token}")
+            token = data["attributes"]["token"]
+            expect(token).to be_present
+            expect(data["links"]["sign_in"]["href"]).to eq("https://#{organization.host}/api/rest_full/v0.0/me/magic-links/#{token}")
           end
         end
       end
@@ -64,20 +77,7 @@ RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
           run_test!(example_name: :bad_blocked)
         end
 
-        context "when token is wrong" do
-          let(:magic_token) { "invalid_token" }
-
-          run_test!(example_name: :bad_token)
-        end
-
-        context "when token is expired" do
-          let(:magic_token) do
-            token = create(:magic_token, magic_token: "unique_token", expires_at: 2.days.ago, user: user)
-            token.magic_token
-          end
-
-          run_test!(example_name: :bad_token_expired)
-        end
+        context "when user is locked"
       end
 
       response "403", "Forbidden" do
@@ -122,9 +122,9 @@ RSpec.describe Decidim::Api::RestFull::User::MeController, type: :request do
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::User::MeController.new
-          allow(controller).to receive(:signin_magic_link).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::User::MeController).to receive(:new).and_return(controller)
+          controller = Decidim::Api::RestFull::Users::MagicLinksController.new
+          allow(controller).to receive(:create).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::Users::MagicLinksController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

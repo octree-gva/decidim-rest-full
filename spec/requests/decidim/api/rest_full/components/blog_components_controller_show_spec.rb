@@ -28,7 +28,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
       end
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
-      let(:id) {component.id}
+      let(:id) { component.id }
 
       before do
         host! organization.host
@@ -36,7 +36,6 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
         blog_component = create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now)
         create(:post, component: blog_component)
         create(:post, component: blog_component)
-
       end
 
       response "200", "Blog Component" do
@@ -50,7 +49,6 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
 
           run_test!(example_name: :ok)
         end
-
       end
 
       response "403", "Forbidden" do

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::System::UsersController, type: :request do
-  path "/system/users" do
+RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
+  path "/users" do
     get "List available Users" do
       tags "System"
       produces "application/json"
@@ -204,9 +204,9 @@ RSpec.describe Decidim::Api::RestFull::System::UsersController, type: :request d
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::System::UsersController.new
+          controller = Decidim::Api::RestFull::Users::UsersController.new
           allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::System::UsersController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Users::UsersController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

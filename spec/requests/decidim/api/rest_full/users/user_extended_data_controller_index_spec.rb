@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type: :request do
-  path "/system/users/{user_id}/extended_data" do
+RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: :request do
+  path "/me/extended_data" do
     get "Get user extended data" do
       tags "System"
       produces "application/json"
-      security [{ credentialFlowBearer: ["system"] }]
+      security [{ resourceOwnerFlowBearer: ["system"] }]
       operationId "userData"
       description "Fetch user extended data"
       parameter name: "object_path", in: :query, required: true, schema: { type: :string, description: "object path, in dot style, like foo.bar" }
@@ -23,7 +23,7 @@ RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type:
       end
 
       let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "custom" => { "data" => { key: "value" } } }) }
-      let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+      let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
       let(:Authorization) { "Bearer #{credential_token.token}" }
 
       let!(:user_id) { user.id }
@@ -115,9 +115,9 @@ RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type:
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::System::UserExtendedDataController.new
-          allow(controller).to receive(:show).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::System::UserExtendedDataController).to receive(:new).and_return(controller)
+          controller = Decidim::Api::RestFull::Users::UserExtendedDataController.new
+          allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
+          allow(Decidim::Api::RestFull::Users::UserExtendedDataController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

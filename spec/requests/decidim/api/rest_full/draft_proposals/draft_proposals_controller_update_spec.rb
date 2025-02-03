@@ -77,10 +77,10 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
         prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
         prop.body = nil
         prop.title = nil
-        prop.save(validate:false )
+        prop.save(validate: false)
         prop
       end
-      let(:id) {proposal.id}
+      let(:id) { proposal.id }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
         api_client.permissions = [
@@ -129,7 +129,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
         context "when update nothing" do
           let(:body) { { data: {} } }
-          let(:id) {proposal.id}
+          let(:id) { proposal.id }
 
           after { clean_drafts }
 
@@ -143,7 +143,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
         context "when update body" do
           let(:text) { "I am quiet a valid proposal, with one sentence that is long enough to be valid I think." }
           let(:body) { { data: { body: text } } }
-          let(:id) {proposal.id}
+          let(:id) { proposal.id }
+
           after { clean_drafts }
 
           run_test!(:ok_update_body) do |example|

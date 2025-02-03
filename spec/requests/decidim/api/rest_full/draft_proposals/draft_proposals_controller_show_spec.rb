@@ -16,7 +16,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
       let!(:proposal) { create(:proposal, component: proposal_component) }
-      let(:id) {proposal.id}
+      let(:id) { proposal.id }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
         api_client.permissions = [
@@ -58,7 +58,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
             prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
             prop
           end
-          let(:id) {proposal.id}
+          let(:id) { proposal.id }
           let!(:Authorization) { "Bearer #{impersonate_token.token}" }
 
           before do
@@ -86,7 +86,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
         context "with no draft" do
           before { clean_drafts }
-          let(:id) {Decidim::Proposals::Proposal.last.id+1}
+
+          let(:id) { Decidim::Proposals::Proposal.last.id + 1 }
 
           run_test!(example_name: :not_found)
         end

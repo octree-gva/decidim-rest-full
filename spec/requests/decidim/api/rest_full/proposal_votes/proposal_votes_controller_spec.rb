@@ -13,13 +13,13 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
         properties: {
-          proposal_id:  { type: :integer, description: "Proposal Id" },
+          proposal_id: { type: :integer, description: "Proposal Id" },
           data: {
             type: :object,
             properties: {
               weight: { type: :integer, description: "Weight for your vote" }
             },
-            required: [ :weight],
+            required: [:weight],
             description: "Payload to send your vote"
           }
         }, required: [:data, :proposal_id]
@@ -32,7 +32,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
       let(:"locales[]") { %w(en fr) }
       let!(:body) do
         {
-          data: { weight: 1} , proposal_id: proposal.id 
+          data: { weight: 1 }, proposal_id: proposal.id
         }
       end
 
@@ -89,7 +89,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 2} , proposal_id: proposal.id 
+              data: { weight: 2 }, proposal_id: proposal.id
             }
           end
 
@@ -113,7 +113,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 0} , proposal_id: proposal.id 
+              data: { weight: 0 }, proposal_id: proposal.id
             }
           end
 
@@ -137,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
           let!(:proposal) { create(:proposal, component: proposal_component) }
           let!(:body) do
             {
-              data: { weight: 0} , proposal_id: proposal.id 
+              data: { weight: 0 }, proposal_id: proposal.id
             }
           end
 
@@ -162,9 +162,10 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController, t
           end
           let!(:body) do
             {
-              data: { weight: 1} , proposal_id: draft_proposal.id
+              data: { weight: 1 }, proposal_id: draft_proposal.id
             }
           end
+
           run_test!
         end
       end

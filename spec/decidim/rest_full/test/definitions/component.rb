@@ -20,7 +20,7 @@ module Api
               description: "Component annoucement (intro)"
             },
             participatory_space_type: {
-              "$ref" => "#/components/schemas/space_classes",              
+              "$ref" => "#/components/schemas/space_classes"
             },
             participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },
             created_at: { type: :string, description: "Creation date of the component" },

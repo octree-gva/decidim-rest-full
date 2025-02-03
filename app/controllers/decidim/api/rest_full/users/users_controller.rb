@@ -3,7 +3,7 @@
 module Decidim
   module Api
     module RestFull
-      module System
+      module Users
         class UsersController < ApplicationController
           before_action do
             doorkeeper_authorize! :system

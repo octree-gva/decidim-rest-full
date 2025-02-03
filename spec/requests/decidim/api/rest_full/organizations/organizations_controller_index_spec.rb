@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::System::OrganizationsController, type: :request do
-  path "/system/organizations" do
+RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, type: :request do
+  path "/organizations" do
     get "List available organizations" do
       tags "System"
       produces "application/json"
@@ -101,9 +101,9 @@ RSpec.describe Decidim::Api::RestFull::System::OrganizationsController, type: :r
         produces "application/json"
 
         before do
-          controller = Decidim::Api::RestFull::System::OrganizationsController.new
+          controller = Decidim::Api::RestFull::Organizations::OrganizationsController.new
           allow(controller).to receive(:index).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::System::OrganizationsController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Organizations::OrganizationsController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

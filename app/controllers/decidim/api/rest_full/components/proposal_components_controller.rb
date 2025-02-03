@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       module Components
-        class ProposalComponentsController < Decidim::Api::RestFull::Public::ComponentsController
+        class ProposalComponentsController < Decidim::Api::RestFull::Components::ComponentsController
           before_action { doorkeeper_authorize! :public }
           before_action { ability.authorize! :read, ::Decidim::Component }
 
@@ -24,7 +24,7 @@ module Decidim
           def show
             resource_id = params.require(:id).to_i
             match = collection.find(resource_id)
-            
+
             render json: Decidim::Api::RestFull::ProposalComponentSerializer.new(
               match,
               params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }

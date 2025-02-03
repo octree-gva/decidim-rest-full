@@ -9,9 +9,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
       operationId "createDraftProposal"
       description <<~README
-        Create a draft 
+        Create a draft#{" "}
       README
-
 
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
@@ -19,7 +18,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
           data: {
             type: :object,
             properties: {
-              component_id: {type: :integer, description: "Component ID"}
+              component_id: { type: :integer, description: "Component ID" }
             },
             required: [:component_id],
             description: "Payload to update in the proposal"
@@ -34,10 +33,10 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
         prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
         prop.body = nil
         prop.title = nil
-        prop.save(validate:false )
+        prop.save(validate: false)
         prop
       end
-      let(:id) {proposal.id}
+      let(:id) { proposal.id }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
         api_client.permissions = [
@@ -74,8 +73,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
         context "when create empty" do
           before { clean_drafts }
-          let(:body) { { data: { component_id: proposal_component.id } } }
 
+          let(:body) { { data: { component_id: proposal_component.id } } }
 
           run_test!(example_name: :ok_empty) do |example|
             data = JSON.parse(example.body)["data"]
@@ -84,6 +83,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
           end
         end
       end
+
       response "404", "Bad Request" do
         consumes "application/json"
         produces "application/json"
@@ -96,14 +96,12 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
           run_test!(:component_not_found)
         end
-
       end
+
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
-
-        
 
         context "when posted too much proposals" do
           let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now, settings: { proposal_limit: 2 }) }
@@ -128,7 +126,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
         context "with client credentials" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
-          let(:body) { { data: { title: "This is a valid proposal title sample", component_id: proposal_component.id} } }
+          let(:body) { { data: { title: "This is a valid proposal title sample", component_id: proposal_component.id } } }
 
           after { clean_drafts }
 

@@ -35,7 +35,6 @@ module Decidim
 
           private
 
-
           def space_manifest_names
             @space_manifest_names ||= Decidim.participatory_space_registry.manifests.map(&:name)
           end

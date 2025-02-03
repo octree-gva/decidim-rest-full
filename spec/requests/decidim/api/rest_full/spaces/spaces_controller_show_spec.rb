@@ -2,16 +2,15 @@
 
 require "swagger_helper"
 
-
 RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request do
   Decidim.participatory_space_registry.manifests.map(&:name).each do |space_manifest|
-    space_manifest_title = "#{space_manifest}".titleize
+    space_manifest_title = space_manifest.to_s.titleize
     path "/spaces/#{space_manifest}/{id}" do
       get "#{space_manifest_title} Details" do
         tags "Spaces"
         produces "application/json"
         security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
-        operationId "#{space_manifest.to_s.camelize}"
+        operationId space_manifest.to_s.camelize.to_s
         description "Get detail of a #{space_manifest_title} given its id"
 
         parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
@@ -65,7 +64,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           schema "$ref" => "#/components/schemas/space_response"
           context "with a valid #{space_manifest} id" do
             let(:id) { "6" }
-            let(:manifest_name) { "#{space_manifest}" }
+            let(:manifest_name) { space_manifest.to_s }
 
             run_test!(example_name: :ok) do |example|
               json_response = JSON.parse(example.body)
@@ -106,6 +105,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           schema "$ref" => "#/components/schemas/api_error"
           context "with a valid assembly id" do
             let(:id) { "404" }
+
             run_test!(example_name: :not_found) do |example|
               JSON.parse(example.body)
               expect(example.status).to eq(404)

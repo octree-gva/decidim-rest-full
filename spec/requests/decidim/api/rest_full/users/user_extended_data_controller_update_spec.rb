@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type: :request do
-  path "/system/users/{user_id}/extended_data" do
+RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: :request do
+  path "/me/extended_data" do
     put "Update user extended data" do
       tags "System"
       produces "application/json"
-      security [{ credentialFlowBearer: ["system"] }]
+      security [{ resourceOwnerFlowBearer: ["system"] }]
       operationId "setUserData"
       description <<~README
         The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:
@@ -96,7 +96,6 @@ RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type:
           object_path: { type: :string, description: "object path, in dot style, like foo.bar. use '.' to update the whole user data" }
         }, required: [:data]
       }
-      parameter name: :user_id, in: :path, schema: { type: :integer, description: "User Id" }
 
       let!(:organization) { create(:organization) }
       let(:api_client) do
@@ -109,10 +108,8 @@ RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type:
       end
 
       let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "custom" => { "data" => { key: "value" } } }) }
-      let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+      let(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
       let(:Authorization) { "Bearer #{credential_token.token}" }
-
-      let!(:user_id) { user.id }
       let(:body) { { data: { "foo" => "bar" }, object_path: "." } }
 
       before do
@@ -220,9 +217,9 @@ RSpec.describe Decidim::Api::RestFull::System::UserExtendedDataController, type:
         let(:body) { { data: "1990-02-09", object_path: "." } }
 
         before do
-          controller = Decidim::Api::RestFull::System::UserExtendedDataController.new
+          controller = Decidim::Api::RestFull::Users::UserExtendedDataController.new
           allow(controller).to receive(:update).and_raise(StandardError.new("Intentional error for testing"))
-          allow(Decidim::Api::RestFull::System::UserExtendedDataController).to receive(:new).and_return(controller)
+          allow(Decidim::Api::RestFull::Users::UserExtendedDataController).to receive(:new).and_return(controller)
         end
 
         schema "$ref" => "#/components/schemas/api_error"

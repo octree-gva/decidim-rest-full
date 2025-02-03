@@ -98,7 +98,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
           let(:per_page) { 2 }
 
           before do
-            manifests = Decidim.participatory_space_registry.manifests.map(&:name)
+            Decidim.participatory_space_registry.manifests.map(&:name)
             10.times.each do
               create(:component, participatory_space: assembly, manifest_name: "blogs", published_at: Time.zone.now)
             end

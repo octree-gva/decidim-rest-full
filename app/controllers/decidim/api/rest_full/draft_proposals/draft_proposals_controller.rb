@@ -11,6 +11,23 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
           end
 
+          def show
+            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+
+            form = form_for(draft)
+
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+              draft,
+              params: {
+                only: [],
+                locales: [current_locale.to_sym],
+                host: current_organization.host,
+                publishable: form.valid?,
+                fields: allowed_data_keys
+              }
+            ).serializable_hash
+          end
+
           def create
             component_id = params.require(:data).require(:component_id)
             raise Decidim::RestFull::ApiException::BadRequest, "Draft Proposal already exists for this component" if collection.find_by(decidim_component_id: component_id)
@@ -54,28 +71,11 @@ module Decidim
             end
           end
 
-          def show
-            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
-
-            form = form_for(draft)
-
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
-              draft,
-              params: {
-                only: [],
-                locales: [current_locale.to_sym],
-                host: current_organization.host,
-                publishable: form.valid?,
-                fields: allowed_data_keys
-              }
-            ).serializable_hash
-          end
-
           def update
             raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
             payload = data
-            draft_proposal = draft 
+            draft_proposal = draft
             form = form_for(draft_proposal)
 
             update_keys = payload.keys
@@ -173,6 +173,7 @@ module Decidim
           def create_new_draft(component_id)
             component = find_components(Decidim::Component.all).find(component_id)
             raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
+
             proposal = Decidim::Proposals::Proposal.new(component: component, published_at: nil)
             raise ::ActiveRecord::RecordNotSaved, "Could not add new draft" unless proposal.save!(validate: false)
 

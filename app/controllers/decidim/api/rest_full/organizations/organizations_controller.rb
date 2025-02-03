@@ -4,7 +4,7 @@
 module Decidim
   module Api
     module RestFull
-      module System
+      module Organizations
         class OrganizationsController < ApplicationController
           before_action do
             doorkeeper_authorize! :system

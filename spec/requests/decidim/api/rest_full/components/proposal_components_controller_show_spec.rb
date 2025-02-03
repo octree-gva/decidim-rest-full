@@ -28,7 +28,8 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
       end
       let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
-      let(:id) {component.id}
+      let(:id) { component.id }
+
       before do
         host! organization.host
 
@@ -55,7 +56,6 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
 
           run_test!(example_name: :ok)
         end
-
       end
 
       response "403", "Forbidden" do

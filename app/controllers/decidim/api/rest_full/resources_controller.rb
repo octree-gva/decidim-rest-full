@@ -5,13 +5,12 @@ module Decidim
     module RestFull
       class ResourcesController < ApplicationController
         protected
+
         def filter_for_context(query)
           components_filters = find_components(Decidim::Component.all)
-          if params.key? :space_manifest
+          if params.has_key? :space_manifest
             components_filters = components_filters.where(participatory_space_type: space_class_from_name(params.require(:space_manifest)))
-            if params.key? :space_id
-              components_filters = components_filters.where(participatory_space_id: params.require(:space_id))
-            end
+            components_filters = components_filters.where(participatory_space_id: params.require(:space_id)) if params.has_key? :space_id
           end
           query.where(decidim_component_id: components_filters.ids)
         end

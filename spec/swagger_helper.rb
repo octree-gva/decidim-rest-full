@@ -128,12 +128,12 @@ RSpec.configure do |config|
           components_response: Api::Definitions.array_response("component", "Components List"),
           spaces_response: Api::Definitions.array_response("space", "Participatory Spaces List"),
           space_response: Api::Definitions.item_response("space", "Participatory Space Detail"),
-          
+
           # Proposals
           proposal_component: Api::Definitions::PROPOSAL_COMPONENT,
           proposal_component_response: Api::Definitions.item_response("proposal_component", "Proposal Component Detail"),
           proposal_components_response: Api::Definitions.array_response("proposal_component", "Proposal Components List"),
-          
+
           # Blogs
           blog: Api::Definitions::BLOG,
           blogs_response: Api::Definitions.array_response("blog", "Blog Post List"),
