@@ -13,26 +13,24 @@ module Decidim
               Decidim::Proposals::Proposal.ransacker :voted_weight do |_r|
                 Arel.sql(<<~SQL.squish
                   (
-                    SELECT#{" "}
-                      cast(tweight.weight AS varchar) as weight#{" "}
-                    FROM #{Decidim::DecidimAwesome::VoteWeight.table_name} as tweight#{" "}
-                  WHERE#{" "}
-                    proposal_vote_id=(
-                      SELECT#{" "}
-                        id#{" "}
-                      FROM #{Decidim::Proposals::ProposalVote.table_name} as tvote#{" "}
-                      WHERE#{" "}
-                        tvote.decidim_proposal_id=decidim_proposals_proposals.id AND
-                        tvote.decidim_author_id=#{current_user.id.to_i}
-                      LIMIT 1
-                    )
+                    SELECT
+                      COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
+                    FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
+                    LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
+                      ON tvote.id = tweight.proposal_vote_id
+                    WHERE
+                      tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
+                      tvote.decidim_author_id = #{current_user.id.to_i}
+                    LIMIT 1
                   )
                 SQL
                         )
               end
+
             end
             query = ordered(collection).ransack(params[:filter])
             results = query.result
+
             render json: Decidim::Api::RestFull::ProposalSerializer.new(
               paginate(results),
               params: {

@@ -13,6 +13,4 @@ require "decidim/core/test/factories"
 
 require "decidim/rest_full/test/definitions"
 
-require "rswag/specs"
-
 Bullet.add_safelist type: :counter_cache, class_name: "Decidim::Proposals::Proposal", association: :coauthorships if defined?(Bullet)
