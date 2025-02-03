@@ -103,7 +103,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
         context "with no draft" do
           before { clean_drafts }
 
-          let(:id) { Decidim::Proposals::Proposal.last.id + 1 }
+          let(:id) { Decidim::Proposals::Proposal.maximum(:id).to_i + 1 }
 
           run_test!(example_name: :not_found)
         end
