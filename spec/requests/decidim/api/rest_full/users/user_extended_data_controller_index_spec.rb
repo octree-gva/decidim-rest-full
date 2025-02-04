@@ -10,7 +10,6 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
       operationId "userData"
       description "Fetch user extended data"
       parameter name: "object_path", in: :query, required: true, schema: { type: :string, description: "object path, in dot style, like foo.bar" }
-      parameter name: "user_id", in: :path, schema: { type: :integer, description: "User Id" }
 
       let!(:organization) { create(:organization) }
       let(:api_client) do

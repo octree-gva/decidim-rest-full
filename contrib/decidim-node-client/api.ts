@@ -6192,6 +6192,64 @@ export const DraftProposalsApiAxiosParamCreator = function (
 ) {
   return {
     /**
+     * Create a draft
+     * @summary Create draft proposal
+     * @param {CreateDraftProposalRequest} createDraftProposalRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createDraftProposal: async (
+      createDraftProposalRequest: CreateDraftProposalRequest,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'createDraftProposalRequest' is not null or undefined
+      assertParamExists(
+        "createDraftProposal",
+        "createDraftProposalRequest",
+        createDraftProposalRequest,
+      );
+      const localVarPath = `/draft_proposals`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createDraftProposalRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
      * @summary Display a draft proposal
      * @param {number} id
@@ -6292,6 +6350,71 @@ export const DraftProposalsApiAxiosParamCreator = function (
       };
     },
     /**
+     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * @summary Update draft proposal
+     * @param {number} id
+     * @param {UpdateDraftProposalRequest} updateDraftProposalRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateDraftProposal: async (
+      id: number,
+      updateDraftProposalRequest: UpdateDraftProposalRequest,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("updateDraftProposal", "id", id);
+      // verify required parameter 'updateDraftProposalRequest' is not null or undefined
+      assertParamExists(
+        "updateDraftProposal",
+        "updateDraftProposalRequest",
+        updateDraftProposalRequest,
+      );
+      const localVarPath = `/draft_proposals/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateDraftProposalRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Withdrawn a draft proposal. This action cannot be undone.
      * @summary Withdrawn a draft proposal
      * @param {number} id
@@ -6352,6 +6475,40 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator =
     DraftProposalsApiAxiosParamCreator(configuration);
   return {
+    /**
+     * Create a draft
+     * @summary Create draft proposal
+     * @param {CreateDraftProposalRequest} createDraftProposalRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createDraftProposal(
+      createDraftProposalRequest: CreateDraftProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<DraftProposalResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.createDraftProposal(
+          createDraftProposalRequest,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["DraftProposalsApi.createDraftProposal"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
     /**
      * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
      * @summary Display a draft proposal
@@ -6417,6 +6574,43 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
+     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * @summary Update draft proposal
+     * @param {number} id
+     * @param {UpdateDraftProposalRequest} updateDraftProposalRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateDraftProposal(
+      id: number,
+      updateDraftProposalRequest: UpdateDraftProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<DraftProposalResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateDraftProposal(
+          id,
+          updateDraftProposalRequest,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["DraftProposalsApi.updateDraftProposal"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * Withdrawn a draft proposal. This action cannot be undone.
      * @summary Withdrawn a draft proposal
      * @param {number} id
@@ -6462,6 +6656,24 @@ export const DraftProposalsApiFactory = function (
   const localVarFp = DraftProposalsApiFp(configuration);
   return {
     /**
+     * Create a draft
+     * @summary Create draft proposal
+     * @param {DraftProposalsApiCreateDraftProposalRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createDraftProposal(
+      requestParameters: DraftProposalsApiCreateDraftProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<DraftProposalResponse> {
+      return localVarFp
+        .createDraftProposal(
+          requestParameters.createDraftProposalRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
      * @summary Display a draft proposal
      * @param {DraftProposalsApiDraftProposalRequest} requestParameters Request parameters.
@@ -6492,6 +6704,25 @@ export const DraftProposalsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * @summary Update draft proposal
+     * @param {DraftProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateDraftProposal(
+      requestParameters: DraftProposalsApiUpdateDraftProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<DraftProposalResponse> {
+      return localVarFp
+        .updateDraftProposal(
+          requestParameters.id,
+          requestParameters.updateDraftProposalRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Withdrawn a draft proposal. This action cannot be undone.
      * @summary Withdrawn a draft proposal
      * @param {DraftProposalsApiWithdrawnDraftProposalRequest} requestParameters Request parameters.
@@ -6508,6 +6739,20 @@ export const DraftProposalsApiFactory = function (
     },
   };
 };
+
+/**
+ * Request parameters for createDraftProposal operation in DraftProposalsApi.
+ * @export
+ * @interface DraftProposalsApiCreateDraftProposalRequest
+ */
+export interface DraftProposalsApiCreateDraftProposalRequest {
+  /**
+   *
+   * @type {CreateDraftProposalRequest}
+   * @memberof DraftProposalsApiCreateDraftProposal
+   */
+  readonly createDraftProposalRequest: CreateDraftProposalRequest;
+}
 
 /**
  * Request parameters for draftProposal operation in DraftProposalsApi.
@@ -6538,6 +6783,27 @@ export interface DraftProposalsApiPublishDraftProposalRequest {
 }
 
 /**
+ * Request parameters for updateDraftProposal operation in DraftProposalsApi.
+ * @export
+ * @interface DraftProposalsApiUpdateDraftProposalRequest
+ */
+export interface DraftProposalsApiUpdateDraftProposalRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof DraftProposalsApiUpdateDraftProposal
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {UpdateDraftProposalRequest}
+   * @memberof DraftProposalsApiUpdateDraftProposal
+   */
+  readonly updateDraftProposalRequest: UpdateDraftProposalRequest;
+}
+
+/**
  * Request parameters for withdrawnDraftProposal operation in DraftProposalsApi.
  * @export
  * @interface DraftProposalsApiWithdrawnDraftProposalRequest
@@ -6558,6 +6824,26 @@ export interface DraftProposalsApiWithdrawnDraftProposalRequest {
  * @extends {BaseAPI}
  */
 export class DraftProposalsApi extends BaseAPI {
+  /**
+   * Create a draft
+   * @summary Create draft proposal
+   * @param {DraftProposalsApiCreateDraftProposalRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof DraftProposalsApi
+   */
+  public createDraftProposal(
+    requestParameters: DraftProposalsApiCreateDraftProposalRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return DraftProposalsApiFp(this.configuration)
+      .createDraftProposal(
+        requestParameters.createDraftProposalRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
    * @summary Display a draft proposal
@@ -6589,6 +6875,27 @@ export class DraftProposalsApi extends BaseAPI {
   ) {
     return DraftProposalsApiFp(this.configuration)
       .publishDraftProposal(requestParameters.id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+   * @summary Update draft proposal
+   * @param {DraftProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof DraftProposalsApi
+   */
+  public updateDraftProposal(
+    requestParameters: DraftProposalsApiUpdateDraftProposalRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return DraftProposalsApiFp(this.configuration)
+      .updateDraftProposal(
+        requestParameters.id,
+        requestParameters.updateDraftProposalRequest,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -6926,64 +7233,6 @@ export const ProposalsApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create a draft
-     * @summary Create draft proposal
-     * @param {CreateDraftProposalRequest} createDraftProposalRequest
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    createDraftProposal: async (
-      createDraftProposalRequest: CreateDraftProposalRequest,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'createDraftProposalRequest' is not null or undefined
-      assertParamExists(
-        "createDraftProposal",
-        "createDraftProposalRequest",
-        createDraftProposalRequest,
-      );
-      const localVarPath = `/draft_proposals`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        createDraftProposalRequest,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
      * Proposal detail
      * @summary Proposal Details
      * @param {number} id
@@ -7176,71 +7425,6 @@ export const ProposalsApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
-    /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
-     * @summary Update draft proposal
-     * @param {number} id
-     * @param {UpdateDraftProposalRequest} updateDraftProposalRequest
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    updateDraftProposal: async (
-      id: number,
-      updateDraftProposalRequest: UpdateDraftProposalRequest,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("updateDraftProposal", "id", id);
-      // verify required parameter 'updateDraftProposalRequest' is not null or undefined
-      assertParamExists(
-        "updateDraftProposal",
-        "updateDraftProposalRequest",
-        updateDraftProposalRequest,
-      );
-      const localVarPath = `/draft_proposals/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "PUT",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        updateDraftProposalRequest,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
   };
 };
 
@@ -7252,40 +7436,6 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator =
     ProposalsApiAxiosParamCreator(configuration);
   return {
-    /**
-     * Create a draft
-     * @summary Create draft proposal
-     * @param {CreateDraftProposalRequest} createDraftProposalRequest
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async createDraftProposal(
-      createDraftProposalRequest: CreateDraftProposalRequest,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<DraftProposalResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.createDraftProposal(
-          createDraftProposalRequest,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["ProposalsApi.createDraftProposal"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
     /**
      * Proposal detail
      * @summary Proposal Details
@@ -7394,43 +7544,6 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
           configuration,
         )(axios, localVarOperationServerBasePath || basePath);
     },
-    /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
-     * @summary Update draft proposal
-     * @param {number} id
-     * @param {UpdateDraftProposalRequest} updateDraftProposalRequest
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async updateDraftProposal(
-      id: number,
-      updateDraftProposalRequest: UpdateDraftProposalRequest,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<DraftProposalResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.updateDraftProposal(
-          id,
-          updateDraftProposalRequest,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["ProposalsApi.updateDraftProposal"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
   };
 };
 
@@ -7445,24 +7558,6 @@ export const ProposalsApiFactory = function (
 ) {
   const localVarFp = ProposalsApiFp(configuration);
   return {
-    /**
-     * Create a draft
-     * @summary Create draft proposal
-     * @param {ProposalsApiCreateDraftProposalRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    createDraftProposal(
-      requestParameters: ProposalsApiCreateDraftProposalRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<DraftProposalResponse> {
-      return localVarFp
-        .createDraftProposal(
-          requestParameters.createDraftProposalRequest,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
     /**
      * Proposal detail
      * @summary Proposal Details
@@ -7513,41 +7608,8 @@ export const ProposalsApiFactory = function (
         )
         .then((request) => request(axios, basePath));
     },
-    /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
-     * @summary Update draft proposal
-     * @param {ProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    updateDraftProposal(
-      requestParameters: ProposalsApiUpdateDraftProposalRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<DraftProposalResponse> {
-      return localVarFp
-        .updateDraftProposal(
-          requestParameters.id,
-          requestParameters.updateDraftProposalRequest,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
   };
 };
-
-/**
- * Request parameters for createDraftProposal operation in ProposalsApi.
- * @export
- * @interface ProposalsApiCreateDraftProposalRequest
- */
-export interface ProposalsApiCreateDraftProposalRequest {
-  /**
-   *
-   * @type {CreateDraftProposalRequest}
-   * @memberof ProposalsApiCreateDraftProposal
-   */
-  readonly createDraftProposalRequest: CreateDraftProposalRequest;
-}
 
 /**
  * Request parameters for proposal operation in ProposalsApi.
@@ -7676,53 +7738,12 @@ export interface ProposalsApiProposalsRequest {
 }
 
 /**
- * Request parameters for updateDraftProposal operation in ProposalsApi.
- * @export
- * @interface ProposalsApiUpdateDraftProposalRequest
- */
-export interface ProposalsApiUpdateDraftProposalRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof ProposalsApiUpdateDraftProposal
-   */
-  readonly id: number;
-
-  /**
-   *
-   * @type {UpdateDraftProposalRequest}
-   * @memberof ProposalsApiUpdateDraftProposal
-   */
-  readonly updateDraftProposalRequest: UpdateDraftProposalRequest;
-}
-
-/**
  * ProposalsApi - object-oriented interface
  * @export
  * @class ProposalsApi
  * @extends {BaseAPI}
  */
 export class ProposalsApi extends BaseAPI {
-  /**
-   * Create a draft
-   * @summary Create draft proposal
-   * @param {ProposalsApiCreateDraftProposalRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProposalsApi
-   */
-  public createDraftProposal(
-    requestParameters: ProposalsApiCreateDraftProposalRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return ProposalsApiFp(this.configuration)
-      .createDraftProposal(
-        requestParameters.createDraftProposalRequest,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
   /**
    * Proposal detail
    * @summary Proposal Details
@@ -7772,27 +7793,6 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.filterVotedWeightIn,
         requestParameters.filterVotedWeightEq,
         requestParameters.filterVotedWeightBlank,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_IMPERSONATION_TOKEN  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
-   * @summary Update draft proposal
-   * @param {ProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProposalsApi
-   */
-  public updateDraftProposal(
-    requestParameters: ProposalsApiUpdateDraftProposalRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return ProposalsApiFp(this.configuration)
-      .updateDraftProposal(
-        requestParameters.id,
-        requestParameters.updateDraftProposalRequest,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -9546,23 +9546,16 @@ export const UsersApiAxiosParamCreator = function (
      * Fetch user extended data
      * @summary Get user extended data
      * @param {string} objectPath
-     * @param {number} userId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     userData: async (
       objectPath: string,
-      userId: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'objectPath' is not null or undefined
       assertParamExists("userData", "objectPath", objectPath);
-      // verify required parameter 'userId' is not null or undefined
-      assertParamExists("userData", "userId", userId);
-      const localVarPath = `/me/extended_data`.replace(
-        `{${"user_id"}}`,
-        encodeURIComponent(String(userId)),
-      );
+      const localVarPath = `/me/extended_data`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -9838,13 +9831,11 @@ export const UsersApiFp = function (configuration?: Configuration) {
      * Fetch user extended data
      * @summary Get user extended data
      * @param {string} objectPath
-     * @param {number} userId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async userData(
       objectPath: string,
-      userId: number,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -9854,7 +9845,6 @@ export const UsersApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
         objectPath,
-        userId,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -10008,11 +9998,7 @@ export const UsersApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
-        .userData(
-          requestParameters.objectPath,
-          requestParameters.userId,
-          options,
-        )
+        .userData(requestParameters.objectPath, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -10102,13 +10088,6 @@ export interface UsersApiUserDataRequest {
    * @memberof UsersApiUserData
    */
   readonly objectPath: string;
-
-  /**
-   *
-   * @type {number}
-   * @memberof UsersApiUserData
-   */
-  readonly userId: number;
 }
 
 /**
@@ -10283,7 +10262,7 @@ export class UsersApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
-      .userData(requestParameters.objectPath, requestParameters.userId, options)
+      .userData(requestParameters.objectPath, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
