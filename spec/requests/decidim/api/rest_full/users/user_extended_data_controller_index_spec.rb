@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: :request do
   path "/me/extended_data" do
     get "Get user extended data" do
-      tags "System"
+      tags "Users"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["system"] }]
       operationId "userData"

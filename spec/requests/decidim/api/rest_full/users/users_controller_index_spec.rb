@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
   path "/users" do
     get "List available Users" do
-      tags "System"
+      tags "Users"
       produces "application/json"
       security [{ credentialFlowBearer: ["system"] }]
       operationId "users"
