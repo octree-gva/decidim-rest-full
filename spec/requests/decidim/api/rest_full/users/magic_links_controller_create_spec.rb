@@ -60,7 +60,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
             data = JSON.parse(example.body)["data"]
             token = data["attributes"]["token"]
             expect(token).to be_present
-            expect(data["links"]["sign_in"]["href"]).to eq("https://#{organization.host}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/me/magic-links/#{token}")
+            expect(data["links"]["sign_in"]["href"]).to eq("https://#{organization.host}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/me/magic_links/#{token}")
           end
         end
       end

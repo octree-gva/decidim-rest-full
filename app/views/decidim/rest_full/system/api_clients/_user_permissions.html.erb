@@ -6,7 +6,7 @@
     <div class="mt-4">
       <div class="font-bold py-2"><%= t('.oauth') %></div>
       <div class="flex gap-6 flex-wrap">
-        <% ["oauth.magic_link"].each do |permission| %>
+        <% ["oauth.magic_link", "oauth.extended_data.read", "oauth.extended_data.update"].each do |permission| %>
           <label>
             <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
             <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>

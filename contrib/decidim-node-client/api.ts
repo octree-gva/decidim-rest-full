@@ -9435,7 +9435,7 @@ export const UsersApiAxiosParamCreator = function (
       };
     },
     /**
-     * Challenge given token, open and a session and redirect
+     * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
      * @summary Use a magic-lick
      * @param {string} magicToken
      * @param {*} [options] Override http request option.
@@ -9465,10 +9465,6 @@ export const UsersApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -9765,7 +9761,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     * Challenge given token, open and a session and redirect
+     * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
      * @summary Use a magic-lick
      * @param {string} magicToken
      * @param {*} [options] Override http request option.
@@ -9957,7 +9953,7 @@ export const UsersApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * Challenge given token, open and a session and redirect
+     * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
      * @summary Use a magic-lick
      * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -10216,7 +10212,7 @@ export class UsersApi extends BaseAPI {
   }
 
   /**
-   * Challenge given token, open and a session and redirect
+   * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
    * @summary Use a magic-lick
    * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.

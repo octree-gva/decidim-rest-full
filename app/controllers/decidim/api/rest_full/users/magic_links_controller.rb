@@ -5,14 +5,14 @@ module Decidim
     module RestFull
       module Users
         class MagicLinksController < ResourcesController
-          before_action { doorkeeper_authorize! :oauth }
-          before_action { ability.authorize! :magic_link, ::Decidim::User }
-          before_action do
+          include ::Devise::Controllers::Helpers
+          before_action only: [:create] do
+            doorkeeper_authorize! :oauth
+            ability.authorize! :magic_link, ::Decidim::User
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
             raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at
             raise Decidim::RestFull::ApiException::BadRequest, "User locked" if current_user.locked_at
           end
-
           def show
             token = params.require(:id)
             magic_token = Decidim::RestFull::MagicToken.find_by(magic_token: token)
@@ -20,19 +20,11 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, "Invalid Token" unless magic_token.valid_token?
 
             user = magic_token.user
+            raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if user.blocked_at
+            raise Decidim::RestFull::ApiException::BadRequest, "User locked" if user.locked_at
+
             scope = user.admin? ? :admin : :user
-            sign_in magic_token.user, scope: scope unless user_signed_in?
-            endpoint_body = Decidim::Api::RestFull::MagicLinkRedirectSerializer.new(
-              magic_token,
-              params: {
-                only: [],
-                locales: available_locales,
-                host: current_organization.host,
-                act_as: act_as
-              }
-            ).serializable_hash
-            redirect_to ::Decidim::Core::Engine.routes.url_helpers.root_path
-            response.body = endpoint_body.to_json
+            sign_in_and_redirect user, scope: scope
           end
 
           def create

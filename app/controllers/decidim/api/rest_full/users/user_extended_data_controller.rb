@@ -5,13 +5,16 @@ module Decidim
     module RestFull
       module Users
         class UserExtendedDataController < ApplicationController
-          before_action -> { doorkeeper_authorize! :system }
+          before_action -> { doorkeeper_authorize! :oauth }
+
           before_action only: [:index] do
             authorize! :read_extended_data, ::Decidim::User
           end
+
           before_action only: [:update] do
             authorize! :update_extended_data, ::Decidim::User
           end
+
           before_action do
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
             raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at

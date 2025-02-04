@@ -39,8 +39,8 @@ module Decidim
                 ).serializable_hash
               end
 
-              on(:invalid) do
-                raise Decidim::RestFull::ApiException::BadRequest
+              on(:invalid) do |_error|
+                raise Decidim::RestFull::ApiException::BadRequest, "Vote is invalid"
               end
             end
           end

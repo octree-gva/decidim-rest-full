@@ -5,11 +5,12 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
   path "/me/magic_links/{magic_token}" do
     get "Use a magic-lick" do
       tags "Users"
+      consumes "text/html"
       produces "application/json"
-      security [{ resourceOwnerFlowBearer: ["oauth"] }]
+      security []
       operationId "magicLinkSignin"
       description <<~README
-        Challenge given token, open and a session and redirect
+        Challenge given token, open and a session and redirect. Publically accessible by HTTP.
       README
 
       parameter name: "magic_token", in: :path, schema: { type: :string, description: "A token received for magic link" }
@@ -26,34 +27,23 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
         api_client.reload
       end
 
-      let(:user) { create(:user, locale: "fr", organization: organization) }
-
-      # Routing
-      let!(:impersonate_token) do
-        create(:oauth_access_token, scopes: ["oauth"], resource_owner_id: user.id, application: api_client)
-      end
-
-      let(:Authorization) { "Bearer #{impersonate_token.token}" }
+      let(:user) { create(:user, locale: "fr", organization: organization, confirmed_at: Time.zone.now) }
 
       before do
         host! organization.host
       end
 
       response "302", "Signed in" do
-        produces "application/json"
-        schema "$ref" => "#/components/schemas/magic_link_redirect_response"
-
+        produces "html/text"
         context "when token is valid" do
           run_test!(example_name: :ok) do |example|
-            data = JSON.parse(example.body)["data"]
-            token = user.rest_full_magic_token.magic_token
-            expect(data["links"]["self"]["href"]).to eq("https://#{organization.host}/api/rest_full/v#{Decidim::RestFull.major_minor_version}/me/magic-links/#{token}")
+            expect(example.body).to include("You are being ")
           end
         end
       end
 
       response "400", "Bad Request" do
-        consumes "application/json"
+        consumes "text/html"
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
         context "when user is blocked" do
@@ -77,43 +67,6 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
           end
 
           run_test!(example_name: :bad_token_expired)
-        end
-      end
-
-      response "403", "Forbidden" do
-        produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
-        context "with client credentials" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
-          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
-
-          run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
-            expect(response.body).to include("Forbidden")
-          end
-        end
-
-        context "with no oauth scope" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-          let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
-          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
-
-          run_test!(example_name: :forbidden_scope) do |_example|
-            expect(response.status).to eq(403)
-            expect(response.body).to include("Forbidden")
-          end
-        end
-
-        context "with no oauth.magic_link permission" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["oauth"]) }
-          let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: user.id, application: api_client) }
-          let(:body) { { data: { title: "This is a valid proposal title sample" } } }
-
-          run_test! do |_example|
-            expect(response.status).to eq(403)
-            expect(response.body).to include("Forbidden")
-          end
         end
       end
 
