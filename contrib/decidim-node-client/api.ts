@@ -4806,6 +4806,175 @@ export const ComponentsApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * List or search components of the organization
+     * @summary Search components
+     * @param {Array<SearchComponentsLocalesEnum>} [locales]
+     * @param {Array<ComponentManifest>} [filterManifestNameNotIn]
+     * @param {Array<ComponentManifest>} [filterManifestNameIn]
+     * @param {ComponentManifest} [filterManifestNameEq]
+     * @param {ComponentManifest} [filterManifestNameNotEq]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
+     * @param {Array<string>} [filterParticipatorySpaceIdIn]
+     * @param {string} [filterParticipatorySpaceIdEq]
+     * @param {Array<SpaceType>} [filterParticipatorySpaceTypeIn]
+     * @param {SpaceType} [filterParticipatorySpaceTypeEq]
+     * @param {string} [filterNameStart]
+     * @param {string} [filterNameEq]
+     * @param {string} [filterNameNotEq]
+     * @param {string} [filterNameMatches]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    searchComponents: async (
+      locales?: Array<SearchComponentsLocalesEnum>,
+      filterManifestNameNotIn?: Array<ComponentManifest>,
+      filterManifestNameIn?: Array<ComponentManifest>,
+      filterManifestNameEq?: ComponentManifest,
+      filterManifestNameNotEq?: ComponentManifest,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
+      filterParticipatorySpaceIdIn?: Array<string>,
+      filterParticipatorySpaceIdEq?: string,
+      filterParticipatorySpaceTypeIn?: Array<SpaceType>,
+      filterParticipatorySpaceTypeEq?: SpaceType,
+      filterNameStart?: string,
+      filterNameEq?: string,
+      filterNameNotEq?: string,
+      filterNameMatches?: string,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/components/search`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (filterManifestNameNotIn) {
+        localVarQueryParameter["filter[manifest_name_not_in][]"] =
+          filterManifestNameNotIn;
+      }
+
+      if (filterManifestNameIn) {
+        localVarQueryParameter["filter[manifest_name_in][]"] =
+          filterManifestNameIn;
+      }
+
+      if (filterManifestNameEq !== undefined) {
+        localVarQueryParameter["filter[manifest_name_eq]"] =
+          filterManifestNameEq;
+      }
+
+      if (filterManifestNameNotEq !== undefined) {
+        localVarQueryParameter["filter[manifest_name_not_eq]"] =
+          filterManifestNameNotEq;
+      }
+
+      if (filterIdNotIn) {
+        localVarQueryParameter["filter[id_not_in][]"] = filterIdNotIn;
+      }
+
+      if (filterIdIn) {
+        localVarQueryParameter["filter[id_in][]"] = filterIdIn;
+      }
+
+      if (filterIdEq !== undefined) {
+        localVarQueryParameter["filter[id_eq]"] = filterIdEq;
+      }
+
+      if (filterIdNotEq !== undefined) {
+        localVarQueryParameter["filter[id_not_eq]"] = filterIdNotEq;
+      }
+
+      if (filterParticipatorySpaceIdIn) {
+        localVarQueryParameter["filter[participatory_space_id_in][]"] =
+          filterParticipatorySpaceIdIn;
+      }
+
+      if (filterParticipatorySpaceIdEq !== undefined) {
+        localVarQueryParameter["filter[participatory_space_id_eq]"] =
+          filterParticipatorySpaceIdEq;
+      }
+
+      if (filterParticipatorySpaceTypeIn) {
+        localVarQueryParameter["filter[participatory_space_type_in][]"] =
+          filterParticipatorySpaceTypeIn;
+      }
+
+      if (filterParticipatorySpaceTypeEq !== undefined) {
+        localVarQueryParameter["filter[participatory_space_type_eq]"] =
+          filterParticipatorySpaceTypeEq;
+      }
+
+      if (filterNameStart !== undefined) {
+        localVarQueryParameter["filter[name_start]"] = filterNameStart;
+      }
+
+      if (filterNameEq !== undefined) {
+        localVarQueryParameter["filter[name_eq]"] = filterNameEq;
+      }
+
+      if (filterNameNotEq !== undefined) {
+        localVarQueryParameter["filter[name_not_eq]"] = filterNameNotEq;
+      }
+
+      if (filterNameMatches !== undefined) {
+        localVarQueryParameter["filter[name_matches]"] = filterNameMatches;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -5013,6 +5182,94 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
           configuration,
         )(axios, localVarOperationServerBasePath || basePath);
     },
+    /**
+     * List or search components of the organization
+     * @summary Search components
+     * @param {Array<SearchComponentsLocalesEnum>} [locales]
+     * @param {Array<ComponentManifest>} [filterManifestNameNotIn]
+     * @param {Array<ComponentManifest>} [filterManifestNameIn]
+     * @param {ComponentManifest} [filterManifestNameEq]
+     * @param {ComponentManifest} [filterManifestNameNotEq]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
+     * @param {Array<string>} [filterParticipatorySpaceIdIn]
+     * @param {string} [filterParticipatorySpaceIdEq]
+     * @param {Array<SpaceType>} [filterParticipatorySpaceTypeIn]
+     * @param {SpaceType} [filterParticipatorySpaceTypeEq]
+     * @param {string} [filterNameStart]
+     * @param {string} [filterNameEq]
+     * @param {string} [filterNameNotEq]
+     * @param {string} [filterNameMatches]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async searchComponents(
+      locales?: Array<SearchComponentsLocalesEnum>,
+      filterManifestNameNotIn?: Array<ComponentManifest>,
+      filterManifestNameIn?: Array<ComponentManifest>,
+      filterManifestNameEq?: ComponentManifest,
+      filterManifestNameNotEq?: ComponentManifest,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
+      filterParticipatorySpaceIdIn?: Array<string>,
+      filterParticipatorySpaceIdEq?: string,
+      filterParticipatorySpaceTypeIn?: Array<SpaceType>,
+      filterParticipatorySpaceTypeEq?: SpaceType,
+      filterNameStart?: string,
+      filterNameEq?: string,
+      filterNameNotEq?: string,
+      filterNameMatches?: string,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ComponentsResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.searchComponents(
+          locales,
+          filterManifestNameNotIn,
+          filterManifestNameIn,
+          filterManifestNameEq,
+          filterManifestNameNotEq,
+          filterIdNotIn,
+          filterIdIn,
+          filterIdEq,
+          filterIdNotEq,
+          filterParticipatorySpaceIdIn,
+          filterParticipatorySpaceIdEq,
+          filterParticipatorySpaceTypeIn,
+          filterParticipatorySpaceTypeEq,
+          filterNameStart,
+          filterNameEq,
+          filterNameNotEq,
+          filterNameMatches,
+          page,
+          perPage,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ComponentsApi.searchComponents"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
   };
 };
 
@@ -5103,6 +5360,42 @@ export const ComponentsApiFactory = function (
       return localVarFp
         .proposalComponents(
           requestParameters.locales,
+          requestParameters.filterParticipatorySpaceIdIn,
+          requestParameters.filterParticipatorySpaceIdEq,
+          requestParameters.filterParticipatorySpaceTypeIn,
+          requestParameters.filterParticipatorySpaceTypeEq,
+          requestParameters.filterNameStart,
+          requestParameters.filterNameEq,
+          requestParameters.filterNameNotEq,
+          requestParameters.filterNameMatches,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List or search components of the organization
+     * @summary Search components
+     * @param {ComponentsApiSearchComponentsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    searchComponents(
+      requestParameters: ComponentsApiSearchComponentsRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ComponentsResponse> {
+      return localVarFp
+        .searchComponents(
+          requestParameters.locales,
+          requestParameters.filterManifestNameNotIn,
+          requestParameters.filterManifestNameIn,
+          requestParameters.filterManifestNameEq,
+          requestParameters.filterManifestNameNotEq,
+          requestParameters.filterIdNotIn,
+          requestParameters.filterIdIn,
+          requestParameters.filterIdEq,
+          requestParameters.filterIdNotEq,
           requestParameters.filterParticipatorySpaceIdIn,
           requestParameters.filterParticipatorySpaceIdEq,
           requestParameters.filterParticipatorySpaceTypeIn,
@@ -5331,6 +5624,146 @@ export interface ComponentsApiProposalComponentsRequest {
 }
 
 /**
+ * Request parameters for searchComponents operation in ComponentsApi.
+ * @export
+ * @interface ComponentsApiSearchComponentsRequest
+ */
+export interface ComponentsApiSearchComponentsRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly locales?: Array<SearchComponentsLocalesEnum>;
+
+  /**
+   *
+   * @type {Array<ComponentManifest>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterManifestNameNotIn?: Array<ComponentManifest>;
+
+  /**
+   *
+   * @type {Array<ComponentManifest>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterManifestNameIn?: Array<ComponentManifest>;
+
+  /**
+   *
+   * @type {ComponentManifest}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterManifestNameEq?: ComponentManifest;
+
+  /**
+   *
+   * @type {ComponentManifest}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterManifestNameNotEq?: ComponentManifest;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterIdNotIn?: Array<number>;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterIdIn?: Array<number>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterIdEq?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterIdNotEq?: number;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterParticipatorySpaceIdIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterParticipatorySpaceIdEq?: string;
+
+  /**
+   *
+   * @type {Array<SpaceType>}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterParticipatorySpaceTypeIn?: Array<SpaceType>;
+
+  /**
+   *
+   * @type {SpaceType}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterParticipatorySpaceTypeEq?: SpaceType;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterNameStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterNameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterNameNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly filterNameMatches?: string;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly perPage?: number;
+}
+
+/**
  * ComponentsApi - object-oriented interface
  * @export
  * @class ComponentsApi
@@ -5420,6 +5853,44 @@ export class ComponentsApi extends BaseAPI {
     return ComponentsApiFp(this.configuration)
       .proposalComponents(
         requestParameters.locales,
+        requestParameters.filterParticipatorySpaceIdIn,
+        requestParameters.filterParticipatorySpaceIdEq,
+        requestParameters.filterParticipatorySpaceTypeIn,
+        requestParameters.filterParticipatorySpaceTypeEq,
+        requestParameters.filterNameStart,
+        requestParameters.filterNameEq,
+        requestParameters.filterNameNotEq,
+        requestParameters.filterNameMatches,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List or search components of the organization
+   * @summary Search components
+   * @param {ComponentsApiSearchComponentsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ComponentsApi
+   */
+  public searchComponents(
+    requestParameters: ComponentsApiSearchComponentsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ComponentsApiFp(this.configuration)
+      .searchComponents(
+        requestParameters.locales,
+        requestParameters.filterManifestNameNotIn,
+        requestParameters.filterManifestNameIn,
+        requestParameters.filterManifestNameEq,
+        requestParameters.filterManifestNameNotEq,
+        requestParameters.filterIdNotIn,
+        requestParameters.filterIdIn,
+        requestParameters.filterIdEq,
+        requestParameters.filterIdNotEq,
         requestParameters.filterParticipatorySpaceIdIn,
         requestParameters.filterParticipatorySpaceIdEq,
         requestParameters.filterParticipatorySpaceTypeIn,
@@ -5656,6 +6127,61 @@ export const ProposalComponentsLocalesEnum = {
 } as const;
 export type ProposalComponentsLocalesEnum =
   (typeof ProposalComponentsLocalesEnum)[keyof typeof ProposalComponentsLocalesEnum];
+/**
+ * @export
+ */
+export const SearchComponentsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type SearchComponentsLocalesEnum =
+  (typeof SearchComponentsLocalesEnum)[keyof typeof SearchComponentsLocalesEnum];
 
 /**
  * DraftProposalsApi - axios parameter creator
@@ -7606,540 +8132,6 @@ export class ProposalsVoteApi extends BaseAPI {
 }
 
 /**
- * PublicApi - axios parameter creator
- * @export
- */
-export const PublicApiAxiosParamCreator = function (
-  configuration?: Configuration,
-) {
-  return {
-    /**
-     * List or search components of the organization
-     * @summary Search components
-     * @param {Array<SearchComponentsLocalesEnum>} [locales]
-     * @param {Array<SearchComponentsFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<SearchComponentsFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
-     * @param {Array<string>} [filterParticipatorySpaceIdIn]
-     * @param {string} [filterParticipatorySpaceIdEq]
-     * @param {Array<string>} [filterParticipatorySpaceTypeIn]
-     * @param {string} [filterParticipatorySpaceTypeEq]
-     * @param {string} [filterNameStart]
-     * @param {string} [filterNameEq]
-     * @param {string} [filterNameNotEq]
-     * @param {string} [filterNameMatches]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    searchComponents: async (
-      locales?: Array<SearchComponentsLocalesEnum>,
-      filterManifestNameNotIn?: Array<SearchComponentsFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<SearchComponentsFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
-      filterParticipatorySpaceIdIn?: Array<string>,
-      filterParticipatorySpaceIdEq?: string,
-      filterParticipatorySpaceTypeIn?: Array<string>,
-      filterParticipatorySpaceTypeEq?: string,
-      filterNameStart?: string,
-      filterNameEq?: string,
-      filterNameNotEq?: string,
-      filterNameMatches?: string,
-      page?: number,
-      perPage?: number,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/components/search`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (locales) {
-        localVarQueryParameter["locales[]"] = locales;
-      }
-
-      if (filterManifestNameNotIn) {
-        localVarQueryParameter["filter[manifest_name_not_in][]"] =
-          filterManifestNameNotIn;
-      }
-
-      if (filterManifestNameIn) {
-        localVarQueryParameter["filter[manifest_name_in][]"] =
-          filterManifestNameIn;
-      }
-
-      if (filterManifestNameEq !== undefined) {
-        localVarQueryParameter["filter[manifest_name_eq]"] =
-          filterManifestNameEq;
-      }
-
-      if (filterManifestNameNotEq !== undefined) {
-        localVarQueryParameter["filter[manifest_name_not_eq]"] =
-          filterManifestNameNotEq;
-      }
-
-      if (filterParticipatorySpaceIdIn) {
-        localVarQueryParameter["filter[participatory_space_id_in][]"] =
-          filterParticipatorySpaceIdIn;
-      }
-
-      if (filterParticipatorySpaceIdEq !== undefined) {
-        localVarQueryParameter["filter[participatory_space_id_eq]"] =
-          filterParticipatorySpaceIdEq;
-      }
-
-      if (filterParticipatorySpaceTypeIn) {
-        localVarQueryParameter["filter[participatory_space_type_in][]"] =
-          filterParticipatorySpaceTypeIn;
-      }
-
-      if (filterParticipatorySpaceTypeEq !== undefined) {
-        localVarQueryParameter["filter[participatory_space_type_eq]"] =
-          filterParticipatorySpaceTypeEq;
-      }
-
-      if (filterNameStart !== undefined) {
-        localVarQueryParameter["filter[name_start]"] = filterNameStart;
-      }
-
-      if (filterNameEq !== undefined) {
-        localVarQueryParameter["filter[name_eq]"] = filterNameEq;
-      }
-
-      if (filterNameNotEq !== undefined) {
-        localVarQueryParameter["filter[name_not_eq]"] = filterNameNotEq;
-      }
-
-      if (filterNameMatches !== undefined) {
-        localVarQueryParameter["filter[name_matches]"] = filterNameMatches;
-      }
-
-      if (page !== undefined) {
-        localVarQueryParameter["page"] = page;
-      }
-
-      if (perPage !== undefined) {
-        localVarQueryParameter["per_page"] = perPage;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * PublicApi - functional programming interface
- * @export
- */
-export const PublicApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = PublicApiAxiosParamCreator(configuration);
-  return {
-    /**
-     * List or search components of the organization
-     * @summary Search components
-     * @param {Array<SearchComponentsLocalesEnum>} [locales]
-     * @param {Array<SearchComponentsFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
-     * @param {Array<SearchComponentsFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
-     * @param {Array<string>} [filterParticipatorySpaceIdIn]
-     * @param {string} [filterParticipatorySpaceIdEq]
-     * @param {Array<string>} [filterParticipatorySpaceTypeIn]
-     * @param {string} [filterParticipatorySpaceTypeEq]
-     * @param {string} [filterNameStart]
-     * @param {string} [filterNameEq]
-     * @param {string} [filterNameNotEq]
-     * @param {string} [filterNameMatches]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async searchComponents(
-      locales?: Array<SearchComponentsLocalesEnum>,
-      filterManifestNameNotIn?: Array<SearchComponentsFilterManifestNameNotInEnum>,
-      filterManifestNameIn?: Array<SearchComponentsFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
-      filterParticipatorySpaceIdIn?: Array<string>,
-      filterParticipatorySpaceIdEq?: string,
-      filterParticipatorySpaceTypeIn?: Array<string>,
-      filterParticipatorySpaceTypeEq?: string,
-      filterNameStart?: string,
-      filterNameEq?: string,
-      filterNameNotEq?: string,
-      filterNameMatches?: string,
-      page?: number,
-      perPage?: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<ComponentsResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.searchComponents(
-          locales,
-          filterManifestNameNotIn,
-          filterManifestNameIn,
-          filterManifestNameEq,
-          filterManifestNameNotEq,
-          filterParticipatorySpaceIdIn,
-          filterParticipatorySpaceIdEq,
-          filterParticipatorySpaceTypeIn,
-          filterParticipatorySpaceTypeEq,
-          filterNameStart,
-          filterNameEq,
-          filterNameNotEq,
-          filterNameMatches,
-          page,
-          perPage,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["PublicApi.searchComponents"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-  };
-};
-
-/**
- * PublicApi - factory interface
- * @export
- */
-export const PublicApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = PublicApiFp(configuration);
-  return {
-    /**
-     * List or search components of the organization
-     * @summary Search components
-     * @param {PublicApiSearchComponentsRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    searchComponents(
-      requestParameters: PublicApiSearchComponentsRequest = {},
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<ComponentsResponse> {
-      return localVarFp
-        .searchComponents(
-          requestParameters.locales,
-          requestParameters.filterManifestNameNotIn,
-          requestParameters.filterManifestNameIn,
-          requestParameters.filterManifestNameEq,
-          requestParameters.filterManifestNameNotEq,
-          requestParameters.filterParticipatorySpaceIdIn,
-          requestParameters.filterParticipatorySpaceIdEq,
-          requestParameters.filterParticipatorySpaceTypeIn,
-          requestParameters.filterParticipatorySpaceTypeEq,
-          requestParameters.filterNameStart,
-          requestParameters.filterNameEq,
-          requestParameters.filterNameNotEq,
-          requestParameters.filterNameMatches,
-          requestParameters.page,
-          requestParameters.perPage,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * Request parameters for searchComponents operation in PublicApi.
- * @export
- * @interface PublicApiSearchComponentsRequest
- */
-export interface PublicApiSearchComponentsRequest {
-  /**
-   *
-   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly locales?: Array<SearchComponentsLocalesEnum>;
-
-  /**
-   *
-   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs' | 'awesome_map' | 'awesome_iframe'>}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterManifestNameNotIn?: Array<SearchComponentsFilterManifestNameNotInEnum>;
-
-  /**
-   *
-   * @type {Array<'pages' | 'proposals' | 'meetings' | 'budgets' | 'surveys' | 'accountability' | 'debates' | 'sortitions' | 'blogs' | 'awesome_map' | 'awesome_iframe'>}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterManifestNameIn?: Array<SearchComponentsFilterManifestNameInEnum>;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterManifestNameEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterManifestNameNotEq?: string;
-
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterParticipatorySpaceIdIn?: Array<string>;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterParticipatorySpaceIdEq?: string;
-
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterParticipatorySpaceTypeIn?: Array<string>;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterParticipatorySpaceTypeEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterNameStart?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterNameEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterNameNotEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly filterNameMatches?: string;
-
-  /**
-   * Page number for pagination
-   * @type {number}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly page?: number;
-
-  /**
-   * Number of items per page
-   * @type {number}
-   * @memberof PublicApiSearchComponents
-   */
-  readonly perPage?: number;
-}
-
-/**
- * PublicApi - object-oriented interface
- * @export
- * @class PublicApi
- * @extends {BaseAPI}
- */
-export class PublicApi extends BaseAPI {
-  /**
-   * List or search components of the organization
-   * @summary Search components
-   * @param {PublicApiSearchComponentsRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof PublicApi
-   */
-  public searchComponents(
-    requestParameters: PublicApiSearchComponentsRequest = {},
-    options?: RawAxiosRequestConfig,
-  ) {
-    return PublicApiFp(this.configuration)
-      .searchComponents(
-        requestParameters.locales,
-        requestParameters.filterManifestNameNotIn,
-        requestParameters.filterManifestNameIn,
-        requestParameters.filterManifestNameEq,
-        requestParameters.filterManifestNameNotEq,
-        requestParameters.filterParticipatorySpaceIdIn,
-        requestParameters.filterParticipatorySpaceIdEq,
-        requestParameters.filterParticipatorySpaceTypeIn,
-        requestParameters.filterParticipatorySpaceTypeEq,
-        requestParameters.filterNameStart,
-        requestParameters.filterNameEq,
-        requestParameters.filterNameNotEq,
-        requestParameters.filterNameMatches,
-        requestParameters.page,
-        requestParameters.perPage,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * @export
- */
-export const SearchComponentsLocalesEnum = {
-  En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
-  Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
-} as const;
-export type SearchComponentsLocalesEnum =
-  (typeof SearchComponentsLocalesEnum)[keyof typeof SearchComponentsLocalesEnum];
-/**
- * @export
- */
-export const SearchComponentsFilterManifestNameNotInEnum = {
-  Pages: "pages",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Budgets: "budgets",
-  Surveys: "surveys",
-  Accountability: "accountability",
-  Debates: "debates",
-  Sortitions: "sortitions",
-  Blogs: "blogs",
-  AwesomeMap: "awesome_map",
-  AwesomeIframe: "awesome_iframe",
-} as const;
-export type SearchComponentsFilterManifestNameNotInEnum =
-  (typeof SearchComponentsFilterManifestNameNotInEnum)[keyof typeof SearchComponentsFilterManifestNameNotInEnum];
-/**
- * @export
- */
-export const SearchComponentsFilterManifestNameInEnum = {
-  Pages: "pages",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Budgets: "budgets",
-  Surveys: "surveys",
-  Accountability: "accountability",
-  Debates: "debates",
-  Sortitions: "sortitions",
-  Blogs: "blogs",
-  AwesomeMap: "awesome_map",
-  AwesomeIframe: "awesome_iframe",
-} as const;
-export type SearchComponentsFilterManifestNameInEnum =
-  (typeof SearchComponentsFilterManifestNameInEnum)[keyof typeof SearchComponentsFilterManifestNameInEnum];
-
-/**
  * SpacesApi - axios parameter creator
  * @export
  */
@@ -8273,8 +8265,8 @@ export const SpacesApiAxiosParamCreator = function (
      * @param {Array<SearchSpacesLocalesEnum>} [locales]
      * @param {Array<SearchSpacesFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
      * @param {Array<SearchSpacesFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
+     * @param {SearchSpacesFilterManifestNameEqEnum} [filterManifestNameEq]
+     * @param {SearchSpacesFilterManifestNameNotEqEnum} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -8283,7 +8275,7 @@ export const SpacesApiAxiosParamCreator = function (
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {SearchSpacesFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {boolean} [filterTitlePresent]
      * @param {boolean} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -8294,8 +8286,8 @@ export const SpacesApiAxiosParamCreator = function (
       locales?: Array<SearchSpacesLocalesEnum>,
       filterManifestNameNotIn?: Array<SearchSpacesFilterManifestNameNotInEnum>,
       filterManifestNameIn?: Array<SearchSpacesFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
+      filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum,
+      filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -8304,7 +8296,7 @@ export const SpacesApiAxiosParamCreator = function (
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: SearchSpacesFilterTitlePresentEnum,
+      filterTitlePresent?: boolean,
       filterTitleBlank?: boolean,
       page?: number,
       perPage?: number,
@@ -8504,8 +8496,8 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @param {Array<SearchSpacesLocalesEnum>} [locales]
      * @param {Array<SearchSpacesFilterManifestNameNotInEnum>} [filterManifestNameNotIn]
      * @param {Array<SearchSpacesFilterManifestNameInEnum>} [filterManifestNameIn]
-     * @param {string} [filterManifestNameEq]
-     * @param {string} [filterManifestNameNotEq]
+     * @param {SearchSpacesFilterManifestNameEqEnum} [filterManifestNameEq]
+     * @param {SearchSpacesFilterManifestNameNotEqEnum} [filterManifestNameNotEq]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -8514,7 +8506,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @param {string} [filterTitleNotEq]
      * @param {string} [filterTitleMatches]
      * @param {string} [filterTitleDoesNotMatch]
-     * @param {SearchSpacesFilterTitlePresentEnum} [filterTitlePresent]
+     * @param {boolean} [filterTitlePresent]
      * @param {boolean} [filterTitleBlank]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -8525,8 +8517,8 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       locales?: Array<SearchSpacesLocalesEnum>,
       filterManifestNameNotIn?: Array<SearchSpacesFilterManifestNameNotInEnum>,
       filterManifestNameIn?: Array<SearchSpacesFilterManifestNameInEnum>,
-      filterManifestNameEq?: string,
-      filterManifestNameNotEq?: string,
+      filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum,
+      filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -8535,7 +8527,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       filterTitleNotEq?: string,
       filterTitleMatches?: string,
       filterTitleDoesNotMatch?: string,
-      filterTitlePresent?: SearchSpacesFilterTitlePresentEnum,
+      filterTitlePresent?: boolean,
       filterTitleBlank?: boolean,
       page?: number,
       perPage?: number,
@@ -8732,17 +8724,17 @@ export interface SpacesApiSearchSpacesRequest {
 
   /**
    *
-   * @type {string}
+   * @type {'participatory_processes' | 'assemblies'}
    * @memberof SpacesApiSearchSpaces
    */
-  readonly filterManifestNameEq?: string;
+  readonly filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum;
 
   /**
    *
-   * @type {string}
+   * @type {'participatory_processes' | 'assemblies'}
    * @memberof SpacesApiSearchSpaces
    */
-  readonly filterManifestNameNotEq?: string;
+  readonly filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum;
 
   /**
    *
@@ -8802,10 +8794,10 @@ export interface SpacesApiSearchSpacesRequest {
 
   /**
    *
-   * @type {'1' | '0'}
+   * @type {boolean}
    * @memberof SpacesApiSearchSpaces
    */
-  readonly filterTitlePresent?: SearchSpacesFilterTitlePresentEnum;
+  readonly filterTitlePresent?: boolean;
 
   /**
    *
@@ -9097,12 +9089,21 @@ export type SearchSpacesFilterManifestNameInEnum =
 /**
  * @export
  */
-export const SearchSpacesFilterTitlePresentEnum = {
-  _1: "1",
-  _0: "0",
+export const SearchSpacesFilterManifestNameEqEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
 } as const;
-export type SearchSpacesFilterTitlePresentEnum =
-  (typeof SearchSpacesFilterTitlePresentEnum)[keyof typeof SearchSpacesFilterTitlePresentEnum];
+export type SearchSpacesFilterManifestNameEqEnum =
+  (typeof SearchSpacesFilterManifestNameEqEnum)[keyof typeof SearchSpacesFilterManifestNameEqEnum];
+/**
+ * @export
+ */
+export const SearchSpacesFilterManifestNameNotEqEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type SearchSpacesFilterManifestNameNotEqEnum =
+  (typeof SearchSpacesFilterManifestNameNotEqEnum)[keyof typeof SearchSpacesFilterManifestNameNotEqEnum];
 
 /**
  * SystemApi - axios parameter creator
@@ -9158,6 +9159,316 @@ export const SystemApiAxiosParamCreator = function (
       if (perPage !== undefined) {
         localVarQueryParameter["per_page"] = perPage;
       }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * SystemApi - functional programming interface
+ * @export
+ */
+export const SystemApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = SystemApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * List available organizations
+     * @summary List available organizations
+     * @param {Array<OrganizationsLocalesEnum>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async organizations(
+      locales?: Array<OrganizationsLocalesEnum>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<OrganizationsResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
+        locales,
+        page,
+        perPage,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SystemApi.organizations"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * SystemApi - factory interface
+ * @export
+ */
+export const SystemApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = SystemApiFp(configuration);
+  return {
+    /**
+     * List available organizations
+     * @summary List available organizations
+     * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organizations(
+      requestParameters: SystemApiOrganizationsRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<OrganizationsResponse> {
+      return localVarFp
+        .organizations(
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for organizations operation in SystemApi.
+ * @export
+ * @interface SystemApiOrganizationsRequest
+ */
+export interface SystemApiOrganizationsRequest {
+  /**
+   *
+   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
+   * @memberof SystemApiOrganizations
+   */
+  readonly locales?: Array<OrganizationsLocalesEnum>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SystemApiOrganizations
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SystemApiOrganizations
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * SystemApi - object-oriented interface
+ * @export
+ * @class SystemApi
+ * @extends {BaseAPI}
+ */
+export class SystemApi extends BaseAPI {
+  /**
+   * List available organizations
+   * @summary List available organizations
+   * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SystemApi
+   */
+  public organizations(
+    requestParameters: SystemApiOrganizationsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SystemApiFp(this.configuration)
+      .organizations(
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * @export
+ */
+export const OrganizationsLocalesEnum = {
+  En: "en",
+  Bg: "bg",
+  Ar: "ar",
+  Ca: "ca",
+  Cs: "cs",
+  Da: "da",
+  De: "de",
+  El: "el",
+  Eo: "eo",
+  Es: "es",
+  EsMx: "es-MX",
+  EsPy: "es-PY",
+  Et: "et",
+  Eu: "eu",
+  Fa: "fa",
+  FiPl: "fi-pl",
+  Fi: "fi",
+  Fr: "fr",
+  FrCa: "fr-CA",
+  Ga: "ga",
+  Gl: "gl",
+  Hr: "hr",
+  Hu: "hu",
+  Id: "id",
+  Is: "is",
+  It: "it",
+  Ja: "ja",
+  Ko: "ko",
+  Lb: "lb",
+  Lt: "lt",
+  Lv: "lv",
+  Mt: "mt",
+  Nl: "nl",
+  No: "no",
+  Pl: "pl",
+  Pt: "pt",
+  PtBr: "pt-BR",
+  Ro: "ro",
+  Ru: "ru",
+  Sk: "sk",
+  Sl: "sl",
+  Sr: "sr",
+  Sv: "sv",
+  Tr: "tr",
+  Uk: "uk",
+  Vi: "vi",
+  ZhCn: "zh-CN",
+  ZhTw: "zh-TW",
+} as const;
+export type OrganizationsLocalesEnum =
+  (typeof OrganizationsLocalesEnum)[keyof typeof OrganizationsLocalesEnum];
+
+/**
+ * UsersApi - axios parameter creator
+ * @export
+ */
+export const UsersApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
+     * @summary Create a magic-lick
+     * @param {MagickLinkConfigurationPayload} [magickLinkConfigurationPayload]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    generateMagicLink: async (
+      magickLinkConfigurationPayload?: MagickLinkConfigurationPayload,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/me/magic_links`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        magickLinkConfigurationPayload,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Challenge given token, open and a session and redirect
+     * @summary Use a magic-lick
+     * @param {string} magicToken
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    magicLinkSignin: async (
+      magicToken: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'magicToken' is not null or undefined
+      assertParamExists("magicLinkSignin", "magicToken", magicToken);
+      const localVarPath = `/me/magic_links/{magic_token}`.replace(
+        `{${"magic_token"}}`,
+        encodeURIComponent(String(magicToken)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -9302,7 +9613,7 @@ export const SystemApiAxiosParamCreator = function (
      * @param {string} [filterNicknameNotEq]
      * @param {string} [filterNicknameMatches]
      * @param {string} [filterNicknameDoesNotMatch]
-     * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
+     * @param {boolean} [filterNicknamePresent]
      * @param {boolean} [filterNicknameBlank]
      * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
@@ -9319,7 +9630,7 @@ export const SystemApiAxiosParamCreator = function (
       filterNicknameNotEq?: string,
       filterNicknameMatches?: string,
       filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: UsersFilterNicknamePresentEnum,
+      filterNicknamePresent?: boolean,
       filterNicknameBlank?: boolean,
       filterExtendedDataCont?: string,
       options: RawAxiosRequestConfig = {},
@@ -9420,721 +9731,6 @@ export const SystemApiAxiosParamCreator = function (
 };
 
 /**
- * SystemApi - functional programming interface
- * @export
- */
-export const SystemApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = SystemApiAxiosParamCreator(configuration);
-  return {
-    /**
-     * List available organizations
-     * @summary List available organizations
-     * @param {Array<OrganizationsLocalesEnum>} [locales]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async organizations(
-      locales?: Array<OrganizationsLocalesEnum>,
-      page?: number,
-      perPage?: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<OrganizationsResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
-        locales,
-        page,
-        perPage,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.organizations"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
-     * @summary Update user extended data
-     * @param {SetUserDataRequest} setUserDataRequest
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async setUserData(
-      setUserDataRequest: SetUserDataRequest,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<{ [key: string]: any }>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.setUserData(
-        setUserDataRequest,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.setUserData"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * Fetch user extended data
-     * @summary Get user extended data
-     * @param {string} objectPath
-     * @param {number} userId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async userData(
-      objectPath: string,
-      userId: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<{ [key: string]: any }>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
-        objectPath,
-        userId,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.userData"]?.[localVarOperationServerIndex]
-          ?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * List or search users of the organization
-     * @summary List available Users
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {Array<string>} [filterNicknameNotIn]
-     * @param {Array<string>} [filterNicknameIn]
-     * @param {string} [filterNicknameStart]
-     * @param {string} [filterNicknameNotStart]
-     * @param {string} [filterNicknameEq]
-     * @param {string} [filterNicknameNotEq]
-     * @param {string} [filterNicknameMatches]
-     * @param {string} [filterNicknameDoesNotMatch]
-     * @param {UsersFilterNicknamePresentEnum} [filterNicknamePresent]
-     * @param {boolean} [filterNicknameBlank]
-     * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async users(
-      page?: number,
-      perPage?: number,
-      filterNicknameNotIn?: Array<string>,
-      filterNicknameIn?: Array<string>,
-      filterNicknameStart?: string,
-      filterNicknameNotStart?: string,
-      filterNicknameEq?: string,
-      filterNicknameNotEq?: string,
-      filterNicknameMatches?: string,
-      filterNicknameDoesNotMatch?: string,
-      filterNicknamePresent?: UsersFilterNicknamePresentEnum,
-      filterNicknameBlank?: boolean,
-      filterExtendedDataCont?: string,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.users(
-        page,
-        perPage,
-        filterNicknameNotIn,
-        filterNicknameIn,
-        filterNicknameStart,
-        filterNicknameNotStart,
-        filterNicknameEq,
-        filterNicknameNotEq,
-        filterNicknameMatches,
-        filterNicknameDoesNotMatch,
-        filterNicknamePresent,
-        filterNicknameBlank,
-        filterExtendedDataCont,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.users"]?.[localVarOperationServerIndex]
-          ?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-  };
-};
-
-/**
- * SystemApi - factory interface
- * @export
- */
-export const SystemApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = SystemApiFp(configuration);
-  return {
-    /**
-     * List available organizations
-     * @summary List available organizations
-     * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    organizations(
-      requestParameters: SystemApiOrganizationsRequest = {},
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<OrganizationsResponse> {
-      return localVarFp
-        .organizations(
-          requestParameters.locales,
-          requestParameters.page,
-          requestParameters.perPage,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
-     * @summary Update user extended data
-     * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    setUserData(
-      requestParameters: SystemApiSetUserDataRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<{ [key: string]: any }> {
-      return localVarFp
-        .setUserData(requestParameters.setUserDataRequest, options)
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     * Fetch user extended data
-     * @summary Get user extended data
-     * @param {SystemApiUserDataRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    userData(
-      requestParameters: SystemApiUserDataRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<{ [key: string]: any }> {
-      return localVarFp
-        .userData(
-          requestParameters.objectPath,
-          requestParameters.userId,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     * List or search users of the organization
-     * @summary List available Users
-     * @param {SystemApiUsersRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    users(
-      requestParameters: SystemApiUsersRequest = {},
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<UsersResponse> {
-      return localVarFp
-        .users(
-          requestParameters.page,
-          requestParameters.perPage,
-          requestParameters.filterNicknameNotIn,
-          requestParameters.filterNicknameIn,
-          requestParameters.filterNicknameStart,
-          requestParameters.filterNicknameNotStart,
-          requestParameters.filterNicknameEq,
-          requestParameters.filterNicknameNotEq,
-          requestParameters.filterNicknameMatches,
-          requestParameters.filterNicknameDoesNotMatch,
-          requestParameters.filterNicknamePresent,
-          requestParameters.filterNicknameBlank,
-          requestParameters.filterExtendedDataCont,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * Request parameters for organizations operation in SystemApi.
- * @export
- * @interface SystemApiOrganizationsRequest
- */
-export interface SystemApiOrganizationsRequest {
-  /**
-   *
-   * @type {Array<'en' | 'bg' | 'ar' | 'ca' | 'cs' | 'da' | 'de' | 'el' | 'eo' | 'es' | 'es-MX' | 'es-PY' | 'et' | 'eu' | 'fa' | 'fi-pl' | 'fi' | 'fr' | 'fr-CA' | 'ga' | 'gl' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lt' | 'lv' | 'mt' | 'nl' | 'no' | 'pl' | 'pt' | 'pt-BR' | 'ro' | 'ru' | 'sk' | 'sl' | 'sr' | 'sv' | 'tr' | 'uk' | 'vi' | 'zh-CN' | 'zh-TW'>}
-   * @memberof SystemApiOrganizations
-   */
-  readonly locales?: Array<OrganizationsLocalesEnum>;
-
-  /**
-   * Page number for pagination
-   * @type {number}
-   * @memberof SystemApiOrganizations
-   */
-  readonly page?: number;
-
-  /**
-   * Number of items per page
-   * @type {number}
-   * @memberof SystemApiOrganizations
-   */
-  readonly perPage?: number;
-}
-
-/**
- * Request parameters for setUserData operation in SystemApi.
- * @export
- * @interface SystemApiSetUserDataRequest
- */
-export interface SystemApiSetUserDataRequest {
-  /**
-   *
-   * @type {SetUserDataRequest}
-   * @memberof SystemApiSetUserData
-   */
-  readonly setUserDataRequest: SetUserDataRequest;
-}
-
-/**
- * Request parameters for userData operation in SystemApi.
- * @export
- * @interface SystemApiUserDataRequest
- */
-export interface SystemApiUserDataRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUserData
-   */
-  readonly objectPath: string;
-
-  /**
-   *
-   * @type {number}
-   * @memberof SystemApiUserData
-   */
-  readonly userId: number;
-}
-
-/**
- * Request parameters for users operation in SystemApi.
- * @export
- * @interface SystemApiUsersRequest
- */
-export interface SystemApiUsersRequest {
-  /**
-   * Page number for pagination
-   * @type {number}
-   * @memberof SystemApiUsers
-   */
-  readonly page?: number;
-
-  /**
-   * Number of items per page
-   * @type {number}
-   * @memberof SystemApiUsers
-   */
-  readonly perPage?: number;
-
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameNotIn?: Array<string>;
-
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameIn?: Array<string>;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameStart?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameNotStart?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameNotEq?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameMatches?: string;
-
-  /**
-   *
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameDoesNotMatch?: string;
-
-  /**
-   *
-   * @type {'1' | '0'}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknamePresent?: UsersFilterNicknamePresentEnum;
-
-  /**
-   *
-   * @type {boolean}
-   * @memberof SystemApiUsers
-   */
-  readonly filterNicknameBlank?: boolean;
-
-  /**
-   * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
-   * @type {string}
-   * @memberof SystemApiUsers
-   */
-  readonly filterExtendedDataCont?: string;
-}
-
-/**
- * SystemApi - object-oriented interface
- * @export
- * @class SystemApi
- * @extends {BaseAPI}
- */
-export class SystemApi extends BaseAPI {
-  /**
-   * List available organizations
-   * @summary List available organizations
-   * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public organizations(
-    requestParameters: SystemApiOrganizationsRequest = {},
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .organizations(
-        requestParameters.locales,
-        requestParameters.page,
-        requestParameters.perPage,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
-   * @summary Update user extended data
-   * @param {SystemApiSetUserDataRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public setUserData(
-    requestParameters: SystemApiSetUserDataRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .setUserData(requestParameters.setUserDataRequest, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * Fetch user extended data
-   * @summary Get user extended data
-   * @param {SystemApiUserDataRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public userData(
-    requestParameters: SystemApiUserDataRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .userData(requestParameters.objectPath, requestParameters.userId, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   * List or search users of the organization
-   * @summary List available Users
-   * @param {SystemApiUsersRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public users(
-    requestParameters: SystemApiUsersRequest = {},
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .users(
-        requestParameters.page,
-        requestParameters.perPage,
-        requestParameters.filterNicknameNotIn,
-        requestParameters.filterNicknameIn,
-        requestParameters.filterNicknameStart,
-        requestParameters.filterNicknameNotStart,
-        requestParameters.filterNicknameEq,
-        requestParameters.filterNicknameNotEq,
-        requestParameters.filterNicknameMatches,
-        requestParameters.filterNicknameDoesNotMatch,
-        requestParameters.filterNicknamePresent,
-        requestParameters.filterNicknameBlank,
-        requestParameters.filterExtendedDataCont,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * @export
- */
-export const OrganizationsLocalesEnum = {
-  En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
-  Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
-} as const;
-export type OrganizationsLocalesEnum =
-  (typeof OrganizationsLocalesEnum)[keyof typeof OrganizationsLocalesEnum];
-/**
- * @export
- */
-export const UsersFilterNicknamePresentEnum = {
-  _1: "1",
-  _0: "0",
-} as const;
-export type UsersFilterNicknamePresentEnum =
-  (typeof UsersFilterNicknamePresentEnum)[keyof typeof UsersFilterNicknamePresentEnum];
-
-/**
- * UsersApi - axios parameter creator
- * @export
- */
-export const UsersApiAxiosParamCreator = function (
-  configuration?: Configuration,
-) {
-  return {
-    /**
-     * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
-     * @summary Create a magic-lick
-     * @param {MagickLinkConfigurationPayload} [magickLinkConfigurationPayload]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    generateMagicLink: async (
-      magickLinkConfigurationPayload?: MagickLinkConfigurationPayload,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/me/magic_links`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        magickLinkConfigurationPayload,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     * Challenge given token, open and a session and redirect
-     * @summary Use a magic-lick
-     * @param {string} magicToken
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    magicLinkSignin: async (
-      magicToken: string,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'magicToken' is not null or undefined
-      assertParamExists("magicLinkSignin", "magicToken", magicToken);
-      const localVarPath = `/me/magic_links/{magic_token}`.replace(
-        `{${"magic_token"}}`,
-        encodeURIComponent(String(magicToken)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
  * UsersApi - functional programming interface
  * @export
  */
@@ -10205,6 +9801,139 @@ export const UsersApiFp = function (configuration?: Configuration) {
           configuration,
         )(axios, localVarOperationServerBasePath || basePath);
     },
+    /**
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+     * @summary Update user extended data
+     * @param {SetUserDataRequest} setUserDataRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async setUserData(
+      setUserDataRequest: SetUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.setUserData(
+        setUserDataRequest,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["UsersApi.setUserData"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get user extended data
+     * @param {string} objectPath
+     * @param {number} userId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async userData(
+      objectPath: string,
+      userId: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
+        objectPath,
+        userId,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["UsersApi.userData"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List or search users of the organization
+     * @summary List available Users
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<string>} [filterNicknameNotIn]
+     * @param {Array<string>} [filterNicknameIn]
+     * @param {string} [filterNicknameStart]
+     * @param {string} [filterNicknameNotStart]
+     * @param {string} [filterNicknameEq]
+     * @param {string} [filterNicknameNotEq]
+     * @param {string} [filterNicknameMatches]
+     * @param {string} [filterNicknameDoesNotMatch]
+     * @param {boolean} [filterNicknamePresent]
+     * @param {boolean} [filterNicknameBlank]
+     * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async users(
+      page?: number,
+      perPage?: number,
+      filterNicknameNotIn?: Array<string>,
+      filterNicknameIn?: Array<string>,
+      filterNicknameStart?: string,
+      filterNicknameNotStart?: string,
+      filterNicknameEq?: string,
+      filterNicknameNotEq?: string,
+      filterNicknameMatches?: string,
+      filterNicknameDoesNotMatch?: string,
+      filterNicknamePresent?: boolean,
+      filterNicknameBlank?: boolean,
+      filterExtendedDataCont?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.users(
+        page,
+        perPage,
+        filterNicknameNotIn,
+        filterNicknameIn,
+        filterNicknameStart,
+        filterNicknameNotStart,
+        filterNicknameEq,
+        filterNicknameNotEq,
+        filterNicknameMatches,
+        filterNicknameDoesNotMatch,
+        filterNicknamePresent,
+        filterNicknameBlank,
+        filterExtendedDataCont,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["UsersApi.users"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
   };
 };
 
@@ -10252,6 +9981,70 @@ export const UsersApiFactory = function (
         .magicLinkSignin(requestParameters.magicToken, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+     * @summary Update user extended data
+     * @param {UsersApiSetUserDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    setUserData(
+      requestParameters: UsersApiSetUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .setUserData(requestParameters.setUserDataRequest, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Fetch user extended data
+     * @summary Get user extended data
+     * @param {UsersApiUserDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userData(
+      requestParameters: UsersApiUserDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .userData(
+          requestParameters.objectPath,
+          requestParameters.userId,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List or search users of the organization
+     * @summary List available Users
+     * @param {UsersApiUsersRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    users(
+      requestParameters: UsersApiUsersRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<UsersResponse> {
+      return localVarFp
+        .users(
+          requestParameters.page,
+          requestParameters.perPage,
+          requestParameters.filterNicknameNotIn,
+          requestParameters.filterNicknameIn,
+          requestParameters.filterNicknameStart,
+          requestParameters.filterNicknameNotStart,
+          requestParameters.filterNicknameEq,
+          requestParameters.filterNicknameNotEq,
+          requestParameters.filterNicknameMatches,
+          requestParameters.filterNicknameDoesNotMatch,
+          requestParameters.filterNicknamePresent,
+          requestParameters.filterNicknameBlank,
+          requestParameters.filterExtendedDataCont,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -10281,6 +10074,139 @@ export interface UsersApiMagicLinkSigninRequest {
    * @memberof UsersApiMagicLinkSignin
    */
   readonly magicToken: string;
+}
+
+/**
+ * Request parameters for setUserData operation in UsersApi.
+ * @export
+ * @interface UsersApiSetUserDataRequest
+ */
+export interface UsersApiSetUserDataRequest {
+  /**
+   *
+   * @type {SetUserDataRequest}
+   * @memberof UsersApiSetUserData
+   */
+  readonly setUserDataRequest: SetUserDataRequest;
+}
+
+/**
+ * Request parameters for userData operation in UsersApi.
+ * @export
+ * @interface UsersApiUserDataRequest
+ */
+export interface UsersApiUserDataRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUserData
+   */
+  readonly objectPath: string;
+
+  /**
+   *
+   * @type {number}
+   * @memberof UsersApiUserData
+   */
+  readonly userId: number;
+}
+
+/**
+ * Request parameters for users operation in UsersApi.
+ * @export
+ * @interface UsersApiUsersRequest
+ */
+export interface UsersApiUsersRequest {
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof UsersApiUsers
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof UsersApiUsers
+   */
+  readonly perPage?: number;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameNotStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameMatches?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameDoesNotMatch?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknamePresent?: boolean;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof UsersApiUsers
+   */
+  readonly filterNicknameBlank?: boolean;
+
+  /**
+   * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly filterExtendedDataCont?: string;
 }
 
 /**
@@ -10324,6 +10250,72 @@ export class UsersApi extends BaseAPI {
   ) {
     return UsersApiFp(this.configuration)
       .magicLinkSignin(requestParameters.magicToken, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+   * @summary Update user extended data
+   * @param {UsersApiSetUserDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UsersApi
+   */
+  public setUserData(
+    requestParameters: UsersApiSetUserDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return UsersApiFp(this.configuration)
+      .setUserData(requestParameters.setUserDataRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Fetch user extended data
+   * @summary Get user extended data
+   * @param {UsersApiUserDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UsersApi
+   */
+  public userData(
+    requestParameters: UsersApiUserDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return UsersApiFp(this.configuration)
+      .userData(requestParameters.objectPath, requestParameters.userId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List or search users of the organization
+   * @summary List available Users
+   * @param {UsersApiUsersRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UsersApi
+   */
+  public users(
+    requestParameters: UsersApiUsersRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return UsersApiFp(this.configuration)
+      .users(
+        requestParameters.page,
+        requestParameters.perPage,
+        requestParameters.filterNicknameNotIn,
+        requestParameters.filterNicknameIn,
+        requestParameters.filterNicknameStart,
+        requestParameters.filterNicknameNotStart,
+        requestParameters.filterNicknameEq,
+        requestParameters.filterNicknameNotEq,
+        requestParameters.filterNicknameMatches,
+        requestParameters.filterNicknameDoesNotMatch,
+        requestParameters.filterNicknamePresent,
+        requestParameters.filterNicknameBlank,
+        requestParameters.filterExtendedDataCont,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 }

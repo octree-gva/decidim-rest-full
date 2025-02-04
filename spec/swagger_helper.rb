@@ -71,8 +71,9 @@ RSpec.configure do |config|
       ],
       tags: [
         Api::Definitions::Tags::OAUTH,
-        Api::Definitions::Tags::SYSTEM,
-        Api::Definitions::Tags::PUBLIC,
+        Api::Definitions::Tags::SPACE,
+        Api::Definitions::Tags::COMPONENT,
+        Api::Definitions::Tags::USER,
         Api::Definitions::Tags::BLOG,
         Api::Definitions::Tags::PROPOSAL
       ],

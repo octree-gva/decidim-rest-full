@@ -37,14 +37,14 @@ module Api
         },
         {
           name: "filter[#{filter}_eq]", in: :query, schema: {
-            type: :string,
+            **item_schema,
             title: "#{filter} equal filter",
             description: "_#{filter}_ is equal to"
           }, required: false
         },
         {
           name: "filter[#{filter}_not_eq]", in: :query, schema: {
-            type: :string,
+            **item_schema,
             title: "#{filter} not equal filter",
             description: "_#{filter}_ is NOT equal to"
           }, required: false
@@ -65,24 +65,22 @@ module Api
           }, required: false
         },
         { name: "filter[#{filter}_lt]", in: :query, schema: {
-          type: :string,
+          **item_schema,
           title: "#{filter} less than filter",
           description: "_#{filter}_ is less than"
         }, required: false },
         {
           name: "filter[#{filter}_gt]", in: :query, schema: {
-            type: :string,
+            **item_schema,
             title: "#{filter} greater than filter",
             description: "_#{filter}_ is greater than"
           }, required: false
         },
         {
           name: "filter[#{filter}_present]", in: :query, schema: {
-            type: :string,
+            type: :boolean,
             title: "#{filter} present filter",
-            description: "_#{filter}_ is not null and not empty",
-            enum: %w(1 0),
-            example: "1"
+            description: "_#{filter}_ is not null and not empty"
           }, required: false
         },
         {
