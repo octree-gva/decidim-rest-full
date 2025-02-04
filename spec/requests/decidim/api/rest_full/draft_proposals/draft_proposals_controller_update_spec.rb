@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController, type: :request do
   path "/draft_proposals/{id}" do
     put "Update draft proposal" do
-      tags "Proposals"
+      tags "Draft Proposals"
       produces "application/json"
       security [{ resourceOwnerFlowBearer: ["proposals"] }]
       operationId "updateDraftProposal"
