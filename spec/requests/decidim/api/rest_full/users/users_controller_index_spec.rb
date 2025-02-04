@@ -6,7 +6,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
     get "List available Users" do
       tags "Users"
       produces "application/json"
-      security [{ credentialFlowBearer: ["system"] }]
+      security [{ credentialFlowBearer: ["oauth"] }]
       operationId "users"
       description "List or search users of the organization"
 
@@ -25,14 +25,14 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
       let!(:organization) { create(:organization) }
       let(:Authorization) { "Bearer #{impersonation_token.token}" }
       let(:api_client) do
-        api_client = create(:api_client, organization: organization, scopes: "system")
+        api_client = create(:api_client, organization: organization, scopes: "oauth")
         api_client.permissions = [
-          api_client.permissions.build(permission: "system.users.read")
+          api_client.permissions.build(permission: "oauth.read")
         ]
         api_client.save!
         api_client
       end
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
 
       before do
         host! organization.host
@@ -63,7 +63,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
           end
         end
 
-        context "without system.users.extended_data.read permission" do
+        context "without oauth.extended_data.read permission" do
           context "and return empty extended_data" do
             before do
               create(:user, nickname: "specific-data", extended_data: { "key.path.is.awesome" => "bar" }, organization: organization)
@@ -77,12 +77,12 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
           end
         end
 
-        context "with system.users.extended_data.read permission" do
+        context "with oauth.extended_data.read permission" do
           let(:api_client) do
-            api_client = create(:api_client, organization: organization, scopes: "system")
+            api_client = create(:api_client, organization: organization, scopes: "oauth")
             api_client.permissions = [
-              api_client.permissions.build(permission: "system.users.read"),
-              api_client.permissions.build(permission: "system.users.extended_data.read")
+              api_client.permissions.build(permission: "oauth.read"),
+              api_client.permissions.build(permission: "oauth.extended_data.read")
             ]
             api_client.save!
             api_client
@@ -160,7 +160,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
 
-        context "with no system scope" do
+        context "with no oauth scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
@@ -170,10 +170,10 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
           end
         end
 
-        context "without system.users.extended_data.read permission" do
+        context "without oauth.extended_data.read permission" do
           context "and list user" do
-            let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-            let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+            let!(:api_client) { create(:api_client, organization: organization, scopes: ["oauth"]) }
+            let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
 
             run_test! do |_example|
               expect(response.status).to eq(403)

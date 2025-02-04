@@ -6,7 +6,7 @@ module Decidim
       module Users
         class UsersController < ApplicationController
           before_action do
-            doorkeeper_authorize! :system
+            doorkeeper_authorize! :oauth
             authorize! :read, ::Decidim::User
           end
           before_action :validates_filter_params!

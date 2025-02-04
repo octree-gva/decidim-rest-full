@@ -6,7 +6,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
     put "Update user extended data" do
       tags "Users"
       produces "application/json"
-      security [{ resourceOwnerFlowBearer: ["system"] }]
+      security [{ resourceOwnerFlowBearer: ["oauth"] }]
       operationId "setUserData"
       description <<~README
         The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:
@@ -99,16 +99,16 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
 
       let!(:organization) { create(:organization) }
       let(:api_client) do
-        api_client = create(:api_client, organization: organization, scopes: "system")
+        api_client = create(:api_client, organization: organization, scopes: "oauth")
         api_client.permissions = [
-          api_client.permissions.build(permission: "system.users.extended_data.update")
+          api_client.permissions.build(permission: "oauth.extended_data.update")
         ]
         api_client.save!
         api_client
       end
 
       let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "custom" => { "data" => { key: "value" } } }) }
-      let(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
+      let(:credential_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: user.id, application: api_client) }
       let(:Authorization) { "Bearer #{credential_token.token}" }
       let(:body) { { data: { "foo" => "bar" }, object_path: "." } }
 
@@ -188,7 +188,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
         schema "$ref" => "#/components/schemas/api_error"
         let(:body) { { data: "1990-02-09", object_path: "." } }
 
-        context "with no system scope" do
+        context "with no oauth scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
           let!(:credential_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
@@ -198,9 +198,9 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           end
         end
 
-        context "with no system.users.extended_data.update permission" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-          let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+        context "with no oauth.extended_data.update permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["oauth"]) }
+          let!(:credential_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
           let(:body) { { data: "1990-02-09", object_path: "." } }
 
           run_test! do |_example|

@@ -6,23 +6,23 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
     get "Get user extended data" do
       tags "Users"
       produces "application/json"
-      security [{ resourceOwnerFlowBearer: ["system"] }]
+      security [{ resourceOwnerFlowBearer: ["oauth"] }]
       operationId "userData"
       description "Fetch user extended data"
       parameter name: "object_path", in: :query, required: true, schema: { type: :string, description: "object path, in dot style, like foo.bar" }
 
       let!(:organization) { create(:organization) }
       let(:api_client) do
-        api_client = create(:api_client, organization: organization, scopes: "system")
+        api_client = create(:api_client, organization: organization, scopes: "oauth")
         api_client.permissions = [
-          api_client.permissions.build(permission: "system.users.extended_data.read")
+          api_client.permissions.build(permission: "oauth.extended_data.read")
         ]
         api_client.save!
         api_client
       end
 
       let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "custom" => { "data" => { key: "value" } } }) }
-      let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
+      let!(:credential_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: user.id, application: api_client) }
       let(:Authorization) { "Bearer #{credential_token.token}" }
 
       let!(:user_id) { user.id }
@@ -86,7 +86,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
         produces "application/json"
         schema "$ref" => "#/components/schemas/api_error"
 
-        context "with no system scope" do
+        context "with no oauth scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
           let!(:credential_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
           let!(:object_path) { "." }
@@ -97,9 +97,9 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           end
         end
 
-        context "with no system.users.extended_data.read permission" do
-          let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
-          let!(:credential_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
+        context "with no oauth.extended_data.read permission" do
+          let!(:api_client) { create(:api_client, organization: organization, scopes: ["oauth"]) }
+          let!(:credential_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
           let!(:object_path) { "." }
 
           run_test! do |_example|

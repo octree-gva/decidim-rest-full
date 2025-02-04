@@ -16,7 +16,7 @@ module Decidim
         end
         link :magic_link do |_object, params|
           {
-            href: link_join(params[:host], "me", "magic-links"),
+            href: link_join(params[:host], "me", "magic_links"),
             title: "Generates a magic link ",
             rel: "resource",
             meta: {
@@ -27,7 +27,7 @@ module Decidim
         end
         link :self do |object, params|
           {
-            href: link_join(params[:host], "me", "magic-links", object.magic_token),
+            href: link_join(params[:host], "me", "magic_links", object.magic_token),
             title: "Sign in with magic link",
             rel: "resource",
             meta: {
