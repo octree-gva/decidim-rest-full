@@ -20,7 +20,7 @@ module Decidim
                                      "FALSE as is_transparent"
                                    end
               model.ransacker :manifest_name do |_r|
-                Arel.sql("'#{manifest}'")
+                Arel.sql("'#{manifest.name}'")
               end
               query = model.where(organization: current_organization).visible_for(act_as).select(
                 "#{model.table_name}.created_at",
@@ -33,7 +33,7 @@ module Decidim
                 "#{model.table_name}.private_space",
                 "#{model.table_name}.decidim_organization_id",
                 select_transparent,
-                "'#{manifest}' AS manifest_name",
+                "'#{manifest.name}' AS manifest_name",
                 "'#{data[:model]}' AS class_name"
               ).ransack(params[:filter])
               query.result.to_sql
