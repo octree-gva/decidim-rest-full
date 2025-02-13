@@ -15,6 +15,14 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
       Api::Definitions::FILTER_PARAM.call("nickname", { type: :string }, %w(lt gt)).each do |param|
         parameter(**param)
       end
+      Api::Definitions::FILTER_PARAM.call(
+        "id",
+        { type: :integer },
+        %w(lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+
       parameter name: :"filter[extended_data_cont]",
                 schema: { type: :string },
                 in: :query,
@@ -119,6 +127,16 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(0)
             end
+          end
+        end
+
+        context "with filter[id_in][] in a list of 5 ids" do
+          let(:user_list) { create_list(:user, 5, organization: organization) }
+          let(:"filter[id_in][]") { user_list.map(&:id) }
+
+          run_test!(example_name: :filter_by_id_in) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.size).to eq(5)
           end
         end
 

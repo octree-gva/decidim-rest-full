@@ -12,6 +12,9 @@ module Decidim
           before_action :validates_filter_params!
           # List all users
           def index
+            Decidim::User.ransacker :id do |_r|
+              Arel.sql('CAST("decidim_users"."id" AS VARCHAR)')
+            end
             # Fetch users and paginate
             users = paginate(Decidim::User.where(organization: current_organization).ransack(params[:filter]).result)
             # Render the response
