@@ -8267,6 +8267,10 @@ export const SpacesApiAxiosParamCreator = function (
      * @param {Array<SearchSpacesFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {SearchSpacesFilterManifestNameEqEnum} [filterManifestNameEq]
      * @param {SearchSpacesFilterManifestNameNotEqEnum} [filterManifestNameNotEq]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -8288,6 +8292,10 @@ export const SpacesApiAxiosParamCreator = function (
       filterManifestNameIn?: Array<SearchSpacesFilterManifestNameInEnum>,
       filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum,
       filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -8348,6 +8356,22 @@ export const SpacesApiAxiosParamCreator = function (
       if (filterManifestNameNotEq !== undefined) {
         localVarQueryParameter["filter[manifest_name_not_eq]"] =
           filterManifestNameNotEq;
+      }
+
+      if (filterIdNotIn) {
+        localVarQueryParameter["filter[id_not_in][]"] = filterIdNotIn;
+      }
+
+      if (filterIdIn) {
+        localVarQueryParameter["filter[id_in][]"] = filterIdIn;
+      }
+
+      if (filterIdEq !== undefined) {
+        localVarQueryParameter["filter[id_eq]"] = filterIdEq;
+      }
+
+      if (filterIdNotEq !== undefined) {
+        localVarQueryParameter["filter[id_not_eq]"] = filterIdNotEq;
       }
 
       if (filterTitleNotIn) {
@@ -8498,6 +8522,10 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @param {Array<SearchSpacesFilterManifestNameInEnum>} [filterManifestNameIn]
      * @param {SearchSpacesFilterManifestNameEqEnum} [filterManifestNameEq]
      * @param {SearchSpacesFilterManifestNameNotEqEnum} [filterManifestNameNotEq]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -8519,6 +8547,10 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       filterManifestNameIn?: Array<SearchSpacesFilterManifestNameInEnum>,
       filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum,
       filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -8541,6 +8573,10 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         filterManifestNameIn,
         filterManifestNameEq,
         filterManifestNameNotEq,
+        filterIdNotIn,
+        filterIdIn,
+        filterIdEq,
+        filterIdNotEq,
         filterTitleNotIn,
         filterTitleIn,
         filterTitleStart,
@@ -8634,6 +8670,10 @@ export const SpacesApiFactory = function (
           requestParameters.filterManifestNameIn,
           requestParameters.filterManifestNameEq,
           requestParameters.filterManifestNameNotEq,
+          requestParameters.filterIdNotIn,
+          requestParameters.filterIdIn,
+          requestParameters.filterIdEq,
+          requestParameters.filterIdNotEq,
           requestParameters.filterTitleNotIn,
           requestParameters.filterTitleIn,
           requestParameters.filterTitleStart,
@@ -8735,6 +8775,34 @@ export interface SpacesApiSearchSpacesRequest {
    * @memberof SpacesApiSearchSpaces
    */
   readonly filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterIdNotIn?: Array<number>;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterIdIn?: Array<number>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterIdEq?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterIdNotEq?: number;
 
   /**
    *
@@ -8885,6 +8953,10 @@ export class SpacesApi extends BaseAPI {
         requestParameters.filterManifestNameIn,
         requestParameters.filterManifestNameEq,
         requestParameters.filterManifestNameNotEq,
+        requestParameters.filterIdNotIn,
+        requestParameters.filterIdIn,
+        requestParameters.filterIdEq,
+        requestParameters.filterIdNotEq,
         requestParameters.filterTitleNotIn,
         requestParameters.filterTitleIn,
         requestParameters.filterTitleStart,
@@ -9604,6 +9676,10 @@ export const UsersApiAxiosParamCreator = function (
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {boolean} [filterNicknamePresent]
      * @param {boolean} [filterNicknameBlank]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
      * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9621,6 +9697,10 @@ export const UsersApiAxiosParamCreator = function (
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: boolean,
       filterNicknameBlank?: boolean,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
       filterExtendedDataCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -9695,6 +9775,22 @@ export const UsersApiAxiosParamCreator = function (
 
       if (filterNicknameBlank !== undefined) {
         localVarQueryParameter["filter[nickname_blank]"] = filterNicknameBlank;
+      }
+
+      if (filterIdNotIn) {
+        localVarQueryParameter["filter[id_not_in][]"] = filterIdNotIn;
+      }
+
+      if (filterIdIn) {
+        localVarQueryParameter["filter[id_in][]"] = filterIdIn;
+      }
+
+      if (filterIdEq !== undefined) {
+        localVarQueryParameter["filter[id_eq]"] = filterIdEq;
+      }
+
+      if (filterIdNotEq !== undefined) {
+        localVarQueryParameter["filter[id_not_eq]"] = filterIdNotEq;
       }
 
       if (filterExtendedDataCont !== undefined) {
@@ -9870,6 +9966,10 @@ export const UsersApiFp = function (configuration?: Configuration) {
      * @param {string} [filterNicknameDoesNotMatch]
      * @param {boolean} [filterNicknamePresent]
      * @param {boolean} [filterNicknameBlank]
+     * @param {Array<number>} [filterIdNotIn]
+     * @param {Array<number>} [filterIdIn]
+     * @param {number} [filterIdEq]
+     * @param {number} [filterIdNotEq]
      * @param {string} [filterExtendedDataCont] Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9887,6 +9987,10 @@ export const UsersApiFp = function (configuration?: Configuration) {
       filterNicknameDoesNotMatch?: string,
       filterNicknamePresent?: boolean,
       filterNicknameBlank?: boolean,
+      filterIdNotIn?: Array<number>,
+      filterIdIn?: Array<number>,
+      filterIdEq?: number,
+      filterIdNotEq?: number,
       filterExtendedDataCont?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -9905,6 +10009,10 @@ export const UsersApiFp = function (configuration?: Configuration) {
         filterNicknameDoesNotMatch,
         filterNicknamePresent,
         filterNicknameBlank,
+        filterIdNotIn,
+        filterIdIn,
+        filterIdEq,
+        filterIdNotEq,
         filterExtendedDataCont,
         options,
       );
@@ -10022,6 +10130,10 @@ export const UsersApiFactory = function (
           requestParameters.filterNicknameDoesNotMatch,
           requestParameters.filterNicknamePresent,
           requestParameters.filterNicknameBlank,
+          requestParameters.filterIdNotIn,
+          requestParameters.filterIdIn,
+          requestParameters.filterIdEq,
+          requestParameters.filterIdNotEq,
           requestParameters.filterExtendedDataCont,
           options,
         )
@@ -10177,6 +10289,34 @@ export interface UsersApiUsersRequest {
   readonly filterNicknameBlank?: boolean;
 
   /**
+   *
+   * @type {Array<number>}
+   * @memberof UsersApiUsers
+   */
+  readonly filterIdNotIn?: Array<number>;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof UsersApiUsers
+   */
+  readonly filterIdIn?: Array<number>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof UsersApiUsers
+   */
+  readonly filterIdEq?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof UsersApiUsers
+   */
+  readonly filterIdNotEq?: number;
+
+  /**
    * Search on user extended_data. use the format: &#x60;\&quot;&lt;key&gt;\&quot;:&lt;space&gt;\&quot;&lt;value&gt;\&quot;&#x60;
    * @type {string}
    * @memberof UsersApiUsers
@@ -10288,6 +10428,10 @@ export class UsersApi extends BaseAPI {
         requestParameters.filterNicknameDoesNotMatch,
         requestParameters.filterNicknamePresent,
         requestParameters.filterNicknameBlank,
+        requestParameters.filterIdNotIn,
+        requestParameters.filterIdIn,
+        requestParameters.filterIdEq,
+        requestParameters.filterIdNotEq,
         requestParameters.filterExtendedDataCont,
         options,
       )

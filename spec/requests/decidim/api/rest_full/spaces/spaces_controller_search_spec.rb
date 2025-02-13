@@ -18,6 +18,14 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
       ).each do |param|
         parameter(**param)
       end
+      Api::Definitions::FILTER_PARAM.call(
+        "id",
+        { type: :integer },
+        %w(lt gt start not_start matches does_not_match present blank)
+      ).each do |param|
+        parameter(**param)
+      end
+
       Api::Definitions::FILTER_PARAM.call("title", { type: :string }, %w(lt gt)).each do |param|
         parameter(**param)
       end
@@ -39,10 +47,10 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
       let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
 
       let!(:space_list) do
-        3.times do
+        3.times.map do
           create(:assembly, organization: organization)
           create(:participatory_process, organization: organization)
-        end
+        end.flatten
       end
 
       let!(:component_list) do
@@ -96,6 +104,15 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           run_test!(example_name: :manifest_name_in_Assemblies) do |example|
             data = JSON.parse(example.body)["data"]
             expect(data).to eq(data.select { |resp| resp["attributes"]["manifest_name"] == "assemblies" })
+          end
+        end
+
+        context "with filter[id_in][] in a list of 3 ids" do
+          let(:"filter[id_in][]") { space_list.map(&:id) }
+
+          run_test!(example_name: :filter_by_id_in) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data.size).to eq(3)
           end
         end
 
