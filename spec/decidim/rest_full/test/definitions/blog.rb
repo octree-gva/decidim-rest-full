@@ -57,8 +57,8 @@ module Api
             self: Api::Definitions.link("Blog Post"),
             collection: Api::Definitions.link("Associate blog post list"),
             related: Api::Definitions.link("Related Component"),
-            prev: Api::Definitions.link("Prev blog post entry", [{}]),
-            next: Api::Definitions.link("Next blog post entry", [{}])
+            prev: Api::Definitions.link("Prev blog post entry", [nil, {}]),
+            next: Api::Definitions.link("Next blog post entry", [nil, {}])
           },
           additionalProperties: false,
           required: [:self, :collection, :related]

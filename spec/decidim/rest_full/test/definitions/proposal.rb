@@ -65,7 +65,9 @@ module Api
           properties: {
             self: Api::Definitions.link("Proposal Detail"),
             collection: Api::Definitions.link("Proposal Lists"),
-            related: Api::Definitions.link("Component Details")
+            related: Api::Definitions.link("Component Details"),
+            prev: Api::Definitions.link("Prev proposal entry", [nil, {}]),
+            next: Api::Definitions.link("Next proposal entry", [nil, {}])
           },
           additionalProperties: false,
           required: [:self, :collection, :related]
@@ -81,9 +83,9 @@ module Api
                   type: :object,
                   properties: {
                     id: { type: :string, description: "Proposal State id" },
-                    type: { type: :string, enum: ["proposal_state"] }
+                    type: { type: :string, enum: ["proposal_state"], description: "Proposal State Type" }
                   },
-                  required: [:id, :string]
+                  required: [:id, :type]
                 },
                 meta: {
                   type: :object,

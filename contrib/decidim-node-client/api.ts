@@ -1109,10 +1109,10 @@ export interface DraftProposal {
   meta: DraftPropositionMetadata;
   /**
    *
-   * @type {ProposalLinks}
+   * @type {ProposalLinks1}
    * @memberof DraftProposal
    */
-  links: ProposalLinks;
+  links: ProposalLinks1;
   /**
    *
    * @type {ProposalRelationships1}
@@ -2389,6 +2389,43 @@ export interface ProposalLinks {
    * @memberof ProposalLinks
    */
   related: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {AttachedComponentsLinksSelf}
+   * @memberof ProposalLinks
+   */
+  prev?: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {AttachedComponentsLinksSelf}
+   * @memberof ProposalLinks
+   */
+  next?: AttachedComponentsLinksSelf;
+}
+/**
+ *
+ * @export
+ * @interface ProposalLinks1
+ */
+export interface ProposalLinks1 {
+  /**
+   *
+   * @type {AttachedComponentsLinksSelf}
+   * @memberof ProposalLinks1
+   */
+  self: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {AttachedComponentsLinksSelf}
+   * @memberof ProposalLinks1
+   */
+  collection: AttachedComponentsLinksSelf;
+  /**
+   *
+   * @type {AttachedComponentsLinksSelf}
+   * @memberof ProposalLinks1
+   */
+  related: AttachedComponentsLinksSelf;
 }
 /**
  *
@@ -2645,11 +2682,11 @@ export interface ProposalRelationshipsStateData {
    */
   id: string;
   /**
-   *
+   * Proposal State Type
    * @type {string}
    * @memberof ProposalRelationshipsStateData
    */
-  type?: ProposalRelationshipsStateDataTypeEnum;
+  type: ProposalRelationshipsStateDataTypeEnum;
 }
 
 export const ProposalRelationshipsStateDataTypeEnum = {
@@ -7173,6 +7210,13 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {ProposalSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
      * @param {number} [componentId]
+     * @param {Array<string>} [filterVotedWeightIn]
+     * @param {string} [filterVotedWeightEq]
+     * @param {boolean} [filterVotedWeightBlank]
+     * @param {Array<string>} [filterStateIn]
+     * @param {string} [filterStateEq]
+     * @param {string} [filterStateNotEq]
+     * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -7182,6 +7226,13 @@ export const ProposalsApiAxiosParamCreator = function (
       spaceManifest?: ProposalSpaceManifestEnum,
       spaceId?: number,
       componentId?: number,
+      filterVotedWeightIn?: Array<string>,
+      filterVotedWeightEq?: string,
+      filterVotedWeightBlank?: boolean,
+      filterStateIn?: Array<string>,
+      filterStateEq?: string,
+      filterStateNotEq?: string,
+      filterStateBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -7229,6 +7280,36 @@ export const ProposalsApiAxiosParamCreator = function (
         localVarQueryParameter["component_id"] = componentId;
       }
 
+      if (filterVotedWeightIn) {
+        localVarQueryParameter["filter[voted_weight_in][]"] =
+          filterVotedWeightIn;
+      }
+
+      if (filterVotedWeightEq !== undefined) {
+        localVarQueryParameter["filter[voted_weight_eq]"] = filterVotedWeightEq;
+      }
+
+      if (filterVotedWeightBlank !== undefined) {
+        localVarQueryParameter["filter[voted_weight_blank]"] =
+          filterVotedWeightBlank;
+      }
+
+      if (filterStateIn) {
+        localVarQueryParameter["filter[state_in][]"] = filterStateIn;
+      }
+
+      if (filterStateEq !== undefined) {
+        localVarQueryParameter["filter[state_eq]"] = filterStateEq;
+      }
+
+      if (filterStateNotEq !== undefined) {
+        localVarQueryParameter["filter[state_not_eq]"] = filterStateNotEq;
+      }
+
+      if (filterStateBlank !== undefined) {
+        localVarQueryParameter["filter[state_blank]"] = filterStateBlank;
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7259,6 +7340,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {boolean} [filterVotedWeightBlank]
      * @param {Array<string>} [filterStateIn]
      * @param {string} [filterStateEq]
+     * @param {string} [filterStateNotEq]
      * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7277,6 +7359,7 @@ export const ProposalsApiAxiosParamCreator = function (
       filterVotedWeightBlank?: boolean,
       filterStateIn?: Array<string>,
       filterStateEq?: string,
+      filterStateNotEq?: string,
       filterStateBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -7358,6 +7441,10 @@ export const ProposalsApiAxiosParamCreator = function (
         localVarQueryParameter["filter[state_eq]"] = filterStateEq;
       }
 
+      if (filterStateNotEq !== undefined) {
+        localVarQueryParameter["filter[state_not_eq]"] = filterStateNotEq;
+      }
+
       if (filterStateBlank !== undefined) {
         localVarQueryParameter["filter[state_blank]"] = filterStateBlank;
       }
@@ -7395,6 +7482,13 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {ProposalSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
      * @param {number} [componentId]
+     * @param {Array<string>} [filterVotedWeightIn]
+     * @param {string} [filterVotedWeightEq]
+     * @param {boolean} [filterVotedWeightBlank]
+     * @param {Array<string>} [filterStateIn]
+     * @param {string} [filterStateEq]
+     * @param {string} [filterStateNotEq]
+     * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -7404,6 +7498,13 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       spaceManifest?: ProposalSpaceManifestEnum,
       spaceId?: number,
       componentId?: number,
+      filterVotedWeightIn?: Array<string>,
+      filterVotedWeightEq?: string,
+      filterVotedWeightBlank?: boolean,
+      filterStateIn?: Array<string>,
+      filterStateEq?: string,
+      filterStateNotEq?: string,
+      filterStateBlank?: boolean,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -7417,6 +7518,13 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         spaceManifest,
         spaceId,
         componentId,
+        filterVotedWeightIn,
+        filterVotedWeightEq,
+        filterVotedWeightBlank,
+        filterStateIn,
+        filterStateEq,
+        filterStateNotEq,
+        filterStateBlank,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -7448,6 +7556,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {boolean} [filterVotedWeightBlank]
      * @param {Array<string>} [filterStateIn]
      * @param {string} [filterStateEq]
+     * @param {string} [filterStateNotEq]
      * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7466,6 +7575,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       filterVotedWeightBlank?: boolean,
       filterStateIn?: Array<string>,
       filterStateEq?: string,
+      filterStateNotEq?: string,
       filterStateBlank?: boolean,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -7488,6 +7598,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         filterVotedWeightBlank,
         filterStateIn,
         filterStateEq,
+        filterStateNotEq,
         filterStateBlank,
         options,
       );
@@ -7536,6 +7647,13 @@ export const ProposalsApiFactory = function (
           requestParameters.spaceManifest,
           requestParameters.spaceId,
           requestParameters.componentId,
+          requestParameters.filterVotedWeightIn,
+          requestParameters.filterVotedWeightEq,
+          requestParameters.filterVotedWeightBlank,
+          requestParameters.filterStateIn,
+          requestParameters.filterStateEq,
+          requestParameters.filterStateNotEq,
+          requestParameters.filterStateBlank,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -7566,6 +7684,7 @@ export const ProposalsApiFactory = function (
           requestParameters.filterVotedWeightBlank,
           requestParameters.filterStateIn,
           requestParameters.filterStateEq,
+          requestParameters.filterStateNotEq,
           requestParameters.filterStateBlank,
           options,
         )
@@ -7614,6 +7733,55 @@ export interface ProposalsApiProposalRequest {
    * @memberof ProposalsApiProposal
    */
   readonly componentId?: number;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterVotedWeightIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterVotedWeightEq?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterVotedWeightBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterStateIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterStateEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterStateNotEq?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProposalsApiProposal
+   */
+  readonly filterStateBlank?: boolean;
 }
 
 /**
@@ -7715,6 +7883,13 @@ export interface ProposalsApiProposalsRequest {
 
   /**
    *
+   * @type {string}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterStateNotEq?: string;
+
+  /**
+   *
    * @type {boolean}
    * @memberof ProposalsApiProposals
    */
@@ -7747,6 +7922,13 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.spaceManifest,
         requestParameters.spaceId,
         requestParameters.componentId,
+        requestParameters.filterVotedWeightIn,
+        requestParameters.filterVotedWeightEq,
+        requestParameters.filterVotedWeightBlank,
+        requestParameters.filterStateIn,
+        requestParameters.filterStateEq,
+        requestParameters.filterStateNotEq,
+        requestParameters.filterStateBlank,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -7779,6 +7961,7 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.filterVotedWeightBlank,
         requestParameters.filterStateIn,
         requestParameters.filterStateEq,
+        requestParameters.filterStateNotEq,
         requestParameters.filterStateBlank,
         options,
       )

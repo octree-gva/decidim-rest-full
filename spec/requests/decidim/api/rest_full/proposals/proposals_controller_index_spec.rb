@@ -30,7 +30,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
       Api::Definitions::FILTER_PARAM.call(
         "state",
         { type: :string },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present)
+        %w(not_in lt gt start not_start matches does_not_match present)
       ).each do |param|
         parameter(**param)
       end
@@ -163,6 +163,22 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
                   expect(d["relationships"]["state"]["meta"]["token"]).to eq("accepted")
                 end
                 expect(data.size).to eq(1)
+              end
+            end
+
+            context "with filter state_not_eq rejected, filter only non-rejected proposal" do
+              let(:"filter[state_not_eq]") { "rejected" }
+
+              run_test!(example_name: :state_non_rejected) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  if d["relationships"]["state"]
+                    expect(d["relationships"]["state"]["meta"]["token"]).not_to eq("rejected")
+                  else
+                    expect(d["relationships"]["state"]).to be_nil
+                  end
+                end
+                expect(data.size).to eq(13)
               end
             end
 
