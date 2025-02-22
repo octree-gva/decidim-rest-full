@@ -123,8 +123,7 @@ module Decidim
           def destroy
             raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
-            draft.destroy!
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+            serialized_draft = Decidim::Api::RestFull::DraftProposalSerializer.new(
               draft,
               params: {
                 only: [],
@@ -134,6 +133,8 @@ module Decidim
                 fields: allowed_data_keys
               }
             ).serializable_hash
+            draft.destroy!
+            render json: serialized_draft
           end
 
           private

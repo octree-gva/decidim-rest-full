@@ -16,9 +16,9 @@ module Decidim
           metas
         end
 
-        link :next do |object, params|
-          next nil unless params.has_key?(:next) && params[:next]
-
+        link :next, if: (proc do |_object, params|
+                           params.has_key?(:next) && params[:next]
+                         end) do |object, params|
           next_id = params[:next]
           infos = link_infos_from_resource(object)
           {
@@ -33,9 +33,9 @@ module Decidim
           }
         end
 
-        link :prev do |object, params|
-          next nil unless params.has_key?(:prev) && params[:prev]
-
+        link :prev, if: (proc do |_object, params|
+                           params.has_key?(:prev) && params[:prev]
+                         end) do |object, params|
           prev_id = params[:prev]
           infos = link_infos_from_resource(object)
           {

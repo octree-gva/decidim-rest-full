@@ -81,14 +81,20 @@ module Api
 
     def self.link(description, links = {})
       links = [links] unless links.is_a? Array
-      link_schemas = links.map do |link|
-        next { **LINK_NULL, description: description } if link.nil?
-        next { **LINK_STRING, description: description } if link.is_a? String
-        next { **LINK_OBJECT, description: description } if link.is_a? Hash
+      nullable = links.find(&:nil?).present?
+      link_schemas = links.filter { |link| !link.nil? }.map do |link|
+        next { **LINK_STRING, description: description, nullable: nullable } if link.is_a? String
+
+        if link.is_a? Hash
+          link_object = { oneOf: LINK_OBJECT[:oneOf].map do |one_of|
+            one_of[:nullable] = nullable
+            one_of
+          end }
+          next link_object
+        end
 
         raise "Link #{link} type is not supported"
       end
-
       return link_schemas.first if link_schemas.size == 1
 
       {

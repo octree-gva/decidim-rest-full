@@ -4,6 +4,8 @@ module Decidim
   module Api
     module RestFull
       class ProposalSerializer < ResourceSerializer
+        extend Helpers::ResourceLinksHelper
+
         def self.default_meta(proposal)
           scope = proposal.component.scope || proposal.participatory_space.scope
           metas = {
@@ -15,10 +17,6 @@ module Decidim
 
         meta do |proposal, params|
           metas = default_meta(proposal)
-          metas[:has_more] = params[:has_more] if params.has_key? :has_more
-          metas[:next] = params[:next].id.to_s if params.has_key?(:next) && params[:next]
-          metas[:prev] = params[:prev].id.to_s if params.has_key?(:prev) && params[:prev]
-          metas[:count] = params[:count] if params.has_key? :count
           metas[:client_id] = proposal.rest_full_application.api_client_id if proposal.rest_full_application
           vote_manifest = proposal.component.settings[:awesome_voting_manifest]
 
@@ -44,9 +42,18 @@ module Decidim
           translated_field(comp.body, params[:locales])
         end
 
-        has_one :author do |proposal, _params|
-          coauthorship = proposal.coauthorships.first
-          coauthorship ? coauthorship.author : nil
+        has_one :state, if: (proc do |proposal|
+          proposal.state
+        end), meta: (proc do |proposal, _params|
+          { token: proposal.state }
+        end) do |proposal, _params|
+          proposal.proposal_state
+        end
+
+        has_one :author, if: (proc do |proposal|
+          proposal.coauthorships.count.positive?
+        end) do |proposal, _params|
+          proposal.coauthorships.first.author
         end
 
         has_many :coauthors, meta: (proc do |proposal, _params|
@@ -55,6 +62,40 @@ module Decidim
           proposal.coauthorships.map do |coauthorship, _params|
             coauthorship.author
           end
+        end
+
+        link :next, if: (proc do |_object, params|
+          params.has_key?(:next) && params[:next]
+        end) do |object, params|
+          next_id = params[:next]
+          infos = link_infos_from_resource(object)
+          {
+            href: link_for_resource(params[:host], infos, next_id),
+            title: "Next Proposal",
+            rel: "resource",
+            meta: {
+              **infos,
+              resource_id: next_id.to_s,
+              action_method: "GET"
+            }
+          }
+        end
+
+        link :prev, if: (proc do |_object, params|
+                           params.has_key?(:prev) && params[:prev]
+                         end) do |object, params|
+          prev_id = params[:prev]
+          infos = link_infos_from_resource(object)
+          {
+            href: link_for_resource(params[:host], infos, prev_id),
+            title: "Previous Proposal",
+            rel: "resource",
+            meta: {
+              **infos,
+              resource_id: prev_id.to_s,
+              action_method: "GET"
+            }
+          }
         end
       end
     end

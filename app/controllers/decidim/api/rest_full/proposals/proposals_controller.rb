@@ -9,25 +9,9 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Proposals::Proposal }
 
           def index
-            if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
-              Decidim::Proposals::Proposal.ransacker :voted_weight do |_r|
-                Arel.sql(<<~SQL.squish
-                  (
-                    SELECT
-                      COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
-                    FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
-                    LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
-                      ON tvote.id = tweight.proposal_vote_id
-                    WHERE
-                      tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
-                      tvote.decidim_author_id = #{current_user.id.to_i}
-                    LIMIT 1
-                  )
-                SQL
-                        )
-              end
+            add_state_filter!
+            add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
 
-            end
             query = ordered(collection).ransack(params[:filter])
             results = query.result
 
@@ -44,11 +28,33 @@ module Decidim
           end
 
           def show
+            add_state_filter!
             resource = collection.find_by("decidim_proposals_proposals.id" => resource_id)
             raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless resource
 
-            next_item = collection.where("published_at > ? AND decidim_proposals_proposals.id != ?", resource.published_at, resource_id).first
-            first_item = collection.first
+            add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+            subquery = collection.select(
+              "decidim_proposals_proposals.id",
+              "decidim_proposals_proposals.decidim_component_id",
+              "decidim_proposals_proposals.published_at",
+              "LAG(decidim_proposals_proposals.id) OVER (ORDER BY decidim_proposals_proposals.published_at ASC) AS previous_id",
+              "LEAD(decidim_proposals_proposals.id) OVER (ORDER BY decidim_proposals_proposals.published_at ASC) AS next_id"
+            ).ransack(params[:filter]).result.to_sql
+            aliased_subquery = "(#{subquery}) AS decidim_proposals_proposals"
+            select_for_pagination = <<~SQL.squish
+              decidim_proposals_proposals.id,#{" "}
+              decidim_proposals_proposals.previous_id as previous_id,#{" "}
+              decidim_proposals_proposals.next_id as next_id
+            SQL
+            pagination_match = model_class.select(select_for_pagination).from(aliased_subquery).find_by(
+              "decidim_proposals_proposals.id = ? ", resource_id
+            )
+
+            next_item = pagination_match.next_id
+            prev_item = pagination_match.previous_id
+            pagination_match.previous_id
+            first_item = collection.ids.first
+            last_item = collection.ids.last
 
             render json: Decidim::Api::RestFull::ProposalSerializer.new(
               resource,
@@ -58,9 +64,11 @@ module Decidim
                 host: current_organization.host,
                 client_id: client_id,
                 act_as: act_as,
-                has_more: next_item.present?,
-                next: next_item || first_item,
-                count: collection.count
+                first: first_item,
+                last: first_item,
+                next: next_item,
+                prev: prev_item,
+                count: last_item
               }
             ).serializable_hash
           end
@@ -92,6 +100,41 @@ module Decidim
               query.where("published_at" => ...now)
             else
               query.where("published_at <= ? OR (published_at is NULL AND decidim_coauthorships.decidim_author_id = ?)", now, act_as.id)
+            end
+          end
+
+          def add_state_filter!
+            Decidim::Proposals::Proposal.ransacker :state do |_r|
+              Arel.sql(<<~SQL.squish
+                COALESCE(
+                  (SELECT
+                    tstate.token
+                  FROM #{Decidim::Proposals::ProposalState.table_name} AS tstate
+                  WHERE
+                    decidim_proposals_proposals.decidim_proposals_proposal_state_id = tstate.id
+                  LIMIT 1), ''
+                )
+              SQL
+                      )
+            end
+          end
+
+          def add_vote_weight_filter!
+            Decidim::Proposals::Proposal.ransacker :voted_weight do |_r|
+              Arel.sql(<<~SQL.squish
+                (
+                  SELECT
+                    COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
+                  FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
+                  LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
+                    ON tvote.id = tweight.proposal_vote_id
+                  WHERE
+                    tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
+                    tvote.decidim_author_id = #{current_user.id.to_i}
+                  LIMIT 1
+                )
+              SQL
+                      )
             end
           end
         end

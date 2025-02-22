@@ -61,7 +61,7 @@ module Api
             next: Api::Definitions.link("Next blog post entry", [nil, {}])
           },
           additionalProperties: false,
-          required: [:self, :collection, :related, :prev, :next]
+          required: [:self, :collection, :related]
         },
         relationships: {
           type: :object,

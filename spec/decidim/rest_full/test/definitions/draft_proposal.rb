@@ -116,7 +116,8 @@ module Api
                 id: { type: :string, description: "User Id" },
                 type: { type: :string, enum: %w(user user_group) }
               },
-              required: [:data]
+              required: [:data],
+              nullable: true
             },
             coauthors: {
               type: :object,

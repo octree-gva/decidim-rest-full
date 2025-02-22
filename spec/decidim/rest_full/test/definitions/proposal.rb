@@ -65,7 +65,9 @@ module Api
           properties: {
             self: Api::Definitions.link("Proposal Detail"),
             collection: Api::Definitions.link("Proposal Lists"),
-            related: Api::Definitions.link("Component Details")
+            related: Api::Definitions.link("Component Details"),
+            prev: Api::Definitions.link("Prev proposal entry", [nil, {}]),
+            next: Api::Definitions.link("Next proposal entry", [nil, {}])
           },
           additionalProperties: false,
           required: [:self, :collection, :related]
@@ -74,6 +76,29 @@ module Api
           type: :object,
           title: "Proposal Relationships",
           properties: {
+            state: {
+              type: :object,
+              properties: {
+                data: {
+                  type: :object,
+                  properties: {
+                    id: { type: :string, description: "Proposal State id" },
+                    type: { type: :string, enum: ["proposal_state"], description: "Proposal State Type" }
+                  },
+                  required: [:id, :type]
+                },
+                meta: {
+                  type: :object,
+                  properties: {
+                    token: { type: :string, description: "Proposal State token" }
+                  },
+                  required: [:token]
+                }
+              },
+              additionalProperties: false,
+              required: [:data, :meta],
+              nullable: true
+            },
             space: {
               type: :object,
               properties: {
@@ -86,7 +111,8 @@ module Api
                   required: [:id, :type]
                 }
               },
-              required: [:data]
+              required: [:data],
+              additionalProperties: false
             },
             component: {
               type: :object,
@@ -108,7 +134,8 @@ module Api
                 id: { type: :string, description: "User Id" },
                 type: { type: :string, enum: %w(user user_group) }
               },
-              required: [:data]
+              required: [:data],
+              nullable: true
             },
             coauthors: {
               type: :object,
