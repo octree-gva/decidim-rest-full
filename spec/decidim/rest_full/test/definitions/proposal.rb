@@ -74,6 +74,23 @@ module Api
           type: :object,
           title: "Proposal Relationships",
           properties: {
+            state: {
+              type: :object, 
+              data: {
+                type: :object,
+                properties: {
+                  id: { type: :string, description: "Proposal State id" },
+                  type: {type: :string, enum: ["proposal_state"]}
+                },
+                required: [:id, :string]
+              },
+              meta: {
+                type: :object, 
+                properties: {
+                  token: {type: :string, description: "Proposal State token"}
+                }
+              }
+            },
             space: {
               type: :object,
               properties: {

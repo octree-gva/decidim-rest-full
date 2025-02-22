@@ -44,6 +44,12 @@ module Decidim
           translated_field(comp.body, params[:locales])
         end
 
+        has_one :state,  meta: (proc do |proposal, _params|
+          { token: proposal.state }
+        end) do |proposal, params|
+          proposal.proposal_state
+        end
+
         has_one :author do |proposal, _params|
           coauthorship = proposal.coauthorships.first
           coauthorship ? coauthorship.author : nil

@@ -58,6 +58,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController,
         proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
         create(:proposal, component: proposals)
         create(:proposal, component: proposals)
+        create(:proposal, component: proposals, state: "accepted")
 
         create(
           :proposal_component,

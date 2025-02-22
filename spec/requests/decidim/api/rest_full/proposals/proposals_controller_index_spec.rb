@@ -27,6 +27,13 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
       ).each do |param|
         parameter(**param)
       end
+      Api::Definitions::FILTER_PARAM.call(
+        "state",
+        { type: :string },
+        %w(not_in not_eq lt gt start not_start matches does_not_match present)
+      ).each do |param|
+        parameter(**param)
+      end
 
       let!(:page) { 1 }
       let!(:per_page) { 50 }
@@ -103,6 +110,8 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
               )
               component
             end
+            let!(:accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
+            let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
             let!(:proposal) { create(:proposal, component: proposal_component) }
             let!(:liked_proposal) { create(:proposal, component: proposal_component) }
             let!(:loved_proposal) { create(:proposal, component: proposal_component) }
@@ -145,6 +154,30 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
               end
             end
 
+            context "with filter state_eq accepted, filter only accepted proposal" do
+              let(:"filter[state_eq]") { "accepted" }
+              
+              run_test!(example_name: :state_accepted) do |example|
+                data = JSON.parse(example.body)["data"]
+                data.each do |d|
+                  expect(d["relationships"]["state"]["meta"]["token"]).to eq("accepted")
+                end
+                expect(data.size).to eq(1)
+              end
+            end
+
+            context "with filter voted_weight_eq 1 and state_eq rejected, return always an empty list" do
+              let(:"filter[state_eq]") { "rejected" }
+              let(:"filter[voted_weight_eq]") { 0.to_s }
+
+              run_test! do |example|
+                data = JSON.parse(example.body)["data"]
+  
+                expect(data.size).to eq(0)
+              end
+
+            end
+
             context "with filter voted_weight_blank, filter only the non-voted proposals" do
               let(:"filter[voted_weight_blank]") { true }
 
@@ -154,7 +187,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
                   expect(d["meta"]["voted"]).to be_blank
                 end
                 expect(data.last["id"]).to eq(unseen_proposals.last.id.to_s)
-                expect(data.count).to eq(8)
+                expect(data.count).to eq(10)
               end
             end
 
