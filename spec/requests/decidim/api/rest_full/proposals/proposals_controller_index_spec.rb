@@ -156,7 +156,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
 
             context "with filter state_eq accepted, filter only accepted proposal" do
               let(:"filter[state_eq]") { "accepted" }
-              
+
               run_test!(example_name: :state_accepted) do |example|
                 data = JSON.parse(example.body)["data"]
                 data.each do |d|
@@ -172,10 +172,9 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
 
               run_test! do |example|
                 data = JSON.parse(example.body)["data"]
-  
+
                 expect(data.size).to eq(0)
               end
-
             end
 
             context "with filter voted_weight_blank, filter only the non-voted proposals" do

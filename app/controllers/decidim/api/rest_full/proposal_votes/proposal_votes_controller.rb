@@ -8,7 +8,7 @@ module Decidim
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :vote, ::Decidim::Proposals::Proposal }
           before_action do
-            if !proposal_component.current_settings[:votes_enabled]
+            unless proposal_component.current_settings[:votes_enabled]
               raise Decidim::RestFull::ApiException::BadRequest,
                     "Vote are disabled"
             end

@@ -74,16 +74,18 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
           end
         end
 
-        context "when answered proposal" do 
+        context "when answered proposal" do
           let!(:accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
-          context "when accepted" do 
+
+          context "when accepted" do
             let(:id) { accepted_proposal.id }
+
             run_test!(example_name: :accepted_proposal) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data).to be_truthy
-              expect(data["id"]).to eq(accepted_proposal.id.to_s)  
-              expect(data["relationships"]["state"]["meta"]).to eq({ "token" => "accepted" })  
-              expect(data["relationships"]["state"]["data"]).to eq({ "id" => accepted_proposal.proposal_state.id.to_s, "type" => "proposal_state" })  
+              expect(data["id"]).to eq(accepted_proposal.id.to_s)
+              expect(data["relationships"]["state"]["meta"]).to eq({ "token" => "accepted" })
+              expect(data["relationships"]["state"]["data"]).to eq({ "id" => accepted_proposal.proposal_state.id.to_s, "type" => "proposal_state" })
             end
           end
         end

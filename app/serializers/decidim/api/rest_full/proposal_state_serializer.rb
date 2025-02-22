@@ -11,7 +11,7 @@ module Decidim
           metas
         end
 
-        meta do |state, params|
+        meta do |state, _params|
           metas = default_meta(state)
           metas
         end
