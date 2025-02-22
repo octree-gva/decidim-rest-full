@@ -180,21 +180,13 @@ export interface AttachedComponentsLinks {
   self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {AttachedComponentsLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof AttachedComponentsLinks
    */
-  related?: AttachedComponentsLinksRelated;
+  related?: AttachedComponentsLinksSelf;
 }
 /**
- * @type AttachedComponentsLinksRelated
- * Component List
- * @export
- */
-export type AttachedComponentsLinksRelated = ActionURL | ResourceURL;
-
-/**
  * @type AttachedComponentsLinksSelf
- * Space Detail
  * @export
  */
 export type AttachedComponentsLinksSelf = ActionURL | ResourceURL;
@@ -428,70 +420,35 @@ export type BlogPostComponentAttributesManifestNameEnum =
 export interface BlogPostLinks {
   /**
    *
-   * @type {BlogPostLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof BlogPostLinks
    */
-  self: BlogPostLinksSelf;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {BlogPostLinksCollection}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof BlogPostLinks
    */
-  collection: BlogPostLinksCollection;
+  collection: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {BlogPostLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof BlogPostLinks
    */
-  related: BlogPostLinksRelated;
+  related: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {BlogPostLinksPrev}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof BlogPostLinks
    */
-  prev: BlogPostLinksPrev | null;
+  prev?: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {BlogPostLinksNext}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof BlogPostLinks
    */
-  next: BlogPostLinksNext | null;
+  next?: AttachedComponentsLinksSelf;
 }
-/**
- * @type BlogPostLinksCollection
- * Associate blog post list
- * @export
- */
-export type BlogPostLinksCollection = ActionURL | ResourceURL;
-
-/**
- * @type BlogPostLinksNext
- * Next blog post entry
- * @export
- */
-export type BlogPostLinksNext = ActionURL | ResourceURL;
-
-/**
- * @type BlogPostLinksPrev
- * Prev blog post entry
- * @export
- */
-export type BlogPostLinksPrev = ActionURL | ResourceURL;
-
-/**
- * @type BlogPostLinksRelated
- * Related Component
- * @export
- */
-export type BlogPostLinksRelated = ActionURL | ResourceURL;
-
-/**
- * @type BlogPostLinksSelf
- * Blog Post
- * @export
- */
-export type BlogPostLinksSelf = ActionURL | ResourceURL;
-
 /**
  *
  * @export
@@ -702,22 +659,22 @@ export type Component =
 export interface ComponentLinks {
   /**
    *
-   * @type {ComponentLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ComponentLinks
    */
-  self: ComponentLinksSelf;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {ComponentLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ComponentLinks
    */
-  related?: ComponentLinksRelated;
+  related?: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {ComponentLinksDraft}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ComponentLinks
    */
-  draft: ComponentLinksDraft | null;
+  draft?: AttachedComponentsLinksSelf;
 }
 /**
  *
@@ -727,38 +684,17 @@ export interface ComponentLinks {
 export interface ComponentLinks1 {
   /**
    *
-   * @type {ComponentLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ComponentLinks1
    */
-  self: ComponentLinksSelf;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {ComponentLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ComponentLinks1
    */
-  related?: ComponentLinksRelated;
+  related?: AttachedComponentsLinksSelf;
 }
-/**
- * @type ComponentLinksDraft
- * Link to the Draft proposal
- * @export
- */
-export type ComponentLinksDraft = ActionURL | ResourceURL;
-
-/**
- * @type ComponentLinksRelated
- * Space details API URL
- * @export
- */
-export type ComponentLinksRelated = ActionURL | ResourceURL;
-
-/**
- * @type ComponentLinksSelf
- * API URL to the component
- * @export
- */
-export type ComponentLinksSelf = ActionURL | ResourceURL;
-
 /**
  *
  * @export
@@ -1173,10 +1109,10 @@ export interface DraftProposal {
   meta: DraftPropositionMetadata;
   /**
    *
-   * @type {ProposalLinks1}
+   * @type {ProposalLinks}
    * @memberof DraftProposal
    */
-  links: ProposalLinks1;
+  links: ProposalLinks;
   /**
    *
    * @type {ProposalRelationships1}
@@ -1764,16 +1700,16 @@ export interface MagicLinkAttributes1 {
 export interface MagicLinkLinks {
   /**
    *
-   * @type {MagicLinkLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof MagicLinkLinks
    */
-  self: MagicLinkLinksSelf;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {MagicLinkLinksSignIn}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof MagicLinkLinks
    */
-  sign_in: MagicLinkLinksSignIn;
+  sign_in: AttachedComponentsLinksSelf;
 }
 /**
  *
@@ -1783,31 +1719,17 @@ export interface MagicLinkLinks {
 export interface MagicLinkLinks1 {
   /**
    *
-   * @type {MagicLinkLinksSignIn}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof MagicLinkLinks1
    */
-  self: MagicLinkLinksSignIn;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {MagicLinkLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof MagicLinkLinks1
    */
-  magic_link: MagicLinkLinksSelf;
+  magic_link: AttachedComponentsLinksSelf;
 }
-/**
- * @type MagicLinkLinksSelf
- * Magic Link Creation
- * @export
- */
-export type MagicLinkLinksSelf = ActionURL | ResourceURL;
-
-/**
- * @type MagicLinkLinksSignIn
- * Sign in
- * @export
- */
-export type MagicLinkLinksSignIn = ActionURL | ResourceURL;
-
 /**
  *
  * @export
@@ -2451,89 +2373,35 @@ export interface ProposalComponentsResponse {
 export interface ProposalLinks {
   /**
    *
-   * @type {ProposalLinksSelf}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ProposalLinks
    */
-  self: ProposalLinksSelf;
+  self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {ProposalLinksCollection}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ProposalLinks
    */
-  collection: ProposalLinksCollection;
+  collection: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {ProposalLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof ProposalLinks
    */
-  related: ProposalLinksRelated;
+  related: AttachedComponentsLinksSelf;
 }
-/**
- *
- * @export
- * @interface ProposalLinks1
- */
-export interface ProposalLinks1 {
-  /**
-   *
-   * @type {ProposalLinks1Self}
-   * @memberof ProposalLinks1
-   */
-  self: ProposalLinks1Self;
-  /**
-   *
-   * @type {ProposalLinks1Collection}
-   * @memberof ProposalLinks1
-   */
-  collection: ProposalLinks1Collection;
-  /**
-   *
-   * @type {ProposalLinksRelated}
-   * @memberof ProposalLinks1
-   */
-  related: ProposalLinksRelated;
-}
-/**
- * @type ProposalLinks1Collection
- * Proposal List
- * @export
- */
-export type ProposalLinks1Collection = ActionURL | ResourceURL;
-
-/**
- * @type ProposalLinks1Self
- * Draft Proposal Details
- * @export
- */
-export type ProposalLinks1Self = ActionURL | ResourceURL;
-
-/**
- * @type ProposalLinksCollection
- * Proposal Lists
- * @export
- */
-export type ProposalLinksCollection = ActionURL | ResourceURL;
-
-/**
- * @type ProposalLinksRelated
- * Component Details
- * @export
- */
-export type ProposalLinksRelated = ActionURL | ResourceURL;
-
-/**
- * @type ProposalLinksSelf
- * Proposal Detail
- * @export
- */
-export type ProposalLinksSelf = ActionURL | ResourceURL;
-
 /**
  *
  * @export
  * @interface ProposalRelationships
  */
 export interface ProposalRelationships {
+  /**
+   *
+   * @type {ProposalRelationshipsState}
+   * @memberof ProposalRelationships
+   */
+  state?: ProposalRelationshipsState | null;
   /**
    *
    * @type {ProposalRelationshipsSpace}
@@ -2551,7 +2419,7 @@ export interface ProposalRelationships {
    * @type {ProposalRelationshipsAuthor}
    * @memberof ProposalRelationships
    */
-  author: ProposalRelationshipsAuthor;
+  author: ProposalRelationshipsAuthor | null;
   /**
    *
    * @type {ProposalRelationshipsCoauthors}
@@ -2567,10 +2435,10 @@ export interface ProposalRelationships {
 export interface ProposalRelationships1 {
   /**
    *
-   * @type {ProposalRelationshipsSpace}
+   * @type {ProposalRelationships1Space}
    * @memberof ProposalRelationships1
    */
-  space: ProposalRelationshipsSpace;
+  space: ProposalRelationships1Space;
   /**
    *
    * @type {BlogPostRelationshipsComponent}
@@ -2582,13 +2450,26 @@ export interface ProposalRelationships1 {
    * @type {ProposalRelationshipsAuthor}
    * @memberof ProposalRelationships1
    */
-  author: ProposalRelationshipsAuthor;
+  author: ProposalRelationshipsAuthor | null;
   /**
    *
    * @type {ProposalRelationshipsCoauthors}
    * @memberof ProposalRelationships1
    */
   coauthors?: ProposalRelationshipsCoauthors;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationships1Space
+ */
+export interface ProposalRelationships1Space {
+  /**
+   *
+   * @type {ProposalRelationshipsSpaceData}
+   * @memberof ProposalRelationships1Space
+   */
+  data: ProposalRelationshipsSpaceData;
 }
 /**
  *
@@ -2732,6 +2613,65 @@ export interface ProposalRelationshipsSpaceData {
   type: SpaceType;
 }
 
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsState
+ */
+export interface ProposalRelationshipsState {
+  /**
+   *
+   * @type {ProposalRelationshipsStateData}
+   * @memberof ProposalRelationshipsState
+   */
+  data: ProposalRelationshipsStateData;
+  /**
+   *
+   * @type {ProposalRelationshipsStateMeta}
+   * @memberof ProposalRelationshipsState
+   */
+  meta: ProposalRelationshipsStateMeta;
+}
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsStateData
+ */
+export interface ProposalRelationshipsStateData {
+  /**
+   * Proposal State id
+   * @type {string}
+   * @memberof ProposalRelationshipsStateData
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalRelationshipsStateData
+   */
+  type?: ProposalRelationshipsStateDataTypeEnum;
+}
+
+export const ProposalRelationshipsStateDataTypeEnum = {
+  ProposalState: "proposal_state",
+} as const;
+
+export type ProposalRelationshipsStateDataTypeEnum =
+  (typeof ProposalRelationshipsStateDataTypeEnum)[keyof typeof ProposalRelationshipsStateDataTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ProposalRelationshipsStateMeta
+ */
+export interface ProposalRelationshipsStateMeta {
+  /**
+   * Proposal State token
+   * @type {string}
+   * @memberof ProposalRelationshipsStateMeta
+   */
+  token: string;
+}
 /**
  *
  * @export
@@ -3173,18 +3113,11 @@ export interface SpaceLinks {
   self: AttachedComponentsLinksSelf;
   /**
    *
-   * @type {SpaceLinksRelated}
+   * @type {AttachedComponentsLinksSelf}
    * @memberof SpaceLinks
    */
-  related: SpaceLinksRelated;
+  related: AttachedComponentsLinksSelf;
 }
-/**
- * @type SpaceLinksRelated
- * Organization Detail
- * @export
- */
-export type SpaceLinksRelated = ActionURL | ResourceURL;
-
 /**
  *
  * @export
@@ -7324,6 +7257,9 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {Array<string>} [filterVotedWeightIn]
      * @param {string} [filterVotedWeightEq]
      * @param {boolean} [filterVotedWeightBlank]
+     * @param {Array<string>} [filterStateIn]
+     * @param {string} [filterStateEq]
+     * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -7339,6 +7275,9 @@ export const ProposalsApiAxiosParamCreator = function (
       filterVotedWeightIn?: Array<string>,
       filterVotedWeightEq?: string,
       filterVotedWeightBlank?: boolean,
+      filterStateIn?: Array<string>,
+      filterStateEq?: string,
+      filterStateBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/proposals`;
@@ -7409,6 +7348,18 @@ export const ProposalsApiAxiosParamCreator = function (
       if (filterVotedWeightBlank !== undefined) {
         localVarQueryParameter["filter[voted_weight_blank]"] =
           filterVotedWeightBlank;
+      }
+
+      if (filterStateIn) {
+        localVarQueryParameter["filter[state_in][]"] = filterStateIn;
+      }
+
+      if (filterStateEq !== undefined) {
+        localVarQueryParameter["filter[state_eq]"] = filterStateEq;
+      }
+
+      if (filterStateBlank !== undefined) {
+        localVarQueryParameter["filter[state_blank]"] = filterStateBlank;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -7495,6 +7446,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {Array<string>} [filterVotedWeightIn]
      * @param {string} [filterVotedWeightEq]
      * @param {boolean} [filterVotedWeightBlank]
+     * @param {Array<string>} [filterStateIn]
+     * @param {string} [filterStateEq]
+     * @param {boolean} [filterStateBlank]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -7510,6 +7464,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       filterVotedWeightIn?: Array<string>,
       filterVotedWeightEq?: string,
       filterVotedWeightBlank?: boolean,
+      filterStateIn?: Array<string>,
+      filterStateEq?: string,
+      filterStateBlank?: boolean,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -7529,6 +7486,9 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         filterVotedWeightIn,
         filterVotedWeightEq,
         filterVotedWeightBlank,
+        filterStateIn,
+        filterStateEq,
+        filterStateBlank,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -7604,6 +7564,9 @@ export const ProposalsApiFactory = function (
           requestParameters.filterVotedWeightIn,
           requestParameters.filterVotedWeightEq,
           requestParameters.filterVotedWeightBlank,
+          requestParameters.filterStateIn,
+          requestParameters.filterStateEq,
+          requestParameters.filterStateBlank,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -7735,6 +7698,27 @@ export interface ProposalsApiProposalsRequest {
    * @memberof ProposalsApiProposals
    */
   readonly filterVotedWeightBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterStateIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterStateEq?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProposalsApiProposals
+   */
+  readonly filterStateBlank?: boolean;
 }
 
 /**
@@ -7793,6 +7777,9 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.filterVotedWeightIn,
         requestParameters.filterVotedWeightEq,
         requestParameters.filterVotedWeightBlank,
+        requestParameters.filterStateIn,
+        requestParameters.filterStateEq,
+        requestParameters.filterStateBlank,
         options,
       )
       .then((request) => request(this.axios, this.basePath));

@@ -76,22 +76,26 @@ module Api
           properties: {
             state: {
               type: :object,
-              data: {
-                type: :object,
-                properties: {
-                  id: { type: :string, description: "Proposal State id" },
-                  type: { type: :string, enum: ["proposal_state"] }
+              properties: {
+                data: {
+                  type: :object,
+                  properties: {
+                    id: { type: :string, description: "Proposal State id" },
+                    type: { type: :string, enum: ["proposal_state"] }
+                  },
+                  required: [:id, :string]
                 },
-                required: [:id, :string]
+                meta: {
+                  type: :object,
+                  properties: {
+                    token: { type: :string, description: "Proposal State token" }
+                  },
+                  required: [:token]
+                }
               },
-              meta: {
-                type: :object,
-                properties: {
-                  token: { type: :string, description: "Proposal State token" }
-                },
-                required: [:token]
-              },
-              required: [:data, :meta]
+              additionalProperties: false,
+              required: [:data, :meta],
+              nullable: true
             },
             space: {
               type: :object,
@@ -105,7 +109,8 @@ module Api
                   required: [:id, :type]
                 }
               },
-              required: [:data]
+              required: [:data],
+              additionalProperties: false
             },
             component: {
               type: :object,
@@ -127,7 +132,8 @@ module Api
                 id: { type: :string, description: "User Id" },
                 type: { type: :string, enum: %w(user user_group) }
               },
-              required: [:data]
+              required: [:data],
+              nullable: true
             },
             coauthors: {
               type: :object,
