@@ -3895,12 +3895,14 @@ export const BlogsApiAxiosParamCreator = function (
      * @summary Show a blog detail
      * @param {number} id
      * @param {Array<BlogLocalesEnum>} [locales]
+     * @param {number} [componentId]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     blog: async (
       id: number,
       locales?: Array<BlogLocalesEnum>,
+      componentId?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -3934,6 +3936,10 @@ export const BlogsApiAxiosParamCreator = function (
 
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (componentId !== undefined) {
+        localVarQueryParameter["component_id"] = componentId;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -4048,12 +4054,14 @@ export const BlogsApiFp = function (configuration?: Configuration) {
      * @summary Show a blog detail
      * @param {number} id
      * @param {Array<BlogLocalesEnum>} [locales]
+     * @param {number} [componentId]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async blog(
       id: number,
       locales?: Array<BlogLocalesEnum>,
+      componentId?: number,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<BlogResponse>
@@ -4061,6 +4069,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blog(
         id,
         locales,
+        componentId,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -4145,7 +4154,12 @@ export const BlogsApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<BlogResponse> {
       return localVarFp
-        .blog(requestParameters.id, requestParameters.locales, options)
+        .blog(
+          requestParameters.id,
+          requestParameters.locales,
+          requestParameters.componentId,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -4193,6 +4207,13 @@ export interface BlogsApiBlogRequest {
    * @memberof BlogsApiBlog
    */
   readonly locales?: Array<BlogLocalesEnum>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlog
+   */
+  readonly componentId?: number;
 }
 
 /**
@@ -4264,7 +4285,12 @@ export class BlogsApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return BlogsApiFp(this.configuration)
-      .blog(requestParameters.id, requestParameters.locales, options)
+      .blog(
+        requestParameters.id,
+        requestParameters.locales,
+        requestParameters.componentId,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 

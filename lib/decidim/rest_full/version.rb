@@ -3,7 +3,7 @@
 module Decidim
   module RestFull
     def self.version
-      "0.1.5" # DO NOT UPDATE MANUALLY
+      "0.1.6" # DO NOT UPDATE MANUALLY
     end
 
     def self.major_minor_version

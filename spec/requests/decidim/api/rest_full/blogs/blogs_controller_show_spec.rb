@@ -12,6 +12,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController, type: :request do
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: "id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
