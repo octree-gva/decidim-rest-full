@@ -60,6 +60,8 @@ module Decidim
 
           def collection
             query = filter_for_context(model_class.order(published_at: :asc))
+            query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
+
             now = Time.zone.now
             if act_as.nil?
               query.where(published_at: ...now)
