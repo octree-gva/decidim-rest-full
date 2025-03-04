@@ -12,6 +12,9 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
 
       parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
       parameter name: "id", in: :path, schema: { type: :integer }
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
+      parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
+      parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
 
       let!(:organization) { create(:organization) }
       let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }

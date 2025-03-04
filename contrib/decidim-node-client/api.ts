@@ -4427,12 +4427,18 @@ export const ComponentsApiAxiosParamCreator = function (
      * @summary Blog Component Details
      * @param {number} id
      * @param {Array<BlogComponentLocalesEnum>} [locales]
+     * @param {number} [componentId]
+     * @param {BlogComponentSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     blogComponent: async (
       id: number,
       locales?: Array<BlogComponentLocalesEnum>,
+      componentId?: number,
+      spaceManifest?: BlogComponentSpaceManifestEnum,
+      spaceId?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -4466,6 +4472,18 @@ export const ComponentsApiAxiosParamCreator = function (
 
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (componentId !== undefined) {
+        localVarQueryParameter["component_id"] = componentId;
+      }
+
+      if (spaceManifest !== undefined) {
+        localVarQueryParameter["space_manifest"] = spaceManifest;
+      }
+
+      if (spaceId !== undefined) {
+        localVarQueryParameter["space_id"] = spaceId;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -4961,12 +4979,18 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @summary Blog Component Details
      * @param {number} id
      * @param {Array<BlogComponentLocalesEnum>} [locales]
+     * @param {number} [componentId]
+     * @param {BlogComponentSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async blogComponent(
       id: number,
       locales?: Array<BlogComponentLocalesEnum>,
+      componentId?: number,
+      spaceManifest?: BlogComponentSpaceManifestEnum,
+      spaceId?: number,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -4977,6 +5001,9 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blogComponent(
         id,
         locales,
+        componentId,
+        spaceManifest,
+        spaceId,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -5266,7 +5293,14 @@ export const ComponentsApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ComponentResponse> {
       return localVarFp
-        .blogComponent(requestParameters.id, requestParameters.locales, options)
+        .blogComponent(
+          requestParameters.id,
+          requestParameters.locales,
+          requestParameters.componentId,
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -5402,6 +5436,27 @@ export interface ComponentsApiBlogComponentRequest {
    * @memberof ComponentsApiBlogComponent
    */
   readonly locales?: Array<BlogComponentLocalesEnum>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ComponentsApiBlogComponent
+   */
+  readonly componentId?: number;
+
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof ComponentsApiBlogComponent
+   */
+  readonly spaceManifest?: BlogComponentSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof ComponentsApiBlogComponent
+   */
+  readonly spaceId?: number;
 }
 
 /**
@@ -5753,7 +5808,14 @@ export class ComponentsApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return ComponentsApiFp(this.configuration)
-      .blogComponent(requestParameters.id, requestParameters.locales, options)
+      .blogComponent(
+        requestParameters.id,
+        requestParameters.locales,
+        requestParameters.componentId,
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -5932,6 +5994,15 @@ export const BlogComponentLocalesEnum = {
 } as const;
 export type BlogComponentLocalesEnum =
   (typeof BlogComponentLocalesEnum)[keyof typeof BlogComponentLocalesEnum];
+/**
+ * @export
+ */
+export const BlogComponentSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type BlogComponentSpaceManifestEnum =
+  (typeof BlogComponentSpaceManifestEnum)[keyof typeof BlogComponentSpaceManifestEnum];
 /**
  * @export
  */

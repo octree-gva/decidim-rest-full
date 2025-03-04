@@ -95,11 +95,11 @@ module Decidim
             query = filter_for_context(model_class)
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
 
-            now = Time.zone.now
+            Time.zone.now
             if act_as.nil?
-              query.where("published_at" => ...now)
+              query.where.not(published_at: nil)
             else
-              query.where("published_at <= ? OR (published_at is NULL AND decidim_coauthorships.decidim_author_id = ?)", now, act_as.id)
+              query.where("published_at IS NOT NULL OR (published_at is NULL AND decidim_coauthorships.decidim_author_id = ?)", act_as.id)
             end
           end
 
