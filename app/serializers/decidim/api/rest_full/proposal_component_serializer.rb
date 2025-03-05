@@ -98,7 +98,12 @@ module Decidim
                 i18n_values = I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights", object: true)
                 next default_votes if i18n_values.empty?
 
-                i18n_values.reject { |k| k.end_with? "short" }.map { |k, v| { weight: k.to_s.split("_").last.to_i, label: v } }.select { |value| (value[:weight]).positive? }
+                options = i18n_values.reject { |k| k.end_with? "short" }.map { |k, v| { weight: k.to_s.split("_").last.to_i, label: v } }
+                if has_abstain
+                  options
+                else
+                  options.select { |value| (value[:weight]).positive? }
+                end
               else
                 default_votes
               end
