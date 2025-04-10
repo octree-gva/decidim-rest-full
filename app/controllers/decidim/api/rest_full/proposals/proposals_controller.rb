@@ -99,8 +99,8 @@ module Decidim
             if act_as.nil?
               query.where.not(published_at: nil)
             else
-              query.where("published_at IS NOT NULL")
-                 .or(query.where("published_at IS NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id))
+              query.where.not(published_at: nil)
+                   .or(query.where("published_at IS NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id))
             end
           end
 
