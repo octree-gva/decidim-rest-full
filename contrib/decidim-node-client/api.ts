@@ -1357,6 +1357,28 @@ export type GenericComponentAttributesManifestNameEnum =
 /**
  *
  * @export
+ * @interface HealthMetrics503Response
+ */
+export interface HealthMetrics503Response {
+  /**
+   *
+   * @type {string}
+   * @memberof HealthMetrics503Response
+   */
+  message: HealthMetrics503ResponseMessageEnum;
+}
+
+export const HealthMetrics503ResponseMessageEnum = {
+  Ok: "OK",
+  Error: "ERROR",
+} as const;
+
+export type HealthMetrics503ResponseMessageEnum =
+  (typeof HealthMetrics503ResponseMessageEnum)[keyof typeof HealthMetrics503ResponseMessageEnum];
+
+/**
+ *
+ * @export
  * @interface Impersonation
  */
 export interface Impersonation {
@@ -6980,6 +7002,151 @@ export class DraftProposalsApi extends BaseAPI {
   ) {
     return DraftProposalsApiFp(this.configuration)
       .withdrawnDraftProposal(requestParameters.id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * MetricsApi - axios parameter creator
+ * @export
+ */
+export const MetricsApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Health metrics
+     * @summary Health
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    healthMetrics: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/metrics/health`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * MetricsApi - functional programming interface
+ * @export
+ */
+export const MetricsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = MetricsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Health metrics
+     * @summary Health
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async healthMetrics(
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<HealthMetrics503Response>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.healthMetrics(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["MetricsApi.healthMetrics"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * MetricsApi - factory interface
+ * @export
+ */
+export const MetricsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = MetricsApiFp(configuration);
+  return {
+    /**
+     * Health metrics
+     * @summary Health
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    healthMetrics(
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<HealthMetrics503Response> {
+      return localVarFp
+        .healthMetrics(options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * MetricsApi - object-oriented interface
+ * @export
+ * @class MetricsApi
+ * @extends {BaseAPI}
+ */
+export class MetricsApi extends BaseAPI {
+  /**
+   * Health metrics
+   * @summary Health
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MetricsApi
+   */
+  public healthMetrics(options?: RawAxiosRequestConfig) {
+    return MetricsApiFp(this.configuration)
+      .healthMetrics(options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
