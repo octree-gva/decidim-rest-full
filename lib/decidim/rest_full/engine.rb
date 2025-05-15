@@ -73,7 +73,7 @@ module Decidim
               uid: client_id,
               organization: current_organization
             )
-            raise ::Doorkeeper::Errors::DoorkeeperError, "Invalid Api Client, check credentials" unless api_client
+            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Api Client, check credentials" unless api_client
 
             ability = Decidim::RestFull::Ability.new(api_client)
             case auth_type
