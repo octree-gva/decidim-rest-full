@@ -1,7 +1,7 @@
 services:
   rest_full:
     command: bash -c "bin/setup-tests && bundle exec spec/models/ spec/requests/" 
-    image: ruby:3.2.5
+    image: ruby:3.2.7
     entrypoint: ""
     volumes:
       - .:/home/decidim/module

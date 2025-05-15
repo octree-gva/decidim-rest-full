@@ -29,7 +29,9 @@ Decidim::Core::Engine.routes.draw do
             end
           end
         end
-
+        scope "metrics" do
+          get "/health", to: "/decidim/api/rest_full/metrics/health#index"
+        end
         # components
         resources :components, only: [] do
           collection do
