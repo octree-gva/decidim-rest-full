@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
   path "/components/search" do
     get "Search components" do
       tags "Components"
@@ -10,50 +10,8 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
       operationId "searchComponents"
       description "List or search components of the organization"
 
-      parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      Api::Definitions::FILTER_PARAM.call(
-        "manifest_name",
-        { "$ref" => "#/components/schemas/component_manifest" },
-        %w(lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "id",
-        { type: :integer },
-        %w(lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "participatory_space_id",
-        { type: :string },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "participatory_space_type",
-        { "$ref" => "#/components/schemas/space_type" },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "name",
-        { type: :string },
-        %w(not_in in lt gt not_start does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
-      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-
-      let!(:organization) { create(:organization) }
-      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
-      let!(:assembly) { create(:assembly, organization: organization) }
-      let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "meetings", published_at: Time.zone.now) }
-
+      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["public"], organization: organization)
         api_client.permissions = [
@@ -62,8 +20,10 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
         api_client.save!
         api_client.reload
       end
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "meetings", published_at: Time.zone.now) }
+      let!(:assembly) { create(:assembly, organization: organization) }
+      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+      let!(:organization) { create(:organization) }
 
       before do
         host! organization.host
@@ -86,9 +46,17 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
         create(:result, component: accountabilities)
       end
 
+      it_behaves_like "paginated endpoint"
+      it_behaves_like "localized endpoint"
+      it_behaves_like "filtered endpoint", filter: "manifest_name", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_manifest) }, exclude_filters: %w(lt gt not_start does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type) }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, exclude_filters: %w(not_in in lt gt not_start does_not_match present blank)
+
       response "200", "List of components" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/components_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_index_response)
 
         context "with no filter params" do
           let(:"locales[]") { %w(en fr) }
@@ -159,14 +127,14 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no public scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -176,7 +144,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -185,7 +153,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }
@@ -207,7 +175,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController, type: :
           allow(Decidim::Api::RestFull::Components::ComponentsController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

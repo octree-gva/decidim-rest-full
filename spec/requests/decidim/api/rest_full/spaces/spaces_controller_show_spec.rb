@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 
-RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
   Decidim.participatory_space_registry.manifests.map(&:name).each do |space_manifest|
     space_manifest_title = space_manifest.to_s.titleize
     path "/spaces/#{space_manifest}/{id}" do
@@ -12,35 +12,8 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
         security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
         operationId space_manifest.to_s.camelize.to_s
         description "Get detail of a #{space_manifest_title} given its id"
-
-        parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-        parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the space" }
-
-        let!(:organization) { create(:organization) }
-        let!(:api_client) do
-          api_client = create(:api_client, scopes: ["public"], organization: organization)
-          api_client.permissions = [
-            api_client.permissions.build(permission: "public.space.read")
-          ]
-          api_client.save!
-          api_client.reload
-        end
-
-        let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-
-        let(:Authorization) { "Bearer #{impersonation_token.token}" }
-        let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
-        let!(:participatory_process) { create(:participatory_process, id: 6, organization: organization, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
-
-        let!(:space_list) do
-          3.times do
-            create(:assembly, organization: organization)
-            create(:participatory_process, organization: organization)
-          end
-        end
-
         let!(:component_list) do
-          3.times.map do
+          Array.new(3) do
             proposals = create(:component, participatory_space: assembly, manifest_name: "proposals", published_at: Time.zone.now)
             create(:proposal, component: proposals)
             create(:proposal, component: proposals)
@@ -51,6 +24,25 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
             [meeting, proposals]
           end.flatten
         end
+        let!(:space_list) do
+          3.times do
+            create(:assembly, organization: organization)
+            create(:participatory_process, organization: organization)
+          end
+        end
+        let!(:participatory_process) { create(:participatory_process, id: 6, organization: organization, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
+        let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+        let(:Authorization) { "Bearer #{impersonation_token.token}" }
+        let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
+        let!(:api_client) do
+          api_client = create(:api_client, scopes: ["public"], organization: organization)
+          api_client.permissions = [
+            api_client.permissions.build(permission: "public.space.read")
+          ]
+          api_client.save!
+          api_client.reload
+        end
+        let!(:organization) { create(:organization) }
 
         before do
           host! organization.host
@@ -59,9 +51,12 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
           end
         end
 
+        it_behaves_like "localized endpoint"
+        parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the space" }
+
         response "200", "#{space_manifest_title} Details" do
           produces "application/json"
-          schema "$ref" => "#/components/schemas/space_response"
+          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_item_response)
           context "with a valid #{space_manifest} id" do
             let(:id) { "6" }
             let(:manifest_name) { space_manifest.to_s }
@@ -75,7 +70,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
 
         response "403", "Forbidden" do
           produces "application/json"
-          schema "$ref" => "#/components/schemas/api_error"
+          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
           let(:id) { "6" }
           let(:manifest_name) { "participatory_processes" }
 
@@ -84,7 +79,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
             let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
             run_test!(example_name: :forbidden) do |_example|
-              expect(response.status).to eq(403)
+              expect(response).to have_http_status(:forbidden)
               expect(response.body).to include("Forbidden")
             end
           end
@@ -94,7 +89,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
             let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
             run_test! do |_example|
-              expect(response.status).to eq(403)
+              expect(response).to have_http_status(:forbidden)
               expect(response.body).to include("Forbidden")
             end
           end
@@ -102,7 +97,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
 
         response "404", "Not found" do
           produces "application/json"
-          schema "$ref" => "#/components/schemas/api_error"
+          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
           context "with a valid assembly id" do
             let(:id) { "404" }
 
@@ -123,7 +118,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController, type: :request 
             allow(Decidim::Api::RestFull::Spaces::SpacesController).to receive(:new).and_return(controller)
           end
 
-          schema "$ref" => "#/components/schemas/api_error"
+          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
           run_test! do |response|
             expect(response.status).to eq(500)

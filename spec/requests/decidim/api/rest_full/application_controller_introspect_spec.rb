@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
+RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization: organization, scopes: "public") }
@@ -31,7 +31,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
       parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { token: { type: :string } }, required: [:token] }
 
       response "200", "User details returned" do
-        schema "$ref" => "#/components/schemas/introspect_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:introspect_data)
         context "with client_credentials grant" do
           let!(:client_credential_token_b) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
@@ -59,7 +59,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
 
       response "401", "When the token is invalid" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with expired token" do
           let!(:client_credential_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client, created_at: 1.month.ago, expires_in: 1.minute) }

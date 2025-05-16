@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module Decidim
-  describe User, type: :model do
+  describe User do
     let(:user) { create(:user) } # Assuming you have a factory for Decidim::User
 
     describe "rest_full_magic_token association" do

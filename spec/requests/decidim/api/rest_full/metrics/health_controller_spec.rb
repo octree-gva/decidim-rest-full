@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 
-RSpec.describe Decidim::Api::RestFull::Metrics::HealthController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Metrics::HealthController do
   path "/metrics/health" do
     get "Health" do
       tags "Metrics"
@@ -42,9 +42,8 @@ RSpec.describe Decidim::Api::RestFull::Metrics::HealthController, type: :request
 
       response "503", "Unhealthy services" do
         produces "application/json"
-        schema type: :object, properties: {
-          message: { type: :string, enum: %w(OK ERROR) }
-        }, required: ["message"]
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:health)
+
         context "when DB is not accessible" do
           before do
             allow(ActiveRecord::Base.connection).to receive(:active?).and_return(false)
@@ -84,9 +83,7 @@ RSpec.describe Decidim::Api::RestFull::Metrics::HealthController, type: :request
 
       response "200", "Healthy services" do
         produces "application/json"
-        schema type: :object, properties: {
-          message: { type: :string, enum: %w(OK ERROR) }
-        }, required: ["message"]
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:health)
 
         context "when healthy" do
           before do

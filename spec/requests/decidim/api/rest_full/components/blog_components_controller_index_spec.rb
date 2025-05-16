@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController do
   path "/components/blog_components" do
     get "Blog Components" do
       tags "Components"
@@ -10,37 +10,8 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
       operationId "blog_components"
       description "List or search blog components of the organization"
 
-      parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-
-      Api::Definitions::FILTER_PARAM.call(
-        "participatory_space_id",
-        { type: :string },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "participatory_space_type",
-        { type: :string, example: "Decidim::Assembly" },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "name",
-        { type: :string },
-        %w(not_in in lt gt not_start does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
-      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-
-      let!(:organization) { create(:organization) }
-      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
-      let!(:assembly) { create(:assembly, organization: organization) }
-      let(:component) { create(:component, manifest_name: "blogs") }
-
+      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["public"], organization: organization)
         api_client.permissions = [
@@ -49,8 +20,10 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
         api_client.save!
         api_client.reload
       end
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let(:component) { create(:component, manifest_name: "blogs") }
+      let!(:assembly) { create(:assembly, organization: organization) }
+      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+      let!(:organization) { create(:organization) }
 
       before do
         host! organization.host
@@ -67,9 +40,15 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
         )
       end
 
+      it_behaves_like "paginated endpoint"
+      it_behaves_like "localized endpoint"
+      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { type: :string, example: "Decidim::Assembly" }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, exclude_filters: %w(not_in in lt gt not_start does_not_match present blank)
+
       response "200", "List of blog components" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/components_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_component_index_response)
 
         context "with no filter params" do
           let(:"locales[]") { %w(en fr) }
@@ -113,14 +92,14 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no public scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -130,7 +109,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -139,7 +118,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }
@@ -161,7 +140,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController, typ
           allow(Decidim::Api::RestFull::Components::BlogComponentsController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

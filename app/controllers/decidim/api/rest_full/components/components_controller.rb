@@ -12,9 +12,9 @@ module Decidim
             Decidim::Component.ransacker :id do |_r|
               Arel.sql('CAST("decidim_components"."id" AS VARCHAR)')
             end
-            query = find_components(Decidim::Component.all)
+            query = Decidim::Component.all
             query = query.reorder(nil).ransack(params[:filter])
-            data = paginate(ActiveRecord::Base.connection.exec_query(query.result.to_sql).map do |result|
+            data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
               serializer = "Decidim::Api::RestFull::#{result.manifest_name.singularize.camelize}ComponentSerializer".constantize
               serializer.new(
@@ -34,7 +34,7 @@ module Decidim
 
           def show
             component_id = params.require(:id).to_i
-            component = find_components(Decidim::Component.where(id: component_id)).first
+            component = in_visible_spaces(Decidim::Component.where(id: component_id)).first
             raise Decidim::RestFull::ApiException::NotFound, "Component not found" unless component
 
             serializer = "Decidim::Api::RestFull::#{component.manifest_name.singularize.camelize}ComponentSerializer".constantize

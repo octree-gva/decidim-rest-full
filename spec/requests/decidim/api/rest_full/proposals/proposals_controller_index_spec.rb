@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
   path "/proposals" do
     get "Proposals" do
       tags "Proposals"
@@ -9,40 +9,16 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
       security [{ credentialFlowBearer: ["proposals"] }, { resourceOwnerFlowBearer: ["proposals"] }]
       operationId "proposals"
       description "Search proposals"
-
-      parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
-      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-      parameter name: :order, in: :query, schema: { type: :string, description: "field to order by", enum: %w(published_at rand) }, required: false
-      parameter name: :order_direction, in: :query, schema: { type: :string, description: "order direction", enum: %w(desc asc) }, required: false
-
-      parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
-      parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
-      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
-
-      Api::Definitions::FILTER_PARAM.call(
-        "voted_weight",
-        { type: :string },
-        %w(not_in not_eq lt gt start not_start matches does_not_match present)
-      ).each do |param|
-        parameter(**param)
+      let(:proposal_id) { proposal.id }
+      let(:component_id) { proposal_component.id }
+      let(:space_id) { participatory_process.id }
+      let(:space_manifest) { "participatory_processes" }
+      let(:Authorization) { "Bearer #{impersonate_token.token}" }
+      # Routing
+      let!(:impersonate_token) do
+        create(:oauth_access_token, scopes: ["proposals"], resource_owner_id: user.id, application: api_client)
       end
-      Api::Definitions::FILTER_PARAM.call(
-        "state",
-        { type: :string },
-        %w(not_in lt gt start not_start matches does_not_match present)
-      ).each do |param|
-        parameter(**param)
-      end
-
-      let!(:page) { 1 }
-      let!(:per_page) { 50 }
-      let!(:organization) { create(:organization) }
-      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
-      let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
-      let!(:proposal) { create(:proposal, component: proposal_component) }
-      let(:"locales[]") { %w(en fr) }
-
+      let(:user) { create(:user, locale: "fr", organization: organization) }
       let!(:api_client) do
         api_client = create(:api_client, scopes: ["proposals"], organization: organization)
         api_client.permissions = [
@@ -51,34 +27,33 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
         api_client.save!
         api_client.reload
       end
-
-      let(:user) { create(:user, locale: "fr", organization: organization) }
-
-      # Routing
-      let!(:impersonate_token) do
-        create(:oauth_access_token, scopes: ["proposals"], resource_owner_id: user.id, application: api_client)
-      end
-
-      let(:Authorization) { "Bearer #{impersonate_token.token}" }
-      let(:space_manifest) { "participatory_processes" }
-      let(:space_id) { participatory_process.id }
-      let(:component_id) { proposal_component.id }
-      let(:proposal_id) { proposal.id }
+      let(:"locales[]") { %w(en fr) }
+      let!(:proposal) { create(:proposal, component: proposal_component) }
+      let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
+      let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+      let!(:organization) { create(:organization) }
+      let!(:per_page) { 50 }
+      let!(:page) { 1 }
 
       before do
         host! organization.host
       end
 
-      response "200", "Proposal Found" do
+      it_behaves_like "localized endpoint"
+      it_behaves_like "paginated endpoint"
+      it_behaves_like "resource endpoint"
+
+      parameter name: :order, in: :query, schema: { type: :string, description: "field to order by", enum: %w(published_at rand) }, required: false
+      parameter name: :order_direction, in: :query, schema: { type: :string, description: "order direction", enum: %w(desc asc) }, required: false
+      it_behaves_like "filtered endpoint", filter: "voted_weight", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present)
+      it_behaves_like "filtered endpoint", filter: "state", item_schema: { type: :string }, exclude_filters: %w(not_in lt gt start not_start matches does_not_match present)
+
+      response "200", "Proposal List" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/proposals_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_index_response)
         context "when ordered" do
           before do
-            [
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)])
-            ].each_with_index do |proposal, index|
+            Array.new(3) { create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]) }.each_with_index do |proposal, index|
               proposal.published_at = (index + 1).minutes.ago
               proposal.save!
               proposal
@@ -244,11 +219,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
           let(:per_page) { 2 }
           let!(:impersonate_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
           let!(:proposals) do
-            [
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]),
-              create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)])
-            ].each_with_index do |proposal, index|
+            Array.new(3) { create(:proposal, component: proposal_component, users: [create(:user, :confirmed, organization: organization)]) }.each_with_index do |proposal, index|
               proposal.published_at = (index + 1).minutes.ago
               proposal.save!
               proposal
@@ -282,7 +253,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }
@@ -296,14 +267,14 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no proposals scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -313,7 +284,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -329,7 +300,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController, type: :re
           allow(Decidim::Api::RestFull::Proposals::ProposalsController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

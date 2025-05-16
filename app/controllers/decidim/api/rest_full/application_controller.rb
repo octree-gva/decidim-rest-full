@@ -19,7 +19,7 @@ module Decidim
         # Find components that are published in a visible space.
         # exemple: if the user has no view on Decidim::Assembly#2
         #          THEN should not be able to query any Decidim::Assembly#2 components
-        def find_components(context = Decidim::Component.all)
+        def in_visible_spaces(context = Decidim::Component.all)
           if visible_spaces.size.positive?
             first_visible_space = visible_spaces.first
             query_manifest = context
@@ -108,7 +108,7 @@ module Decidim
         def available_locales
           @available_locales ||= begin
             not_allowed_locales = parsed_locales_params.reject { |l| all_locales.include? l }
-            raise Decidim::RestFull::ApiException::BadRequest, "Not allowed locales: #{not_allowed_locales.join}" unless not_allowed_locales.empty?
+            raise Decidim::RestFull::ApiException::BadRequest, "Not allowed locales: #{not_allowed_locales.join(", ")}" unless not_allowed_locales.empty?
 
             parsed_locales_params
           end

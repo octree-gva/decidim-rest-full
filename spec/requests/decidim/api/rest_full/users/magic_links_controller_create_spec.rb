@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
   path "/me/magic_links" do
     post "Create a magic-lick" do
       tags "Users"
@@ -53,7 +53,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
 
       response "201", "Magick link created" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/magic_link_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:magic_link_item_response)
 
         context "when user is valid" do
           run_test!(example_name: :ok) do |example|
@@ -68,7 +68,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
         context "when user is blocked" do
           before do
             user.update(blocked_at: Time.zone.now)
@@ -82,14 +82,14 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
         context "with client credentials" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -100,7 +100,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test!(example_name: :forbidden_scope) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -111,7 +111,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
           let(:body) { { data: { title: "This is a valid proposal title sample" } } }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -127,7 +127,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
           allow(Decidim::Api::RestFull::Users::MagicLinksController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test!(:server_error) do |response|
           expect(response.status).to eq(500)
