@@ -48,11 +48,11 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
 
       it_behaves_like "paginated endpoint"
       it_behaves_like "localized endpoint"
-      it_behaves_like "filtered endpoint", filter: "manifest_name", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_manifest) }, exclude_filters: %w(lt gt not_start does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type) }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, exclude_filters: %w(not_in in lt gt not_start does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "manifest_name", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_manifest) }, only: :string
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, only: :integer
+      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, only: :integer
+      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type) }, only: :string
+      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, only: :string
 
       response "200", "List of components" do
         produces "application/json"

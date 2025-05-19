@@ -26,8 +26,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
       end
 
       it_behaves_like "paginated endpoint"
-      it_behaves_like "filtered endpoint", filter: "nickname", item_schema: { type: :string }, exclude_filters: %w(lt gt)
-      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "nickname", item_schema: { type: :string }, only: :string
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, only: :integer
 
       parameter name: :"filter[extended_data_cont]",
                 schema: { type: :string },

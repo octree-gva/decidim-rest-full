@@ -40,8 +40,8 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
       it_behaves_like "localized endpoint"
       it_behaves_like "resource endpoint"
       parameter name: "id", in: :path, schema: { type: :integer, description: "Proposal Id" }, required: true
-      it_behaves_like "filtered endpoint", filter: "voted_weight", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present)
-      it_behaves_like "filtered endpoint", filter: "state", item_schema: { type: :string }, exclude_filters: %w(not_in lt gt start not_start matches does_not_match present)
+      it_behaves_like "filtered endpoint", filter: "voted_weight", item_schema: { type: :string }, only: :string
+      it_behaves_like "filtered endpoint", filter: "state", item_schema: { type: :string }, only: :string
 
       response "200", "Proposal Found" do
         produces "application/json"

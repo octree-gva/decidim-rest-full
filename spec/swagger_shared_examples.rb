@@ -18,7 +18,15 @@ end
 RSpec.shared_examples "filtered endpoint" do |options = {}|
   filter = options[:filter]
   item_schema = options[:item_schema]
-  exclude_filters = options[:exclude_filters]
+  filter_group = options[:only]
+  filter_groups = {
+    integer: %w(not_in not_eq start not_start matches does_not_match blank),
+    string: %w(lt gt not_start does_not_match present)
+  }
+  raise "exclude must be one of #{filter_groups.keys}" unless filter_groups.has_key?(filter_group)
+
+  exclude_filters = filter_groups[filter_group]
+
   filters_attributes = [
     {
       name: "filter[#{filter}_not_in][]", in: :query, style: :form, explode: true, schema: {

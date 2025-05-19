@@ -49,9 +49,9 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
       it_behaves_like "localized endpoint"
       it_behaves_like "paginated endpoint"
-      it_behaves_like "filtered endpoint", filter: "manifest_name", item_schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "title", item_schema: { type: :string }, exclude_filters: %w(lt gt)
+      it_behaves_like "filtered endpoint", filter: "manifest_name", item_schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }, only: :string
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, only: :integer
+      it_behaves_like "filtered endpoint", filter: "title", item_schema: { type: :string }, only: :string
 
       response "200", "Search Results" do
         produces "application/json"

@@ -45,8 +45,8 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
       parameter name: :order, in: :query, schema: { type: :string, description: "field to order by", enum: %w(published_at rand) }, required: false
       parameter name: :order_direction, in: :query, schema: { type: :string, description: "order direction", enum: %w(desc asc) }, required: false
-      it_behaves_like "filtered endpoint", filter: "voted_weight", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present)
-      it_behaves_like "filtered endpoint", filter: "state", item_schema: { type: :string }, exclude_filters: %w(not_in lt gt start not_start matches does_not_match present)
+      it_behaves_like "filtered endpoint", filter: "voted_weight", item_schema: { type: :string }, only: :string
+      it_behaves_like "filtered endpoint", filter: "state", item_schema: { type: :string }, only: :string
 
       response "200", "Proposal List" do
         produces "application/json"

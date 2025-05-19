@@ -42,9 +42,9 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController do
 
       it_behaves_like "paginated endpoint"
       it_behaves_like "localized endpoint"
-      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { type: :string, example: "Decidim::Assembly" }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
-      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, exclude_filters: %w(not_in in lt gt not_start does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "participatory_space_id", item_schema: { type: :string }, only: :integer
+      it_behaves_like "filtered endpoint", filter: "participatory_space_type", item_schema: { type: :string, example: "Decidim::Assembly" }, only: :string
+      it_behaves_like "filtered endpoint", filter: "name", item_schema: { type: :string }, only: :string
 
       response "200", "List of blog components" do
         produces "application/json"

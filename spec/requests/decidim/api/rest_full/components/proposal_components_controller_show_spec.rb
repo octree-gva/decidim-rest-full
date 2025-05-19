@@ -34,7 +34,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
       it_behaves_like "localized endpoint"
       it_behaves_like "paginated endpoint"
       parameter name: "id", in: :path, schema: { type: :integer }
-      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(not_in not_eq lt gt start not_start matches does_not_match present blank)
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, only: :integer
 
       response "200", "Proposal Component" do
         produces "application/json"
