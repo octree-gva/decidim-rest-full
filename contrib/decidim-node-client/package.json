@@ -1,6 +1,6 @@
 {
   "name": "@octree/decidim-sdk",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Typescript-fetch client for Decidim Restfull APi",
   "keywords": [],
   "license": "AGPL-3.0-only",

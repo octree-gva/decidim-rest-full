@@ -12,6 +12,7 @@ require "decidim/rest_full/version"
 require "decidim/rest_full/menu"
 require "decidim/rest_full/engine"
 require "decidim/rest_full/api_exception"
+require "decidim/rest_full/definition_registry"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
   path "/me/magic_links/{magic_token}" do
     get "Use a magic-lick" do
       tags "Users"
@@ -45,7 +45,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
       response "400", "Bad Request" do
         consumes "text/html"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
         context "when user is blocked" do
           before do
             user.update(blocked_at: Time.zone.now)
@@ -80,7 +80,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController, type: :reque
           allow(Decidim::Api::RestFull::Users::MagicLinksController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test!(:server_error) do |response|
           expect(response.status).to eq(500)

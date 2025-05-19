@@ -2,9 +2,15 @@
 
 require "spec_helper"
 require "rswag/specs"
+
+require "swagger_openapi_specs"
+require "swagger_shared_examples"
+
 # spec/swagger_helper.rb
 RSpec.configure do |config|
   config.openapi_root = Rails.root.join("swagger").to_s
+  # On example, will save the test result and insert it as
+  # an example in the swagger file.
   config.after do |example|
     next unless example.metadata[:type] == :request
 
@@ -29,150 +35,7 @@ RSpec.configure do |config|
       example.metadata[:response][:content] = content.deep_merge(example_spec)
     end
   end
-  config.openapi_specs = {
-    "v1/swagger.json" => {
-      openapi: "3.0.1",
-      info: {
-        title: "API V1",
-        version: "v#{Decidim::RestFull.major_minor_version}",
-        description: <<~README
-          A RestFull API for Decidim, to be able to CRUD resources from Decidim.
 
-          ## Authentication
-          [Get a token](#{Decidim::RestFull.docs_url}/category/authentication) from our `/oauth/token` routes,
-          following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.
-
-          ### Permissions
-          A permission system is attached to the created OAuth application, that is designed in two levels:
-
-          - **scope**: a broad permission to access a collection of endpoints
-          - **abilities**: a fine grained permission system that allow actions.
-
-          The scopes and abilities are manageable in your System Admin Panel.
-
-          ### Multi-tenant
-          Decidim is multi-tenant, and this API supports it.
-          - The **`system` scope** endpoints are available in any tenant
-          - The tenant `host` attribute will be used to guess which tenant you are requesting.
-            For example, given a tenant `example.org` and `foobar.org`, the endpoint
-            * `example.org/oauth/token` will ask a token for the example.org organization
-            * `foobar.org/oauth/token` for foobar.org.
-        README
-      },
-      servers: [
-        {
-          url: "https://{defaultHost}/api/rest_full/v#{Decidim::RestFull.major_minor_version}",
-          variables: {
-            defaultHost: {
-              default: "www.example.com"
-            }
-          }
-        }
-      ],
-      tags: [
-        Api::Definitions::Tags::OAUTH,
-        Api::Definitions::Tags::SPACE,
-        Api::Definitions::Tags::COMPONENT,
-        Api::Definitions::Tags::USER,
-        Api::Definitions::Tags::BLOG,
-        Api::Definitions::Tags::PROPOSAL
-      ],
-      components: {
-        securitySchemes: {
-          credentialFlowBearer: {
-            type: :http,
-            scheme: :bearer,
-            bearerFormat: :JWT,
-            description: <<~README
-              Authorization via service-to-service credentials flow.
-              Use this for machine clients.
-              [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/client-credential-flow)
-            README
-          },
-          resourceOwnerFlowBearer: {
-            type: :http,
-            scheme: :bearer,
-            bearerFormat: :JWT,
-            description: <<~README
-              Authorization via resource owner flow.
-              Use this for user-based authentication
-              [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/user-credentials-flow)
-            README
-          }
-        },
-        schemas: {
-          # Reusable properties
-          api_error: Api::Definitions::ERROR,
-          translated_prop: Api::Definitions::TRANSLATED_PROP,
-          component_type: Api::Definitions::COMPONENT_TYPE,
-          component_manifest: Api::Definitions::COMPONENT_MANIFEST,
-          space_manifest: Api::Definitions::SPACE_MANIFEST,
-          space_type: Api::Definitions::SPACE_TYPE,
-          space_classes: Api::Definitions::SPACE_CLASSES,
-          locales: Api::Definitions::LOCALES_PARAM,
-          locale: Api::Definitions::LOCALE_PARAM,
-          creation_date: Api::Definitions::CREATION_DATE,
-          edition_date: Api::Definitions::EDITION_DATE,
-
-          # System
-          organization: Api::Definitions::ORGANIZATION,
-          user: Api::Definitions::USER,
-          organizations_response: Api::Definitions.array_response("organization", "List of organizations"),
-          users_response: Api::Definitions.array_response("user", "List of users"),
-          user_extended_data_response: Api::Definitions.item_response("user_extended_data", "Extended data response for a given path"),
-          user_extended_data: Api::Definitions::USER_EXTENDED_DATA,
-
-          # Public
-          space: Api::Definitions::SPACE,
-          component: Api::Definitions::COMPONENT,
-          component_response: Api::Definitions.item_response("component", "Component Detail"),
-          components_response: Api::Definitions.array_response("component", "Components List"),
-          spaces_response: Api::Definitions.array_response("space", "Participatory Spaces List"),
-          space_response: Api::Definitions.item_response("space", "Participatory Space Detail"),
-
-          # Proposals
-          proposal_component: Api::Definitions::PROPOSAL_COMPONENT,
-          proposal_component_response: Api::Definitions.item_response("proposal_component", "Proposal Component Detail"),
-          proposal_components_response: Api::Definitions.array_response("proposal_component", "Proposal Components List"),
-
-          # Blogs
-          blog: Api::Definitions::BLOG,
-          blogs_response: Api::Definitions.array_response("blog", "Blog Post List"),
-          blog_response: Api::Definitions.item_response("blog", "Blog Post Detail"),
-
-          # Proposal
-          proposal: Api::Definitions::PROPOSAL,
-          proposals_response: Api::Definitions.array_response("proposal", "Proposals List"),
-          proposal_response: Api::Definitions.item_response("proposal", "Proposal Detail"),
-          draft_proposal: Api::Definitions::DRAFT_PROPOSAL,
-          draft_proposal_response: Api::Definitions.item_response("draft_proposal", "Draft Proposal Detail"),
-
-          # OAuth methods
-          introspect_data: Api::Definitions::INTROSPECT_DATA,
-          introspect_response: {
-            description: "Details about the token beeing used",
-            "$ref" => "#/components/schemas/introspect_data"
-          },
-          magic_link: Api::Definitions::MAGIC_LINK,
-          magic_link_response: Api::Definitions.item_response("magic_link", "Magick Link Response"),
-          magic_link_redirect: Api::Definitions::MAGIC_LINK_REDIRECT,
-          magic_link_redirect_response: Api::Definitions.item_response("magic_link_redirect", "Magick Link Redirect"),
-
-          oauth_grant_param: {
-            oneOf: [
-              Api::Definitions::CLIENT_CREDENTIAL_GRANT,
-              Api::Definitions::PASSWORD_GRANT_IMPERSONATE,
-              Api::Definitions::PASSWORD_GRANT_LOGIN
-            ]
-          },
-          password_grant_param: {
-            oneOf: [
-              Api::Definitions::PASSWORD_GRANT_IMPERSONATE,
-              Api::Definitions::PASSWORD_GRANT_LOGIN
-            ]
-          }
-        }
-      }
-    }
-  }
+  # Add the openapi specs to the config
+  config.openapi_specs = Decidim::RestFull::Test.openapi_specs
 end

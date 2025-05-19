@@ -9,9 +9,9 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Component }
 
           def index
-            query = find_components(collection)
+            query = collection
             query = query.reorder(nil).ransack(params[:filter])
-            data = paginate(ActiveRecord::Base.connection.exec_query(query.result.to_sql).map do |result|
+            data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
               Decidim::Api::RestFull::ProposalComponentSerializer.new(
                 result,

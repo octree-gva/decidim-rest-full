@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
   path "/me/extended_data" do
     put "Update user extended data" do
       tags "Users"
@@ -119,14 +119,14 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
       response "200", "Update extended data value" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/user_extended_data"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_extended_data)
 
         context "with root path '.'" do
           let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "foo" => { "bar" => "true" } }) }
 
           run_test!(example_name: :ok) do |example|
             data = JSON.parse(example.body)["data"]
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(:ok)
             expect(data).to eq(body[:data])
           end
         end
@@ -137,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
 
           run_test! do |example|
             data = JSON.parse(example.body)["data"]
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(:ok)
             expect(data).to include("1990-02-09")
           end
         end
@@ -149,7 +149,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           run_test! do |example|
             JSON.parse(example.body)["data"]
             user.reload
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(:ok)
             expect(user.extended_data["personal"]).to include({ "name" => "Jeanne", "birthday" => "1989-01-28" })
           end
         end
@@ -161,7 +161,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           run_test! do |example|
             JSON.parse(example.body)["data"]
             user.reload
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(:ok)
             expect(user.extended_data["personal"].keys).to eq(["birthday"])
           end
         end
@@ -173,7 +173,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           run_test! do |example|
             user.reload
             data = JSON.parse(example.body)["data"]
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(:ok)
             expect(data).to include(body[:data])
             expect(user.extended_data).to eq({
                                                "personal" => { "birthday" => "1989-01-28" },
@@ -185,7 +185,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
         let(:body) { { data: "1990-02-09", object_path: "." } }
 
         context "with no oauth scope" do
@@ -193,7 +193,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           let!(:credential_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -204,7 +204,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           let(:body) { { data: "1990-02-09", object_path: "." } }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -222,7 +222,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController, type: 
           allow(Decidim::Api::RestFull::Users::UserExtendedDataController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)
