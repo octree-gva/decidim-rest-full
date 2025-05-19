@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Users::UsersController do
   path "/users" do
     get "List available Users" do
       tags "Users"
@@ -9,29 +9,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
       security [{ credentialFlowBearer: ["oauth"] }]
       operationId "users"
       description "List or search users of the organization"
-
-      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
-      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-      Api::Definitions::FILTER_PARAM.call("nickname", { type: :string }, %w(lt gt)).each do |param|
-        parameter(**param)
-      end
-      Api::Definitions::FILTER_PARAM.call(
-        "id",
-        { type: :integer },
-        %w(lt gt start not_start matches does_not_match present blank)
-      ).each do |param|
-        parameter(**param)
-      end
-
-      parameter name: :"filter[extended_data_cont]",
-                schema: { type: :string },
-                in: :query,
-                required: false,
-                example: '"foo": "bar"',
-                description: 'Search on user extended_data. use the format: `"<key>":<space>"<value>"`'
-
-      let!(:organization) { create(:organization) }
-      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
       let(:api_client) do
         api_client = create(:api_client, organization: organization, scopes: "oauth")
         api_client.permissions = [
@@ -40,16 +18,28 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
         api_client.save!
         api_client
       end
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
+      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:organization) { create(:organization) }
 
       before do
         host! organization.host
       end
 
+      it_behaves_like "paginated endpoint"
+      it_behaves_like "filtered endpoint", filter: "nickname", item_schema: { type: :string }, exclude_filters: %w(lt gt)
+      it_behaves_like "filtered endpoint", filter: "id", item_schema: { type: :integer }, exclude_filters: %w(lt gt start not_start matches does_not_match present blank)
+
+      parameter name: :"filter[extended_data_cont]",
+                schema: { type: :string },
+                in: :query,
+                required: false,
+                example: '"foo": "bar"',
+                description: 'Search on user extended_data. use the format: `"<key>":<space>"<value>"`'
+
       response "200", "Users listed" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/users_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_index_response)
 
         context "with no params" do
           before do
@@ -176,14 +166,14 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no oauth scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -194,7 +184,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
             let!(:impersonation_token) { create(:oauth_access_token, scopes: "oauth", resource_owner_id: nil, application: api_client) }
 
             run_test! do |_example|
-              expect(response.status).to eq(403)
+              expect(response).to have_http_status(:forbidden)
               expect(response.body).to include("Forbidden")
             end
           end
@@ -210,7 +200,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
             end
 
             run_test! do |_example|
-              expect(response.status).to eq(403)
+              expect(response).to have_http_status(:forbidden)
               expect(response.body).to include("Forbidden")
             end
           end
@@ -227,7 +217,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController, type: :request do
           allow(Decidim::Api::RestFull::Users::UsersController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, type: :request do
+RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
   path "/organizations" do
     get "List available organizations" do
       tags "System"
@@ -9,11 +9,9 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
       security [{ credentialFlowBearer: ["system"] }]
       operationId "organizations"
       description "List available organizations"
-
-      parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Api::Definitions::LOCALES_PARAM, required: false
-      parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
-      parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
-      let(:organization) { create(:organization) }
+      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
+      let!(:user) { create(:user) }
       let(:api_client) do
         api_client = create(:api_client, organization: organization, scopes: "system")
         api_client.permissions = [
@@ -22,15 +20,15 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
         api_client.save!
         api_client
       end
-      let!(:user) { create(:user) }
-      let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: user.id, application: api_client) }
+      let(:organization) { create(:organization) }
 
-      let(:Authorization) { "Bearer #{impersonation_token.token}" }
+      it_behaves_like "localized endpoint"
+      it_behaves_like "paginated endpoint"
 
       response "200", "Organizations listed" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/organizations_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_index_response)
 
         context "with locale[] filter translated results" do
           let(:"locales[]") { %w(en fr) }
@@ -59,14 +57,14 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no system scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["blogs"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -76,7 +74,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -85,7 +83,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
       response "400", "Bad Request" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with invalid locales[] fields" do
           let(:"locales[]") { ["invalid_locale"] }
@@ -106,7 +104,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController, t
           allow(Decidim::Api::RestFull::Organizations::OrganizationsController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

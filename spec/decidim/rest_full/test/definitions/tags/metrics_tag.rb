@@ -4,9 +4,9 @@ module Decidim
   module RestFull
     module Definitions
       module Tags
-        USER = {
-          name: "Users",
-          description: "Get information about participants, and manage own data."
+        METRICS = {
+          name: "Metrics",
+          description: "Metrics of the organization"
         }.freeze
       end
     end

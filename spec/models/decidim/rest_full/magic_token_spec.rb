@@ -4,7 +4,7 @@ require "spec_helper"
 
 module Decidim
   module RestFull
-    RSpec.describe MagicToken, type: :model do
+    RSpec.describe MagicToken do
       let(:user) { create(:user) }
 
       describe "validations" do

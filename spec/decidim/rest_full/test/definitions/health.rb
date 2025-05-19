@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-module Api
-  module Definitions
-    HEALTH_RESPONSE = {
-      type: :object,
-      properties: {
-        message: { type: :string }
-      }
-    }.freeze
-  end
+Decidim::RestFull::DefinitionRegistry.register_object(:health) do
+  {
+    type: :object,
+    properties: {
+      message: { type: :string, enum: %w(OK ERROR) }
+    }
+  }.freeze
 end

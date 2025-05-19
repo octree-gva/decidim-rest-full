@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController, type: :request do
+RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController do
   path "/draft_proposals/{id}/publish" do
     post "Publish a draft proposal" do
       tags "Draft Proposals"
@@ -51,7 +51,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
       response "200", "Draft Proposal published" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/proposal_response"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_item_response)
 
         context "when all fields are valid" do
           let!(:proposal) do
@@ -72,7 +72,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
       response "400", "Bad request" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "when body is invalid" do
           let!(:proposal) do
@@ -98,7 +98,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
       response "404", "Not Found" do
         consumes "application/json"
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no draft" do
           before { clean_drafts }
@@ -111,14 +111,14 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
 
       response "403", "Forbidden" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "with no proposals scope" do
           let!(:api_client) { create(:api_client, organization: organization, scopes: ["system"]) }
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "system", resource_owner_id: nil, application: api_client) }
 
           run_test!(example_name: :forbidden) do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -128,7 +128,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
           let!(:impersonation_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
 
           run_test! do |_example|
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(:forbidden)
             expect(response.body).to include("Forbidden")
           end
         end
@@ -144,7 +144,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController,
           allow(Decidim::Api::RestFull::DraftProposals::DraftProposalsController).to receive(:new).and_return(controller)
         end
 
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         run_test! do |response|
           expect(response.status).to eq(500)

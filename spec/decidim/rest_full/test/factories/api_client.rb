@@ -10,7 +10,7 @@ FactoryBot.define do
     name { Faker::App.name } # Generate a random app name
     redirect_uri { Faker::Internet.url } # Generate a random URL
     scopes { [] }
-    association :organization, factory: :organization
+    organization factory: [:organization]
     permissions { [] }
   end
 end

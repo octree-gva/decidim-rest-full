@@ -1,147 +1,99 @@
 # frozen_string_literal: true
 
-module Api
-  module Definitions
-    DRAFT_PROPOSAL = {
-      type: :object,
-      title: "Draft Proposal",
-      properties: {
-        id: { type: :string, description: "Draft Proposal Id" },
-        type: { type: :string, enum: ["draft_proposal"] },
-        attributes: {
-          type: :object,
-          properties: {
-            title: {
-              "$ref" => "#/components/schemas/translated_prop",
-              description: "Draft Proposal title"
-            },
-            body: {
-              "$ref" => "#/components/schemas/translated_prop",
-              description: "Draft Proposal content"
-            },
-            errors: {
-              type: :object,
-              properties: {
-                title: {
-                  type: :array,
-                  items: { type: :string }
-                },
-                body: {
-                  type: :array,
-                  items: { type: :string }
-                }
-              },
-              required: [:title, :body],
-              description: "Draft current errors"
-            },
-            created_at: { "$ref" => "#/components/schemas/creation_date" },
-            updated_at: { "$ref" => "#/components/schemas/edition_date" }
+Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
+  {
+    type: :object,
+    title: "Draft Proposal",
+    properties: {
+      id: { type: :string, description: "Draft Proposal Id" },
+      type: { type: :string, enum: ["draft_proposal"] },
+      attributes: {
+        type: :object,
+        properties: {
+          title: {
+            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            description: "Draft Proposal title"
           },
-          required: [:created_at, :updated_at, :title, :body],
-          additionalProperties: false
-        },
-        meta: {
-          type: :object,
-          title: "Draft Proposition Metadata",
-          properties: {
-            publishable: { type: :boolean, description: "Draft is published as it is now?" },
-            client_id: { type: :string, description: "Attached client_id" },
-            scope: { type: :integer, description: "Scope Id" },
-            fields: { type: :array, description: "Editable field names", items: { type: :string } }
+          body: {
+            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            description: "Draft Proposal content"
           },
-          additionalProperties: {
-            oneOf: [
-              {
-                type: :boolean
+          errors: {
+            type: :object,
+            properties: {
+              title: {
+                type: :array,
+                items: { type: :string }
               },
-              {
-                type: :integer
-              },
-              {
-                type: :string
-              },
-              {
-                "$ref" => "#/components/schemas/translated_prop"
+              body: {
+                type: :array,
+                items: { type: :string }
               }
-            ]
+            },
+            required: [:title, :body],
+            description: "Draft current errors"
           },
-          required: [:publishable, :client_id, :fields]
+          created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
+          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) }
         },
-        links: {
-          type: :object,
-          title: "Proposal Links",
-          properties: {
-            self: Api::Definitions.link("Draft Proposal Details"),
-            collection: Api::Definitions.link("Proposal List"),
-            related: Api::Definitions.link("Component Details")
-          },
-          additionalProperties: false,
-          required: [:self, :related, :collection]
-        },
-        relationships: {
-          type: :object,
-          title: "Proposal Relationships",
-          properties: {
-            space: {
-              type: :object,
-              properties: {
-                data: {
-                  type: :object,
-                  properties: {
-                    id: { type: :string, description: "Space Id" },
-                    type: { "$ref" => "#/components/schemas/space_type" }
-                  },
-                  required: [:id, :type]
-                }
-              },
-              required: [:data]
-            },
-            component: {
-              type: :object,
-              properties: {
-                data: {
-                  type: :object,
-                  properties: {
-                    id: { type: :string, description: "Component Id" },
-                    type: { "$ref" => "#/components/schemas/component_type" }
-                  },
-                  required: [:id, :type]
-                }
-              },
-              required: [:data]
-            },
-            author: {
-              type: :object,
-              properties: {
-                id: { type: :string, description: "User Id" },
-                type: { type: :string, enum: %w(user user_group) }
-              },
-              required: [:data],
-              nullable: true
-            },
-            coauthors: {
-              type: :object,
-              properties: {
-                data: {
-                  type: :array,
-                  items: {
-                    type: :object,
-                    properties: {
-                      id: { type: :string, description: "User Id" },
-                      type: { type: :string, enum: %w(user user_group) }
-                    },
-                    required: [:id, :type]
-                  }
-                }
-              },
-              required: [:data]
-            }
-          },
-          required: [:component, :space, :author],
-          additionalProperties: false
-        }
+        required: [:created_at, :updated_at, :title, :body],
+        additionalProperties: false
       },
-      required: [:id, :type, :attributes, :meta, :links]
-    }.freeze
-  end
+      meta: {
+        type: :object,
+        title: "Draft Proposition Metadata",
+        properties: {
+          publishable: { type: :boolean, description: "Draft is published as it is now?" },
+          client_id: { type: :string, description: "Attached client_id" },
+          scope: { type: :integer, description: "Scope Id" },
+          fields: { type: :array, description: "Editable field names", items: { type: :string } }
+        },
+        additionalProperties: {
+          oneOf: [
+            {
+              type: :boolean
+            },
+            {
+              type: :integer
+            },
+            {
+              type: :string
+            },
+            {
+              "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+            }
+          ]
+        },
+        required: [:publishable, :client_id, :fields]
+      },
+      links: {
+        type: :object,
+        title: "Proposal Links",
+        properties: {
+          self: Decidim::RestFull::DefinitionRegistry.resource_link,
+          collection: Decidim::RestFull::DefinitionRegistry.resource_link,
+          related: Decidim::RestFull::DefinitionRegistry.resource_link
+        },
+        additionalProperties: false,
+        required: [:self, :related, :collection]
+      },
+      relationships: {
+        type: :object,
+        title: "Proposal Relationships",
+        properties: {
+          space: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
+                                                                             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type)
+                                                                           }, title: "Linked Space"),
+          component: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
+                                                                                 "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_type)
+                                                                               }, title: "Linked Component"),
+          author: Decidim::RestFull::DefinitionRegistry.belongs_to("user", "user_group", title: "Linked Author"),
+          coauthors: Decidim::RestFull::DefinitionRegistry.has_many("user", "user_group", title: "Linked Coauthors")
+        },
+        required: [:component, :space],
+        additionalProperties: false
+      }
+    },
+    required: [:id, :type, :attributes, :meta, :links]
+  }.freeze
 end

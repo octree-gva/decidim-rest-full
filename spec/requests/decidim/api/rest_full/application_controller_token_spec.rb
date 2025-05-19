@@ -2,7 +2,7 @@
 
 # spec/integration/oauth_scopes_spec.rb
 require "swagger_helper"
-RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
+RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization: organization, scopes: "oauth") }
@@ -27,7 +27,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
       operationId "createToken"
       description "Create a oauth token for the given scopes"
 
-      parameter name: :body, in: :body, required: true, schema: { "$ref" => "#/components/schemas/oauth_grant_param" }
+      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:oauth_grant_param) }
 
       response "200", "Token returned" do
         context "with client_credentials grant" do

@@ -11,7 +11,7 @@ def uniq_nickname
   end
   final_nickname
 end
-RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
+RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
   let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) do
@@ -37,7 +37,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
       operationId "createToken"
       description "Create a oauth token for the given scopes"
 
-      parameter name: :body, in: :body, required: true, schema: { "$ref" => "#/components/schemas/oauth_grant_param" }
+      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:oauth_grant_param) }
       response "200", "Token returned" do
         context "when user does not exists" do
           context "with meta.register_on_missing=true" do
@@ -173,7 +173,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController, type: :request do
 
       response "400", "Bad Request" do
         produces "application/json"
-        schema "$ref" => "#/components/schemas/api_error"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
         context "when user does not exists" do
           context "with meta.register_on_missing=false" do

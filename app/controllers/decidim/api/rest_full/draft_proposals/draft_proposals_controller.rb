@@ -94,7 +94,7 @@ module Decidim
             end
             allowed_data_keys.each do |field_name|
               field_name_sym = field_name.to_sym
-              form.send("#{field_name}=", Rails::Html::FullSanitizer.new.sanitize(payload[field_name_sym])) if update_keys.include? field_name
+              form.send(:"#{field_name}=", Rails::Html::FullSanitizer.new.sanitize(payload[field_name_sym])) if update_keys.include? field_name
             end
 
             form.valid?
@@ -102,7 +102,7 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
 
             allowed_data_keys.each do |field_name|
-              draft_proposal.send("#{field_name}=", { current_locale.to_s => form.send(field_name) })
+              draft_proposal.send(:"#{field_name}=", { current_locale.to_s => form.send(field_name) })
             end
 
             draft_proposal.save(validate: false)
@@ -172,7 +172,7 @@ module Decidim
           end
 
           def create_new_draft(component_id)
-            component = find_components(Decidim::Component.all).find(component_id)
+            component = in_visible_spaces(Decidim::Component.all).find(component_id)
             raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
 
             proposal = Decidim::Proposals::Proposal.new(component: component, published_at: nil)
