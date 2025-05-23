@@ -2,7 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
+<<<<<<< HEAD
     "version": "0.3.0",
+=======
+    "version": "v0.2",
+>>>>>>> main
     "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant\nDecidim is multi-tenant, and this API supports it.\n- The **`system` scope** endpoints are available in any tenant\n- The tenant `host` attribute will be used to guess which tenant you are requesting.\n  For example, given a tenant `example.org` and `foobar.org`, the endpoint\n  * `example.org/oauth/token` will ask a token for the example.org organization\n  * `foobar.org/oauth/token` for foobar.org.\n"
   },
   "servers": [

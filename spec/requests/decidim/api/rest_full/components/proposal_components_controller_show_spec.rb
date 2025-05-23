@@ -7,6 +7,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
       tags "Components"
       produces "application/json"
       operationId "proposal_component"
+
       description "Find on proposal"
       it_behaves_like "localized params"
       it_behaves_like "paginated params"
