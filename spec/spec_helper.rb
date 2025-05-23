@@ -12,5 +12,7 @@ require "decidim/dev/test/base_spec_helper"
 require "decidim/core/test/factories"
 
 require "decidim/rest_full/test/definitions"
+require "decidim/rest_full/test/global_context"
+require "decidim/rest_full/test/on_api_endpoint_methods"
 
 Bullet.add_safelist type: :counter_cache, class_name: "Decidim::Proposals::Proposal", association: :coauthorships if defined?(Bullet)

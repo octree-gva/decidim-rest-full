@@ -58,6 +58,10 @@ module Decidim
 
           private
 
+          def order_columns
+            %w(rand published_at)
+          end
+
           def collection
             query = filter_for_context(model_class.order(published_at: :asc))
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
@@ -68,6 +72,7 @@ module Decidim
             else
               query.where("published_at <= ? OR (published_at > ? AND decidim_author_id = ?)", now, now, act_as.id)
             end
+            ordered(query)
           end
 
           def model_class

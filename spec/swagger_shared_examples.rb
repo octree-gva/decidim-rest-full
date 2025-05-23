@@ -1,21 +1,155 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples "paginated endpoint" do
+RSpec.shared_examples "paginated params" do
   parameter name: :page, in: :query, type: :integer, description: "Page number for pagination", required: false
   parameter name: :per_page, in: :query, type: :integer, description: "Number of items per page", required: false
 end
 
+RSpec.shared_examples "ordered params" do |options = {}|
+  columns = options[:columns]
+  order_parameter_attributes = {
+    name: :order,
+    in: :query,
+    type: :string,
+    description: "Order by",
+    required: false
+  }
+  order_parameter_attributes[:enum] = columns if columns.present?
+  parameter order_parameter_attributes
+  parameter name: :order_direction, in: :query, type: :string, enum: %w(asc desc), description: "Order direction", required: false
+end
+
+RSpec.shared_examples "ordered endpoint" do |options = {}|
+  columns = options[:columns]
+  break if columns.blank?
+
+  columns.each do |column|
+    context "when ordered by #{column}" do
+      before do
+        resources.each(&:destroy)
+        Array.new(3) { create_resource.call }.each_with_index do |resource, index|
+          each_resource.call(resource, index)
+          resource.reload
+        end
+        resources.reload if resources.respond_to?(:reload)
+      end
+
+      context "when order_direction=asc" do
+        let(:order) { column }
+        let(:order_direction) { "asc" }
+
+        run_test! do |example|
+          data = JSON.parse(example.body)["data"]
+          resources_ids = resources.order(column => :asc).ids
+          expect(data.first["id"]).to eq(resources_ids.first.to_s)
+          expect(data.last["id"]).to eq(resources_ids.last.to_s)
+        end
+      end
+
+      context "when order_direction=desc" do
+        let(:order) { column }
+        let(:order_direction) { "desc" }
+
+        run_test! do |example|
+          data = JSON.parse(example.body)["data"]
+          resources_ids = resources.order(column => :desc).ids
+          expect(data.first["id"]).to eq(resources_ids.first.to_s)
+          expect(data.last["id"]).to eq(resources_ids.last.to_s)
+        end
+      end
+    end
+  end
+end
+
+RSpec.shared_examples "paginated endpoint" do |options = {}|
+  sample_size = options.fetch(:sample_size, 3)
+
+  raise ArgumentError, "sample_size must be less than 100" unless sample_size < 100
+
+  let(:destroy_resources) { -> { resources.each(&:destroy!) } }
+  before do
+    destroy_resources.call
+    resources.reload if resources.respond_to?(:reload)
+  end
+
+  context "with no resources, return empty array" do
+    let(:per_page) { 2 }
+    let(:page) { 1 }
+
+    run_test! do |example|
+      json_response = JSON.parse(example.body)
+      expect(json_response["data"].size).to eq(0)
+    end
+  end
+
+  context "with #{sample_size} resources" do
+    before do
+      Array.new(sample_size) { create_resource.call }.each_with_index do |resource, index|
+        each_resource.call(resource, index)
+      end
+      resources.reload if resources.respond_to?(:reload)
+    end
+
+    context "when per_page=2 and page=1, list 2 resources" do
+      let(:per_page) { 2 }
+      let(:page) { 1 }
+
+      run_test!(example_name: :paginated) do |example|
+        json_response = JSON.parse(example.body)
+        expect(json_response["data"].size).to eq(2)
+      end
+    end
+
+    context "when per_page=2 and page=#{((sample_size + 1) / 2).ceil}, list #{sample_size % 2} resource" do
+      let(:per_page) { 2 }
+      let(:page) { ((sample_size + 1) / 2).ceil }
+
+      run_test! do |example|
+        json_response = JSON.parse(example.body)
+        expect(json_response["data"].size).to eq(sample_size % 2)
+      end
+    end
+
+    context "when per_page=1 and page=100, return empty array" do
+      let(:per_page) { 1 }
+      let(:page) { 100 }
+
+      run_test! do |example|
+        json_response = JSON.parse(example.body)
+        expect(json_response["data"]).to be_empty
+      end
+    end
+  end
+end
+
 RSpec.shared_examples "localized endpoint" do
+  response "400", "Bad Request" do
+    consumes "application/json"
+    produces "application/json"
+    schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+
+    context "with invalid locales[] fields" do
+      let(:"locales[]") { ["invalid_locale"] }
+
+      run_test! do |example|
+        error_description = JSON.parse(example.body)["error_description"]
+        expect(error_description).to start_with("Not allowed locales:")
+      end
+    end
+  end
+end
+
+RSpec.shared_examples "localized params" do
   parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Decidim::RestFull::DefinitionRegistry.schema_for(:locales), required: false
 end
 
-RSpec.shared_examples "resource endpoint" do
+RSpec.shared_examples "resource params" do
   parameter name: "space_manifest", in: :query, schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name), description: "Space type" }, required: false
   parameter name: "space_id", in: :query, schema: { type: :integer, description: "Space Id" }, required: false
   parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
 end
 
-RSpec.shared_examples "filtered endpoint" do |options = {}|
+RSpec.shared_examples "filtered params" do |options = {}|
   filter = options[:filter]
   item_schema = options[:item_schema]
   filter_group = options[:only]

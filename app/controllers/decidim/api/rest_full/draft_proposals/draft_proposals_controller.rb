@@ -7,6 +7,7 @@ module Decidim
         class DraftProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
+
           before_action do
             raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
           end

@@ -13,7 +13,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
     api_client.save!
   end
   let!(:client_credential_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
-  let!(:impersonation_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
+  let!(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
 
   before do
     host! api_client.organization.host
@@ -46,7 +46,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
 
         context "with password grant" do
           let(:Authorization) { "Bearer #{client_credential_token.token}" }
-          let(:body) { { token: impersonation_token.token } }
+          let(:body) { { token: bearer_token.token } }
 
           run_test!(example_name: :bearer_ropc) do |response|
             json_response = JSON.parse(response.body)

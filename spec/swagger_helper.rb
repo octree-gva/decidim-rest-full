@@ -5,10 +5,18 @@ require "rswag/specs"
 
 require "swagger_openapi_specs"
 require "swagger_shared_examples"
-
 # spec/swagger_helper.rb
+
 RSpec.configure do |config|
   config.openapi_root = Rails.root.join("swagger").to_s
+  config.extend Decidim::RestFull::Test::OnApiEndpointMethods
+  config.before do
+    I18n.available_locales = Decidim.available_locales = %w(en fr es)
+    I18n.default_locale = Decidim.default_locale = :en
+
+    Decidim::RestFull::Test::GlobalContext.security_type = nil
+  end
+
   # On example, will save the test result and insert it as
   # an example in the swagger file.
   config.after do |example|
