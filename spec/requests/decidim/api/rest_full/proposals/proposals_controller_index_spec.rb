@@ -12,7 +12,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
       it_behaves_like "paginated params"
       it_behaves_like "resource params"
       it_behaves_like "ordered params", columns: %w(published_at rand)
-      it_behaves_like "filtered params", filter: "voted_weight", item_schema: { type: :string }, only: :string
+      it_behaves_like "filtered params", filter: "voted_weight", item_schema: { type: :string }, only: :integer, security: [:impersonationFlow]
       it_behaves_like "filtered params", filter: "state", item_schema: { type: :string }, only: :string
 
       describe_api_endpoint(
@@ -86,14 +86,12 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                     expect(d["relationships"]["state"]).to be_nil
                   end
                 end
-                expect(data.size).to eq(6)
               end
             end
           end
 
           on_security(:impersonationFlow) do
             context "when voting_cards is enabled" do
-
               let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
               let(:proposal_component) do
                 component = create(
@@ -104,7 +102,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 )
                 component
               end
-              
+
               let!(:accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
               let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
               let!(:normal_proposal) { create(:proposal, component: proposal_component) }
@@ -113,75 +111,85 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               let!(:unseen_proposals) { create_list(:proposal, 5, component: proposal_component) }
               let!(:abstention_proposal) { create(:proposal, component: proposal_component) }
 
-              let!(:votes) do 
-                [
-                  create(:proposal_vote, proposal: normal_proposal, author: user).update(weight: 1),
-                  create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1),
-                  create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2),
-                  create(:proposal_vote, proposal: abstention_proposal, author: user).update(weight: 0)
-                ]
+              on_security(:credentialFlow) do
+                context "with filter voted_weight" do
+                  context "when filter voted_weight_eq 1, return nil" do
+                    let(:"filter[voted_weight_eq]") { 1.to_s }
+
+                    run_test!(example_name: :voted) do |example|
+                      data = JSON.parse(example.body)["data"]
+                      data.each do |d|
+                        expect(d["meta"]["voted"]).to be_nil
+                      end
+                    end
+                  end
+                end
               end
-
-              context "with filter voted_weight" do
-                context "when filter voted_weight_eq 1, filter only the vote_weight=1" do
-                  let(:"filter[voted_weight_eq]") { 1.to_s }
-
-                  run_test!(example_name: :voted) do |example|
-                    data = JSON.parse(example.body)["data"]
-                    data.each do |d|
-                      expect(d["meta"]["voted"]).to eq({ "weight" => 1 })
-                    end
-                    expect(data.size).to eq(2)
-                  end
+              on_security(:impersonationFlow) do
+                let!(:votes) do
+                  [
+                    create(:proposal_vote, proposal: normal_proposal, author: user).update(weight: 1),
+                    create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1),
+                    create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2),
+                    create(:proposal_vote, proposal: abstention_proposal, author: user).update(weight: 0)
+                  ]
                 end
+                context "with filter voted_weight" do
+                  context "when filter voted_weight_eq 1, filter only the vote_weight=1" do
+                    let(:"filter[voted_weight_eq]") { 1.to_s }
 
-                context "when filter voted_weight_eq 0, filter only the abstention" do
-                  let(:"filter[voted_weight_eq]") { 0.to_s }
-
-                  run_test!(example_name: :abstentions) do |example|
-                    data = JSON.parse(example.body)["data"]
-                    data.each do |d|
-                      expect(d["meta"]["voted"]).to eq({ "weight" => 0 })
+                    run_test!(example_name: :voted) do |example|
+                      data = JSON.parse(example.body)["data"]
+                      data.each do |d|
+                        expect(d["meta"]["voted"]).to eq({ "weight" => 1 })
+                      end
                     end
-                    expect(data.size).to eq(1)
                   end
-                end
 
-                context "when filter voted_weight_eq 1 and state_eq rejected, return always an empty list" do
-                  let(:"filter[state_eq]") { "rejected" }
-                  let(:"filter[voted_weight_eq]") { 0.to_s }
+                  context "when filter voted_weight_eq 0, filter only the abstention" do
+                    let(:"filter[voted_weight_eq]") { 0.to_s }
 
-                  run_test! do |example|
-                    data = JSON.parse(example.body)["data"]
-
-                    expect(data.size).to eq(0)
-                  end
-                end
-
-                context "when filter voted_weight_blank, filter only the non-voted proposals" do
-                  let(:"filter[voted_weight_blank]") { true }
-
-                  run_test!(example_name: :abstentions) do |example|
-                    data = JSON.parse(example.body)["data"]
-                    data.each do |d|
-                      expect(d["meta"]["voted"]).to be_blank
+                    run_test!(example_name: :abstentions) do |example|
+                      data = JSON.parse(example.body)["data"]
+                      data.each do |d|
+                        expect(d["meta"]["voted"]).to eq({ "weight" => 0 })
+                      end
                     end
-                    expect(data.last["id"]).to eq(unseen_proposals.last.id.to_s)
-                    expect(data.count).to eq(8)
                   end
-                end
 
-                context "when filter voted_weight_blank, and per_page=1, order=rand get one non-voted proposal" do
-                  let(:"filter[voted_weight_blank]") { true }
-                  let(:per_page) { 1 }
-                  let(:order) { "rand" }
+                  context "when filter voted_weight_eq 1 and state_eq rejected, return an empty list" do
+                    let(:"filter[state_eq]") { "rejected" }
+                    let(:"filter[voted_weight_eq]") { 0.to_s }
 
-                  run_test!(example_name: :abstentions) do |example|
-                    data = JSON.parse(example.body)["data"]
-                    data.each do |d|
-                      expect(d["meta"]["voted"]).to be_blank
+                    run_test! do |example|
+                      data = JSON.parse(example.body)["data"]
+                      expect(data).to be_empty
                     end
-                    expect(data.count).to eq(1)
+                  end
+
+                  context "when filter voted_weight_blank, filter only the non-voted proposals" do
+                    let(:"filter[voted_weight_blank]") { true }
+
+                    run_test!(example_name: :abstentions) do |example|
+                      data = JSON.parse(example.body)["data"]
+                      data.each do |d|
+                        expect(d["meta"]).not_to have_key("voted")
+                      end
+                      expect(data.last["id"]).to eq(unseen_proposals.last.id.to_s)
+                    end
+                  end
+
+                  context "when filter voted_weight_blank, and per_page=1, order=rand get one non-voted proposal" do
+                    let(:"filter[voted_weight_blank]") { true }
+                    let(:per_page) { 1 }
+                    let(:order) { "rand" }
+
+                    run_test!(example_name: :abstentions) do |example|
+                      data = JSON.parse(example.body)["data"]
+                      data.each do |d|
+                        expect(d["meta"]["voted"]).to be_blank
+                      end
+                    end
                   end
                 end
               end

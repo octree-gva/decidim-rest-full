@@ -10,13 +10,13 @@ RSpec.shared_examples "ordered params" do |options = {}|
   order_parameter_attributes = {
     name: :order,
     in: :query,
-    type: :string,
+    schema: { type: :string },
     description: "Order by",
     required: false
   }
-  order_parameter_attributes[:enum] = columns if columns.present?
+  order_parameter_attributes[:schema][:enum] = columns if columns.present?
   parameter order_parameter_attributes
-  parameter name: :order_direction, in: :query, type: :string, enum: %w(asc desc), description: "Order direction", required: false
+  parameter name: :order_direction, in: :query, schema: { type: :string, enum: %w(asc desc) }, description: "Order direction", required: false
 end
 
 RSpec.shared_examples "ordered endpoint" do |options = {}|
@@ -154,9 +154,11 @@ RSpec.shared_examples "filtered params" do |options = {}|
   item_schema = options[:item_schema]
   filter_group = options[:only]
   filter_groups = {
-    integer: %w(not_in not_eq start not_start matches does_not_match blank),
+    integer: %w(not_in not_eq start not_start matches does_not_match),
     string: %w(lt gt not_start does_not_match present)
   }
+  security = options[:security]
+  additional_description = security ? ". Only available with #{security} flow" : ""
   raise "exclude must be one of #{filter_groups.keys}" unless filter_groups.has_key?(filter_group)
 
   exclude_filters = filter_groups[filter_group]
@@ -167,7 +169,7 @@ RSpec.shared_examples "filtered params" do |options = {}|
         type: :array,
         items: item_schema,
         title: "#{filter} not IN filter",
-        description: "match none of _#{filter}_'s values in array"
+        description: "match none of _#{filter}_'s values in array#{additional_description}"
       }, required: false
     },
     {
@@ -175,20 +177,20 @@ RSpec.shared_examples "filtered params" do |options = {}|
         type: :array,
         items: item_schema,
         title: "#{filter} IN filter",
-        description: "match one of _#{filter}_'s values in array"
+        description: "match one of _#{filter}_'s values in array#{additional_description}"
       }, required: false
     },
     {
       name: "filter[#{filter}_start]", in: :query, schema: {
         type: :string,
-        description: "_#{filter}_ starts with",
+        description: "_#{filter}_ starts with#{additional_description}",
         title: "#{filter} starts With filter",
         example: "some_string"
       }, required: false
     }, {
       name: "filter[#{filter}_not_start]", in: :query, schema: {
         type: :string,
-        description: "_#{filter}_ does not starts with",
+        description: "_#{filter}_ does not starts with#{additional_description}",
         title: "#{filter} not starts With filter",
         example: "some_string"
       }, required: false
@@ -197,21 +199,21 @@ RSpec.shared_examples "filtered params" do |options = {}|
       name: "filter[#{filter}_eq]", in: :query, schema: {
         **item_schema,
         title: "#{filter} equal filter",
-        description: "_#{filter}_ is equal to"
+        description: "_#{filter}_ is equal to#{additional_description}"
       }, required: false
     },
     {
       name: "filter[#{filter}_not_eq]", in: :query, schema: {
         **item_schema,
         title: "#{filter} not equal filter",
-        description: "_#{filter}_ is NOT equal to"
+        description: "_#{filter}_ is NOT equal to#{additional_description}"
       }, required: false
     },
     {
       name: "filter[#{filter}_matches]", in: :query, schema: {
         type: :string,
         title: "#{filter} like filter",
-        description: "matches _#{filter}_ with `LIKE`",
+        description: "matches _#{filter}_ with `LIKE`#{additional_description}",
         example: "%some_string"
       }, required: false
     },
@@ -219,33 +221,33 @@ RSpec.shared_examples "filtered params" do |options = {}|
       name: "filter[#{filter}_does_not_match]", in: :query, schema: {
         type: :string,
         title: "#{filter} not like filter",
-        description: "Does not matches _#{filter}_ with `LIKE`"
+        description: "Does not matches _#{filter}_ with `LIKE`#{additional_description}"
       }, required: false
     },
     { name: "filter[#{filter}_lt]", in: :query, schema: {
       **item_schema,
       title: "#{filter} less than filter",
-      description: "_#{filter}_ is less than"
+      description: "_#{filter}_ is less than#{additional_description}"
     }, required: false },
     {
       name: "filter[#{filter}_gt]", in: :query, schema: {
         **item_schema,
         title: "#{filter} greater than filter",
-        description: "_#{filter}_ is greater than"
+        description: "_#{filter}_ is greater than#{additional_description}"
       }, required: false
     },
     {
       name: "filter[#{filter}_present]", in: :query, schema: {
         type: :boolean,
         title: "#{filter} present filter",
-        description: "_#{filter}_ is not null and not empty"
+        description: "_#{filter}_ is not null and not empty#{additional_description}"
       }, required: false
     },
     {
       name: "filter[#{filter}_blank]", in: :query, schema: {
         type: :boolean,
         title: "#{filter} blank filter",
-        description: "_#{filter}_ is null or empty"
+        description: "_#{filter}_ is null or empty#{additional_description}"
       }, required: false
     }
   ].reject do |filter_param|

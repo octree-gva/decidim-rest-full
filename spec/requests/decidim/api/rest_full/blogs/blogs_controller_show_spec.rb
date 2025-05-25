@@ -10,6 +10,8 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
       operationId "blog"
       description "Get blog post details"
       it_behaves_like "localized params"
+      parameter name: "id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
+      parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
 
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Blogs::BlogsController,
@@ -27,9 +29,6 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         let!(:blog_post) { create(:post, component: component, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization: organization)) }
         let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
         let!(:participatory_process) { create(:participatory_process, organization: organization) }
-
-        parameter name: "id", in: :path, schema: { type: :integer, description: "Blog Post Id" }
-        parameter name: "component_id", in: :query, schema: { type: :integer, description: "Component Id" }, required: false
 
         response "200", "Blog Found" do
           produces "application/json"
