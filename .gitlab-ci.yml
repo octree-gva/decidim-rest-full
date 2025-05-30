@@ -122,7 +122,7 @@ ruby::rspec:
   before_script:
     - bin/setup-tests
   script:
-    - RAILS_ENV=test bundle exec rspec spec/requests/ spec/models/ --format progress --format RspecJunitFormatter --out rspec.xml
+    - DISABLE_SPRING=true RAILS_ENV=test bundle exec rspec spec/requests/ spec/models/ --format progress --format RspecJunitFormatter --out rspec.xml
   artifacts:
     when: always
     paths:
