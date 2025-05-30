@@ -848,8 +848,6 @@ DEPENDENCIES
   rubocop-rspec
   selenium-webdriver
   simplecov-cobertura
-  spring (~> 4.0)
-  spring-watcher-listen (~> 2.1)
   uglifier (~> 4.1)
 
 BUNDLED WITH
