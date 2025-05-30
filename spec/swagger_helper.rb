@@ -13,6 +13,7 @@ RSpec.configure do |config|
   config.before do
     Decidim::RestFull::Test::GlobalContext.security_type = nil
   end
+  config.use_transactional_fixtures = true
 
   # On example, will save the test result and insert it as
   # an example in the swagger file.

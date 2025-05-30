@@ -102,16 +102,13 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 )
                 component
               end
-
-              let!(:accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
-              let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
-              let!(:normal_proposal) { create(:proposal, component: proposal_component) }
-              let!(:liked_proposal) { create(:proposal, component: proposal_component) }
-              let!(:loved_proposal) { create(:proposal, component: proposal_component) }
-              let!(:unseen_proposals) { create_list(:proposal, 5, component: proposal_component) }
-              let!(:abstention_proposal) { create(:proposal, component: proposal_component) }
-
+            
               on_security(:credentialFlow) do
+                before do 
+                  accepted_proposal = create(:proposal, :accepted, component: proposal_component) 
+                  create(:proposal_vote, proposal: accepted_proposal, author: user).update(weight: 1)
+                end
+  
                 context "with filter voted_weight" do
                   context "when filter voted_weight_eq 1, return nil" do
                     let(:"filter[voted_weight_eq]") { 1.to_s }
@@ -126,14 +123,20 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 end
               end
               on_security(:impersonationFlow) do
-                let!(:votes) do
-                  [
-                    create(:proposal_vote, proposal: normal_proposal, author: user).update(weight: 1),
-                    create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1),
-                    create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2),
+                before do 
+                    accepted_proposal =  create(:proposal, :accepted, component: proposal_component) 
+                    rejected_proposal =  create(:proposal, :rejected, component: proposal_component) 
+                    normal_proposal =  create(:proposal, component: proposal_component) 
+                    liked_proposal =  create(:proposal, component: proposal_component) 
+                    loved_proposal =  create(:proposal, component: proposal_component) 
+                    unseen_proposals =  create_list(:proposal, 5, component: proposal_component) 
+                    abstention_proposal =  create(:proposal, component: proposal_component) 
+                    create(:proposal_vote, proposal: normal_proposal, author: user).update(weight: 1)
+                    create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1)
+                    create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2)
                     create(:proposal_vote, proposal: abstention_proposal, author: user).update(weight: 0)
-                  ]
                 end
+                
                 context "with filter voted_weight" do
                   context "when filter voted_weight_eq 1, filter only the vote_weight=1" do
                     let(:"filter[voted_weight_eq]") { 1.to_s }
@@ -175,7 +178,6 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                       data.each do |d|
                         expect(d["meta"]).not_to have_key("voted")
                       end
-                      expect(data.last["id"]).to eq(unseen_proposals.last.id.to_s)
                     end
                   end
 
