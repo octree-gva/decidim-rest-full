@@ -35,7 +35,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           end.flatten
         end
         let!(:space_list) do
-          Array.new(3) do
+          3.times.map do
             create(:assembly, organization: organization)
             create(:participatory_process, organization: organization)
           end.flatten
@@ -94,12 +94,12 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             end
           end
 
-          context "with filter[id_in][] in a list of 3 ids" do
-            let(:"filter[id_in][]") { space_list.map(&:id) }
+          context "with filter[id_in][] in a list of 6 ids" do
+            let(:"filter[id_in][]") { space_list.map(&:id).map(&:to_s) }
 
             run_test!(example_name: :filter_by_id_in) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data.size).to eq(3)
+              expect(data.size).to eq(space_list.size)
             end
           end
 
