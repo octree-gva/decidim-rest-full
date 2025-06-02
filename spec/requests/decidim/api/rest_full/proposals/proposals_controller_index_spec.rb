@@ -126,6 +126,14 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               on_security(:impersonationFlow) do
                 context "with filter voted_weight" do
                   before do
+                    # Setup a scenario where:
+                    # a user have a draft and a published proposal
+                    # a user vote on proposals not authored by the user
+                    # a user vote on its own proposal
+
+                    create(:proposal, published_at: nil, component: proposal_component, users: [user])
+                    authored_proposal = create(:proposal, component: proposal_component, users: [user])
+                    # roposals with different status
                     create(:proposal, :accepted, component: proposal_component)
                     create(:proposal, :rejected, component: proposal_component)
                     normal_proposal = create(:proposal, component: proposal_component)
@@ -137,6 +145,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                     create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1)
                     create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2)
                     create(:proposal_vote, proposal: abstention_proposal, author: user).update(weight: 0)
+                    create(:proposal_vote, proposal: authored_proposal, author: user).update(weight: 2)
                   end
 
                   context "when filter voted_weight_eq 1, filter only the vote_weight=1" do

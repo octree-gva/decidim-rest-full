@@ -96,12 +96,16 @@ module Decidim
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
 
             Time.zone.now
-            if act_as.nil?
+            if act_as.nil? || vote_weight_filtered?
               query.where.not(published_at: nil)
             else
               query.where.not(published_at: nil)
                    .or(query.where("published_at IS NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id))
             end
+          end
+
+          def vote_weight_filtered?
+            params.has_key?(:filter) && params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
           end
 
           def add_state_filter!
@@ -132,8 +136,8 @@ module Decidim
                   FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
                   LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
                     ON tvote.id = tweight.proposal_vote_id
-                  WHERE#{" "}
-                    tvote.decidim_proposal_id = #{Decidim::Proposals::Proposal.table_name}.id#{" "}
+                  WHERE
+                    tvote.decidim_proposal_id = #{Decidim::Proposals::Proposal.table_name}.id
                     AND tvote.decidim_author_id = #{current_user.id.to_i}
                   LIMIT 1
                 )
