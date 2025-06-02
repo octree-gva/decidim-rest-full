@@ -69,10 +69,10 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
         properties: {
           resources: Decidim::RestFull::DefinitionRegistry.has_many_relation({
                                                                                type: :string
-                                                                             }, title: "Linked Resources") do |component_schema|
+                                                                             }, title: "Component Linked Resources") do |component_schema|
                        component_schema[:properties][:meta] = {
                          type: :object,
-                         title: "Linked Resources",
+                         title: "Component Linked Resources Metadata",
                          properties: {
                            count: { type: :integer, description: "Total count of resources" }
                          },
@@ -131,11 +131,12 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :gener
     amendment_reaction_enabled: { type: :boolean, description: "If participant can react to an amendment of a proposal" },
     amendment_promotion_enabled: { type: :boolean, description: "If participant choose an amendment to replace their initial proposal" },
     votes: {
-      title: "Available votes in this proposal component",
+      title: "Proposal Vote Weights Options",
       description: "Vote weight, if can_vote is true.",
       type: :array,
       items: {
         type: :object,
+        title: "Proposal Vote Weight",
         properties: {
           label: { type: :string, description: "Label to voting button" },
           weight: { type: :integer, description: "Value to add to the vote. 0 for abstention" }

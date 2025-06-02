@@ -61,10 +61,10 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:space) do
         properties: {
           components: Decidim::RestFull::DefinitionRegistry.has_many_relation({
                                                                                 "$ref" => "#/components/schemas/component_type"
-                                                                              }, title: "Linked Components") do |components_schema|
+                                                                              }, title: "Space Component Relationships") do |components_schema|
                         components_schema[:properties][:meta] = {
 
-                          title: "Attached Components Meta",
+                          title: "Space Component Metadata",
                           type: :object,
                           properties: {
                             count: { type: :integer, description: "Total count for components association" }
@@ -75,7 +75,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:space) do
 
                         components_schema[:properties][:links] = {
                           type: :object,
-                          title: "Linked Components",
+                          title: "Space Component Links",
                           properties: {
                             self: Decidim::RestFull::DefinitionRegistry.resource_link,
                             related: Decidim::RestFull::DefinitionRegistry.resource_link

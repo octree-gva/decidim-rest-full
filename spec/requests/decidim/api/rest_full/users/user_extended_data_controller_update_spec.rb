@@ -91,8 +91,9 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
       README
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
+        title: "User Extended Data Payload",
         properties: {
-          data: { type: :object, description: "New value for the extended data at the given path" },
+          data: { type: :object, title: "User Extended Data Data", description: "New value for the extended data at the given path" },
           object_path: { type: :string, description: "object path, in dot style, like foo.bar. use '.' to update the whole user data" }
         }, required: [:data]
       }

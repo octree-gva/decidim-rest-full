@@ -15,7 +15,7 @@ module Decidim
         link :self do |_object, params|
           {
             href: link_join(params[:host], "me", "magic_links"),
-            title: "Generates a magic link ",
+            title: "Generates a magic link",
             rel: "resource",
             meta: {
               action_method: "POST",

@@ -55,9 +55,11 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
       parameter name: "id", in: :path, schema: { type: :integer, description: "Draft Id" }, required: true
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
+        title: "Update Draft Proposal Payload",
         properties: {
           data: {
             type: :object,
+            title: "Update Draft Proposal Payload Data",
             properties: {
               title: { type: :string, description: "Title of the draft" },
               body: { type: :string, description: "Content of the draft" },

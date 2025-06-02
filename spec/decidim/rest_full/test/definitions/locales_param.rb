@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:locales) do
+Decidim::RestFull::DefinitionRegistry.register_object(:locale) do
   {
-    type: :array,
-    title: "Locales enumeration",
-    items: { type: :string, enum: Decidim.available_locales }
+    title: "Current locale",
+    type: :string,
+    enum: Decidim.available_locales
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:locale) do
+Decidim::RestFull::DefinitionRegistry.register_object(:locales) do
   {
-    title: "Locale",
-    type: :string,
-    enum: Decidim.available_locales
+    type: :array,
+    title: "Available locales",
+    items: { "$ref": Decidim::RestFull::DefinitionRegistry.reference(:locale) }
   }.freeze
 end

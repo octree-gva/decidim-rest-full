@@ -30,6 +30,7 @@ module Decidim
           required: [:data]
         }
         has_many_schema[:title] = title if title.present?
+        has_many_schema[:properties][:data][:title] = "#{title} Data" if title.present?
         has_many_schema[:description] = description if description.present?
         return yield(has_many_schema) if block_given?
 
@@ -69,6 +70,7 @@ module Decidim
           required: [:data]
         }
         belongs_to_schema[:title] = title if title.present?
+        belongs_to_schema[:properties][:data][:title] = "#{title} Data" if title.present?
         belongs_to_schema[:description] = description if description.present?
         return yield(belongs_to_schema) if block_given?
 
@@ -114,7 +116,20 @@ module Decidim
         raise "Schema #{name} already registered" if @schema.has_key?(name)
 
         parent = @schema[parent].deep_dup
-        @schema[name] = yield(parent)
+        parent_title = parent[:title]
+        extended_object = yield(parent)
+        # To have uniq typing, we need to replace the title of the extended object with the name of the extended object
+        title = extended_object[:title]
+        title = name.to_s.titleize if title == parent_title
+        extended_object = extended_object.deep_transform_values do |value|
+          if value.is_a? String
+            value.gsub(parent_title, title)
+          else
+            value
+          end
+        end
+        extended_object[:title] = title
+        @schema[name] = extended_object
       end
 
       def register_response_for(name)
@@ -123,6 +138,7 @@ module Decidim
         register_object("#{name_sym}_index_response") do
           {
             type: :object,
+            title: "#{name_sym.to_s.titleize} Index Response",
             properties: {
               data: {
                 type: :array,
@@ -135,6 +151,7 @@ module Decidim
         register_object("#{name_sym}_item_response") do
           {
             type: :object,
+            title: "#{name_sym.to_s.titleize} Index Response",
             properties: {
               data: {
                 "$ref" => reference(name_sym)
@@ -295,6 +312,7 @@ module Decidim
               rel: { type: :string, enum: %w(public_page resource) },
               meta: {
                 type: :object,
+                title: "Resource URL Metadata",
                 properties: {
                   component_id: { type: :string, description: "Component ID" },
                   component_manifest: { type: :string, description: "Component manifest" },

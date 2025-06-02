@@ -20,6 +20,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
           },
           errors: {
             type: :object,
+            title: "Draft Proposal Validation Errors",
             properties: {
               title: {
                 type: :array,
@@ -79,16 +80,16 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
       },
       relationships: {
         type: :object,
-        title: "Proposal Relationships",
+        title: "Draft Proposal Relationships",
         properties: {
           space: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
                                                                              "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type)
-                                                                           }, title: "Linked Space"),
+                                                                           }, title: "Draft Proposal Related Space"),
           component: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
                                                                                  "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_type)
-                                                                               }, title: "Linked Component"),
-          author: Decidim::RestFull::DefinitionRegistry.belongs_to("user", "user_group", title: "Linked Author"),
-          coauthors: Decidim::RestFull::DefinitionRegistry.has_many("user", "user_group", title: "Linked Coauthors")
+                                                                               }, title: "Draft Proposal Related Component"),
+          author: Decidim::RestFull::DefinitionRegistry.belongs_to("user", "user_group", title: "Draft Proposal Author"),
+          coauthors: Decidim::RestFull::DefinitionRegistry.has_many("user", "user_group", title: "Draft Proposal Coauthors")
         },
         required: [:component, :space],
         additionalProperties: false

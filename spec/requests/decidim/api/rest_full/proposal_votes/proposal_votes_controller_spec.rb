@@ -11,10 +11,12 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
 
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
+        title: "Vote A Proposal Payload",
         properties: {
           proposal_id: { type: :integer, description: "Proposal Id" },
           data: {
             type: :object,
+            title: "Vote A Proposal Data",
             properties: {
               weight: { type: :integer, description: "Weight for your vote" }
             },

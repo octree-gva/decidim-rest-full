@@ -6,6 +6,7 @@ module Decidim
       module OnApiEndpointMethods
         def on_security(flow_type)
           yield if Decidim::RestFull::Test::GlobalContext.security_type == flow_type
+          nil
         end
 
         def describe_api_endpoint(options = {}, &block)
@@ -17,19 +18,21 @@ module Decidim
           # Prepare host for the request
           rest_full_setup_api_context!(options)
 
-          security_types.each do |security_type|
-            Decidim::RestFull::Test::GlobalContext.security_type = security_type
-            rest_full_validate_security_type!(security_type)
-
-            context "when #{security_type}" do
-              # Prepare security for the request (api_client and bearer_token)
-              rest_full_setup_credential_flow!(scopes, is_protected) if security_type == :credentialFlow
-              rest_full_setup_resource_owner_flow!(scopes, is_protected) if security_type == :impersonationFlow
-
-              let(:security_type) { security_type }
+          security_types.each do |security_type_item|
+            rest_full_validate_security_type!(security_type_item)
+            context "when #{security_type_item}" do
+              let(:security_type) { security_type_item }
               let(:Authorization) { "Bearer #{bearer_token.token}" }
 
-              rest_full_handle_forbidden(security_type, options) if is_protected
+              before do
+                Decidim::RestFull::Test::GlobalContext.security_type = security_type_item
+              end
+
+              # Prepare security for the request (api_client and bearer_token)
+              rest_full_setup_credential_flow!(scopes, is_protected) if security_type_item == :credentialFlow
+              rest_full_setup_resource_owner_flow!(scopes, is_protected) if security_type_item == :impersonationFlow
+
+              rest_full_handle_forbidden(security_type_item, options) if is_protected
               rest_full_handle_500_error(options)
               instance_eval(&block)
             end

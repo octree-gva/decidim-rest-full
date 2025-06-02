@@ -8,6 +8,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:organization) do
       id: { type: :string },
       type: { type: :string, enum: ["organization"] },
       attributes: {
+        title: "Organization Attributes",
         type: :object,
         properties: {
           name: {
@@ -25,6 +26,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:organization) do
         required: [:created_at, :updated_at, :host, :name, :available_locales, :default_locale]
       },
       meta: {
+        title: "Organization Metadata",
         type: :object,
         properties: {
           locales: Decidim::RestFull::DefinitionRegistry.schema_for(:locales)

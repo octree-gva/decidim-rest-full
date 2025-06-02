@@ -105,7 +105,9 @@ module Decidim
           end
 
           def vote_weight_filtered?
-            params.has_key?(:filter) && params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
+            return false unless params.has_key?(:filter)
+
+            params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
           end
 
           def add_state_filter!

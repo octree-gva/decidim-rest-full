@@ -8,6 +8,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
       id: { type: :string },
       type: { type: :string, enum: ["user"] },
       meta: {
+        title: "User Metadata",
         type: :object,
         properties: {
           blocked: { type: :boolean, description: "If the user is blocked, and need to be unblocked to signin" },
@@ -19,14 +20,17 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
       },
       relationships: {
         type: :object,
+        title: "User Relationships",
         properties: {
           roles: {
             type: :object,
+            title: "User Roles",
             properties: {
               data: {
                 type: :array,
                 items: {
                   type: :object,
+                  title: "User Role",
                   properties: {
                     id: { type: :string },
                     type: { type: :string, enum: ["user_role"] }
@@ -43,6 +47,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
       },
       attributes: {
         type: :object,
+        title: "User Attributes",
         properties: {
           name: {
             description: "User name, use to display the Profile identity. Public",
@@ -70,7 +75,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
           },
           extended_data: {
             type: :object,
-            title: "User's additional data",
+            title: "User Extended Data",
             description: "Additional data. Private",
             properties: {},
             additionalProperties: true

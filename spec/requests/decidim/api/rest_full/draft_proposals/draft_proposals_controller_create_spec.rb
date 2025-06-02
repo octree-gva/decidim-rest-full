@@ -13,9 +13,11 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
 
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
+        title: "Create Draft Proposal Payload",
         properties: {
           data: {
             type: :object,
+            title: "Draft Proposal Data",
             properties: {
               component_id: { type: :integer, description: "Component ID" }
             },

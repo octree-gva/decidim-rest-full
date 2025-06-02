@@ -12,7 +12,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
       README
 
       parameter name: :body, in: :body, schema: {
-        title: "Magick Link Configuration Payload",
+        title: "Generate Magic Link Payload",
         type: :object,
         properties: {
           data: {

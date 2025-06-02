@@ -3,7 +3,7 @@
 Decidim::RestFull::DefinitionRegistry.register_object(:error) do
   {
     type: :object,
-    title: "Api Error",
+    title: "Api Error Payload",
     properties: {
       error: { type: :string, description: "Error title, starting with HTTP Code, like 400: bad request" },
       error_description: { type: :string, description: "Error detail, mostly validation error" },

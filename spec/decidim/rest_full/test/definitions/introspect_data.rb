@@ -32,6 +32,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:introspect_data) do
           },
           attributes: {
             type: :object,
+            title: "Resource Attributes",
             properties: {
               email: {
                 type: :string,
