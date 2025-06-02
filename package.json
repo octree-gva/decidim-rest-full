@@ -1,7 +1,7 @@
 {
   "name": "decidim-rest_full",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.15.3",

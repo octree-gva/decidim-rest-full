@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    decidim-rest_full (0.2.0)
+    decidim-rest_full (0.3.0)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (>= 0.28, < 0.30)
@@ -848,8 +848,6 @@ DEPENDENCIES
   rubocop-rspec
   selenium-webdriver
   simplecov-cobertura
-  spring (~> 4.0)
-  spring-watcher-listen (~> 2.1)
   uglifier (~> 4.1)
 
 BUNDLED WITH

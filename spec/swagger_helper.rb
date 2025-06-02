@@ -5,10 +5,16 @@ require "rswag/specs"
 
 require "swagger_openapi_specs"
 require "swagger_shared_examples"
-
 # spec/swagger_helper.rb
+
 RSpec.configure do |config|
   config.openapi_root = Rails.root.join("swagger").to_s
+  config.extend Decidim::RestFull::Test::OnApiEndpointMethods
+  config.before do
+    Decidim::RestFull::Test::GlobalContext.security_type = nil
+  end
+  config.use_transactional_fixtures = true
+
   # On example, will save the test result and insert it as
   # an example in the swagger file.
   config.after do |example|
