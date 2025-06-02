@@ -72,7 +72,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
                                                                              }, title: "Linked Resources") do |component_schema|
                        component_schema[:properties][:meta] = {
                          type: :object,
-                         title: "Linked Resources",
+                         title: "Linked Resources Metadata",
                          properties: {
                            count: { type: :integer, description: "Total count of resources" }
                          },

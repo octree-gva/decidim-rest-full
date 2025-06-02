@@ -86,7 +86,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
                                                                            }, title: "Linked Space"),
           component: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
                                                                                  "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_type)
-                                                                               }, title: "Linked Component"),
+                                                                               }, title: "Linked Proposal Component"),
           author: Decidim::RestFull::DefinitionRegistry.belongs_to("user", "user_group", title: "Linked Author"),
           coauthors: Decidim::RestFull::DefinitionRegistry.has_many("user", "user_group", title: "Linked Coauthors")
         },

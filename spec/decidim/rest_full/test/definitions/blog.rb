@@ -65,7 +65,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
         title: "Blog Post Relationships",
         properties: {
           space: Decidim::RestFull::DefinitionRegistry.belongs_to(*Decidim.participatory_space_registry.manifests.map(&:name), title: "Linked Space"),
-          component: Decidim::RestFull::DefinitionRegistry.belongs_to("blog_component", title: "Linked Component")
+          component: Decidim::RestFull::DefinitionRegistry.belongs_to("blog_component", title: "Linked Blog Component")
         },
         required: [:component, :space],
         additionalProperties: false
