@@ -55,10 +55,10 @@ log "~~~~~~~~~~~~~~~~~~~~~~~"
 
 if [[ $QUIET -eq 1 ]]; then
   SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
-    --format Rswag::Specs::SwaggerFormatter --order defined > /dev/null 2>&1
+    --format Rswag::Specs::SwaggerFormatter > /dev/null 2>&1
 else
   SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
-    --format Rswag::Specs::SwaggerFormatter --order defined
+    --format Rswag::Specs::SwaggerFormatter
 fi
 
 mv -f spec/decidim_dummy_app/swagger/v1/swagger.json "$OUTPUT_FILE"

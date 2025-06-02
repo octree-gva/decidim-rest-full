@@ -12,11 +12,11 @@ module Decidim
             add_state_filter!
             add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
 
-            query = ordered(collection).ransack(params[:filter])
+            query = collection.ransack(params[:filter])
             results = query.result
 
             render json: Decidim::Api::RestFull::ProposalSerializer.new(
-              paginate(results),
+              paginate(ordered(results)),
               params: {
                 only: [],
                 locales: available_locales,
@@ -96,12 +96,16 @@ module Decidim
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
 
             Time.zone.now
-            if act_as.nil?
+            if act_as.nil? || vote_weight_filtered?
               query.where.not(published_at: nil)
             else
               query.where.not(published_at: nil)
                    .or(query.where("published_at IS NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id))
             end
+          end
+
+          def vote_weight_filtered?
+            params.has_key?(:filter) && params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
           end
 
           def add_state_filter!
@@ -125,13 +129,16 @@ module Decidim
               Arel.sql(<<~SQL.squish
                 (
                   SELECT
-                    COALESCE(CAST(tweight.weight AS VARCHAR), '1') AS weight
+                    CASE
+                      WHEN tweight.id IS NULL THEN '1'
+                      ELSE CAST(tweight.weight AS VARCHAR)
+                    END AS weight
                   FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
                   LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
                     ON tvote.id = tweight.proposal_vote_id
                   WHERE
-                    tvote.decidim_proposal_id = decidim_proposals_proposals.id AND
-                    tvote.decidim_author_id = #{current_user.id.to_i}
+                    tvote.decidim_proposal_id = #{Decidim::Proposals::Proposal.table_name}.id
+                    AND tvote.decidim_author_id = #{current_user.id.to_i}
                   LIMIT 1
                 )
               SQL

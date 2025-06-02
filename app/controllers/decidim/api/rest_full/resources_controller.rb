@@ -20,7 +20,7 @@ module Decidim
         end
 
         def ordered(collection)
-          collection.order(order)
+          collection.reorder(order)
         end
 
         def default_order_column
@@ -48,7 +48,7 @@ module Decidim
             ord = params.permit(:order)[:order] || default_order_column
             raise Decidim::RestFull::ApiException::BadRequest, "Unknown order #{ord}" unless [default_order_direction, *order_columns].include?(ord)
 
-            ord == "rand" ? "RANDOM()" : { ord.to_s => order_direction }
+            ord == "rand" ? "RANDOM()" : { ord.to_s => order_direction.to_sym }
           end
         end
 
