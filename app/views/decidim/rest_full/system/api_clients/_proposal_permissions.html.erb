@@ -13,6 +13,24 @@
           </label>
         <% end %>
       </div>
+      <div class="mt-4">
+        <strong >Webhook events</strong><br />
+        <p class="text-sm">
+          Events the API client can subscribe to.
+        </p>
+        <ul>
+        <% ::Decidim::RestFull::events_for_proposals.each do |permission| %>
+          <li class="my-2">
+          <label>
+            <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+            <span class="font-normal">
+              <%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %>
+            </span>
+          </label>
+          </li>
+        <% end %>
+      </ul>
+      </div>
     </div>
   </div>
 </div>

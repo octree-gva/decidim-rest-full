@@ -47,6 +47,12 @@ en:
               read: "read: list and details of a proposal"
               draft: "draft: create, update, publish and see a draft proposal"
               vote: "vote: vote on proposals"
+            proposal_creation:
+              succeeded: "Proposal created: send proposal details"
+            proposal_state_change:
+              succeeded: "Proposal state changed: send proposal details"
+            draft_proposal_creation:
+              succeeded: "Draft proposal created: send draft proposal details"
       admin:
         menu:
           api_clients: "API Clients"

@@ -18,6 +18,16 @@ module Decidim
         # and send notifications (webhooks)
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
       end
+
+      initializer "rest_full.webhooks" do
+        ActiveSupport::Notifications.subscribe(/decidim\.events\./) do |event_name, data|
+          WebhookDispatcher.instance.handle_proposals(event_name, data)
+        end
+        ActiveSupport::Notifications.subscribe(/decidim\.proposals\./) do |event_name, data|
+          WebhookDispatcher.instance.handle_proposals(event_name, data)
+        end
+      end
+
       initializer "rest_full.scopes" do
         Doorkeeper.configure do
           handle_auth_errors :raise
