@@ -4,10 +4,10 @@ module Decidim
   module RestFull
     class WebhookRegistration < ApplicationRecord
       self.table_name = "webhooks_tables"
+      belongs_to :api_client, class_name: "Decidim::RestFull::ApiClient"
 
       validates :url, presence: true
       validates :subscriptions, presence: true
-      validates :private_key, presence: true
 
       before_validation :generate_private_key
 
@@ -52,6 +52,8 @@ module Decidim
       end
 
       def generate_private_key
+        return if private_key.present? && private_key.length == 64
+
         self.private_key = SecureRandom.hex(32)
       end
     end

@@ -6,7 +6,6 @@ module Decidim
       def perform(event_name, proposal_id, organization_id)
         proposal = Decidim::Proposals::Proposal.find(proposal_id)
         organization = Decidim::Organization.find(organization_id)
-        proposal.component
         # Form to know if the proposal is publishable
         proposal_form = Decidim::Proposals::ProposalForm.from_model(proposal).with_context(
           current_organization: organization,
@@ -27,6 +26,7 @@ module Decidim
                end
 
         permissions = Decidim::RestFull::Permission.where(permission: event_name, api_client: organization.api_clients)
+
         permissions.each do |permission|
           api_client = permission.api_client
           payload = WebhookEventForm.new(

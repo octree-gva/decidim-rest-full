@@ -49,10 +49,14 @@ en:
               vote: "vote: vote on proposals"
             proposal_creation:
               succeeded: "Proposal created: send proposal details"
+            proposal_update:
+              succeeded: "Proposal updated: send proposal details"
             proposal_state_change:
               succeeded: "Proposal state changed: send proposal details"
             draft_proposal_creation:
               succeeded: "Draft proposal created: send draft proposal details"
+            draft_proposal_update:
+              succeeded: "Draft proposal updated: send draft proposal details"
       admin:
         menu:
           api_clients: "API Clients"

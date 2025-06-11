@@ -10,7 +10,7 @@ require "decidim/core"
 
 require "decidim/rest_full/rest_full"
 require "decidim/rest_full/version"
-require "decidim/rest_full/webhook_trigger"
+require "decidim/rest_full/webhook_dispatcher"
 require "decidim/rest_full/menu"
 require "decidim/rest_full/engine"
 require "decidim/rest_full/api_exception"
