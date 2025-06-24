@@ -8,7 +8,9 @@ require "jsonapi/serializer"
 require "api-pagination"
 require "decidim/core"
 
+require "decidim/rest_full/rest_full"
 require "decidim/rest_full/version"
+require "decidim/rest_full/webhook_dispatcher"
 require "decidim/rest_full/menu"
 require "decidim/rest_full/engine"
 require "decidim/rest_full/api_exception"
@@ -25,12 +27,5 @@ require "decidim/rest_full/overrides/application_mailer_override"
 
 module Decidim
   module RestFull
-    def self.decidim_rest_full
-      @decidim_rest_full ||= Decidim::RestFull::Engine.routes.url_helpers
-    end
-
-    def self.docs_url
-      ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")
-    end
   end
 end
