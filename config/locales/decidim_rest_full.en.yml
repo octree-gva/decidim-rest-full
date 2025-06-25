@@ -30,6 +30,9 @@ en:
                 read: "read: List and detail of organizations"
                 update: "update: Update an organization"
                 destroy: "destroy: Remove definitly an organization"
+                extended_data:
+                  read: "read extended data: can read extended data"
+                  update: "write extended data: update and remove extended data"
               users:
                 update: "update: Update a user"
                 destroy: "destroy: Remove definitly a user"

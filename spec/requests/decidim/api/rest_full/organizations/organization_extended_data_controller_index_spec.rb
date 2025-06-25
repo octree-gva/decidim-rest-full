@@ -12,7 +12,6 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
       parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the organization" }
       let(:organization) { create(:organization) }
 
-
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Organizations::OrganizationExtendedDataController,
         action: :index,
@@ -31,6 +30,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "foo" => { "bar" => "true" } })
             end
+
             let!(:object_path) { "foo.bar" }
 
             run_test! do |example|
@@ -44,6 +44,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let!(:object_path) { "personal" }
 
             run_test!(example_name: :ok) do |example|
@@ -57,6 +58,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let!(:object_path) { "." }
 
             run_test!(example_name: :ok) do |example|
@@ -75,6 +77,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let!(:object_path) { "unknown" }
 
             run_test!(example_name: :not_found)

@@ -129,6 +129,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let(:body) { { data: "1990-02-09", object_path: "personal.birthday" } }
 
             run_test! do |example|
@@ -142,6 +143,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let(:body) { { data: { "name" => "Jeanne" }, object_path: "personal" } }
 
             run_test! do |example|
@@ -156,6 +158,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28", "name" => "Jeanne" } })
             end
+
             let(:body) { { data: { "name" => nil }, object_path: "personal" } }
 
             run_test! do |example|
@@ -170,6 +173,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
+
             let(:body) { { data: { "whatever" => { "is" => { "stil" => "ok" } } }, object_path: "unknown" } }
 
             run_test! do |example|
@@ -178,9 +182,9 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
               expect(response).to have_http_status(:ok)
               expect(data).to include(body[:data])
               expect(organization.extended_data.data).to eq({
-                                                 "personal" => { "birthday" => "1989-01-28" },
-                                                 "unknown" => { "whatever" => { "is" => { "stil" => "ok" } } }
-                                               })
+                                                              "personal" => { "birthday" => "1989-01-28" },
+                                                              "unknown" => { "whatever" => { "is" => { "stil" => "ok" } } }
+                                                            })
             end
           end
         end

@@ -18,7 +18,7 @@ Decidim::Core::Engine.routes.draw do
         # organizations
         resources :organizations,
                   only: [:index],
-                  controller: "/decidim/api/rest_full/organizations/organizations" do 
+                  controller: "/decidim/api/rest_full/organizations/organizations" do
           member do
             resources :extended_data, only: [], controller: "/decidim/api/rest_full/organizations/organization_extended_data" do
               collection do

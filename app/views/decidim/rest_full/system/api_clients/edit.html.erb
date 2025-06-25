@@ -4,17 +4,17 @@
   <h1 class="h1"><%= @api_client.name %></h1>
 <% end %>
 <%= decidim_form_for(@form) do |f| %>
-  <%= render partial: "form", object: f, locals: {disabled:true} %>
+  <%= render partial: "form", object: f, locals: { disabled:true } %>
 <% end %>
 <div class="form__wrapper">
-  <h3 class="h5"><%= t('.keys_label') %></h3>
+  <h3 class="h5"><%= t(".keys_label") %></h3>
   <label>
-    <span><%= t('.client_id') %></span>
-    <input type="text" value="<%= @api_client.client_id %>" name="unnamed" />
+    <span><%= t(".client_id") %></span>
+    <input type="text" value="<%= @api_client.client_id %>" name="unnamed" autocomplete="off">
   </label>
   <label>
-    <span><%= t('.client_secret') %></span>
-    <input type="text" value="<%= @api_client.client_secret %>" name="unnamed" />
+    <span><%= t(".client_secret") %></span>
+    <input type="text" value="<%= @api_client.client_secret %>" name="unnamed" autocomplete="off">
   </label>
 </div>
 <h2 class="h2"><%= t(".permissions_title") %></h2>
@@ -25,19 +25,19 @@
 <%= form_for(@perm_form, method: :post, url: system_api_permissions_path ) do |form| %>
   <%= form.hidden_field :api_client_id, value: @api_client.id %>
   <% if @api_client.scopes.to_a.include?("system") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/system_permissions", locals: {form: form} %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/system_permissions", locals: { form: form, api_client: api_client } %>
   <% end %>
   <% if @api_client.scopes.to_a.include?("public") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/public_permissions", locals: {form: form} %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/public_permissions", locals: { form: form, api_client: api_client } %>
   <% end %>
   <% if @api_client.scopes.to_a.include?("blogs") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/blog_permissions", locals: {form: form} %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/blog_permissions", locals: { form: form, api_client: api_client } %>
   <% end %>
   <% if @api_client.scopes.to_a.include?("proposals") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/proposal_permissions", locals: {form: form} %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/proposal_permissions", locals: { form: form, api_client: api_client } %>
   <% end %>
   <% if @api_client.scopes.to_a.include?("oauth") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/user_permissions", locals: {form: form} %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/user_permissions", locals: { form: form, api_client: api_client } %>
   <% end %>
   <div class="my-4">
     <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>

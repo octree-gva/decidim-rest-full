@@ -10,7 +10,7 @@ module Decidim
                 foreign_key: "organization_id",
                 class_name: "Decidim::RestFull::OrganizationExtendedData",
                 inverse_of: :organization
-        
+
         after_create :ensure_organization_extended_data
       end
 
