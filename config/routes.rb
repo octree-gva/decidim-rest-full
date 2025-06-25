@@ -13,12 +13,22 @@ Decidim::Core::Engine.routes.draw do
   namespace :api do
     namespace :rest_full do
       scope "v#{Decidim::RestFull.major_minor_version}" do
+        get "/", to: "/decidim/rest_full/pages#show"
         post "/oauth/token", to: "/doorkeeper/tokens#create"
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
         # organizations
         resources :organizations,
                   only: [:index],
-                  controller: "/decidim/api/rest_full/organizations/organizations"
+                  controller: "/decidim/api/rest_full/organizations/organizations" do
+          member do
+            resources :extended_data, only: [], controller: "/decidim/api/rest_full/organizations/organization_extended_data" do
+              collection do
+                get "/", action: :index
+                put "/", action: :update
+              end
+            end
+          end
+        end
 
         # spaces
         resources :spaces, only: [] do

@@ -14,13 +14,13 @@ module Decidim
       def call
         return broadcast(:invalid) unless @form.valid?
 
-        @api_client = Decidim.traceability.create!(
+        api_client = Decidim.traceability.create!(
           ApiClient,
           @form.current_user,
           **api_client_attributes
         )
 
-        broadcast(:ok, @api_client)
+        broadcast(:ok, api_client)
       rescue ActiveRecord::RecordInvalid
         broadcast(:invalid)
       end

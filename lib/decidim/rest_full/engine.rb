@@ -7,6 +7,7 @@ module Decidim
 
       config.to_prepare do
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
+        Decidim::Organization.include(Decidim::RestFull::OrganizationExtendedDataOverride)
         Decidim::Proposals::Proposal.include(Decidim::RestFull::ProposalClientIdOverride)
         Decidim::Proposals::ProposalsController.include(Decidim::RestFull::ProposalsControllerOverride)
 

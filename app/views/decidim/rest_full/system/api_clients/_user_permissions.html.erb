@@ -2,13 +2,13 @@
   <h2 class="border-b-4 h5 p-4" id="proposals_permission">
       <%= t("scope_oauth", scope: "decidim.rest_full.models.api_client.fields") %>
   </h2>
-  <div id="proposals_permission" class="p-4 " >
+  <div id="proposals_permission" class="p-4 ">
     <div class="mt-4">
-      <div class="font-bold py-2"><%= t('.oauth') %></div>
+      <div class="font-bold py-2"><%= t(".oauth") %></div>
       <div class="flex gap-6 flex-wrap">
         <% ["oauth.magic_link", "oauth.extended_data.read", "oauth.extended_data.update"].each do |permission| %>
           <label>
-            <%= form.check_box :permissions, { multiple: true, label: "", checked: @api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+            <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
             <span class="font-normal"><%= t("#{permission}", scope: "decidim.rest_full.models.api_client.permission") %></span>
           </label>
         <% end %>
@@ -16,4 +16,3 @@
     </div>
   </div>
 </div>
-  

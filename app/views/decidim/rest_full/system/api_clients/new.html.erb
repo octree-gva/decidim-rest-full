@@ -5,7 +5,7 @@
 <% end %>
 
 <%= decidim_form_for(@form) do |f| %>
-  <%= render partial: "form", object: f, locals: {disabled: false}%>
+  <%= render partial: "form", object: f, locals: { disabled: false } %>
 
   <div class="form__wrapper-block">
     <%= f.submit t(".save"), class: "button button__sm md:button__lg button__primary" %>

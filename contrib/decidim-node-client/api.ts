@@ -1544,53 +1544,7 @@ export interface LinkedSpaceData1 {
 
 export const Locale = {
   En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
   Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
 } as const;
 
 export type Locale = (typeof Locale)[keyof typeof Locale];
@@ -3202,53 +3156,7 @@ export interface ResourceAttributes {
 
 export const ResourceAttributesLocaleEnum = {
   En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
   Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
 } as const;
 
 export type ResourceAttributesLocaleEnum =
@@ -3701,287 +3609,11 @@ export interface TranslatedProp {
    */
   en?: string;
   /**
-   * Translation in bg
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  bg?: string;
-  /**
-   * Translation in ar
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ar?: string;
-  /**
-   * Translation in ca
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ca?: string;
-  /**
-   * Translation in cs
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  cs?: string;
-  /**
-   * Translation in da
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  da?: string;
-  /**
-   * Translation in de
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  de?: string;
-  /**
-   * Translation in el
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  el?: string;
-  /**
-   * Translation in eo
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  eo?: string;
-  /**
-   * Translation in es
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  es?: string;
-  /**
-   * Translation in es-MX
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "es-MX"?: string;
-  /**
-   * Translation in es-PY
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "es-PY"?: string;
-  /**
-   * Translation in et
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  et?: string;
-  /**
-   * Translation in eu
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  eu?: string;
-  /**
-   * Translation in fa
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  fa?: string;
-  /**
-   * Translation in fi-pl
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "fi-pl"?: string;
-  /**
-   * Translation in fi
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  fi?: string;
-  /**
    * Translation in fr
    * @type {string}
    * @memberof TranslatedProp
    */
   fr?: string;
-  /**
-   * Translation in fr-CA
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "fr-CA"?: string;
-  /**
-   * Translation in ga
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ga?: string;
-  /**
-   * Translation in gl
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  gl?: string;
-  /**
-   * Translation in hr
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  hr?: string;
-  /**
-   * Translation in hu
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  hu?: string;
-  /**
-   * Translation in id
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  id?: string;
-  /**
-   * Translation in is
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  is?: string;
-  /**
-   * Translation in it
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  it?: string;
-  /**
-   * Translation in ja
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ja?: string;
-  /**
-   * Translation in ko
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ko?: string;
-  /**
-   * Translation in lb
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  lb?: string;
-  /**
-   * Translation in lt
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  lt?: string;
-  /**
-   * Translation in lv
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  lv?: string;
-  /**
-   * Translation in mt
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  mt?: string;
-  /**
-   * Translation in nl
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  nl?: string;
-  /**
-   * Translation in no
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  no?: string;
-  /**
-   * Translation in pl
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  pl?: string;
-  /**
-   * Translation in pt
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  pt?: string;
-  /**
-   * Translation in pt-BR
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "pt-BR"?: string;
-  /**
-   * Translation in ro
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ro?: string;
-  /**
-   * Translation in ru
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  ru?: string;
-  /**
-   * Translation in sk
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  sk?: string;
-  /**
-   * Translation in sl
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  sl?: string;
-  /**
-   * Translation in sr
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  sr?: string;
-  /**
-   * Translation in sv
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  sv?: string;
-  /**
-   * Translation in tr
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  tr?: string;
-  /**
-   * Translation in uk
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  uk?: string;
-  /**
-   * Translation in vi
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  vi?: string;
-  /**
-   * Translation in zh-CN
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "zh-CN"?: string;
-  /**
-   * Translation in zh-TW
-   * @type {string}
-   * @memberof TranslatedProp
-   */
-  "zh-TW"?: string;
 }
 /**
  *
@@ -4024,53 +3656,7 @@ export interface UpdateDraftProposalPayloadData {
 
 export const UpdateDraftProposalPayloadDataLocaleEnum = {
   En: "en",
-  Bg: "bg",
-  Ar: "ar",
-  Ca: "ca",
-  Cs: "cs",
-  Da: "da",
-  De: "de",
-  El: "el",
-  Eo: "eo",
-  Es: "es",
-  EsMx: "es-MX",
-  EsPy: "es-PY",
-  Et: "et",
-  Eu: "eu",
-  Fa: "fa",
-  FiPl: "fi-pl",
-  Fi: "fi",
   Fr: "fr",
-  FrCa: "fr-CA",
-  Ga: "ga",
-  Gl: "gl",
-  Hr: "hr",
-  Hu: "hu",
-  Id: "id",
-  Is: "is",
-  It: "it",
-  Ja: "ja",
-  Ko: "ko",
-  Lb: "lb",
-  Lt: "lt",
-  Lv: "lv",
-  Mt: "mt",
-  Nl: "nl",
-  No: "no",
-  Pl: "pl",
-  Pt: "pt",
-  PtBr: "pt-BR",
-  Ro: "ro",
-  Ru: "ru",
-  Sk: "sk",
-  Sl: "sl",
-  Sr: "sr",
-  Sv: "sv",
-  Tr: "tr",
-  Uk: "uk",
-  Vi: "vi",
-  ZhCn: "zh-CN",
-  ZhTw: "zh-TW",
 } as const;
 
 export type UpdateDraftProposalPayloadDataLocaleEnum =
@@ -8460,6 +8046,369 @@ export class OAuthApi extends BaseAPI {
   ) {
     return OAuthApiFp(this.configuration)
       .introspectToken(requestParameters.introspectTokenRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * OrganizationsApi - axios parameter creator
+ * @export
+ */
+export const OrganizationsApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Fetch organization extended data
+     * @summary Get organization extended data
+     * @param {string} objectPath
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organizationData: async (
+      objectPath: string,
+      id: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'objectPath' is not null or undefined
+      assertParamExists("organizationData", "objectPath", objectPath);
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("organizationData", "id", id);
+      const localVarPath = `/organizations/{id}/extended_data`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (objectPath !== undefined) {
+        localVarQueryParameter["object_path"] = objectPath;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+     * @summary Update organization extended data
+     * @param {number} id
+     * @param {UserExtendedDataPayload} userExtendedDataPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    setOrganizationExtendedData: async (
+      id: number,
+      userExtendedDataPayload: UserExtendedDataPayload,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("setOrganizationExtendedData", "id", id);
+      // verify required parameter 'userExtendedDataPayload' is not null or undefined
+      assertParamExists(
+        "setOrganizationExtendedData",
+        "userExtendedDataPayload",
+        userExtendedDataPayload,
+      );
+      const localVarPath = `/organizations/{id}/extended_data`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        userExtendedDataPayload,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * OrganizationsApi - functional programming interface
+ * @export
+ */
+export const OrganizationsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    OrganizationsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Fetch organization extended data
+     * @summary Get organization extended data
+     * @param {string} objectPath
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async organizationData(
+      objectPath: string,
+      id: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.organizationData(
+          objectPath,
+          id,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OrganizationsApi.organizationData"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+     * @summary Update organization extended data
+     * @param {number} id
+     * @param {UserExtendedDataPayload} userExtendedDataPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async setOrganizationExtendedData(
+      id: number,
+      userExtendedDataPayload: UserExtendedDataPayload,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<{ [key: string]: any }>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.setOrganizationExtendedData(
+          id,
+          userExtendedDataPayload,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OrganizationsApi.setOrganizationExtendedData"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * OrganizationsApi - factory interface
+ * @export
+ */
+export const OrganizationsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = OrganizationsApiFp(configuration);
+  return {
+    /**
+     * Fetch organization extended data
+     * @summary Get organization extended data
+     * @param {OrganizationsApiOrganizationDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organizationData(
+      requestParameters: OrganizationsApiOrganizationDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .organizationData(
+          requestParameters.objectPath,
+          requestParameters.id,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+     * @summary Update organization extended data
+     * @param {OrganizationsApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    setOrganizationExtendedData(
+      requestParameters: OrganizationsApiSetOrganizationExtendedDataRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<{ [key: string]: any }> {
+      return localVarFp
+        .setOrganizationExtendedData(
+          requestParameters.id,
+          requestParameters.userExtendedDataPayload,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for organizationData operation in OrganizationsApi.
+ * @export
+ * @interface OrganizationsApiOrganizationDataRequest
+ */
+export interface OrganizationsApiOrganizationDataRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof OrganizationsApiOrganizationData
+   */
+  readonly objectPath: string;
+
+  /**
+   *
+   * @type {number}
+   * @memberof OrganizationsApiOrganizationData
+   */
+  readonly id: number;
+}
+
+/**
+ * Request parameters for setOrganizationExtendedData operation in OrganizationsApi.
+ * @export
+ * @interface OrganizationsApiSetOrganizationExtendedDataRequest
+ */
+export interface OrganizationsApiSetOrganizationExtendedDataRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof OrganizationsApiSetOrganizationExtendedData
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {UserExtendedDataPayload}
+   * @memberof OrganizationsApiSetOrganizationExtendedData
+   */
+  readonly userExtendedDataPayload: UserExtendedDataPayload;
+}
+
+/**
+ * OrganizationsApi - object-oriented interface
+ * @export
+ * @class OrganizationsApi
+ * @extends {BaseAPI}
+ */
+export class OrganizationsApi extends BaseAPI {
+  /**
+   * Fetch organization extended data
+   * @summary Get organization extended data
+   * @param {OrganizationsApiOrganizationDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OrganizationsApi
+   */
+  public organizationData(
+    requestParameters: OrganizationsApiOrganizationDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OrganizationsApiFp(this.configuration)
+      .organizationData(
+        requestParameters.objectPath,
+        requestParameters.id,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
+   * @summary Update organization extended data
+   * @param {OrganizationsApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OrganizationsApi
+   */
+  public setOrganizationExtendedData(
+    requestParameters: OrganizationsApiSetOrganizationExtendedDataRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OrganizationsApiFp(this.configuration)
+      .setOrganizationExtendedData(
+        requestParameters.id,
+        requestParameters.userExtendedDataPayload,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 }

@@ -18,6 +18,8 @@ require "decidim/rest_full/definition_registry"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
+require "decidim/rest_full/overrides/organization_extended_data_override"
+
 require "decidim/rest_full/overrides/proposal_client_id_override"
 require "decidim/rest_full/overrides/proposals_controller_override"
 require "decidim/rest_full/overrides/user_magic_token_override"
