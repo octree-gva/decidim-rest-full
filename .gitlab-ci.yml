@@ -52,6 +52,14 @@ ruby::rubocop:
     - bundle
     - bundle exec rubocop .
 
+ruby::erb:  
+  extends: .development_rules
+  image: ruby:3.2.7
+  stage: lint
+  script:
+    - bundle
+    - bundle exec erblint --lint-all --enable-all-linters
+
 ##
 # Publish the gem un ruby gem.
 ruby::rubygem:

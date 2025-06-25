@@ -1,7 +1,7 @@
 {
   "name": "decidim-rest_full",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.15.3",
@@ -19,7 +19,9 @@
     "docs:build": "yarn docs:compile_re_doc && cd website && yarn build",
     "gen:openapi-spec": "docker compose run -u root -w /home/decidim/module --rm rest_full bin/swaggerize -o website/static/openapi.json",
     "gen:node-client": "bin/gen-node-client --validate --input website/static/openapi.json",
-    "format": "docker compose run -u root -w /home/decidim/module --rm rest_full bundle exec rubocop -A .",
+    "format:ruby": "docker compose run -u root -w /home/decidim/module --rm rest_full bundle exec rubocop -A .",
+    "format:erb": "docker compose run -u root -w /home/decidim/module --rm rest_full bundle exec erblint --lint-all --enable-all-linters --autocorrect",
+    "format": "yarn format:ruby && yarn format:erb",
     "postcommit": "yarn format && yarn gen:openapi-spec && yarn gen:node-client && yarn docs:compile_re_doc",
     "postversion": "bin/postversion && yarn postcommit"
   }

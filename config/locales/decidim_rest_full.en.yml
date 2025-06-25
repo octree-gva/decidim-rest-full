@@ -1,6 +1,12 @@
 en:
   decidim:
     rest_full:
+
+      pages:
+        show:
+          title: "Decidim Rest API"
+          documentation_website: "Documentation website"
+          open_api_spec: "Open API spec"
       models:
         api_client:
           fields:
@@ -25,11 +31,14 @@ en:
                 read: "read extended data: can read extended data"
                 update: "write extended data: update and remove extended data"
 
-            system: 
+            system:
               organizations:
                 read: "read: List and detail of organizations"
                 update: "update: Update an organization"
                 destroy: "destroy: Remove definitly an organization"
+                extended_data:
+                  read: "read extended data: can read extended data"
+                  update: "write extended data: update and remove extended data"
               users:
                 update: "update: Update a user"
                 destroy: "destroy: Remove definitly a user"
@@ -63,6 +72,9 @@ en:
           
       system:
         api_clients:
+          webhook_events: "Webhook events"
+          webhook_events_description: "Events the API client is allowed to subscribe to."
+
           form:
             select_organization: "Select an organization"
             scopes_label: "Allowed scopes"

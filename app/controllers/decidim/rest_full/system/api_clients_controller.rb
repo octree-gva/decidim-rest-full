@@ -6,7 +6,8 @@ module Decidim
       class ApiClientsController < Decidim::System::ApplicationController
         helper Decidim::Admin::AttributesDisplayHelper
         helper Decidim::Core::Engine.routes.url_helpers
-        helper_method :destroy_admin_session_path
+        helper_method :destroy_admin_session_path, :api_client
+
         def core_engine_routes
           Decidim::Core::Engine.routes.url_helpers
         end
@@ -20,8 +21,7 @@ module Decidim
         end
 
         def show
-          @api_client = collection.find(params[:id])
-          @form = form(ApiClientForm).from_model(@api_client)
+          @form = form(ApiClientForm).from_model(api_client)
         end
 
         def new
@@ -29,9 +29,8 @@ module Decidim
         end
 
         def edit
-          @api_client = collection.find(params[:id])
-          @form = form(ApiClientForm).from_model(@api_client)
-          @perm_form = form(ApiPermissions).from_model(@api_client)
+          @form = form(ApiClientForm).from_model(api_client)
+          @perm_form = form(ApiPermissions).from_model(api_client)
         end
 
         def create
@@ -51,12 +50,15 @@ module Decidim
         end
 
         def destroy
-          @api_client = collection.find(params[:id])
-          @api_client.destroy
+          api_client.destroy
           redirect_to core_engine_routes.system_api_clients_path, flash: { success: "Client Revoked" }
         end
 
         private
+
+        def api_client
+          @api_client ||= collection.find(params[:id])
+        end
 
         def collection
           @collection = Decidim::RestFull::ApiClient.includes([:organization])

@@ -5,13 +5,12 @@
                     { include_blank: t(".select_organization"), },
                     { multiple: false,  disabled: } %>
     <div>
-        <h3 class="h5"><%= t('.scopes_label') %></h3>
+        <h3 class="h5"><%= t(".scopes_label") %></h3>
         <% [:system, :proposals, :meetings, :debates, :pages, :blogs, :oauth].each do |scope| %>
-            <label class="block py-2  <%= "hidden" if disabled &&  !form.object.scopes.to_a.include?(scope.to_s) %></label>">
+            <label class="block py-2  <%= "hidden" if disabled && form.object.scopes.to_a.exclude?(scope.to_s) %></label>">
                 <%= form.check_box :scopes, { multiple: true, label: "", disabled: disabled, checked: form.object.scopes.to_a.include?(scope.to_s) }, scope, nil %>
                 <span class="font-normal"><%= t("scope_#{scope}", scope: "decidim.rest_full.models.api_client.fields") %></span>
             </label>
         <% end %>
     </div>
 </div>
-
