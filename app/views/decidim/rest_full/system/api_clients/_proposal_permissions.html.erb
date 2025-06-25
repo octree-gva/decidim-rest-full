@@ -14,9 +14,9 @@
         <% end %>
       </div>
       <div class="mt-4">
-        <strong>Webhook events</strong><br>
+        <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
         <p class="text-sm">
-          Events the API client is allowed to subscribe to.
+          <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
         </p>
         <ul>
         <% ::Decidim::RestFull::events_for_proposals.each do |permission| %>

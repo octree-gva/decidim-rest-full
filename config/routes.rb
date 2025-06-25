@@ -13,6 +13,7 @@ Decidim::Core::Engine.routes.draw do
   namespace :api do
     namespace :rest_full do
       scope "v#{Decidim::RestFull.major_minor_version}" do
+        get "/", to: "/decidim/rest_full/pages#show"
         post "/oauth/token", to: "/doorkeeper/tokens#create"
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
         # organizations
