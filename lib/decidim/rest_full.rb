@@ -26,6 +26,7 @@ require "decidim/rest_full/overrides/user_magic_token_override"
 
 require "decidim/rest_full/overrides/user_extended_data_ransack"
 require "decidim/rest_full/overrides/application_mailer_override"
+require "decidim/rest_full/overrides/update_organization_form_override"
 
 module Decidim
   module RestFull

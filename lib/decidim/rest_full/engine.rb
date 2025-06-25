@@ -18,6 +18,7 @@ module Decidim
         # Override mailer to avoid sending emails to @example.org
         # and send notifications (webhooks)
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
+        ::Decidim::System::UpdateOrganizationForm.prepend(Decidim::RestFull::UpdateOrganizationFormOverride)
       end
 
       initializer "rest_full.webhooks" do
