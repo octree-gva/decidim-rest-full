@@ -1,0 +1,26 @@
+deployment decidimSystem "Live" "api-infra" {
+    title "Infrastructure for API"
+    include *
+    autoLayout lr
+}
+
+dynamic decidim "host-resolve" {
+  title "Host match to a Decidim Tenant"
+  user -> current_organization_middleware "request https://my-org.example.org"
+  current_organization_middleware -> organization_model "match my-org.example.org to the right tenant"
+  current_organization_middleware -> user "render with the right organization"
+  autoLayout tb
+}
+
+dynamic decidim "update-host" {
+  title "Update of Organization Host"
+  
+  system_form -> update_organization_command "Admin update `host`"
+  update_organization_command -> organization_model "Save unconfirmed host"
+  update_organization_command -> syncronize_unconfirmed_host "Enque a Syncronization job"
+  syncronize_unconfirmed_host -> syncronize_unconfirmed_host "DNS reverse lookup to check ip"
+  syncronize_unconfirmed_host -> organization_model "Update the tenant host"
+  current_organization_middleware -> organization_model "match new tenant"
+  autoLayout 
+
+}

@@ -2,6 +2,7 @@
 
 ENV["RAILS_ENV"] = "test"
 ENV["NODE_ENV"] ||= "test"
+ENV["DISABLE_SPRING"] = "1"
 ENV["ENGINE_ROOT"] = File.dirname(__dir__)
 
 require "decidim/dev"

@@ -1,0 +1,8 @@
+{
+  "label": "Development documentation",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Understand how the module works"
+  }
+}

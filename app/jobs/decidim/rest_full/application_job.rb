@@ -3,7 +3,7 @@
 module Decidim
   module RestFull
     class ApplicationJob < ::ApplicationJob
-      queue_as :default
+      queue_as Decidim::RestFull.config.queue_name
       retry_on WebhookFailedError, wait: 5.seconds, attempts: 3
     end
   end

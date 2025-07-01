@@ -3,8 +3,8 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataController do
   path "/organizations/{id}/extended_data" do
-    get "Get organization extended data" do
-      tags "Organizations"
+    get "Organization extended data" do
+      tags "Organizations Extended Data"
       produces "application/json"
       operationId "organizationData"
       description "Fetch organization extended data"

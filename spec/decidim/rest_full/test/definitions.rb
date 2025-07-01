@@ -2,6 +2,7 @@
 
 # utilities
 require_relative "definitions/translated_prop"
+require_relative "definitions/time_zone"
 require_relative "definitions/component_type"
 require_relative "definitions/filter_param"
 require_relative "definitions/creation_date"

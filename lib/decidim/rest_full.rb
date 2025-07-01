@@ -15,6 +15,7 @@ require "decidim/rest_full/menu"
 require "decidim/rest_full/engine"
 require "decidim/rest_full/api_exception"
 require "decidim/rest_full/definition_registry"
+require "decidim/rest_full/configuration"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
@@ -27,8 +28,16 @@ require "decidim/rest_full/overrides/user_magic_token_override"
 require "decidim/rest_full/overrides/user_extended_data_ransack"
 require "decidim/rest_full/overrides/application_mailer_override"
 require "decidim/rest_full/overrides/update_organization_form_override"
+require "decidim/rest_full/overrides/update_organization_command_override"
 
 module Decidim
   module RestFull
+    def self.config
+      Configuration.config
+    end
+
+    def self.configure
+      Configuration.configure
+    end
   end
 end
