@@ -1,0 +1,16 @@
+
+  theme https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-voca/-/snippets/38/raw/main/theme.json
+  themes https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-voca/-/snippets/38/raw/main/theme.json
+  styles {
+    relationship "Relationship" {
+        color #293845
+        dashed true
+        thickness 2
+        fontSize 14
+        width 550
+        routing direct
+    }
+  }
+  branding {
+    font default https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap
+  }

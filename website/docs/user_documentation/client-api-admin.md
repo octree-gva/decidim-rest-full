@@ -1,6 +1,6 @@
 ---
-sidebar_position: 1
-title: Administration
+sidebar_position: 2
+title: API Clients
 ---
 
 # Administrate your API Client credentials

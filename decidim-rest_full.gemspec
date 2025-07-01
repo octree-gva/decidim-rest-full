@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-comments", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
+  s.add_dependency "deface", "~> 1.9"
   s.add_dependency "doorkeeper"
   s.add_dependency "jsonapi-serializer"
   s.add_dependency "rswag-api"

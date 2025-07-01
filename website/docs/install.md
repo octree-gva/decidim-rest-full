@@ -37,3 +37,10 @@ bundle exec rails db:migrate
 ```
 (you can make sure migrations pass with bundle exec rails db:migrate:status)
 
+## Environment variables
+
+| Name | Description | Default Value |
+|------|-------------|---------------|
+| `DECIDIM_REST_QUEUE_NAME`| Name of the queue used by the module | `default` |
+| `DECIDIM_REST_LOADBALANCER_IPS`| CSV of ips to a loadbalancer to safely save `host` attribute. See [Safe Host Update](/dev/update-hosts) | `127.0.0.1, ::1` |
+| `DOCS_URL`| Base URL for this doc, to build the documentation website | `https://octree-gva.github.io/decidim-rest-full` |
