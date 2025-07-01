@@ -151,7 +151,7 @@ module Decidim
         register_object("#{name_sym}_item_response") do
           {
             type: :object,
-            title: "#{name_sym.to_s.titleize} Index Response",
+            title: "#{name_sym.to_s.titleize} Item Response",
             properties: {
               data: {
                 "$ref" => reference(name_sym)

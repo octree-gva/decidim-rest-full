@@ -12,12 +12,13 @@ GIT
 PATH
   remote: .
   specs:
-    decidim-rest_full (0.2.1)
+    decidim-rest_full (0.2.2)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (>= 0.28, < 0.30)
       decidim-comments (>= 0.28, < 0.30)
       decidim-core (>= 0.28, < 0.30)
+      deface (~> 1.9)
       doorkeeper
       jsonapi-serializer
       rswag-api

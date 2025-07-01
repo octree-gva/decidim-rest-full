@@ -14,7 +14,7 @@ module Decidim
                 A RestFull API for Decidim, to be able to CRUD resources from Decidim.
 
                 ## Authentication
-                [Get a token](#{Decidim::RestFull.docs_url}/category/authentication) from our `/oauth/token` routes,
+                [Get a token](#{Decidim::RestFull.config.docs_url}/category/authentication) from our `/oauth/token` routes,
                 following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.
 
                 ### Permissions
@@ -46,6 +46,8 @@ module Decidim
             ],
             tags: [
               Definitions::Tags::OAUTH,
+              Definitions::Tags::ORGANIZATIONS,
+              Definitions::Tags::ORGANIZATION_EXTENDED_DATA,
               Definitions::Tags::SPACE,
               Definitions::Tags::COMPONENT,
               Definitions::Tags::USER,
@@ -62,7 +64,7 @@ module Decidim
                   description: <<~README
                     Authorization via service-to-service credentials flow.
                     Use this for machine clients.
-                    [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/client-credential-flow)
+                    [Learn more here](#{Decidim::RestFull.config.docs_url}/user_documentation/auth/client-credential-flow)
                   README
                 },
                 resourceOwnerFlowBearer: {
@@ -72,7 +74,7 @@ module Decidim
                   description: <<~README
                     Authorization via resource owner flow.
                     Use this for user-based authentication
-                    [Learn more here](#{Decidim::RestFull.docs_url}/user_documentation/auth/user-credentials-flow)
+                    [Learn more here](#{Decidim::RestFull.config.docs_url}/user_documentation/auth/user-credentials-flow)
                   README
                 }
               },

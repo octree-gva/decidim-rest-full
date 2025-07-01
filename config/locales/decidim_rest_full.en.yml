@@ -117,3 +117,31 @@ en:
             new_api_client: "New API Client"
             edit: "Edit"
             destroy: "Revoke"
+        update_organization:
+          unconfirmed_host_label: "Host"
+          unconfirmed_host_pending_warning_html: |
+              <div class="callout warning">
+                <p class="h4">
+                  An operation is pending
+                </p>
+                <p>
+                  While we are changing the host to <strong>%{unconfirmed_host}</strong>,
+                  the current host is still <strong>%{host}</strong>.
+                </p>
+                <p>
+                  Once we validated your DNS configuration, the host will be updated. <br />
+                  Please make sure to have these DNS records: 
+                  <pre>
+              %{a_records}
+              %{aaa_records}</pre>
+                </p>
+              </div>
+          unconfirmed_host_explaination_html: |
+              <div class="callout info">
+                <p>
+                  Before updating the host, please make sure to configure these DNS records: 
+                  <pre>
+              %{a_records}
+              %{aaa_records}</pre>
+                </p>
+              </div>

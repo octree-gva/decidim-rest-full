@@ -12,7 +12,7 @@ module Decidim
 
           externalDocs: {
             description: "How to authenticate",
-            url: "#{Decidim::RestFull.docs_url}/category/authentication"
+            url: "#{Decidim::RestFull.config.docs_url}/category/authentication"
           }
         }.freeze
       end

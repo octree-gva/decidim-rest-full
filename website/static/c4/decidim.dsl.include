@@ -1,0 +1,40 @@
+decidimSystem = softwareSystem "decidim" "Decidim Instance" {
+
+  worker = container "activejob-runner" "running sidekiq" "worker-process" "sidekiq,good_job" {
+    syncronize_unconfirmed_host = component "SyncronizeUnconfirmedHost" "job" "Decidim::RestFull::SyncronizeUnconfirmedHost"
+  }
+
+  decidim = container "decidim" "decidim with decidim rest_full module" {
+    organization_model = component "Organization Model" "ActiveRecord" "Decidim::Organization"
+    current_organization_middleware = component "Current Organization Middleware" "Decidim Rack Middleware" "Decidim::Middleware::CurrentOrganization"
+    update_organization_command = component "Update Organization Command" "Command trigger on organization updates in System" "Decidim::System::UpdateOrganization"
+    system_form = component "System Edit Organization Form" "Decidim::Form in /system" "Decidim::System::UpdateOrganizationForm"
+    
+    user -> current_organization_middleware
+    current_organization_middleware -> organization_model
+    current_organization_middleware -> user
+
+    system_form -> update_organization_command
+    update_organization_command -> organization_model
+    update_organization_command -> syncronize_unconfirmed_host
+    syncronize_unconfirmed_host -> organization_model
+    syncronize_unconfirmed_host -> syncronize_unconfirmed_host
+  }
+}
+
+
+deploymentEnvironment "Live" {
+    dnsNode = deploymentNode "DNSService" "DNS Service" "environment" "" 1 {
+      dnsInfraNode = infrastructureNode "dns" "DNS Service" "infomaniak" "External"
+    }
+
+    lbNode = deploymentNode "load-balancer" "Load Balancer" "environment" "" 1 {
+      lbInfraNode = infrastructureNode "lb" "Route the host to the decidim instance" "traefik" "External"
+    }
+    vocaInstance = deploymentNode "decidim" "" "decidim/decidim" "" 1 {
+      appInstance = containerInstance decidim
+      workerInstance = containerInstance worker
+    }
+    dnsInfraNode -> lbInfraNode "Bind DNS to Adress"
+    lbInfraNode -> appInstance "Resolve host to server instance"
+}

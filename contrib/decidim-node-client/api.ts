@@ -1939,10 +1939,34 @@ export interface OrganizationAttributes {
   name: { [key: string]: string };
   /**
    *
+   * @type {{ [key: string]: string; }}
+   * @memberof OrganizationAttributes
+   */
+  description?: { [key: string]: string };
+  /**
+   * Prefix for the organization. Used to prefix uplodaded files and reference resources
+   * @type {string}
+   * @memberof OrganizationAttributes
+   */
+  reference_prefix?: string;
+  /**
+   *
    * @type {string}
    * @memberof OrganizationAttributes
    */
   host: string;
+  /**
+   * True if welcome email is sent to users
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  send_welcome_notification?: boolean;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof OrganizationAttributes
+   */
+  secondary_hosts?: Array<string>;
   /**
    *
    * @type {Array<Locale>}
@@ -1956,24 +1980,88 @@ export interface OrganizationAttributes {
    */
   default_locale: string;
   /**
-   *
-   * @type {Array<string>}
+   * Define user registration mode:  - `enabled`: Enable users registration - `existing`: Existing users will be able to login. Registration will be disabled. - `disabled`: No registration enabled
+   * @type {string}
    * @memberof OrganizationAttributes
    */
-  secondary_hosts?: Array<string>;
+  users_registration_mode?: OrganizationAttributesUsersRegistrationModeEnum;
+  /**
+   * Force users to authenticate before accessing the organization (disabled if users_registration_mode is `disabled`)
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  force_users_to_authenticate_before_access_organization?: boolean;
+  /**
+   * Enable badges for public views
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  badges_enabled?: boolean;
+  /**
+   * Display areas and scopes filter in public views.
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  enable_participatory_space_filters?: boolean;
+  /**
+   * Enable machine translations (must be configured, see [Using machine translations](https://docs.decidim.org/en/develop/develop/machine_translations.html))
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  enable_machine_translations?: boolean;
+  /**
+   * Enable user groups in public views
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  user_groups_enabled?: boolean;
+  /**
+   *
+   * @type {TimeZone}
+   * @memberof OrganizationAttributes
+   */
+  time_zone?: TimeZone;
+  /**
+   * Default maximum length of comments
+   * @type {number}
+   * @memberof OrganizationAttributes
+   */
+  comments_max_length?: number;
+  /**
+   * Enable rich text editor in public views
+   * @type {boolean}
+   * @memberof OrganizationAttributes
+   */
+  rich_text_editor_in_public_views?: boolean;
   /**
    * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof OrganizationAttributes
    */
-  created_at: string;
+  created_at?: string;
   /**
    * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof OrganizationAttributes
    */
-  updated_at: string;
+  updated_at?: string;
+  /**
+   * Extended data for the organization
+   * @type {object}
+   * @memberof OrganizationAttributes
+   */
+  extended_data?: object;
 }
+
+export const OrganizationAttributesUsersRegistrationModeEnum = {
+  Enabled: "enabled",
+  Existing: "existing",
+  Disabled: "disabled",
+} as const;
+
+export type OrganizationAttributesUsersRegistrationModeEnum =
+  (typeof OrganizationAttributesUsersRegistrationModeEnum)[keyof typeof OrganizationAttributesUsersRegistrationModeEnum];
+
 /**
  *
  * @export
@@ -2012,6 +2100,12 @@ export interface OrganizationMetadata {
    * @memberof OrganizationMetadata
    */
   locales: Array<Locale>;
+  /**
+   * If host update is pending, unconfirmed host for the organization
+   * @type {string}
+   * @memberof OrganizationMetadata
+   */
+  unconfirmed_host?: string;
 }
 /**
  *
@@ -3597,6 +3691,169 @@ export const SpaceType = {
 export type SpaceType = (typeof SpaceType)[keyof typeof SpaceType];
 
 /**
+ * Time Zone identifier
+ * @export
+ * @enum {string}
+ */
+
+export const TimeZone = {
+  AfricaAlgiers: "Africa/Algiers",
+  AfricaCairo: "Africa/Cairo",
+  AfricaCasablanca: "Africa/Casablanca",
+  AfricaHarare: "Africa/Harare",
+  AfricaJohannesburg: "Africa/Johannesburg",
+  AfricaMonrovia: "Africa/Monrovia",
+  AfricaNairobi: "Africa/Nairobi",
+  AmericaArgentinaBuenosAires: "America/Argentina/Buenos_Aires",
+  AmericaBogota: "America/Bogota",
+  AmericaCaracas: "America/Caracas",
+  AmericaChicago: "America/Chicago",
+  AmericaChihuahua: "America/Chihuahua",
+  AmericaDenver: "America/Denver",
+  AmericaGodthab: "America/Godthab",
+  AmericaGuatemala: "America/Guatemala",
+  AmericaGuyana: "America/Guyana",
+  AmericaHalifax: "America/Halifax",
+  AmericaIndianaIndianapolis: "America/Indiana/Indianapolis",
+  AmericaJuneau: "America/Juneau",
+  AmericaLaPaz: "America/La_Paz",
+  AmericaLima: "America/Lima",
+  AmericaLima2: "America/Lima",
+  AmericaLosAngeles: "America/Los_Angeles",
+  AmericaMazatlan: "America/Mazatlan",
+  AmericaMexicoCity: "America/Mexico_City",
+  AmericaMexicoCity2: "America/Mexico_City",
+  AmericaMonterrey: "America/Monterrey",
+  AmericaMontevideo: "America/Montevideo",
+  AmericaNewYork: "America/New_York",
+  AmericaPhoenix: "America/Phoenix",
+  AmericaPuertoRico: "America/Puerto_Rico",
+  AmericaRegina: "America/Regina",
+  AmericaSantiago: "America/Santiago",
+  AmericaSaoPaulo: "America/Sao_Paulo",
+  AmericaStJohns: "America/St_Johns",
+  AmericaTijuana: "America/Tijuana",
+  AsiaAlmaty: "Asia/Almaty",
+  AsiaBaghdad: "Asia/Baghdad",
+  AsiaBaku: "Asia/Baku",
+  AsiaBangkok: "Asia/Bangkok",
+  AsiaBangkok2: "Asia/Bangkok",
+  AsiaChongqing: "Asia/Chongqing",
+  AsiaColombo: "Asia/Colombo",
+  AsiaDhaka: "Asia/Dhaka",
+  AsiaDhaka2: "Asia/Dhaka",
+  AsiaHongKong: "Asia/Hong_Kong",
+  AsiaIrkutsk: "Asia/Irkutsk",
+  AsiaJakarta: "Asia/Jakarta",
+  AsiaJerusalem: "Asia/Jerusalem",
+  AsiaKabul: "Asia/Kabul",
+  AsiaKamchatka: "Asia/Kamchatka",
+  AsiaKarachi: "Asia/Karachi",
+  AsiaKarachi2: "Asia/Karachi",
+  AsiaKathmandu: "Asia/Kathmandu",
+  AsiaKolkata: "Asia/Kolkata",
+  AsiaKolkata2: "Asia/Kolkata",
+  AsiaKolkata3: "Asia/Kolkata",
+  AsiaKolkata4: "Asia/Kolkata",
+  AsiaKrasnoyarsk: "Asia/Krasnoyarsk",
+  AsiaKualaLumpur: "Asia/Kuala_Lumpur",
+  AsiaKuwait: "Asia/Kuwait",
+  AsiaMagadan: "Asia/Magadan",
+  AsiaMuscat: "Asia/Muscat",
+  AsiaMuscat2: "Asia/Muscat",
+  AsiaNovosibirsk: "Asia/Novosibirsk",
+  AsiaRangoon: "Asia/Rangoon",
+  AsiaRiyadh: "Asia/Riyadh",
+  AsiaSeoul: "Asia/Seoul",
+  AsiaShanghai: "Asia/Shanghai",
+  AsiaSingapore: "Asia/Singapore",
+  AsiaSrednekolymsk: "Asia/Srednekolymsk",
+  AsiaTaipei: "Asia/Taipei",
+  AsiaTashkent: "Asia/Tashkent",
+  AsiaTbilisi: "Asia/Tbilisi",
+  AsiaTehran: "Asia/Tehran",
+  AsiaTokyo: "Asia/Tokyo",
+  AsiaTokyo2: "Asia/Tokyo",
+  AsiaTokyo3: "Asia/Tokyo",
+  AsiaUlaanbaatar: "Asia/Ulaanbaatar",
+  AsiaUrumqi: "Asia/Urumqi",
+  AsiaVladivostok: "Asia/Vladivostok",
+  AsiaYakutsk: "Asia/Yakutsk",
+  AsiaYekaterinburg: "Asia/Yekaterinburg",
+  AsiaYerevan: "Asia/Yerevan",
+  AtlanticAzores: "Atlantic/Azores",
+  AtlanticCapeVerde: "Atlantic/Cape_Verde",
+  AtlanticSouthGeorgia: "Atlantic/South_Georgia",
+  AustraliaAdelaide: "Australia/Adelaide",
+  AustraliaBrisbane: "Australia/Brisbane",
+  AustraliaDarwin: "Australia/Darwin",
+  AustraliaHobart: "Australia/Hobart",
+  AustraliaMelbourne: "Australia/Melbourne",
+  AustraliaMelbourne2: "Australia/Melbourne",
+  AustraliaPerth: "Australia/Perth",
+  AustraliaSydney: "Australia/Sydney",
+  EtcGmt12: "Etc/GMT+12",
+  EtcUtc: "Etc/UTC",
+  EuropeAmsterdam: "Europe/Amsterdam",
+  EuropeAthens: "Europe/Athens",
+  EuropeBelgrade: "Europe/Belgrade",
+  EuropeBerlin: "Europe/Berlin",
+  EuropeBratislava: "Europe/Bratislava",
+  EuropeBrussels: "Europe/Brussels",
+  EuropeBucharest: "Europe/Bucharest",
+  EuropeBudapest: "Europe/Budapest",
+  EuropeCopenhagen: "Europe/Copenhagen",
+  EuropeDublin: "Europe/Dublin",
+  EuropeHelsinki: "Europe/Helsinki",
+  EuropeIstanbul: "Europe/Istanbul",
+  EuropeKaliningrad: "Europe/Kaliningrad",
+  EuropeKiev: "Europe/Kiev",
+  EuropeLisbon: "Europe/Lisbon",
+  EuropeLjubljana: "Europe/Ljubljana",
+  EuropeLondon: "Europe/London",
+  EuropeLondon2: "Europe/London",
+  EuropeMadrid: "Europe/Madrid",
+  EuropeMinsk: "Europe/Minsk",
+  EuropeMoscow: "Europe/Moscow",
+  EuropeMoscow2: "Europe/Moscow",
+  EuropeParis: "Europe/Paris",
+  EuropePrague: "Europe/Prague",
+  EuropeRiga: "Europe/Riga",
+  EuropeRome: "Europe/Rome",
+  EuropeSamara: "Europe/Samara",
+  EuropeSarajevo: "Europe/Sarajevo",
+  EuropeSkopje: "Europe/Skopje",
+  EuropeSofia: "Europe/Sofia",
+  EuropeStockholm: "Europe/Stockholm",
+  EuropeTallinn: "Europe/Tallinn",
+  EuropeVienna: "Europe/Vienna",
+  EuropeVilnius: "Europe/Vilnius",
+  EuropeVolgograd: "Europe/Volgograd",
+  EuropeWarsaw: "Europe/Warsaw",
+  EuropeZagreb: "Europe/Zagreb",
+  EuropeZurich: "Europe/Zurich",
+  EuropeZurich2: "Europe/Zurich",
+  PacificApia: "Pacific/Apia",
+  PacificAuckland: "Pacific/Auckland",
+  PacificAuckland2: "Pacific/Auckland",
+  PacificChatham: "Pacific/Chatham",
+  PacificFakaofo: "Pacific/Fakaofo",
+  PacificFiji: "Pacific/Fiji",
+  PacificGuadalcanal: "Pacific/Guadalcanal",
+  PacificGuam: "Pacific/Guam",
+  PacificHonolulu: "Pacific/Honolulu",
+  PacificMajuro: "Pacific/Majuro",
+  PacificMidway: "Pacific/Midway",
+  PacificNoumea: "Pacific/Noumea",
+  PacificPagoPago: "Pacific/Pago_Pago",
+  PacificPortMoresby: "Pacific/Port_Moresby",
+  PacificTongatapu: "Pacific/Tongatapu",
+  Utc: "UTC",
+} as const;
+
+export type TimeZone = (typeof TimeZone)[keyof typeof TimeZone];
+
+/**
  * Hash with translated data, key=locale value=translation
  * @export
  * @interface TranslatedProp
@@ -3662,6 +3919,19 @@ export const UpdateDraftProposalPayloadDataLocaleEnum = {
 export type UpdateDraftProposalPayloadDataLocaleEnum =
   (typeof UpdateDraftProposalPayloadDataLocaleEnum)[keyof typeof UpdateDraftProposalPayloadDataLocaleEnum];
 
+/**
+ *
+ * @export
+ * @interface UpdateOrganizationPayload
+ */
+export interface UpdateOrganizationPayload {
+  /**
+   *
+   * @type {OrganizationAttributes}
+   * @memberof UpdateOrganizationPayload
+   */
+  data: OrganizationAttributes;
+}
 /**
  *
  * @export
@@ -7753,7 +8023,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7875,7 +8145,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7949,7 +8219,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8017,7 +8287,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token through Client Credentials
+   * @summary Request a OAuth token throught ROPC
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -8059,8 +8329,530 @@ export const OrganizationsApiAxiosParamCreator = function (
 ) {
   return {
     /**
+     * Show organization
+     * @summary Organization
+     * @param {string} id The ID of the organization
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organization: async (
+      id: string,
+      locales?: Array<Locale>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("organization", "id", id);
+      const localVarPath = `/organizations/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List available organizations
+     * @summary Organizations
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organizations: async (
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/organizations`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
+     * @summary Update organization
+     * @param {string} id The ID of the organization
+     * @param {UpdateOrganizationPayload} updateOrganizationPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateOrganization: async (
+      id: string,
+      updateOrganizationPayload: UpdateOrganizationPayload,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("updateOrganization", "id", id);
+      // verify required parameter 'updateOrganizationPayload' is not null or undefined
+      assertParamExists(
+        "updateOrganization",
+        "updateOrganizationPayload",
+        updateOrganizationPayload,
+      );
+      const localVarPath = `/organizations/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateOrganizationPayload,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * OrganizationsApi - functional programming interface
+ * @export
+ */
+export const OrganizationsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    OrganizationsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Show organization
+     * @summary Organization
+     * @param {string} id The ID of the organization
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async organization(
+      id: string,
+      locales?: Array<Locale>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<OrganizationItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.organization(
+        id,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OrganizationsApi.organization"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List available organizations
+     * @summary Organizations
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async organizations(
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<OrganizationIndexResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
+        locales,
+        page,
+        perPage,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OrganizationsApi.organizations"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
+     * @summary Update organization
+     * @param {string} id The ID of the organization
+     * @param {UpdateOrganizationPayload} updateOrganizationPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateOrganization(
+      id: string,
+      updateOrganizationPayload: UpdateOrganizationPayload,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<OrganizationItemResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateOrganization(
+          id,
+          updateOrganizationPayload,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["OrganizationsApi.updateOrganization"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * OrganizationsApi - factory interface
+ * @export
+ */
+export const OrganizationsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = OrganizationsApiFp(configuration);
+  return {
+    /**
+     * Show organization
+     * @summary Organization
+     * @param {OrganizationsApiOrganizationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organization(
+      requestParameters: OrganizationsApiOrganizationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<OrganizationItemResponse> {
+      return localVarFp
+        .organization(requestParameters.id, requestParameters.locales, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List available organizations
+     * @summary Organizations
+     * @param {OrganizationsApiOrganizationsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    organizations(
+      requestParameters: OrganizationsApiOrganizationsRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<OrganizationIndexResponse> {
+      return localVarFp
+        .organizations(
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
+     * @summary Update organization
+     * @param {OrganizationsApiUpdateOrganizationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateOrganization(
+      requestParameters: OrganizationsApiUpdateOrganizationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<OrganizationItemResponse> {
+      return localVarFp
+        .updateOrganization(
+          requestParameters.id,
+          requestParameters.updateOrganizationPayload,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for organization operation in OrganizationsApi.
+ * @export
+ * @interface OrganizationsApiOrganizationRequest
+ */
+export interface OrganizationsApiOrganizationRequest {
+  /**
+   * The ID of the organization
+   * @type {string}
+   * @memberof OrganizationsApiOrganization
+   */
+  readonly id: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof OrganizationsApiOrganization
+   */
+  readonly locales?: Array<Locale>;
+}
+
+/**
+ * Request parameters for organizations operation in OrganizationsApi.
+ * @export
+ * @interface OrganizationsApiOrganizationsRequest
+ */
+export interface OrganizationsApiOrganizationsRequest {
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof OrganizationsApiOrganizations
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof OrganizationsApiOrganizations
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof OrganizationsApiOrganizations
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for updateOrganization operation in OrganizationsApi.
+ * @export
+ * @interface OrganizationsApiUpdateOrganizationRequest
+ */
+export interface OrganizationsApiUpdateOrganizationRequest {
+  /**
+   * The ID of the organization
+   * @type {string}
+   * @memberof OrganizationsApiUpdateOrganization
+   */
+  readonly id: string;
+
+  /**
+   *
+   * @type {UpdateOrganizationPayload}
+   * @memberof OrganizationsApiUpdateOrganization
+   */
+  readonly updateOrganizationPayload: UpdateOrganizationPayload;
+}
+
+/**
+ * OrganizationsApi - object-oriented interface
+ * @export
+ * @class OrganizationsApi
+ * @extends {BaseAPI}
+ */
+export class OrganizationsApi extends BaseAPI {
+  /**
+   * Show organization
+   * @summary Organization
+   * @param {OrganizationsApiOrganizationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OrganizationsApi
+   */
+  public organization(
+    requestParameters: OrganizationsApiOrganizationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OrganizationsApiFp(this.configuration)
+      .organization(requestParameters.id, requestParameters.locales, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List available organizations
+   * @summary Organizations
+   * @param {OrganizationsApiOrganizationsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OrganizationsApi
+   */
+  public organizations(
+    requestParameters: OrganizationsApiOrganizationsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OrganizationsApiFp(this.configuration)
+      .organizations(
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
+   * @summary Update organization
+   * @param {OrganizationsApiUpdateOrganizationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof OrganizationsApi
+   */
+  public updateOrganization(
+    requestParameters: OrganizationsApiUpdateOrganizationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return OrganizationsApiFp(this.configuration)
+      .updateOrganization(
+        requestParameters.id,
+        requestParameters.updateOrganizationPayload,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * OrganizationsExtendedDataApi - axios parameter creator
+ * @export
+ */
+export const OrganizationsExtendedDataApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
      * Fetch organization extended data
-     * @summary Get organization extended data
+     * @summary Organization extended data
      * @param {string} objectPath
      * @param {number} id
      * @param {*} [options] Override http request option.
@@ -8185,16 +8977,18 @@ export const OrganizationsApiAxiosParamCreator = function (
 };
 
 /**
- * OrganizationsApi - functional programming interface
+ * OrganizationsExtendedDataApi - functional programming interface
  * @export
  */
-export const OrganizationsApiFp = function (configuration?: Configuration) {
+export const OrganizationsExtendedDataApiFp = function (
+  configuration?: Configuration,
+) {
   const localVarAxiosParamCreator =
-    OrganizationsApiAxiosParamCreator(configuration);
+    OrganizationsExtendedDataApiAxiosParamCreator(configuration);
   return {
     /**
      * Fetch organization extended data
-     * @summary Get organization extended data
+     * @summary Organization extended data
      * @param {string} objectPath
      * @param {number} id
      * @param {*} [options] Override http request option.
@@ -8218,7 +9012,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["OrganizationsApi.organizationData"]?.[
+        operationServerMap["OrganizationsExtendedDataApi.organizationData"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -8255,9 +9049,9 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["OrganizationsApi.setOrganizationExtendedData"]?.[
-          localVarOperationServerIndex
-        ]?.url;
+        operationServerMap[
+          "OrganizationsExtendedDataApi.setOrganizationExtendedData"
+        ]?.[localVarOperationServerIndex]?.url;
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -8270,25 +9064,25 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
 };
 
 /**
- * OrganizationsApi - factory interface
+ * OrganizationsExtendedDataApi - factory interface
  * @export
  */
-export const OrganizationsApiFactory = function (
+export const OrganizationsExtendedDataApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
   axios?: AxiosInstance,
 ) {
-  const localVarFp = OrganizationsApiFp(configuration);
+  const localVarFp = OrganizationsExtendedDataApiFp(configuration);
   return {
     /**
      * Fetch organization extended data
-     * @summary Get organization extended data
-     * @param {OrganizationsApiOrganizationDataRequest} requestParameters Request parameters.
+     * @summary Organization extended data
+     * @param {OrganizationsExtendedDataApiOrganizationDataRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     organizationData(
-      requestParameters: OrganizationsApiOrganizationDataRequest,
+      requestParameters: OrganizationsExtendedDataApiOrganizationDataRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
@@ -8302,12 +9096,12 @@ export const OrganizationsApiFactory = function (
     /**
      * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update organization extended data
-     * @param {OrganizationsApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
+     * @param {OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setOrganizationExtendedData(
-      requestParameters: OrganizationsApiSetOrganizationExtendedDataRequest,
+      requestParameters: OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
@@ -8322,67 +9116,67 @@ export const OrganizationsApiFactory = function (
 };
 
 /**
- * Request parameters for organizationData operation in OrganizationsApi.
+ * Request parameters for organizationData operation in OrganizationsExtendedDataApi.
  * @export
- * @interface OrganizationsApiOrganizationDataRequest
+ * @interface OrganizationsExtendedDataApiOrganizationDataRequest
  */
-export interface OrganizationsApiOrganizationDataRequest {
+export interface OrganizationsExtendedDataApiOrganizationDataRequest {
   /**
    *
    * @type {string}
-   * @memberof OrganizationsApiOrganizationData
+   * @memberof OrganizationsExtendedDataApiOrganizationData
    */
   readonly objectPath: string;
 
   /**
    *
    * @type {number}
-   * @memberof OrganizationsApiOrganizationData
+   * @memberof OrganizationsExtendedDataApiOrganizationData
    */
   readonly id: number;
 }
 
 /**
- * Request parameters for setOrganizationExtendedData operation in OrganizationsApi.
+ * Request parameters for setOrganizationExtendedData operation in OrganizationsExtendedDataApi.
  * @export
- * @interface OrganizationsApiSetOrganizationExtendedDataRequest
+ * @interface OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest
  */
-export interface OrganizationsApiSetOrganizationExtendedDataRequest {
+export interface OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest {
   /**
    *
    * @type {number}
-   * @memberof OrganizationsApiSetOrganizationExtendedData
+   * @memberof OrganizationsExtendedDataApiSetOrganizationExtendedData
    */
   readonly id: number;
 
   /**
    *
    * @type {UserExtendedDataPayload}
-   * @memberof OrganizationsApiSetOrganizationExtendedData
+   * @memberof OrganizationsExtendedDataApiSetOrganizationExtendedData
    */
   readonly userExtendedDataPayload: UserExtendedDataPayload;
 }
 
 /**
- * OrganizationsApi - object-oriented interface
+ * OrganizationsExtendedDataApi - object-oriented interface
  * @export
- * @class OrganizationsApi
+ * @class OrganizationsExtendedDataApi
  * @extends {BaseAPI}
  */
-export class OrganizationsApi extends BaseAPI {
+export class OrganizationsExtendedDataApi extends BaseAPI {
   /**
    * Fetch organization extended data
-   * @summary Get organization extended data
-   * @param {OrganizationsApiOrganizationDataRequest} requestParameters Request parameters.
+   * @summary Organization extended data
+   * @param {OrganizationsExtendedDataApiOrganizationDataRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof OrganizationsApi
+   * @memberof OrganizationsExtendedDataApi
    */
   public organizationData(
-    requestParameters: OrganizationsApiOrganizationDataRequest,
+    requestParameters: OrganizationsExtendedDataApiOrganizationDataRequest,
     options?: RawAxiosRequestConfig,
   ) {
-    return OrganizationsApiFp(this.configuration)
+    return OrganizationsExtendedDataApiFp(this.configuration)
       .organizationData(
         requestParameters.objectPath,
         requestParameters.id,
@@ -8394,16 +9188,16 @@ export class OrganizationsApi extends BaseAPI {
   /**
    * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
    * @summary Update organization extended data
-   * @param {OrganizationsApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
+   * @param {OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof OrganizationsApi
+   * @memberof OrganizationsExtendedDataApi
    */
   public setOrganizationExtendedData(
-    requestParameters: OrganizationsApiSetOrganizationExtendedDataRequest,
+    requestParameters: OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest,
     options?: RawAxiosRequestConfig,
   ) {
-    return OrganizationsApiFp(this.configuration)
+    return OrganizationsExtendedDataApiFp(this.configuration)
       .setOrganizationExtendedData(
         requestParameters.id,
         requestParameters.userExtendedDataPayload,
@@ -10552,219 +11346,6 @@ export const SearchSpacesFilterManifestNameNotEqEnum = {
 } as const;
 export type SearchSpacesFilterManifestNameNotEqEnum =
   (typeof SearchSpacesFilterManifestNameNotEqEnum)[keyof typeof SearchSpacesFilterManifestNameNotEqEnum];
-
-/**
- * SystemApi - axios parameter creator
- * @export
- */
-export const SystemApiAxiosParamCreator = function (
-  configuration?: Configuration,
-) {
-  return {
-    /**
-     * List available organizations
-     * @summary List available organizations
-     * @param {Array<Locale>} [locales]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    organizations: async (
-      locales?: Array<Locale>,
-      page?: number,
-      perPage?: number,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/organizations`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (locales) {
-        localVarQueryParameter["locales[]"] = locales;
-      }
-
-      if (page !== undefined) {
-        localVarQueryParameter["page"] = page;
-      }
-
-      if (perPage !== undefined) {
-        localVarQueryParameter["per_page"] = perPage;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * SystemApi - functional programming interface
- * @export
- */
-export const SystemApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = SystemApiAxiosParamCreator(configuration);
-  return {
-    /**
-     * List available organizations
-     * @summary List available organizations
-     * @param {Array<Locale>} [locales]
-     * @param {number} [page] Page number for pagination
-     * @param {number} [perPage] Number of items per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async organizations(
-      locales?: Array<Locale>,
-      page?: number,
-      perPage?: number,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<OrganizationIndexResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
-        locales,
-        page,
-        perPage,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["SystemApi.organizations"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-  };
-};
-
-/**
- * SystemApi - factory interface
- * @export
- */
-export const SystemApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = SystemApiFp(configuration);
-  return {
-    /**
-     * List available organizations
-     * @summary List available organizations
-     * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    organizations(
-      requestParameters: SystemApiOrganizationsRequest = {},
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<OrganizationIndexResponse> {
-      return localVarFp
-        .organizations(
-          requestParameters.locales,
-          requestParameters.page,
-          requestParameters.perPage,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * Request parameters for organizations operation in SystemApi.
- * @export
- * @interface SystemApiOrganizationsRequest
- */
-export interface SystemApiOrganizationsRequest {
-  /**
-   *
-   * @type {Array<Locale>}
-   * @memberof SystemApiOrganizations
-   */
-  readonly locales?: Array<Locale>;
-
-  /**
-   * Page number for pagination
-   * @type {number}
-   * @memberof SystemApiOrganizations
-   */
-  readonly page?: number;
-
-  /**
-   * Number of items per page
-   * @type {number}
-   * @memberof SystemApiOrganizations
-   */
-  readonly perPage?: number;
-}
-
-/**
- * SystemApi - object-oriented interface
- * @export
- * @class SystemApi
- * @extends {BaseAPI}
- */
-export class SystemApi extends BaseAPI {
-  /**
-   * List available organizations
-   * @summary List available organizations
-   * @param {SystemApiOrganizationsRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SystemApi
-   */
-  public organizations(
-    requestParameters: SystemApiOrganizationsRequest = {},
-    options?: RawAxiosRequestConfig,
-  ) {
-    return SystemApiFp(this.configuration)
-      .organizations(
-        requestParameters.locales,
-        requestParameters.page,
-        requestParameters.perPage,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-}
 
 /**
  * UsersApi - axios parameter creator

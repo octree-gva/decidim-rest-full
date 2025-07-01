@@ -9,10 +9,24 @@ module Decidim
           (attributes_to_serialize.keys || []).reject { |k| [:meta, :id].include? k }
         end
 
-        attributes :host, :secondary_hosts, :default_locale, :available_locales
+        attributes :host, :secondary_hosts, :default_locale, :available_locales,
+                   :enable_machine_translations, :enable_participatory_space_filters,
+                   :badges_enabled, :rich_text_editor_in_public_views,
+                   :comments_max_length, :time_zone, :users_registration_mode,
+                   :user_groups_enabled,
+                   :force_users_to_authenticate_before_access_organization,
+                   :reference_prefix,
+                   :send_welcome_notification
 
         attribute :name do |org, params|
           translated_field(org.name, params[:locales])
+        end
+        attribute :description do |org, params|
+          translated_field(org.description, params[:locales])
+        end
+
+        attribute :extended_data do |org, params|
+          params[:includes_extended] ? org.extended_data.data : {}
         end
 
         # Format timestamps to ISO 8601
@@ -24,10 +38,10 @@ module Decidim
           org.updated_at.iso8601
         end
 
-        meta do |_org, params|
-          {
-            locales: params[:locales]
-          }
+        meta do |org, params|
+          metas = { locales: params[:locales] }
+          metas[:unconfirmed_host] = org.extended_data.data["unconfirmed_host"] if org.extended_data.data["unconfirmed_host"]
+          metas
         end
       end
     end

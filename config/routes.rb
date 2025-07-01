@@ -3,6 +3,7 @@
 # config/routes.rb
 
 Decidim::Core::Engine.routes.draw do
+  CRUD_ACTIONS = [:index, :show, :update, :create, :destroy].freeze
   authenticate(:admin) do
     namespace "system" do
       resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
@@ -18,7 +19,7 @@ Decidim::Core::Engine.routes.draw do
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
         # organizations
         resources :organizations,
-                  only: [:index],
+                  only: CRUD_ACTIONS,
                   controller: "/decidim/api/rest_full/organizations/organizations" do
           member do
             resources :extended_data, only: [], controller: "/decidim/api/rest_full/organizations/organization_extended_data" do
@@ -62,7 +63,7 @@ Decidim::Core::Engine.routes.draw do
 
         # draft proposals
         resources :draft_proposals,
-                  only: [:index, :show, :destroy, :update, :create],
+                  only: CRUD_ACTIONS,
                   controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
           member do
             post "/publish", action: :publish
@@ -100,65 +101,6 @@ Decidim::Core::Engine.routes.draw do
             end
           end
         end
-
-        # resources :me, only: [:index] do
-        #   collection do
-        #     post "/magic-links", to: "/decidim/api/rest_full/user/me#create_magic_link"
-        #     get "/magic-links/:magic_token", to: "/decidim/api/rest_full/user/me#signin_magic_link"
-        #   end
-        # end
-
-        # namespace :public do
-        #   resources :spaces, only: [:index]
-        #   Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
-        #     resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/public/spaces", defaults: { manifest_name: manifest_name } do
-        #       # Collection routes for the manifest
-        #       collection do
-        #         get "/", action: :index
-        #       end
-
-        #       # Member routes for the manifest
-        #       member do
-        #         get "/", action: :show
-
-        #         # Special actions, like managing proposal's drafts
-        #         scope ":component_id" do
-        #           resources "proposals",
-        #                     only: [],
-        #                     param: :resource_id,
-        #                     defaults: { manifest_name: manifest_name, component_manifest_name: "proposals" } do
-        #             collection do
-        #               get "/draft", action: :show, controller: "/decidim/api/rest_full/proposal/draft_proposals"
-        #               put "/draft", action: :update, controller: "/decidim/api/rest_full/proposal/draft_proposals"
-        #               delete "/draft", action: :destroy, controller: "/decidim/api/rest_full/proposal/draft_proposals"
-        #               post "/draft/publish", action: :publish, controller: "/decidim/api/rest_full/proposal/draft_proposals"
-        #             end
-        #             member do
-        #               post "/votes", action: :create, controller: "/decidim/api/rest_full/proposal/proposal_votes"
-        #             end
-        #           end
-        #         end
-
-        #         # Basic get index and show on all components
-        #         Decidim.component_registry.manifests.each do |component|
-        #           component_manifest = component.name
-        #           scope ":component_id" do
-        #             resources component_manifest.to_sym, only: [:index, :show], param: :resource_id,
-        #                                                  controller: "/decidim/api/rest_full/#{component_manifest.to_s.singularize}/#{component_manifest}",
-        #                                                  defaults: { manifest_name: manifest_name, component_manifest_name: component_manifest } do
-        #               collection do
-        #                 get "/", action: :index
-        #               end
-        #               member do
-        #                 get "/", action: :show
-        #               end
-        #             end
-        #           end
-        #         end
-        #       end
-        #     end
-        #   end
-        # end
       end
     end
   end

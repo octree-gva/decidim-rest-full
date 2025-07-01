@@ -4,7 +4,7 @@ require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataController do
   path "/organizations/{id}/extended_data" do
     put "Update organization extended data" do
-      tags "Organizations"
+      tags "Organizations Extended Data"
       produces "application/json"
       operationId "setOrganizationExtendedData"
       description <<~README

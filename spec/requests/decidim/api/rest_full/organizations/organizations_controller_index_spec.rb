@@ -3,8 +3,8 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
   path "/organizations" do
-    get "List available organizations" do
-      tags "System"
+    get "Organizations" do
+      tags "Organizations"
       produces "application/json"
       operationId "organizations"
       description "List available organizations"
@@ -14,7 +14,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Organizations::OrganizationsController,
         action: :index,
-        security_types: [:impersonationFlow, :credentialFlow],
+        security_types: [:credentialFlow],
         scopes: ["system"],
         permissions: ["system.organizations.read"]
       ) do

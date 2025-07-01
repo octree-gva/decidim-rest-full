@@ -112,7 +112,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
 
             run_test!(example_name: :ok_empty) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data["attributes"]["title"]["fr"]).to eq("")
+              expect(data["attributes"]["title"]["fr"]).to be_nil
               expect(data["meta"]["publishable"]).to be(false)
             end
           end
