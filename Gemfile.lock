@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    decidim-rest_full (0.2.2)
+    decidim-rest_full (0.2.3)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (>= 0.28, < 0.30)
