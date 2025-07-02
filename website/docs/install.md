@@ -37,6 +37,12 @@ bundle exec rails db:migrate
 ```
 (you can make sure migrations pass with bundle exec rails db:migrate:status)
 
+**Get the binstubs**
+```ruby
+bundle binstub decidim-rest_full
+``` 
+
+
 ## Environment variables
 
 | Name | Description | Default Value |

@@ -18,6 +18,36 @@ module Decidim
         ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")
       end
 
+      config_accessor :available_permissions do
+        {
+          "blogs" => [
+            "blogs.read"
+          ],
+          "system" => [
+            "oauth.impersonate",
+            "oauth.login",
+            "system.organizations.read",
+            "system.organizations.update",
+            "system.organizations.destroy",
+            "system.organizations.extended_data.read",
+            "system.organizations.extended_data.update"
+          ],
+          "public" => [
+            "public.component.read",
+            "public.space.read"
+          ],
+          "proposal" => [
+            "proposals.read", "proposals.draft", "proposals.vote",
+            *config.events_for_proposals
+          ],
+          "oauth" => [
+            "oauth.magic_link",
+            "oauth.extended_data.read",
+            "oauth.extended_data.update"
+          ]
+        }
+      end
+
       config_accessor :events_for_proposals do
         [
           "draft_proposal_creation.succeeded",
