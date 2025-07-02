@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.3_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.2
  *
@@ -8023,7 +8023,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8145,7 +8145,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8219,7 +8219,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8287,7 +8287,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token throught ROPC
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -11,7 +11,8 @@ module Decidim
               title: "API V1",
               version: "v#{Decidim::RestFull.major_minor_version}",
               description: <<~README
-                A RestFull API for Decidim, to be able to CRUD resources from Decidim.
+                A RestFull API for Decidim, to be able to CRUD resources from Decidim.#{"  "}
+                _current version: #{Decidim::RestFull.version}_
 
                 ## Authentication
                 [Get a token](#{Decidim::RestFull.config.docs_url}/category/authentication) from our `/oauth/token` routes,

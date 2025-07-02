@@ -16,14 +16,14 @@ Gem::Specification.new do |s|
   s.summary = "Open Vollective in Decidim"
   s.description = "Open Collective integration for Decidim."
 
-  s.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").select do |f|
-      (File.expand_path(f) == __FILE__) ||
-        f.start_with?(*%w(app/ config/ db/ lib/ Rakefile README.md))
-    end
+  s.files = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|features)/})
   end
 
+  s.bindir = "exe"
+  s.executables = s.files.grep(%r{^exe/}) { |f| File.basename(f) }
   s.require_paths = ["lib"]
+
   s.add_dependency "api-pagination", "~> 6.0"
   s.add_dependency "cancancan"
   s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
