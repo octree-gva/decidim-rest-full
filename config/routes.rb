@@ -17,6 +17,7 @@ Decidim::Core::Engine.routes.draw do
         get "/", to: "/decidim/rest_full/pages#show"
         post "/oauth/token", to: "/doorkeeper/tokens#create"
         post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
+
         # organizations
         resources :organizations,
                   only: CRUD_ACTIONS,
@@ -31,54 +32,60 @@ Decidim::Core::Engine.routes.draw do
           end
         end
 
-        # spaces
-        resources :spaces, only: [] do
-          collection do
-            get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
-            Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
-              resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: manifest_name }
+        if Decidim::RestFull.feature.public?
+          # spaces
+          resources :spaces, only: [] do
+            collection do
+              get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
+              Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
+                resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: manifest_name }
+              end
+            end
+          end
+
+          # components
+          resources :components, only: [] do
+            collection do
+              get "/search", to: "/decidim/api/rest_full/components/components#search"
+              resources :proposal_components,
+                        only: [:index, :show],
+                        controller: "/decidim/api/rest_full/components/proposal_components"
+              resources :blog_components,
+                        only: [:index, :show],
+                        controller: "/decidim/api/rest_full/components/blog_components"
             end
           end
         end
+
         scope "metrics" do
-          get "/health", to: "/decidim/api/rest_full/metrics/health#index"
-        end
-        # components
-        resources :components, only: [] do
-          collection do
-            get "/search", to: "/decidim/api/rest_full/components/components#search"
-            resources :proposal_components,
-                      only: [:index, :show],
-                      controller: "/decidim/api/rest_full/components/proposal_components"
-            resources :blog_components,
-                      only: [:index, :show],
-                      controller: "/decidim/api/rest_full/components/blog_components"
-          end
+          get "/health", to: "/decidim/api/rest_full/metrics/health#index" if Decidim::RestFull.feature.health?
         end
 
-        # proposals
-        resources :proposals,
-                  only: [:index, :show],
-                  controller: "/decidim/api/rest_full/proposals/proposals"
+        if Decidim::RestFull.feature.proposal?
+          # proposals
+          resources :proposals,
+                    only: [:index, :show],
+                    controller: "/decidim/api/rest_full/proposals/proposals"
 
-        # draft proposals
-        resources :draft_proposals,
-                  only: CRUD_ACTIONS,
-                  controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
-          member do
-            post "/publish", action: :publish
+          # draft proposals
+          resources :draft_proposals,
+                    only: CRUD_ACTIONS,
+                    controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
+            member do
+              post "/publish", action: :publish
+            end
           end
+
+          # proposal votes
+          resources :proposal_votes,
+                    only: [:create],
+                    controller: "/decidim/api/rest_full/proposal_votes/proposal_votes"
         end
 
         # blogs
         resources :blogs,
                   only: [:index, :show],
                   controller: "/decidim/api/rest_full/blogs/blogs"
-
-        # proposal votes
-        resources :proposal_votes,
-                  only: [:create],
-                  controller: "/decidim/api/rest_full/proposal_votes/proposal_votes"
 
         # users
         resources :users,
@@ -87,9 +94,11 @@ Decidim::Core::Engine.routes.draw do
 
         resources :me, only: [] do
           collection do
-            resources :magic_links, only: [:create], controller: "/decidim/api/rest_full/users/magic_links" do
-              collection do
-                get "/:id", action: :show, constraints: { id: /[A-Za-z0-9=]+/ }
+            if Decidim::RestFull.feature.magic_link?
+              resources :magic_links, only: [:create], controller: "/decidim/api/rest_full/users/magic_links" do
+                collection do
+                  get "/:id", action: :show, constraints: { id: /[A-Za-z0-9=]+/ }
+                end
               end
             end
 

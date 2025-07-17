@@ -5,6 +5,25 @@ module Decidim
     class Configuration
       include ActiveSupport::Configurable
 
+      # Global features toggles
+      config_accessor :enabled do
+        true
+      end
+      config_accessor :health_enabled do
+        true
+      end
+
+      # Login features toggles
+      config_accessor :impersonation_enabled do
+        true
+      end
+      config_accessor :login_enabled do
+        true
+      end
+      config_accessor :magic_link_enabled do
+        true
+      end
+
       config_accessor :loadbalancer_ips do
         ips = ENV.fetch("DECIDIM_REST_LOADBALANCER_IPS", "127.0.0.1, ::1").split(",").map(&:strip)
         ips.map { |ip| IPAddr.new(ip) }.map(&:to_s)
@@ -24,8 +43,6 @@ module Decidim
             "blogs.read"
           ],
           "system" => [
-            "oauth.impersonate",
-            "oauth.login",
             "system.organizations.read",
             "system.organizations.update",
             "system.organizations.destroy",
@@ -36,11 +53,15 @@ module Decidim
             "public.component.read",
             "public.space.read"
           ],
-          "proposal" => [
-            "proposals.read", "proposals.draft", "proposals.vote",
+          "proposals" => [
+            "proposals.read",
+            "proposals.draft", 
+            "proposals.vote",
             *config.events_for_proposals
           ],
           "oauth" => [
+            "oauth.impersonate",
+            "oauth.login",
             "oauth.magic_link",
             "oauth.extended_data.read",
             "oauth.extended_data.update"

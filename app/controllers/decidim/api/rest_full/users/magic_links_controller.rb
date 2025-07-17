@@ -6,6 +6,7 @@ module Decidim
       module Users
         class MagicLinksController < ResourcesController
           include ::Devise::Controllers::Helpers
+          before_action :check_feature
           before_action only: [:create] do
             doorkeeper_authorize! :oauth
             ability.authorize! :magic_link, ::Decidim::User
@@ -41,6 +42,10 @@ module Decidim
           end
 
           protected
+
+          def check_feature
+            raise AbstractController::ActionNotFound unless Decidim::RestFull.feature.magic_link?
+          end
 
           def model_class
             ::Decidim::User

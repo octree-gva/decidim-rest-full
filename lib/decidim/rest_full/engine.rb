@@ -36,7 +36,7 @@ module Decidim
           handle_auth_errors :raise
           # Define default and optional scopes
           default_scopes :public
-          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth
+          optional_scopes Decidim::RestFull.config.available_permissions.keys.map(&:to_sym)
 
           # Enable resource owner password credentials
           grant_flows %w(password client_credentials)
@@ -66,6 +66,8 @@ module Decidim
               sub: token.id,
               # Current organization
               aud: "https://#{current_organization.host}",
+              # Valid claim, only way to know if a token is valid, as
+              # user might be blocked or locked
               active: active
             }.merge(user_details)
           end
@@ -91,6 +93,8 @@ module Decidim
             ability = Decidim::RestFull::Ability.new(api_client)
             case auth_type
             when "impersonate"
+              ability.authorize! :impersonate, Decidim::RestFull::ApiClient
+
               impersonation_payload = params.permit(
                 :username,
                 :id,

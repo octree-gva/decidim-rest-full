@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       module Metrics
         class HealthController < ApplicationController
+          before_action :check_feature
           def index
             status = :ok
 
@@ -22,6 +23,10 @@ module Decidim
           end
 
           private
+
+          def check_feature
+            raise AbstractController::ActionNotFound unless Decidim::RestFull.feature.health?
+          end
 
           def each_check
             checks = [

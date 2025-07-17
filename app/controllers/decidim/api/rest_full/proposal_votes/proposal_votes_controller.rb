@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       module ProposalVotes
         class ProposalVotesController < ResourcesController
+          before_action :check_feature
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :vote, ::Decidim::Proposals::Proposal }
           before_action do
@@ -46,6 +47,10 @@ module Decidim
           end
 
           protected
+
+          def check_feature
+            raise AbstractController::ActionNotFound unless Decidim::RestFull.feature.proposal?
+          end
 
           def support_weight?
             awesome? && voting_manifest

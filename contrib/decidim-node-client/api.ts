@@ -488,14 +488,8 @@ export type ClientCredentialGrantTypeEnum =
   (typeof ClientCredentialGrantTypeEnum)[keyof typeof ClientCredentialGrantTypeEnum];
 export const ClientCredentialScopeEnum = {
   Public: "public",
-  Spaces: "spaces",
-  System: "system",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Debates: "debates",
-  Pages: "pages",
-  Blogs: "blogs",
-  Oauth: "oauth",
+  BlogsSystemPublicProposalsOauth:
+    "[:blogs, :system, :public, :proposals, :oauth]",
 } as const;
 
 export type ClientCredentialScopeEnum =
@@ -2301,13 +2295,8 @@ export type PasswordGrantImpersonateAuthTypeEnum =
   (typeof PasswordGrantImpersonateAuthTypeEnum)[keyof typeof PasswordGrantImpersonateAuthTypeEnum];
 export const PasswordGrantImpersonateScopeEnum = {
   Public: "public",
-  Spaces: "spaces",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Debates: "debates",
-  Pages: "pages",
-  Blogs: "blogs",
-  Oauth: "oauth",
+  BlogsSystemPublicProposalsOauth:
+    "[:blogs, :system, :public, :proposals, :oauth]",
 } as const;
 
 export type PasswordGrantImpersonateScopeEnum =
@@ -2377,13 +2366,8 @@ export type PasswordGrantLoginAuthTypeEnum =
   (typeof PasswordGrantLoginAuthTypeEnum)[keyof typeof PasswordGrantLoginAuthTypeEnum];
 export const PasswordGrantLoginScopeEnum = {
   Public: "public",
-  Spaces: "spaces",
-  Proposals: "proposals",
-  Meetings: "meetings",
-  Debates: "debates",
-  Pages: "pages",
-  Blogs: "blogs",
-  Oauth: "oauth",
+  BlogsSystemPublicProposalsOauth:
+    "[:blogs, :system, :public, :proposals, :oauth]",
 } as const;
 
 export type PasswordGrantLoginScopeEnum =
@@ -8023,7 +8007,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8145,7 +8129,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8219,7 +8203,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8287,7 +8271,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token through Client Credentials
+   * @summary Request a OAuth token throught ROPC
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

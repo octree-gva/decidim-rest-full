@@ -14,8 +14,9 @@ module Decidim
         @api_client = api_client
         @permissions = api_client.permission_strings
 
-        can :impersonate, Decidim::RestFull::ApiClient if permissions.include? "oauth.impersonate"
-        can :login, Decidim::RestFull::ApiClient if permissions.include? "oauth.login"
+        can :impersonate, Decidim::RestFull::ApiClient if has_permissions? "oauth.impersonate"
+        can :login, Decidim::RestFull::ApiClient if has_permissions? "oauth.login"
+        
         # Switch scopes and compose permissions
         scopes = api_client.scopes.to_a if scopes.nil?
         apply_permissions!(scopes)
@@ -33,6 +34,7 @@ module Decidim
         return Decidim::RestFull::Ability.new(nil) unless doorkeeper_token && doorkeeper_token.valid?
 
         application = doorkeeper_token.application
+        # Can not ask permission if an OIDC token.
         return Decidim::RestFull::Ability.new(nil) unless application.is_a? Decidim::RestFull::ApiClient
 
         application_scopes = application.scopes
@@ -44,37 +46,42 @@ module Decidim
       end
 
       private
+      ##
+      # Check if the permission is active (can ask for it) and if the current client has the permission
+      def has_permissions?(permission)
+        Decidim::RestFull.feature.available_permissions.include?(permission) && permissions.include?(permission)
+      end
 
       def perms_for_users
-        can :magic_link, ::Decidim::User if permissions.include? "oauth.magic_link"
-        can :read_extended_data, ::Decidim::User if permissions.include? "oauth.extended_data.read"
-        can :update_extended_data, ::Decidim::User if permissions.include? "oauth.extended_data.update"
-        can :read, ::Decidim::User if permissions.include? "oauth.read"
+        can :magic_link, ::Decidim::User if has_permissions? "oauth.magic_link"
+        can :read_extended_data, ::Decidim::User if has_permissions? "oauth.extended_data.read"
+        can :update_extended_data, ::Decidim::User if has_permissions? "oauth.extended_data.update"
+        can :read, ::Decidim::User if has_permissions? "oauth.read"
       end
 
       def perms_for_public
-        can :read, ::Decidim::ParticipatorySpaceManifest if permissions.include? "public.space.read"
-        can :read, ::Decidim::Component if permissions.include? "public.component.read"
+        can :read, ::Decidim::ParticipatorySpaceManifest if has_permissions? "public.space.read"
+        can :read, ::Decidim::Component if has_permissions? "public.component.read"
       end
 
       def perms_for_system
-        can :create, ::Decidim::Organization if permissions.include? "system.organizations.create"
-        can :read, ::Decidim::Organization if permissions.include? "system.organizations.read"
-        can :update, ::Decidim::Organization if permissions.include? "system.organizations.update"
-        can :destroy, ::Decidim::Organization if permissions.include? "system.organizations.destroy"
+        can :create, ::Decidim::Organization if has_permissions? "system.organizations.create"
+        can :read, ::Decidim::Organization if has_permissions? "system.organizations.read"
+        can :update, ::Decidim::Organization if has_permissions? "system.organizations.update"
+        can :destroy, ::Decidim::Organization if has_permissions? "system.organizations.destroy"
 
-        can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.read"
-        can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.update"
+        can :read_extended_data, ::Decidim::Organization if has_permissions? "system.organization.extended_data.read"
+        can :update_extended_data, ::Decidim::Organization if has_permissions? "system.organization.extended_data.update"
       end
 
       def perms_for_blogs
-        can :read, ::Decidim::Blogs::Post if permissions.include? "blogs.read"
+        can :read, ::Decidim::Blogs::Post if has_permissions? "blogs.read"
       end
 
       def perms_for_proposals
-        can :read, ::Decidim::Proposals::Proposal if permissions.include? "proposals.read"
-        can :draft, ::Decidim::Proposals::Proposal if permissions.include? "proposals.draft"
-        can :vote, ::Decidim::Proposals::Proposal if permissions.include? "proposals.vote"
+        can :read, ::Decidim::Proposals::Proposal if has_permissions? "proposals.read"
+        can :draft, ::Decidim::Proposals::Proposal if has_permissions? "proposals.draft"
+        can :vote, ::Decidim::Proposals::Proposal if has_permissions? "proposals.vote"
       end
     end
   end

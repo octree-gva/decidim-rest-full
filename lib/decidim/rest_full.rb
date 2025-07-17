@@ -17,6 +17,7 @@ require "decidim/rest_full/api_exception"
 require "decidim/rest_full/definition_registry"
 require "decidim/rest_full/configuration"
 require "decidim/rest_full/cli"
+require "decidim/rest_full/feature"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
@@ -39,6 +40,10 @@ module Decidim
 
     def self.configure
       Configuration.configure
+    end
+
+    def self.feature
+      Feature.instance
     end
   end
 end

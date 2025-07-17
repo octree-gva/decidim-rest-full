@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       module Proposals
         class ProposalsController < ResourcesController
+          before_action :check_feature
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :read, ::Decidim::Proposals::Proposal }
 
@@ -74,6 +75,10 @@ module Decidim
           end
 
           protected
+
+          def check_feature
+            raise AbstractController::ActionNotFound unless Decidim::RestFull.feature.proposal?
+          end
 
           def order_columns
             %w(rand published_at)

@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       module Blogs
         class BlogsController < ResourcesController
+          before_action :check_feature
           before_action { doorkeeper_authorize! :blogs }
           before_action { ability.authorize! :read, ::Decidim::Blogs::Post }
 
@@ -57,6 +58,10 @@ module Decidim
           end
 
           private
+
+          def check_feature
+            raise AbstractController::ActionNotFound unless Decidim::RestFull.feature.blog?
+          end
 
           def order_columns
             %w(rand published_at)
