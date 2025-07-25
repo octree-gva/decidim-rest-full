@@ -33,23 +33,22 @@ module Decidim
             raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless resource
 
             add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
-            subquery = collection.select(
+            subquery = ordered(collection.select(
               "decidim_proposals_proposals.id",
               "decidim_proposals_proposals.decidim_component_id",
               "decidim_proposals_proposals.published_at",
-              "LAG(decidim_proposals_proposals.id) OVER (ORDER BY decidim_proposals_proposals.published_at ASC) AS previous_id",
-              "LEAD(decidim_proposals_proposals.id) OVER (ORDER BY decidim_proposals_proposals.published_at ASC) AS next_id"
-            ).ransack(params[:filter]).result.to_sql
+              "LAG(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS previous_id",
+              "LEAD(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS next_id"
+            ).ransack(params[:filter]).result).to_sql
             aliased_subquery = "(#{subquery}) AS decidim_proposals_proposals"
             select_for_pagination = <<~SQL.squish
-              decidim_proposals_proposals.id,#{" "}
-              decidim_proposals_proposals.previous_id as previous_id,#{" "}
+              decidim_proposals_proposals.id,
+              decidim_proposals_proposals.previous_id as previous_id,
               decidim_proposals_proposals.next_id as next_id
             SQL
             pagination_match = model_class.select(select_for_pagination).from(aliased_subquery).find_by(
               "decidim_proposals_proposals.id = ? ", resource_id
             )
-
             next_item = pagination_match.next_id
             prev_item = pagination_match.previous_id
             pagination_match.previous_id
