@@ -52,6 +52,15 @@ module Decidim
           end
         end
 
+        def order_string
+          @order_string ||= if order.is_a?(Hash)
+                              key = order.keys.first
+                              "#{model_class.table_name}.#{key} #{order[key]}"
+                            else
+                              order
+                            end
+        end
+
         def order_direction
           @order_direction ||= begin
             ord_dir = params.permit(:order_direction)[:order_direction] || default_order_direction

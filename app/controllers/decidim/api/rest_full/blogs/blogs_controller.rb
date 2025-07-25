@@ -24,12 +24,31 @@ module Decidim
             resource = collection.find(resource_id)
             raise Decidim::RestFull::ApiException::NotFound, "Blog Post Not Found" unless resource
 
+            blog_table = model_class.table_name
+            subquery = ordered(collection.select(
+              "#{blog_table}.id",
+              "#{blog_table}.decidim_component_id",
+              "#{blog_table}.published_at",
+              "LAG(#{blog_table}.id) OVER (ORDER BY #{order_string}) AS previous_id",
+              "LEAD(#{blog_table}.id) OVER (ORDER BY #{order_string}) AS next_id"
+            ).ransack(params[:filter]).result).to_sql
+            aliased_subquery = "(#{subquery}) AS #{blog_table}"
+            select_for_pagination = <<~SQL.squish
+              #{blog_table}.id,
+              #{blog_table}.previous_id as previous_id,
+              #{blog_table}.next_id as next_id
+            SQL
+            model_class.select(select_for_pagination).from(aliased_subquery).find_by(
+              "#{blog_table}.id = ? ", resource_id
+            )
+
             subquery = collection.select(
               :id,
-              "LAG(id) OVER (ORDER BY published_at ASC) AS previous_id",
-              "LEAD(id) OVER (ORDER BY published_at ASC) AS next_id"
+              "LAG(id) OVER (ORDER BY #{order_string}) AS previous_id",
+              "LEAD(id) OVER (ORDER BY #{order_string}) AS next_id"
             ).to_sql
             aliased_subquery = "(#{subquery}) AS subquery"
+
             pagination_match = model_class.select("subquery.id, subquery.previous_id as previous_id, subquery.next_id as next_id").from(aliased_subquery).find_by(
               "subquery.id = ? ", resource_id
             )
