@@ -62,10 +62,10 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
                 run_test! do |example|
                   data = JSON.parse(example.body)["data"]
-                  expect(data["id"]).to eq(id.to_s)
+                  expect(data["id"].to_i).to eq(id.to_i)
                   expect(data["meta"]["published"]).to be_truthy
                   expect(data["links"]["next"]).to be_present
-                  expect(data["links"]["next"]["meta"]["resource_id"]).to eq(second_proposal.id.to_s)
+                  expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(second_proposal.id.to_i)
                   expect(data["links"]["prev"]).to be_nil
                 end
               end
@@ -83,11 +83,11 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
                 run_test! do |example|
                   data = JSON.parse(example.body)["data"]
-                  expect(data["id"]).to eq(id.to_s)
+                  expect(data["id"].to_i).to eq(id.to_i)
                   expect(data["meta"]["published"]).to be_truthy
                   expect(data["links"]["next"]).to be_nil
                   expect(data["links"]["prev"]).to be_present
-                  expect(data["links"]["prev"]["meta"]["resource_id"]).to eq(second_proposal.id.to_s)
+                  expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(second_proposal.id)
                 end
               end
             end
@@ -101,10 +101,10 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
               run_test!(example_name: :navigation_non_rejected) do |example|
                 data = JSON.parse(example.body)["data"]
-                expect(data["id"]).to eq(id.to_s)
+                expect(data["id"].to_i).to eq(id.to_i)
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_present
-                expect(data["links"]["next"]["meta"]["resource_id"]).to eq(second_proposal.id.to_s)
+                expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(second_proposal.id.to_i)
               end
             end
 
@@ -117,11 +117,11 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
               run_test!(example_name: :navigation_last_accepted) do |example|
                 data = JSON.parse(example.body)["data"]
-                expect(data["id"]).to eq(id.to_s)
+                expect(data["id"].to_i).to eq(id.to_i)
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_nil
                 expect(data["links"]["prev"]).to be_present
-                expect(data["links"]["prev"]["meta"]["resource_id"]).to eq(first_accepted_proposal.id.to_s)
+                expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(first_accepted_proposal.id.to_i)
               end
             end
           end
@@ -137,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               run_test!(example_name: :ok_drafts) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data).to be_truthy
-                expect(data["id"]).to eq(draft_proposal.id.to_s)
+                expect(data["id"].to_i).to eq(draft_proposal.id)
               end
             end
           end
@@ -151,7 +151,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               run_test!(example_name: :accepted_proposal) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data).to be_truthy
-                expect(data["id"]).to eq(accepted_proposal.id.to_s)
+                expect(data["id"].to_i).to eq(accepted_proposal.id.to_i)
                 expect(data["relationships"]["state"]["meta"]).to eq({ "token" => "accepted" })
                 expect(data["relationships"]["state"]["data"]).to eq({ "id" => accepted_proposal.proposal_state.id.to_s, "type" => "proposal_state" })
               end
