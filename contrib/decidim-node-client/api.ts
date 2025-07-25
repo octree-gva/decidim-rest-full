@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.3_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.4_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.2
  *
@@ -4238,14 +4238,22 @@ export const BlogsApiAxiosParamCreator = function (
      * @summary Show a blog detail
      * @param {number} id
      * @param {Array<Locale>} [locales]
+     * @param {BlogSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
      * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {BlogOrderDirectionEnum} [orderDirection] Order direction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     blog: async (
       id: number,
       locales?: Array<Locale>,
+      spaceManifest?: BlogSpaceManifestEnum,
+      spaceId?: number,
       componentId?: number,
+      order?: string,
+      orderDirection?: BlogOrderDirectionEnum,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -4277,8 +4285,24 @@ export const BlogsApiAxiosParamCreator = function (
         localVarQueryParameter["locales[]"] = locales;
       }
 
+      if (spaceManifest !== undefined) {
+        localVarQueryParameter["space_manifest"] = spaceManifest;
+      }
+
+      if (spaceId !== undefined) {
+        localVarQueryParameter["space_id"] = spaceId;
+      }
+
       if (componentId !== undefined) {
         localVarQueryParameter["component_id"] = componentId;
+      }
+
+      if (order !== undefined) {
+        localVarQueryParameter["order"] = order;
+      }
+
+      if (orderDirection !== undefined) {
+        localVarQueryParameter["order_direction"] = orderDirection;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -4401,14 +4425,22 @@ export const BlogsApiFp = function (configuration?: Configuration) {
      * @summary Show a blog detail
      * @param {number} id
      * @param {Array<Locale>} [locales]
+     * @param {BlogSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
      * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {BlogOrderDirectionEnum} [orderDirection] Order direction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async blog(
       id: number,
       locales?: Array<Locale>,
+      spaceManifest?: BlogSpaceManifestEnum,
+      spaceId?: number,
       componentId?: number,
+      order?: string,
+      orderDirection?: BlogOrderDirectionEnum,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -4419,7 +4451,11 @@ export const BlogsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blog(
         id,
         locales,
+        spaceManifest,
+        spaceId,
         componentId,
+        order,
+        orderDirection,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -4516,7 +4552,11 @@ export const BlogsApiFactory = function (
         .blog(
           requestParameters.id,
           requestParameters.locales,
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
           requestParameters.componentId,
+          requestParameters.order,
+          requestParameters.orderDirection,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -4571,10 +4611,38 @@ export interface BlogsApiBlogRequest {
 
   /**
    *
+   * @type {'participatory_processes' | 'assemblies'}
+   * @memberof BlogsApiBlog
+   */
+  readonly spaceManifest?: BlogSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlog
+   */
+  readonly spaceId?: number;
+
+  /**
+   *
    * @type {number}
    * @memberof BlogsApiBlog
    */
   readonly componentId?: number;
+
+  /**
+   * Order by
+   * @type {string}
+   * @memberof BlogsApiBlog
+   */
+  readonly order?: string;
+
+  /**
+   * Order direction
+   * @type {'asc' | 'desc'}
+   * @memberof BlogsApiBlog
+   */
+  readonly orderDirection?: BlogOrderDirectionEnum;
 }
 
 /**
@@ -4663,7 +4731,11 @@ export class BlogsApi extends BaseAPI {
       .blog(
         requestParameters.id,
         requestParameters.locales,
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
         requestParameters.componentId,
+        requestParameters.order,
+        requestParameters.orderDirection,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -4697,6 +4769,24 @@ export class BlogsApi extends BaseAPI {
   }
 }
 
+/**
+ * @export
+ */
+export const BlogSpaceManifestEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+} as const;
+export type BlogSpaceManifestEnum =
+  (typeof BlogSpaceManifestEnum)[keyof typeof BlogSpaceManifestEnum];
+/**
+ * @export
+ */
+export const BlogOrderDirectionEnum = {
+  Asc: "asc",
+  Desc: "desc",
+} as const;
+export type BlogOrderDirectionEnum =
+  (typeof BlogOrderDirectionEnum)[keyof typeof BlogOrderDirectionEnum];
 /**
  * @export
  */
@@ -8023,7 +8113,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8145,7 +8235,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8219,7 +8309,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * @summary Request a OAuth token throught ROPC
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8287,7 +8377,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token through Client Credentials
+   * @summary Request a OAuth token throught ROPC
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -9237,6 +9327,8 @@ export const ProposalsApiAxiosParamCreator = function (
      * @param {string} [filterStateNotEq]
      * @param {string} [filterStateMatches]
      * @param {boolean} [filterStateBlank]
+     * @param {string} [order] Order by
+     * @param {ProposalOrderDirectionEnum} [orderDirection] Order direction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -9260,6 +9352,8 @@ export const ProposalsApiAxiosParamCreator = function (
       filterStateNotEq?: string,
       filterStateMatches?: string,
       filterStateBlank?: boolean,
+      order?: string,
+      orderDirection?: ProposalOrderDirectionEnum,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -9363,6 +9457,14 @@ export const ProposalsApiAxiosParamCreator = function (
 
       if (filterStateBlank !== undefined) {
         localVarQueryParameter["filter[state_blank]"] = filterStateBlank;
+      }
+
+      if (order !== undefined) {
+        localVarQueryParameter["order"] = order;
+      }
+
+      if (orderDirection !== undefined) {
+        localVarQueryParameter["order_direction"] = orderDirection;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -9584,6 +9686,8 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @param {string} [filterStateNotEq]
      * @param {string} [filterStateMatches]
      * @param {boolean} [filterStateBlank]
+     * @param {string} [order] Order by
+     * @param {ProposalOrderDirectionEnum} [orderDirection] Order direction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -9607,6 +9711,8 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       filterStateNotEq?: string,
       filterStateMatches?: string,
       filterStateBlank?: boolean,
+      order?: string,
+      orderDirection?: ProposalOrderDirectionEnum,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -9634,6 +9740,8 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         filterStateNotEq,
         filterStateMatches,
         filterStateBlank,
+        order,
+        orderDirection,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -9788,6 +9896,8 @@ export const ProposalsApiFactory = function (
           requestParameters.filterStateNotEq,
           requestParameters.filterStateMatches,
           requestParameters.filterStateBlank,
+          requestParameters.order,
+          requestParameters.orderDirection,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -9971,6 +10081,20 @@ export interface ProposalsApiProposalRequest {
    * @memberof ProposalsApiProposal
    */
   readonly filterStateBlank?: boolean;
+
+  /**
+   * Order by
+   * @type {string}
+   * @memberof ProposalsApiProposal
+   */
+  readonly order?: string;
+
+  /**
+   * Order direction
+   * @type {'asc' | 'desc'}
+   * @memberof ProposalsApiProposal
+   */
+  readonly orderDirection?: ProposalOrderDirectionEnum;
 }
 
 /**
@@ -10167,6 +10291,8 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.filterStateNotEq,
         requestParameters.filterStateMatches,
         requestParameters.filterStateBlank,
+        requestParameters.order,
+        requestParameters.orderDirection,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -10222,6 +10348,15 @@ export const ProposalSpaceManifestEnum = {
 } as const;
 export type ProposalSpaceManifestEnum =
   (typeof ProposalSpaceManifestEnum)[keyof typeof ProposalSpaceManifestEnum];
+/**
+ * @export
+ */
+export const ProposalOrderDirectionEnum = {
+  Asc: "asc",
+  Desc: "desc",
+} as const;
+export type ProposalOrderDirectionEnum =
+  (typeof ProposalOrderDirectionEnum)[keyof typeof ProposalOrderDirectionEnum];
 /**
  * @export
  */

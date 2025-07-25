@@ -13,6 +13,8 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
       it_behaves_like "resource params"
       it_behaves_like "filtered params", filter: "voted_weight", item_schema: { type: :string }, only: :string
       it_behaves_like "filtered params", filter: "state", item_schema: { type: :string }, only: :string
+      it_behaves_like "ordered params"
+
       parameter name: "id", in: :path, schema: { type: :integer, description: "Proposal Id" }, required: true
 
       describe_api_endpoint(
@@ -46,6 +48,50 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
           end
 
           context "when paginating" do
+            context "when ordering by published_at DESC" do
+              context "when selecting the last published proposal, next is the 2nd last published proposal, prev is nil" do
+                let(:order) { "published_at" }
+                let(:order_direction) { "desc" }
+                let(:last_proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+                let!(:first_proposal) { create(:proposal, reference: "FIRST", component: last_proposal_component, published_at: 1.day.ago) }
+                let!(:second_proposal) { create(:proposal, reference: "SECOND", component: last_proposal_component, published_at: 2.days.ago) }
+                let!(:third_proposal) { create(:proposal, reference: "THIRD", component: last_proposal_component, published_at: 3.days.ago) }
+                let(:"filter[state_not_eq]") { "rejected" }
+                let(:component_id) { last_proposal_component.id }
+                let(:id) { first_proposal.id }
+
+                run_test! do |example|
+                  data = JSON.parse(example.body)["data"]
+                  expect(data["id"].to_i).to eq(id.to_i)
+                  expect(data["meta"]["published"]).to be_truthy
+                  expect(data["links"]["next"]).to be_present
+                  expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(second_proposal.id.to_i)
+                  expect(data["links"]["prev"]).to be_nil
+                end
+              end
+
+              context "when selecting the first published proposal, prev is the second published proposal, next is nil" do
+                let(:order) { "published_at" }
+                let(:order_direction) { "desc" }
+                let(:last_proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+                let!(:first_proposal) { create(:proposal, reference: "FIRST", component: last_proposal_component, published_at: 1.day.ago) }
+                let!(:second_proposal) { create(:proposal, reference: "SECOND", component: last_proposal_component, published_at: 2.days.ago) }
+                let!(:third_proposal) { create(:proposal, reference: "THIRD", component: last_proposal_component, published_at: 3.days.ago) }
+                let(:"filter[state_not_eq]") { "rejected" }
+                let(:component_id) { last_proposal_component.id }
+                let(:id) { third_proposal.id }
+
+                run_test! do |example|
+                  data = JSON.parse(example.body)["data"]
+                  expect(data["id"].to_i).to eq(id.to_i)
+                  expect(data["meta"]["published"]).to be_truthy
+                  expect(data["links"]["next"]).to be_nil
+                  expect(data["links"]["prev"]).to be_present
+                  expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(second_proposal.id)
+                end
+              end
+            end
+
             context "when looking for the next not-rejected proposal" do
               let!(:first_accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
               let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
@@ -55,10 +101,10 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
               run_test!(example_name: :navigation_non_rejected) do |example|
                 data = JSON.parse(example.body)["data"]
-                expect(data["id"]).to eq(id.to_s)
+                expect(data["id"].to_i).to eq(id.to_i)
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_present
-                expect(data["links"]["next"]["meta"]["resource_id"]).to eq(second_proposal.id.to_s)
+                expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(second_proposal.id.to_i)
               end
             end
 
@@ -71,11 +117,11 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
               run_test!(example_name: :navigation_last_accepted) do |example|
                 data = JSON.parse(example.body)["data"]
-                expect(data["id"]).to eq(id.to_s)
+                expect(data["id"].to_i).to eq(id.to_i)
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_nil
                 expect(data["links"]["prev"]).to be_present
-                expect(data["links"]["prev"]["meta"]["resource_id"]).to eq(first_accepted_proposal.id.to_s)
+                expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(first_accepted_proposal.id.to_i)
               end
             end
           end
@@ -91,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               run_test!(example_name: :ok_drafts) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data).to be_truthy
-                expect(data["id"]).to eq(draft_proposal.id.to_s)
+                expect(data["id"].to_i).to eq(draft_proposal.id)
               end
             end
           end
@@ -105,7 +151,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               run_test!(example_name: :accepted_proposal) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data).to be_truthy
-                expect(data["id"]).to eq(accepted_proposal.id.to_s)
+                expect(data["id"].to_i).to eq(accepted_proposal.id.to_i)
                 expect(data["relationships"]["state"]["meta"]).to eq({ "token" => "accepted" })
                 expect(data["relationships"]["state"]["data"]).to eq({ "id" => accepted_proposal.proposal_state.id.to_s, "type" => "proposal_state" })
               end
