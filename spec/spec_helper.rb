@@ -16,4 +16,12 @@ require "decidim/rest_full/test/definitions"
 require "decidim/rest_full/test/global_context"
 require "decidim/rest_full/test/on_api_endpoint_methods"
 
+if ENV["SIMPLECOV"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  SimpleCov.start
+end
+
 Bullet.add_safelist type: :counter_cache, class_name: "Decidim::Proposals::Proposal", association: :coauthorships if defined?(Bullet)

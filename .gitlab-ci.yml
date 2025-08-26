@@ -13,7 +13,7 @@ stages:
   - translate
   - publish
 variables:
-  POSTGRES_DB: decidim_module_rest_full_test
+  POSTGRES_DB: decidim
   POSTGRES_USER: decidim
   POSTGRES_PASSWORD: "TEST-insecure_password"
 
@@ -128,11 +128,11 @@ ruby::rspec:
     SIMPLECOV: 1
     CI: 1
     RAILS_ENV: test
+    DISABLE_SPRING: 1
   before_script:
   - bin/setup-tests
   script:
-    - bundle exec rails db:create
-    - DISABLE_SPRING=true bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
+    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
   artifacts:
     when: always
     paths:
