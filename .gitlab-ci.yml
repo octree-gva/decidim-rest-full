@@ -127,8 +127,9 @@ ruby::rspec:
     NODE_MAJOR: 18
     SIMPLECOV: 1
     CI: 1
+    RAILS_ENV: test
   before_script:
-    - bin/setup-tests
+  - bin/setup-tests
   script:
     - DISABLE_SPRING=true RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
   artifacts:
