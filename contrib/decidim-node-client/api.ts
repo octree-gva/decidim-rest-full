@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.4_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.5_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.2
  *
@@ -109,10 +109,10 @@ export interface BlogComponent {
   type?: BlogComponentTypeEnum;
   /**
    *
-   * @type {BlogComponentAttributes}
+   * @type {BlogPostComponentAttributes}
    * @memberof BlogComponent
    */
-  attributes?: BlogComponentAttributes;
+  attributes?: BlogPostComponentAttributes;
   /**
    *
    * @type {BlogPostComponentMetadata}
@@ -139,63 +139,6 @@ export const BlogComponentTypeEnum = {
 
 export type BlogComponentTypeEnum =
   (typeof BlogComponentTypeEnum)[keyof typeof BlogComponentTypeEnum];
-
-/**
- *
- * @export
- * @interface BlogComponentAttributes
- */
-export interface BlogComponentAttributes {
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof BlogComponentAttributes
-   */
-  name: TranslatedProp;
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof BlogComponentAttributes
-   */
-  global_announcement?: TranslatedProp;
-  /**
-   *
-   * @type {SpaceClasses}
-   * @memberof BlogComponentAttributes
-   */
-  participatory_space_type: SpaceClasses;
-  /**
-   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
-   * @type {string}
-   * @memberof BlogComponentAttributes
-   */
-  participatory_space_id: string;
-  /**
-   * Creation date of the component
-   * @type {string}
-   * @memberof BlogComponentAttributes
-   */
-  created_at: string;
-  /**
-   * Last update date of the component
-   * @type {string}
-   * @memberof BlogComponentAttributes
-   */
-  updated_at: string;
-  /**
-   *
-   * @type {string}
-   * @memberof BlogComponentAttributes
-   */
-  manifest_name: BlogComponentAttributesManifestNameEnum;
-}
-
-export const BlogComponentAttributesManifestNameEnum = {
-  Blogs: "blogs",
-} as const;
-
-export type BlogComponentAttributesManifestNameEnum =
-  (typeof BlogComponentAttributesManifestNameEnum)[keyof typeof BlogComponentAttributesManifestNameEnum];
 
 /**
  *
@@ -283,15 +226,72 @@ export interface BlogPostAttributes {
 /**
  *
  * @export
+ * @interface BlogPostComponentAttributes
+ */
+export interface BlogPostComponentAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogPostComponentAttributes
+   */
+  name: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof BlogPostComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   *
+   * @type {SpaceClasses}
+   * @memberof BlogPostComponentAttributes
+   */
+  participatory_space_type: SpaceClasses;
+  /**
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  updated_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof BlogPostComponentAttributes
+   */
+  manifest_name: BlogPostComponentAttributesManifestNameEnum;
+}
+
+export const BlogPostComponentAttributesManifestNameEnum = {
+  Blogs: "blogs",
+} as const;
+
+export type BlogPostComponentAttributesManifestNameEnum =
+  (typeof BlogPostComponentAttributesManifestNameEnum)[keyof typeof BlogPostComponentAttributesManifestNameEnum];
+
+/**
+ *
+ * @export
  * @interface BlogPostComponentLinkedResources
  */
 export interface BlogPostComponentLinkedResources {
   /**
    *
-   * @type {Array<ComponentLinkedResourcesDataInner>}
+   * @type {Array<HasManyRelationItem1>}
    * @memberof BlogPostComponentLinkedResources
    */
-  data: Array<ComponentLinkedResourcesDataInner>;
+  data: Array<HasManyRelationItem1>;
   /**
    *
    * @type {BlogPostComponentLinkedResourcesMetadata}
@@ -510,6 +510,50 @@ export type Component = BlogComponent | OtherComponent | ProposalComponent;
 /**
  *
  * @export
+ * @interface ComponentAttributes
+ */
+export interface ComponentAttributes {
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ComponentAttributes
+   */
+  name: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ComponentAttributes
+   */
+  global_announcement?: TranslatedProp;
+  /**
+   *
+   * @type {SpaceClasses}
+   * @memberof ComponentAttributes
+   */
+  participatory_space_type: SpaceClasses;
+  /**
+   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
+   * @type {string}
+   * @memberof ComponentAttributes
+   */
+  participatory_space_id: string;
+  /**
+   * Creation date of the component
+   * @type {string}
+   * @memberof ComponentAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date of the component
+   * @type {string}
+   * @memberof ComponentAttributes
+   */
+  updated_at: string;
+}
+
+/**
+ *
+ * @export
  * @interface ComponentIndexResponse
  */
 export interface ComponentIndexResponse {
@@ -541,35 +585,16 @@ export interface ComponentItemResponse {
 export interface ComponentLinkedResources {
   /**
    *
-   * @type {Array<ComponentLinkedResourcesDataInner>}
+   * @type {Array<HasManyRelationItem1>}
    * @memberof ComponentLinkedResources
    */
-  data: Array<ComponentLinkedResourcesDataInner>;
+  data: Array<HasManyRelationItem1>;
   /**
    *
    * @type {ComponentLinkedResourcesMetadata}
    * @memberof ComponentLinkedResources
    */
   meta: ComponentLinkedResourcesMetadata;
-}
-/**
- *
- * @export
- * @interface ComponentLinkedResourcesDataInner
- */
-export interface ComponentLinkedResourcesDataInner {
-  /**
-   * Resource Id
-   * @type {string}
-   * @memberof ComponentLinkedResourcesDataInner
-   */
-  id: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ComponentLinkedResourcesDataInner
-   */
-  type: string;
 }
 /**
  *
@@ -845,39 +870,11 @@ export type DraftProposalAuthorDataTypeEnum =
 export interface DraftProposalCoauthors {
   /**
    *
-   * @type {Array<DraftProposalCoauthorsDataInner>}
+   * @type {Array<HasManyRelationItem2>}
    * @memberof DraftProposalCoauthors
    */
-  data: Array<DraftProposalCoauthorsDataInner>;
+  data: Array<HasManyRelationItem2>;
 }
-/**
- *
- * @export
- * @interface DraftProposalCoauthorsDataInner
- */
-export interface DraftProposalCoauthorsDataInner {
-  /**
-   * Resource Id
-   * @type {string}
-   * @memberof DraftProposalCoauthorsDataInner
-   */
-  id: string;
-  /**
-   *
-   * @type {string}
-   * @memberof DraftProposalCoauthorsDataInner
-   */
-  type: DraftProposalCoauthorsDataInnerTypeEnum;
-}
-
-export const DraftProposalCoauthorsDataInnerTypeEnum = {
-  User: "user",
-  UserGroup: "user_group",
-} as const;
-
-export type DraftProposalCoauthorsDataInnerTypeEnum =
-  (typeof DraftProposalCoauthorsDataInnerTypeEnum)[keyof typeof DraftProposalCoauthorsDataInnerTypeEnum];
-
 /**
  * Payload to update in the proposal
  * @export
@@ -1067,6 +1064,19 @@ export interface DraftPropositionMetadata {
   fields: Array<string>;
 }
 /**
+ * Optional payload to configure the magic link
+ * @export
+ * @interface GenerateMagicLinkData
+ */
+export interface GenerateMagicLinkData {
+  /**
+   * Redirect url after sign-in
+   * @type {string}
+   * @memberof GenerateMagicLinkData
+   */
+  redirect_url: string;
+}
+/**
  *
  * @export
  * @interface GenerateMagicLinkPayload
@@ -1074,23 +1084,10 @@ export interface DraftPropositionMetadata {
 export interface GenerateMagicLinkPayload {
   /**
    *
-   * @type {GenerateMagicLinkPayloadData}
+   * @type {GenerateMagicLinkData}
    * @memberof GenerateMagicLinkPayload
    */
-  data?: GenerateMagicLinkPayloadData;
-}
-/**
- * Optional payload to configure the magic link
- * @export
- * @interface GenerateMagicLinkPayloadData
- */
-export interface GenerateMagicLinkPayloadData {
-  /**
-   * Redirect url after sign-in
-   * @type {string}
-   * @memberof GenerateMagicLinkPayloadData
-   */
-  redirect_url: string;
+  data?: GenerateMagicLinkData;
 }
 /**
  *
@@ -1112,10 +1109,10 @@ export interface GenericComponent {
   type?: ComponentType;
   /**
    *
-   * @type {GenericComponentAttributes}
+   * @type {ComponentAttributes}
    * @memberof GenericComponent
    */
-  attributes?: GenericComponentAttributes;
+  attributes?: ComponentAttributes;
   /**
    *
    * @type {ComponentMetadata}
@@ -1178,7 +1175,28 @@ export interface GenericComponentAttributes {
    * @memberof GenericComponentAttributes
    */
   updated_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof GenericComponentAttributes
+   */
+  manifest_name: GenericComponentAttributesManifestNameEnum;
 }
+
+export const GenericComponentAttributesManifestNameEnum = {
+  Pages: "pages",
+  Meetings: "meetings",
+  Budgets: "budgets",
+  Surveys: "surveys",
+  Accountability: "accountability",
+  Debates: "debates",
+  Sortitions: "sortitions",
+  AwesomeMap: "awesome_map",
+  AwesomeIframe: "awesome_iframe",
+} as const;
+
+export type GenericComponentAttributesManifestNameEnum =
+  (typeof GenericComponentAttributesManifestNameEnum)[keyof typeof GenericComponentAttributesManifestNameEnum];
 
 /**
  *
@@ -1188,10 +1206,10 @@ export interface GenericComponentAttributes {
 export interface GenericComponentLinkedResources {
   /**
    *
-   * @type {Array<ComponentLinkedResourcesDataInner>}
+   * @type {Array<HasManyRelationItem1>}
    * @memberof GenericComponentLinkedResources
    */
-  data: Array<ComponentLinkedResourcesDataInner>;
+  data: Array<HasManyRelationItem1>;
   /**
    *
    * @type {GenericComponentLinkedResourcesMetadata}
@@ -1319,6 +1337,73 @@ export type GetActionLinkRelEnum =
 /**
  *
  * @export
+ * @interface HasManyRelationItem
+ */
+export interface HasManyRelationItem {
+  /**
+   * Resource Id
+   * @type {string}
+   * @memberof HasManyRelationItem
+   */
+  id: string;
+  /**
+   *
+   * @type {ComponentType}
+   * @memberof HasManyRelationItem
+   */
+  type: ComponentType;
+}
+
+/**
+ *
+ * @export
+ * @interface HasManyRelationItem1
+ */
+export interface HasManyRelationItem1 {
+  /**
+   * Resource Id
+   * @type {string}
+   * @memberof HasManyRelationItem1
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof HasManyRelationItem1
+   */
+  type: string;
+}
+/**
+ *
+ * @export
+ * @interface HasManyRelationItem2
+ */
+export interface HasManyRelationItem2 {
+  /**
+   * Resource Id
+   * @type {string}
+   * @memberof HasManyRelationItem2
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof HasManyRelationItem2
+   */
+  type: HasManyRelationItem2TypeEnum;
+}
+
+export const HasManyRelationItem2TypeEnum = {
+  User: "user",
+  UserGroup: "user_group",
+} as const;
+
+export type HasManyRelationItem2TypeEnum =
+  (typeof HasManyRelationItem2TypeEnum)[keyof typeof HasManyRelationItem2TypeEnum];
+
+/**
+ *
+ * @export
  * @interface Health
  */
 export interface Health {
@@ -1372,13 +1457,13 @@ export interface IntrospectData {
 /**
  *
  * @export
- * @interface IntrospectTokenRequest
+ * @interface IntrospectToken
  */
-export interface IntrospectTokenRequest {
+export interface IntrospectToken {
   /**
    *
    * @type {string}
-   * @memberof IntrospectTokenRequest
+   * @memberof IntrospectToken
    */
   token: string;
 }
@@ -2046,7 +2131,7 @@ export interface OrganizationAttributes {
    */
   updated_at?: string;
   /**
-   * Extended data for the organization
+   *
    * @type {object}
    * @memberof OrganizationAttributes
    */
@@ -2127,10 +2212,10 @@ export interface OtherComponent {
   type?: OtherComponentTypeEnum;
   /**
    *
-   * @type {OtherComponentAttributes}
+   * @type {GenericComponentAttributes}
    * @memberof OtherComponent
    */
-  attributes?: OtherComponentAttributes;
+  attributes?: GenericComponentAttributes;
   /**
    *
    * @type {GenericComponentMetadata}
@@ -2165,71 +2250,6 @@ export const OtherComponentTypeEnum = {
 
 export type OtherComponentTypeEnum =
   (typeof OtherComponentTypeEnum)[keyof typeof OtherComponentTypeEnum];
-
-/**
- *
- * @export
- * @interface OtherComponentAttributes
- */
-export interface OtherComponentAttributes {
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof OtherComponentAttributes
-   */
-  name: TranslatedProp;
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof OtherComponentAttributes
-   */
-  global_announcement?: TranslatedProp;
-  /**
-   *
-   * @type {SpaceClasses}
-   * @memberof OtherComponentAttributes
-   */
-  participatory_space_type: SpaceClasses;
-  /**
-   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
-   * @type {string}
-   * @memberof OtherComponentAttributes
-   */
-  participatory_space_id: string;
-  /**
-   * Creation date of the component
-   * @type {string}
-   * @memberof OtherComponentAttributes
-   */
-  created_at: string;
-  /**
-   * Last update date of the component
-   * @type {string}
-   * @memberof OtherComponentAttributes
-   */
-  updated_at: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OtherComponentAttributes
-   */
-  manifest_name: OtherComponentAttributesManifestNameEnum;
-}
-
-export const OtherComponentAttributesManifestNameEnum = {
-  Pages: "pages",
-  Meetings: "meetings",
-  Budgets: "budgets",
-  Surveys: "surveys",
-  Accountability: "accountability",
-  Debates: "debates",
-  Sortitions: "sortitions",
-  AwesomeMap: "awesome_map",
-  AwesomeIframe: "awesome_iframe",
-} as const;
-
-export type OtherComponentAttributesManifestNameEnum =
-  (typeof OtherComponentAttributesManifestNameEnum)[keyof typeof OtherComponentAttributesManifestNameEnum];
 
 /**
  *
@@ -2670,10 +2690,10 @@ export interface ProposalComponentItemResponse {
 export interface ProposalComponentLinkedResources {
   /**
    *
-   * @type {Array<ComponentLinkedResourcesDataInner>}
+   * @type {Array<HasManyRelationItem1>}
    * @memberof ProposalComponentLinkedResources
    */
-  data: Array<ComponentLinkedResourcesDataInner>;
+  data: Array<HasManyRelationItem1>;
   /**
    *
    * @type {ProposalComponentLinkedResourcesMetadata}
@@ -3127,10 +3147,10 @@ export type ProposalSAuthorDataTypeEnum =
 export interface ProposalSCoauthors {
   /**
    *
-   * @type {Array<DraftProposalCoauthorsDataInner>}
+   * @type {Array<HasManyRelationItem2>}
    * @memberof ProposalSCoauthors
    */
-  data: Array<DraftProposalCoauthorsDataInner>;
+  data: Array<HasManyRelationItem2>;
 }
 /**
  *
@@ -3569,10 +3589,10 @@ export interface SpaceComponentMetadata {
 export interface SpaceComponentRelationships {
   /**
    *
-   * @type {Array<SpaceComponentRelationshipsDataInner>}
+   * @type {Array<HasManyRelationItem>}
    * @memberof SpaceComponentRelationships
    */
-  data: Array<SpaceComponentRelationshipsDataInner>;
+  data: Array<HasManyRelationItem>;
   /**
    *
    * @type {SpaceComponentMetadata}
@@ -3586,26 +3606,6 @@ export interface SpaceComponentRelationships {
    */
   links: SpaceComponentLinks;
 }
-/**
- *
- * @export
- * @interface SpaceComponentRelationshipsDataInner
- */
-export interface SpaceComponentRelationshipsDataInner {
-  /**
-   * Resource Id
-   * @type {string}
-   * @memberof SpaceComponentRelationshipsDataInner
-   */
-  id: string;
-  /**
-   *
-   * @type {ComponentType}
-   * @memberof SpaceComponentRelationshipsDataInner
-   */
-  type: ComponentType;
-}
-
 /**
  *
  * @export
@@ -8113,7 +8113,7 @@ export const OAuthApiAxiosParamCreator = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8164,20 +8164,16 @@ export const OAuthApiAxiosParamCreator = function (
     /**
      * Get given oauth token details
      * @summary Introspect a OAuth token
-     * @param {IntrospectTokenRequest} introspectTokenRequest
+     * @param {IntrospectToken} introspectToken
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     introspectToken: async (
-      introspectTokenRequest: IntrospectTokenRequest,
+      introspectToken: IntrospectToken,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'introspectTokenRequest' is not null or undefined
-      assertParamExists(
-        "introspectToken",
-        "introspectTokenRequest",
-        introspectTokenRequest,
-      );
+      // verify required parameter 'introspectToken' is not null or undefined
+      assertParamExists("introspectToken", "introspectToken", introspectToken);
       const localVarPath = `/oauth/introspect`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8213,7 +8209,7 @@ export const OAuthApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        introspectTokenRequest,
+        introspectToken,
         localVarRequestOptions,
         configuration,
       );
@@ -8235,7 +8231,7 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8266,18 +8262,18 @@ export const OAuthApiFp = function (configuration?: Configuration) {
     /**
      * Get given oauth token details
      * @summary Introspect a OAuth token
-     * @param {IntrospectTokenRequest} introspectTokenRequest
+     * @param {IntrospectToken} introspectToken
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async introspectToken(
-      introspectTokenRequest: IntrospectTokenRequest,
+      introspectToken: IntrospectToken,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<IntrospectData>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.introspectToken(
-        introspectTokenRequest,
+        introspectToken,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -8309,7 +8305,7 @@ export const OAuthApiFactory = function (
   return {
     /**
      * Create a oauth token for the given scopes
-     * @summary Request a OAuth token throught ROPC
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8334,7 +8330,7 @@ export const OAuthApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<IntrospectData> {
       return localVarFp
-        .introspectToken(requestParameters.introspectTokenRequest, options)
+        .introspectToken(requestParameters.introspectToken, options)
         .then((request) => request(axios, basePath));
     },
   };
@@ -8362,10 +8358,10 @@ export interface OAuthApiCreateTokenRequest {
 export interface OAuthApiIntrospectTokenRequest {
   /**
    *
-   * @type {IntrospectTokenRequest}
+   * @type {IntrospectToken}
    * @memberof OAuthApiIntrospectToken
    */
-  readonly introspectTokenRequest: IntrospectTokenRequest;
+  readonly introspectToken: IntrospectToken;
 }
 
 /**
@@ -8377,7 +8373,7 @@ export interface OAuthApiIntrospectTokenRequest {
 export class OAuthApi extends BaseAPI {
   /**
    * Create a oauth token for the given scopes
-   * @summary Request a OAuth token throught ROPC
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -8405,7 +8401,7 @@ export class OAuthApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return OAuthApiFp(this.configuration)
-      .introspectToken(requestParameters.introspectTokenRequest, options)
+      .introspectToken(requestParameters.introspectToken, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }

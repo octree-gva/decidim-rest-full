@@ -9,9 +9,6 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Component }
 
           def search
-            Decidim::Component.ransacker :id do |_r|
-              Arel.sql('CAST("decidim_components"."id" AS VARCHAR)')
-            end
             query = Decidim::Component.all
             query = query.reorder(nil).ransack(params[:filter])
             data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|

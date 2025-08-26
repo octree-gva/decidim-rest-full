@@ -18,7 +18,6 @@ module Decidim
         meta do |proposal, params|
           metas = default_meta(proposal)
           metas[:client_id] = proposal.rest_full_application.api_client_id if proposal.rest_full_application
-
           if params[:act_as] && proposal.published?
             vote = proposal.votes.where(decidim_author_id: params[:act_as].id).last
             vote_manifest = proposal.component.settings[:awesome_voting_manifest]

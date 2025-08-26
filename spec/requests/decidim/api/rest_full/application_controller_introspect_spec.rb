@@ -28,7 +28,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       operationId "introspectToken"
       description "Get given oauth token details"
       # SEE https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
-      parameter name: :body, in: :body, required: true, schema: { type: :object, properties: { token: { type: :string } }, required: [:token] }
+      parameter name: :body, in: :body, required: true, schema: { type: :object, title: "Introspect Token", properties: { token: { type: :string } }, required: [:token] }
 
       response "200", "User details returned" do
         schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:introspect_data)
