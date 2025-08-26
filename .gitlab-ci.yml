@@ -131,7 +131,8 @@ ruby::rspec:
   before_script:
   - bin/setup-tests
   script:
-    - DISABLE_SPRING=true RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
+    - bundle exec rails db:create
+    - DISABLE_SPRING=true bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
   artifacts:
     when: always
     paths:
