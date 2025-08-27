@@ -28,7 +28,7 @@ def database_yml
     "port" => ENV.fetch("DATABASE_PORT", "5432").to_i,
     "username" => ENV.fetch("DATABASE_USERNAME", "decidim"),
     "password" => ENV.fetch("DATABASE_PASSWORD", "insecure-password"),
-    "database" => "decidim"
+    "database" => "decidim_module_rest_full_test_app_test"
   }
 end
 desc "Prepare for testing"

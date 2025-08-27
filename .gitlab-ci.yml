@@ -13,7 +13,7 @@ stages:
   - translate
   - publish
 variables:
-  POSTGRES_DB: decidim
+  POSTGRES_DB: decidim_module_rest_full_test_app_test
   POSTGRES_USER: decidim
   POSTGRES_PASSWORD: "TEST-insecure_password"
 

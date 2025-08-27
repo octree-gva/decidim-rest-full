@@ -11,7 +11,7 @@ services:
       - DATABASE_HOST=rest-full-pg
       - DATABASE_USERNAME=decidim
       - DATABASE_PASSWORD=pleaseChangeMe
-      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim
+      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test
       - DEV_MODULE=decidim-rest_full
       - RAILS_ENV=test
       - NODE_MAJOR=18
@@ -22,3 +22,7 @@ services:
       - 3000:3000
     links:
       - rest-full-pg
+
+  rest-full-pg:
+    environment:
+      - POSTGRES_DB=decidim_module_rest_full_test_app_test
