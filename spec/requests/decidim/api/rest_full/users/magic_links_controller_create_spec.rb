@@ -16,6 +16,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
         type: :object,
         properties: {
           data: {
+            title: "Generate Magic Link Data",
             type: :object,
             properties: {
               redirect_url: { type: :string, description: "Redirect url after sign-in" }

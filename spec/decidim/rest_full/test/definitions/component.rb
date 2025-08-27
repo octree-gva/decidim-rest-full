@@ -8,6 +8,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
       id: { type: :string, description: "Component Id" },
       type: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_type) },
       attributes: {
+        title: "Component Attributes",
         type: :object,
         properties: {
           name: {

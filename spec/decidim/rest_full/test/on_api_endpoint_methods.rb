@@ -5,6 +5,8 @@ module Decidim
     module Test
       module OnApiEndpointMethods
         def on_security(flow_type)
+          raise "Security type is nil" if Decidim::RestFull::Test::GlobalContext.security_type.nil?
+
           yield if Decidim::RestFull::Test::GlobalContext.security_type == flow_type
           nil
         end
@@ -19,6 +21,8 @@ module Decidim
           rest_full_setup_api_context!(options)
 
           security_types.each do |security_type_item|
+            Decidim::RestFull::Test::GlobalContext.security_type = security_type_item
+
             rest_full_validate_security_type!(security_type_item)
             context "when #{security_type_item}" do
               let(:security_type) { security_type_item }

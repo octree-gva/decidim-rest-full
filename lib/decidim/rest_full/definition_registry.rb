@@ -14,11 +14,13 @@ module Decidim
       def has_many_relation(resource_type_schema, title: nil, description: nil)
         has_many_schema = {
           type: :object,
+          title: "Has Many Relation",
           properties: {
             data: {
               type: :array,
               items: {
                 type: :object,
+                title: "Has Many Relation Item",
                 properties: {
                   id: { type: :string, description: "Resource Id" },
                   type: resource_type_schema
@@ -56,10 +58,12 @@ module Decidim
       # rubocop:enable Naming/PredicateName
       def belongs_to_relation(resource_type_schema, title: nil, description: nil)
         belongs_to_schema = {
+          title: "Belongs To Relation",
           type: :object,
           properties: {
             data: {
               type: :object,
+              title: "Belongs To Relation Item",
               properties: {
                 id: { type: :string, description: "Resource Id" },
                 type: resource_type_schema
@@ -270,7 +274,7 @@ module Decidim
 
         register_object :post_action_link do
           {
-            title: "POST/DELETE/PUT Action URL",
+            title: "Action URL",
             type: :object,
             properties: {
               title: { type: :string, description: "Action Name" },

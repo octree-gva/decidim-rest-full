@@ -16,8 +16,14 @@ fi
 # Update all package.json (website, node clients)
 for file in $(find contrib website -name "node_modules" -prune -o -name "package.json" -print); do 
     jq --arg version "$PACKAGE_VERSION" '.version = $version' "$file" > tmp.json
+    # If tmp.json is empty, exit with error
+    if [ ! -s tmp.json ]; then
+        echo "Error: tmp.json is empty check $file"
+        exit 1
+    fi
     mv tmp.json "$file"; 
 done;
+
 # Update generated openapi spec version info
 file=website/static/openapi.json
 if [ -f "$file" ]; then
