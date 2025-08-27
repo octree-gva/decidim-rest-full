@@ -20,6 +20,8 @@ module Decidim
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
         ::Decidim::System::UpdateOrganizationForm.include(Decidim::RestFull::UpdateOrganizationFormOverride)
         ::Decidim::System::UpdateOrganization.include(Decidim::RestFull::UpdateOrganizationCommandOverride)
+
+        Decidim::RestFull::Ransackers.register_ransackers!
       end
 
       initializer "rest_full.webhooks" do

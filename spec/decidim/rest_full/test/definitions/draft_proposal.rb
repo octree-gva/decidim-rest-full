@@ -8,6 +8,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
       id: { type: :string, description: "Draft Proposal Id" },
       type: { type: :string, enum: ["draft_proposal"] },
       attributes: {
+        title: "Draft Proposal Attributes",
         type: :object,
         properties: {
           title: {

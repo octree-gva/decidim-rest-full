@@ -19,12 +19,6 @@ module Decidim
                                    else
                                      "FALSE as is_transparent"
                                    end
-              model.ransacker :manifest_name do |_r|
-                Arel.sql("'#{manifest.name}'")
-              end
-              model.ransacker :id do |_r|
-                Arel.sql("CAST(\"#{model.table_name}\".\"id\" AS VARCHAR)")
-              end
 
               query = model.where(organization: current_organization).visible_for(act_as).select(
                 "#{model.table_name}.created_at",

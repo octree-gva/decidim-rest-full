@@ -7,14 +7,14 @@ module Decidim
         class ProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :read, ::Decidim::Proposals::Proposal }
-
+          class CurrentUser < ActiveSupport::CurrentAttributes
+            attribute :user
+          end
+          before_action { CurrentUser.user = current_user }
           def index
-            add_state_filter!
-            add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
-
             query = collection.ransack(params[:filter])
-            results = query.result
 
+            results = query.result
             render json: Decidim::Api::RestFull::ProposalSerializer.new(
               paginate(ordered(results)),
               params: {
@@ -28,11 +28,9 @@ module Decidim
           end
 
           def show
-            add_state_filter!
             resource = collection.find_by("decidim_proposals_proposals.id" => resource_id)
             raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless resource
 
-            add_vote_weight_filter! if current_user && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
             subquery = ordered(collection.select(
               "decidim_proposals_proposals.id",
               "decidim_proposals_proposals.decidim_component_id",
@@ -93,8 +91,7 @@ module Decidim
           def collection
             query = filter_for_context(model_class)
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
-
-            Time.zone.now
+            Rails.logger.warn "draft filtered out as filtering votes" if act_as.nil? && vote_weight_filtered?
             if act_as.nil? || vote_weight_filtered?
               query.where.not(published_at: nil)
             else
@@ -107,44 +104,6 @@ module Decidim
             return false unless params.has_key?(:filter)
 
             params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
-          end
-
-          def add_state_filter!
-            Decidim::Proposals::Proposal.ransacker :state do |_r|
-              Arel.sql(<<~SQL.squish
-                COALESCE(
-                  (SELECT
-                    tstate.token
-                  FROM #{Decidim::Proposals::ProposalState.table_name} AS tstate
-                  WHERE
-                    decidim_proposals_proposals.decidim_proposals_proposal_state_id = tstate.id
-                  LIMIT 1), ''
-                )
-              SQL
-                      )
-            end
-          end
-
-          def add_vote_weight_filter!
-            Decidim::Proposals::Proposal.ransacker :voted_weight do |_r|
-              Arel.sql(<<~SQL.squish
-                (
-                  SELECT
-                    CASE
-                      WHEN tweight.id IS NULL THEN '1'
-                      ELSE CAST(tweight.weight AS VARCHAR)
-                    END AS weight
-                  FROM #{Decidim::Proposals::ProposalVote.table_name} AS tvote
-                  LEFT JOIN #{Decidim::DecidimAwesome::VoteWeight.table_name} AS tweight
-                    ON tvote.id = tweight.proposal_vote_id
-                  WHERE
-                    tvote.decidim_proposal_id = #{Decidim::Proposals::Proposal.table_name}.id
-                    AND tvote.decidim_author_id = #{current_user.id.to_i}
-                  LIMIT 1
-                )
-              SQL
-                      )
-            end
           end
         end
       end

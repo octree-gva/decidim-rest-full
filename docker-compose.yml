@@ -25,7 +25,7 @@ services:
     volumes:
       - rest_full-pg-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DATABASE=decidim
+      - POSTGRES_DB=decidim
       - POSTGRES_USER=decidim
       - POSTGRES_PASSWORD=pleaseChangeMe
 

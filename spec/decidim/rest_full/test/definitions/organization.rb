@@ -36,7 +36,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:organization_attributes) 
       rich_text_editor_in_public_views: { type: :boolean, description: "Enable rich text editor in public views" },
       created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
       updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) },
-      extended_data: { type: :object, description: "Extended data for the organization" }
+      extended_data: { type: :object, title: "Extended data for the organization" }
     },
     additionalProperties: false,
     required: [:host, :name, :available_locales, :default_locale]
