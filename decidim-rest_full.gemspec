@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency "doorkeeper"
   s.add_dependency "jsonapi-serializer"
   s.add_dependency "rswag-api"
-  s.add_development_dependency "decidim-dev", Decidim::RestFull.decidim_version
 
   s.metadata["rubygems_mfa_required"] = "true"
 end
