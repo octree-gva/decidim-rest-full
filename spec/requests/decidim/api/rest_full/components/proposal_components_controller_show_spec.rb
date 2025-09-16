@@ -23,10 +23,10 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
       ) do
         let(:id) { component.id }
 
-        let(:user) { create(:user, locale: "fr", organization: organization) }
+        let(:user) { create(:user, locale: "fr", organization:) }
         let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
-        let!(:assembly) { create(:assembly, organization: organization) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:assembly) { create(:assembly, organization:) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization) }
         it_behaves_like "localized endpoint"
 
@@ -43,15 +43,43 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
           end
 
           on_security(:impersonationFlow) do
-            context "with an active draft" do
-              let(:user) { create(:user, locale: "fr", organization: organization) }
+            context "without an active draft" do
+              let(:user) { create(:user, locale: "fr", organization:) }
+              let!(:unrelated_participatory_process) { create(:participatory_process, :with_steps, organization:) }
 
-              let!(:draft) do
-                prop = create(:proposal, published_at: nil, component: component, users: [user])
+              let(:unrelated_component) { create(:component, participatory_space: unrelated_participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+              let!(:unrelated_draft) do
+                prop = create(:proposal, published_at: nil, component: unrelated_component, users: [user])
                 prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
                 prop
               end
-              let(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: draft.authors.first.id, application: api_client) }
+
+              let(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
+              let(:Authorization) { "Bearer #{bearer_token.token}" }
+
+              run_test! do |example|
+                json_response = JSON.parse(example.body)
+                comp = json_response["data"]
+                expect(comp["links"]["draft"]).to be_nil
+              end
+            end
+
+            context "with an active draft" do
+              let(:user) { create(:user, locale: "fr", organization:) }
+              let!(:unrelated_participatory_process) { create(:participatory_process, :with_steps, organization:) }
+
+              let(:unrelated_component) { create(:component, participatory_space: unrelated_participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
+              let!(:unrelated_draft) do
+                prop = create(:proposal, published_at: nil, component: unrelated_component, users: [user])
+                prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+                prop
+              end
+              let!(:draft) do
+                prop = create(:proposal, published_at: nil, component:, users: [user])
+                prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+                prop
+              end
+              let(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }
               let(:Authorization) { "Bearer #{bearer_token.token}" }
 
               run_test!(example_name: :ok_with_draft) do |example|

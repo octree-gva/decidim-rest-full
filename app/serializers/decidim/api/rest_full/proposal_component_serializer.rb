@@ -7,7 +7,7 @@ module Decidim
         extend Helpers::ResourceLinksHelper
 
         def self.resources_for(component, act_as)
-          resources = ::Decidim::Proposals::Proposal.where(component: component)
+          resources = ::Decidim::Proposals::Proposal.where(component:)
           if act_as.nil?
             resources.published
           else
@@ -18,6 +18,18 @@ module Decidim
               )
             )
           end
+        end
+
+        def self.draft_for(component_id, user_id, client_id)
+          Decidim::Proposals::Proposal.joins(
+            :rest_full_application,
+            :coauthorships
+          ).where(
+            rest_full_application: { api_client_id: client_id },
+            decidim_component_id: component_id,
+            published_at: nil,
+            decidim_coauthorships: { decidim_author_id: user_id }
+          ).limit(1)
         end
 
         meta do |component, params|
@@ -61,7 +73,7 @@ module Decidim
             metas[key.to_sym] = current_settings_h[key.to_sym]
           end
 
-          resources = ::Decidim::Proposals::Proposal.where(component: component)
+          resources = ::Decidim::Proposals::Proposal.where(component:)
           act_as = params[:act_as]
           proposal_limit = metas[:proposal_limit]
           metas[:can_create_proposals] = false
@@ -113,22 +125,12 @@ module Decidim
           metas
         end
 
-        link :draft, if: (proc do |_component, params|
+        link :draft, if: (proc do |component, params|
           next false unless params[:act_as]
 
-          Decidim::Proposals::Proposal.joins(
-            :rest_full_application,
-            :coauthorships
-          ).where(
-            rest_full_application: { api_client_id: params[:client_id] }
-          ).exists?(["published_at is NULL AND decidim_coauthorships.decidim_author_id = ?", params[:act_as].id])
-        end) do |_object, params|
-          draft = Decidim::Proposals::Proposal.joins(
-            :rest_full_application,
-            :coauthorships
-          ).where(
-            rest_full_application: { api_client_id: params[:client_id] }
-          ).where("published_at is NULL AND decidim_coauthorships.decidim_author_id = ?", params[:act_as].id).first
+          draft_for(component.id, params[:act_as].id, params[:client_id]).exists?
+        end) do |component, params|
+          draft = draft_for(component.id, params[:act_as].id, params[:client_id]).first
           infos = link_infos_from_resource(draft)
           {
             href: link_join(params[:host], "draft_proposals", draft.id),
