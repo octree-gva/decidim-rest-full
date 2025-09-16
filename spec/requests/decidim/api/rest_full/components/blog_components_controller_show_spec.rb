@@ -25,8 +25,8 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController do
         let(:id) { component.id }
 
         let(:component) { create(:component, manifest_name: "blogs") }
-        let!(:assembly) { create(:assembly, organization: organization) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:assembly) { create(:assembly, organization:) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
 
         before do
           blog_component = create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now)

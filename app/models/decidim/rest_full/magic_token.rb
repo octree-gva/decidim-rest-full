@@ -25,7 +25,7 @@ module Decidim
       def set_magic_token
         loop do
           self.magic_token = ::Base64.urlsafe_encode64(::Devise.friendly_token(20))
-          break unless self.class.exists?(magic_token: magic_token)
+          break unless self.class.exists?(magic_token:)
         end
       end
 

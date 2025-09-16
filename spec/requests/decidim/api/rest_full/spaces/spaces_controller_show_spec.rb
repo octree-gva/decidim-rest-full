@@ -21,14 +21,14 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           scopes: ["public"],
           permissions: ["public.space.read"]
         ) do
-          let!(:participatory_process) { create(:participatory_process, id: 6, organization: organization, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
-          let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+          let!(:participatory_process) { create(:participatory_process, id: 6, organization:, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
+          let!(:assembly) { create(:assembly, id: 6, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
           let(:id) { assembly.id }
 
           let!(:space_list) do
             3.times do
-              create(:assembly, organization: organization)
-              create(:participatory_process, organization: organization)
+              create(:assembly, organization:)
+              create(:participatory_process, organization:)
             end
           end
 
@@ -48,7 +48,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
           before do
             Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
-              create(:component, participatory_space: assembly, manifest_name: manifest_name, published_at: Time.zone.now)
+              create(:component, participatory_space: assembly, manifest_name:, published_at: Time.zone.now)
             end
           end
 

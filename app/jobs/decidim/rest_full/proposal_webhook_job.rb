@@ -31,9 +31,9 @@ module Decidim
           api_client = permission.api_client
           payload = WebhookEventForm.new(
             type: event_name,
-            data: data,
+            data:,
             timestamp: Time.current.to_i.to_s
-          ).with_context(organization: organization, api_client: api_client)
+          ).with_context(organization:, api_client:)
           next Rails.logger.warn("Invalid event name: #{event_name}. #{payload.errors.full_messages.join(", ")}") unless payload.valid?
 
           webhook_registrations = Decidim::RestFull::WebhookRegistration.where(api_client_id: api_client.id).where(

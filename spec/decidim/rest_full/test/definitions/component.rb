@@ -13,11 +13,11 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
         properties: {
           name: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            description: "Component name"
+            :description => "Component name"
           },
           global_announcement: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            description: "Component annoucement (intro)"
+            :description => "Component annoucement (intro)"
           },
           participatory_space_type: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_classes)

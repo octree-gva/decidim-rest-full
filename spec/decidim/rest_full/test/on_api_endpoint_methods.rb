@@ -69,9 +69,9 @@ module Decidim
           end
 
           let(:api_client) do
-            api_client = create(:api_client, organization: organization, scopes: scopes)
+            api_client = create(:api_client, organization:, scopes:)
             api_client.permissions = permissions.map do |permission|
-              api_client.permissions.build(permission: permission)
+              api_client.permissions.build(permission:)
             end
             api_client.save!
             api_client
@@ -93,7 +93,7 @@ module Decidim
         end
 
         def rest_full_bearer_resource_owner_flow!(scopes)
-          let(:user) { create(:user, locale: "fr", organization: organization, confirmed_at: Time.zone.now) }
+          let(:user) { create(:user, locale: "fr", organization:, confirmed_at: Time.zone.now) }
           let!(:bearer_token) { create(:oauth_access_token, scopes: scopes.join(" "), resource_owner_id: user.id, application: api_client) }
         end
 
@@ -136,7 +136,7 @@ module Decidim
             schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
             permissions.each do |permission|
               context "without #{permission} permission" do
-                let(:api_client) { create(:api_client, organization: organization, scopes: scopes) }
+                let(:api_client) { create(:api_client, organization:, scopes:) }
 
                 rest_full_bearer_resource_owner_flow!(scopes) if security_type == :impersonationFlow
                 rest_full_bearer_credential_flow!(scopes) if security_type == :credentialFlow

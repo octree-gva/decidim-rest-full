@@ -33,7 +33,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
         let(:"locales[]") { %w(en fr) }
         let!(:proposal) { create(:proposal, component: proposal_component) }
         let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
-        let!(:participatory_process) { create(:participatory_process, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, organization:) }
 
         response "200", "Proposal Found" do
           produces "application/json"
@@ -166,7 +166,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
           on_security(:impersonationFlow) do
             context "with draft that did not co-authored" do
               let!(:draft_proposal) do
-                proposal = create(:proposal, component: proposal_component, published_at: nil, users: [create(:user, :confirmed, organization: organization)])
+                proposal = create(:proposal, component: proposal_component, published_at: nil, users: [create(:user, :confirmed, organization:)])
                 proposal.save!
                 proposal
               end

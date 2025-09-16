@@ -24,7 +24,7 @@ module Decidim
         private
 
         def unique_host
-          if unconfirmed_host.present? && unconfirmed_host != host && Decidim::Organization.where(host: unconfirmed_host).where.not(id: id).exists?
+          if unconfirmed_host.present? && unconfirmed_host != host && Decidim::Organization.where(host: unconfirmed_host).where.not(id:).exists?
             errors.add(:unconfirmed_host, :taken)
           end
         end

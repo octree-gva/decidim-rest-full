@@ -14,7 +14,7 @@ module Decidim
           scopes_enabled = settings["scopes_enabled"] if settings.has_key? "scopes_enabled"
           {
             published: component.published_at.present?,
-            scopes_enabled: scopes_enabled
+            scopes_enabled:
           }
         end
 

@@ -24,7 +24,7 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, "User locked" if user.locked_at
 
             scope = user.admin? ? :admin : :user
-            sign_in_and_redirect user, scope: scope
+            sign_in_and_redirect user, scope:
           end
 
           def create
@@ -35,7 +35,7 @@ module Decidim
                 only: [],
                 locales: available_locales,
                 host: current_organization.host,
-                act_as: act_as
+                act_as:
               }
             ).serializable_hash, status: :created
           end

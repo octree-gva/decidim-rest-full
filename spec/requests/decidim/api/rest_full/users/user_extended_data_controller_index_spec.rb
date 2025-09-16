@@ -25,7 +25,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
           produces "application/json"
           schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_extended_data)
           context "with extended_data={'foo' => {'bar' => 'true'}}, can access object_path=foo.bar" do
-            let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "foo" => { "bar" => "true" } }) }
+            let(:user) { create(:user, locale: "fr", organization:, extended_data: { "foo" => { "bar" => "true" } }) }
             let!(:object_path) { "foo.bar" }
 
             run_test! do |example|
@@ -36,7 +36,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
           end
 
           context "with extended_data={'personal' => {'birthday' => '1989-01-28'}}, can access object_path=personal" do
-            let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
+            let(:user) { create(:user, locale: "fr", organization:, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
             let!(:object_path) { "personal" }
 
             run_test!(example_name: :ok) do |example|
@@ -47,7 +47,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
           end
 
           context "with extended_data=<whatever object>, can access object_path=." do
-            let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
+            let(:user) { create(:user, locale: "fr", organization:, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
             let!(:object_path) { "." }
 
             run_test!(example_name: :ok) do |example|
@@ -63,7 +63,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
           schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 
           context "with a object_path=unknown" do
-            let(:user) { create(:user, locale: "fr", organization: organization, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
+            let(:user) { create(:user, locale: "fr", organization:, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
             let!(:object_path) { "unknown" }
 
             run_test!(example_name: :not_found)

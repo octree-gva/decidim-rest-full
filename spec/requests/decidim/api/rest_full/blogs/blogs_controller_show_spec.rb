@@ -27,9 +27,9 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         let(:space_manifest) { "participatory_processes" }
 
         let(:"locales[]") { %w(en fr) }
-        let!(:blog_post) { create(:post, component: component, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization: organization)) }
+        let!(:blog_post) { create(:post, component:, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization:)) }
         let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
-        let!(:participatory_process) { create(:participatory_process, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, organization:) }
 
         response "200", "Blog Found" do
           produces "application/json"
@@ -92,7 +92,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
             let(:order_direction) { "asc" }
 
             let!(:post_list) do
-              Array.new(3) { create(:post, component: component, author: create(:user, :confirmed, organization: organization)) }.each_with_index do |post, index|
+              Array.new(3) { create(:post, component:, author: create(:user, :confirmed, organization:)) }.each_with_index do |post, index|
                 post.published_at = (index + 1).minutes.ago
                 post.save!
                 post
@@ -102,7 +102,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
 
             run_test!(example_name: :ok_no_more) do |example|
               data = JSON.parse(example.body)["data"]
-              posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
+              posts = Decidim::Blogs::Post.where(component:).order(published_at: :asc).ids
               expect(data["id"].to_i).to eq(posts.last.to_i)
               expect(data["links"]["next"]).to be_nil
               expect(data["links"]["prev"]).to be_present
@@ -114,7 +114,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
             let(:order) { "published_at" }
             let(:order_direction) { "asc" }
             let!(:posts) do
-              Array.new(3) { create(:post, component: component, author: create(:user, :confirmed, organization: organization)) }.each_with_index do |post, index|
+              Array.new(3) { create(:post, component:, author: create(:user, :confirmed, organization:)) }.each_with_index do |post, index|
                 post.published_at = (index + 1).minutes.ago
                 post.save!
                 post
@@ -122,11 +122,11 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
             end
             let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
             let(:component_id) { component.id }
-            let!(:id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).first.id }
+            let!(:id) { Decidim::Blogs::Post.where(component:).order(published_at: :asc).first.id }
 
             run_test!(example_name: :ok) do |example|
               data = JSON.parse(example.body)["data"]
-              posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
+              posts = Decidim::Blogs::Post.where(component:).order(published_at: :asc).ids
               expect(data["id"].to_i).to eq(posts.first.to_i)
               expect(data["links"]["prev"]).to be_nil
               expect(data["links"]["next"]).to be_present
@@ -138,7 +138,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
             let(:order) { "published_at" }
             let(:order_direction) { "asc" }
             let!(:posts) do
-              Array.new(3) { create(:post, component: component, author: create(:user, :confirmed, organization: organization)) }.each_with_index do |post, index|
+              Array.new(3) { create(:post, component:, author: create(:user, :confirmed, organization:)) }.each_with_index do |post, index|
                 post.published_at = (index + 1).minutes.ago
                 post.save!
                 post
@@ -146,11 +146,11 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
             end
             let!(:impersonate_token) { create(:oauth_access_token, scopes: "blogs", resource_owner_id: nil, application: api_client) }
 
-            let!(:id) { Decidim::Blogs::Post.where(component: component).order(published_at: :asc).second.id }
+            let!(:id) { Decidim::Blogs::Post.where(component:).order(published_at: :asc).second.id }
 
             run_test!(example_name: :ok) do |example|
               data = JSON.parse(example.body)["data"]
-              posts = Decidim::Blogs::Post.where(component: component).order(published_at: :asc).ids
+              posts = Decidim::Blogs::Post.where(component:).order(published_at: :asc).ids
               expect(data["id"].to_i).to eq(posts.second.to_i)
               expect(data["links"]).to be_present
               expect(data["links"]["next"]).to be_present
@@ -163,7 +163,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
           on_security(:impersonationFlow) do
             context "with draft" do
               let!(:draft_post) do
-                post = create(:post, component: component, published_at: nil, decidim_author_id: user.id)
+                post = create(:post, component:, published_at: nil, decidim_author_id: user.id)
                 post.published_at = 1.year.from_now
                 post.save!
                 post

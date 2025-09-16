@@ -67,7 +67,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
           },
           locale: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:locale),
-            description: "User locale. Fallback to default locale of the organization. Private"
+            :description => "User locale. Fallback to default locale of the organization. Private"
           },
           email: {
             description: "Email of the user. Private",

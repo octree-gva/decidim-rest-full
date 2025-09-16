@@ -61,7 +61,7 @@ module Decidim
                   params: {
                     locales: available_locales,
                     host: current_organization.host,
-                    act_as: act_as
+                    act_as:
                   }
                 ).serializable_hash
               end
@@ -142,7 +142,7 @@ module Decidim
 
           def form_for(resource)
             Decidim::Proposals::ProposalForm.from_model(resource).with_context(
-              current_organization: current_organization,
+              current_organization:,
               current_component: resource.component
             )
           end
@@ -176,7 +176,7 @@ module Decidim
             component = in_visible_spaces(Decidim::Component.all).find(component_id)
             raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
 
-            proposal = Decidim::Proposals::Proposal.new(component: component, published_at: nil)
+            proposal = Decidim::Proposals::Proposal.new(component:, published_at: nil)
             raise ::ActiveRecord::RecordNotSaved, "Could not add new draft" unless proposal.save!(validate: false)
 
             coauthorship = proposal.coauthorships.build(author: current_user)
@@ -192,7 +192,7 @@ module Decidim
 
             return false if proposal_limit.zero?
 
-            query = model_class.where(component: component)
+            query = model_class.where(component:)
             current_user_proposals_count = query.where("published_at IS NOT NULL AND decidim_coauthorships.decidim_author_id = ?", act_as.id).count
             current_user_proposals_count >= proposal_limit
           end

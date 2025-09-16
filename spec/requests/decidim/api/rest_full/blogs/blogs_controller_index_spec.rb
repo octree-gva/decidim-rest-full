@@ -27,10 +27,10 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         permissions: ["blogs.read"]
       ) do
         let(:"locales[]") { %w(en fr) }
-        let!(:blog_posts) { create_list(:post, 3, component: component, published_at: Time.zone.now - 1.day.ago, author: create(:user, :confirmed, organization: organization)) }
-        let!(:blog_post) { create(:post, component: component, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization: organization)) }
+        let!(:blog_posts) { create_list(:post, 3, component:, published_at: Time.zone.now - 1.day.ago, author: create(:user, :confirmed, organization:)) }
+        let!(:blog_post) { create(:post, component:, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization:)) }
         let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
-        let!(:participatory_process) { create(:participatory_process, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, organization:) }
         it_behaves_like "localized endpoint"
 
         response "200", "Blogs Found" do
@@ -39,7 +39,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
           on_security(:impersonationFlow) do
             context "when list own drafts" do
               let!(:draft_post) do
-                post = create(:post, component: component, published_at: nil, decidim_author_id: user.id)
+                post = create(:post, component:, published_at: nil, decidim_author_id: user.id)
                 post.published_at = 1.year.from_now
                 post.save!
                 post
@@ -57,7 +57,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
           it_behaves_like "ordered endpoint", columns: [
             "published_at"
           ] do
-            let(:create_resource) { -> { create(:post, component: component, author: create(:user, :confirmed, organization: organization)) } }
+            let(:create_resource) { -> { create(:post, component:, author: create(:user, :confirmed, organization:)) } }
             let(:each_resource) do
               lambda { |resource, index|
                 resource.published_at = (index + 1).minutes.ago
@@ -69,7 +69,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
           end
 
           it_behaves_like "paginated endpoint" do
-            let(:create_resource) { -> { create(:post, component: component, author: create(:user, :confirmed, organization: organization)) } }
+            let(:create_resource) { -> { create(:post, component:, author: create(:user, :confirmed, organization:)) } }
             let(:each_resource) do
               lambda { |resource, index|
                 resource.published_at = (index + 1).minutes.ago

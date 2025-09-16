@@ -7,11 +7,11 @@ Decidim::RestFull::DefinitionRegistry.register_object(:organization_attributes) 
     properties: {
       name: {
         "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-        additionalProperties: { type: :string }
+        :additionalProperties => { type: :string }
       },
       description: {
         "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-        additionalProperties: { type: :string }
+        :additionalProperties => { type: :string }
       },
       reference_prefix: { type: :string, description: "Prefix for the organization. Used to prefix uplodaded files and reference resources" },
       host: { type: :string },

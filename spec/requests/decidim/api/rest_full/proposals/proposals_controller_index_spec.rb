@@ -27,11 +27,11 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
         let(:component_id) { proposal_component.id }
         let(:space_id) { participatory_process.id }
         let(:space_manifest) { "participatory_processes" }
-        let(:user) { create(:user, organization: organization) }
+        let(:user) { create(:user, organization:) }
         let(:"locales[]") { %w(en fr) }
         let!(:proposal) { create(:proposal, component: proposal_component) }
         let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization) }
         let!(:per_page) { 50 }
         let!(:page) { 1 }
@@ -46,7 +46,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
           end
 
           context "when voting_cards is enabled" do
-            let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+            let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
             let(:proposal_component) do
               component = create(
                 :proposal_component,

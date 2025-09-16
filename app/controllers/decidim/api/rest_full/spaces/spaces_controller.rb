@@ -97,9 +97,9 @@ module Decidim
           def manifest_data(manifest)
             case manifest
             when :participatory_processes
-              { model: "Decidim::ParticipatoryProcess", manifest: manifest }
+              { model: "Decidim::ParticipatoryProcess", manifest: }
             when :assemblies
-              { model: "Decidim::Assembly", manifest: manifest }
+              { model: "Decidim::Assembly", manifest: }
             else
               raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{manifest}"
             end

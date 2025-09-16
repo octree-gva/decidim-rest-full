@@ -99,7 +99,7 @@ module Decidim
               api_client.organization_url = "https://example.org"
             end
             validate_permissions(permissions, @options[:scopes])
-            api_client.permissions = permissions.map { |permission| api_client.permissions.build(permission: permission) }
+            api_client.permissions = permissions.map { |permission| api_client.permissions.build(permission:) }
             api_client.save!
             puts_api_client api_client
           end

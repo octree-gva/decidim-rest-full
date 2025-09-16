@@ -36,7 +36,7 @@ Decidim::Core::Engine.routes.draw do
           collection do
             get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
             Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
-              resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: manifest_name }
+              resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: }
             end
           end
         end

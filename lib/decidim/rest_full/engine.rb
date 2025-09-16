@@ -68,7 +68,7 @@ module Decidim
               sub: token.id,
               # Current organization
               aud: "https://#{current_organization.host}",
-              active: active
+              active:
             }.merge(user_details)
           end
 

@@ -52,7 +52,7 @@ module Decidim
 
         item_schema = { type: :string }
         item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-        has_many_relation(item_schema, title: title, description: description, &block)
+        has_many_relation(item_schema, title:, description:, &block)
       end
 
       # rubocop:enable Naming/PredicateName
@@ -95,7 +95,7 @@ module Decidim
 
         item_schema = { type: :string }
         item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-        belongs_to_relation(item_schema, title: title, description: description, &block)
+        belongs_to_relation(item_schema, title:, description:, &block)
       end
 
       ##

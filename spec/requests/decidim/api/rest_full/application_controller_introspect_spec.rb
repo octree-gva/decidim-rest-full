@@ -3,8 +3,8 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
-  let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
-  let!(:api_client) { create(:api_client, organization: organization, scopes: "public") }
+  let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
+  let!(:api_client) { create(:api_client, organization:, scopes: "public") }
   let!(:permissions) do
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),

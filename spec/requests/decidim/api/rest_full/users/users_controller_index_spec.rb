@@ -32,8 +32,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
           context "with no params" do
             before do
-              create(:user, organization: organization)
-              create_list(:user, 5, organization: organization)
+              create(:user, organization:)
+              create_list(:user, 5, organization:)
             end
 
             run_test!(example_name: :ok)
@@ -41,7 +41,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
           context "with locale" do
             before do
-              create(:user, locale: "fr", organization: organization)
+              create(:user, locale: "fr", organization:)
             end
 
             run_test!(example_name: :user_fr) do |example|
@@ -53,8 +53,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
           context "without oauth.extended_data.read permission" do
             context "and return empty extended_data" do
               before do
-                create(:user, nickname: "specific-data", extended_data: { "key.path.is.awesome" => "bar" }, organization: organization)
-                create_list(:user, 5, organization: organization)
+                create(:user, nickname: "specific-data", extended_data: { "key.path.is.awesome" => "bar" }, organization:)
+                create_list(:user, 5, organization:)
               end
 
               run_test! do |example|
@@ -66,7 +66,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
           context "with oauth.extended_data.read permission" do
             let(:api_client) do
-              api_client = create(:api_client, organization: organization, scopes: "oauth")
+              api_client = create(:api_client, organization:, scopes: "oauth")
               api_client.permissions = [
                 api_client.permissions.build(permission: "oauth.read"),
                 api_client.permissions.build(permission: "oauth.extended_data.read")
@@ -77,8 +77,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
             context "with filter[extended_data_cont] results" do
               before do
-                create(:user, nickname: "specific-data", extended_data: { "key" => { "is" => "awesome" } }, organization: organization)
-                create_list(:user, 5, organization: organization)
+                create(:user, nickname: "specific-data", extended_data: { "key" => { "is" => "awesome" } }, organization:)
+                create_list(:user, 5, organization:)
               end
 
               let(:"filter[extended_data_cont]") do
@@ -94,8 +94,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
             context "with filter[extended_data_cont], no results" do
               before do
-                create(:user, nickname: "specific-data", extended_data: { foo: "404" }, organization: organization)
-                create_list(:user, 5, organization: organization)
+                create(:user, nickname: "specific-data", extended_data: { foo: "404" }, organization:)
+                create_list(:user, 5, organization:)
               end
 
               let(:"filter[extended_data_cont]") do
@@ -110,7 +110,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
           end
 
           context "with filter[id_in][] in a list of 5 ids" do
-            let(:user_list) { create_list(:user, 5, organization: organization) }
+            let(:user_list) { create_list(:user, 5, organization:) }
             let(:"filter[id_in][]") { user_list.map(&:id) }
 
             run_test!(example_name: :filter_by_id_in) do |example|
@@ -121,8 +121,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
           context "with filter[nickname_eq]" do
             before do
-              create(:user, nickname: "blue-panda-218", organization: organization)
-              create_list(:user, 5, organization: organization)
+              create(:user, nickname: "blue-panda-218", organization:)
+              create_list(:user, 5, organization:)
             end
 
             let(:"filter[nickname_eq]") { "blue-panda-218" }
@@ -137,7 +137,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
           end
 
           it_behaves_like "paginated endpoint" do
-            let(:create_resource) { -> { create(:user, organization: organization) } }
+            let(:create_resource) { -> { create(:user, organization:) } }
             let(:each_resource) { ->(_resource, _index) {} }
             let(:resources) { Decidim::User.all }
           end
@@ -148,8 +148,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
           schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
           context "with extended_data_cont" do
             before do
-              create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization: organization)
-              create_list(:user, 5, organization: organization)
+              create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization:)
+              create_list(:user, 5, organization:)
             end
 
             let(:"filter[extended_data_cont]") do

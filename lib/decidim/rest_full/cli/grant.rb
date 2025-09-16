@@ -43,10 +43,10 @@ module Decidim
 
             validate_permissions(permissions, api_client.scopes)
             new_permissions = permissions.select do |permission|
-              api_client.permissions.where(permission: permission).empty?
+              api_client.permissions.where(permission:).empty?
             end
             api_client.permissions << new_permissions.map do |permission|
-              api_client.permissions.build(permission: permission)
+              api_client.permissions.build(permission:)
             end
             api_client.save!
             puts_api_client api_client

@@ -7,7 +7,7 @@ module Decidim
       let(:organization) { proposal.organization }
       let(:proposal_id) { proposal.id }
       let(:organization_id) { organization.id }
-      let(:api_client) { create(:api_client, organization: organization, scopes: ["proposals"]) }
+      let(:api_client) { create(:api_client, organization:, scopes: ["proposals"]) }
 
       before do
         allow(Decidim::RestFull::WebhookJob).to receive(:perform_later).and_return(true)
@@ -15,8 +15,8 @@ module Decidim
 
       context "when sending a proposal_creation.succeeded event" do
         let(:event_name) { "proposal_creation.succeeded" }
-        let!(:webhooks) { create_list(:webhook_registration, 3, api_client: api_client, subscriptions: [event_name]) }
-        let!(:webhook_other) { create(:webhook_registration, api_client: api_client, subscriptions: ["whatever"]) }
+        let!(:webhooks) { create_list(:webhook_registration, 3, api_client:, subscriptions: [event_name]) }
+        let!(:webhook_other) { create(:webhook_registration, api_client:, subscriptions: ["whatever"]) }
 
         before do
           # Define permissions for the webohook api_client

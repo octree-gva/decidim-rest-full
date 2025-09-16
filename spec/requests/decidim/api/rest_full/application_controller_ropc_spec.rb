@@ -13,9 +13,9 @@ def uniq_nickname
 end
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
-  let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
+  let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) do
-    api_client = create(:api_client, organization: organization, scopes: %w(oauth public))
+    api_client = create(:api_client, organization:, scopes: %w(oauth public))
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),
       api_client.permissions.build(permission: "oauth.login")
@@ -57,7 +57,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
             end
 
             run_test! do |_example|
-              expect(Decidim::User.find_by(nickname: nickname)).to be_truthy
+              expect(Decidim::User.find_by(nickname:)).to be_truthy
             end
           end
 
@@ -75,14 +75,14 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
                 client_secret: api_client.client_secret,
                 meta: {
                   register_on_missing: true,
-                  email: email
+                  email:
                 },
                 scope: "public"
               }
             end
 
             run_test! do |_example|
-              created_user = Decidim::User.find_by(nickname: nickname)
+              created_user = Decidim::User.find_by(nickname:)
               expect(created_user).to be_truthy
               expect(created_user.email).to eq(email)
               expect(created_user.extended_data).to eq({})
@@ -108,7 +108,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
             end
 
             run_test! do |_example|
-              created_user = Decidim::User.find_by(nickname: nickname)
+              created_user = Decidim::User.find_by(nickname:)
               expect(created_user).to be_truthy
               expect(created_user.name).to eq("My Name")
               expect(created_user.extended_data).to eq({})
@@ -140,7 +140,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
 
           context "with auth_type=login" do
             let(:proposal_api_client) do
-              api_client = create(:api_client, organization: organization, scopes: "proposals public")
+              api_client = create(:api_client, organization:, scopes: "proposals public")
               api_client.permissions = [
                 api_client.permissions.build(permission: "oauth.login")
               ]
@@ -193,7 +193,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
             end
 
             run_test!(example_name: :user_not_found) do |_example|
-              expect(Decidim::User.find_by(nickname: nickname)).to be_nil
+              expect(Decidim::User.find_by(nickname:)).to be_nil
             end
           end
 
@@ -214,7 +214,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
             end
 
             run_test!(example_name: :invalid_username_on_register) do |_example|
-              expect(Decidim::User.find_by(nickname: nickname)).to be_nil
+              expect(Decidim::User.find_by(nickname:)).to be_nil
             end
           end
         end
@@ -259,7 +259,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
         end
 
         context "with scope=system and password grant" do
-          let(:system_api_client) { create(:api_client, organization: organization, scopes: "system") }
+          let(:system_api_client) { create(:api_client, organization:, scopes: "system") }
           let(:body) do
             {
               grant_type: "password",

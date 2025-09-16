@@ -13,11 +13,11 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:draft_proposal) do
         properties: {
           title: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            description: "Draft Proposal title"
+            :description => "Draft Proposal title"
           },
           body: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            description: "Draft Proposal content"
+            :description => "Draft Proposal content"
           },
           errors: {
             type: :object,

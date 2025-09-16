@@ -22,8 +22,8 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController do
         permissions: ["public.component.read"]
       ) do
         let(:component) { create(:component, manifest_name: "blogs") }
-        let!(:assembly) { create(:assembly, organization: organization) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:assembly) { create(:assembly, organization:) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization) }
 
         before do

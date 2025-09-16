@@ -28,23 +28,23 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:space) do
         properties: {
           title: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            title: "Title translations",
-            description: "Space title"
+            :title => "Title translations",
+            :description => "Space title"
           },
           subtitle: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            title: "Subtitle translations",
-            description: "Space subtitle"
+            :title => "Subtitle translations",
+            :description => "Space subtitle"
           },
           short_description: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            title: "Short Description translations",
-            description: "Space short_description"
+            :title => "Short Description translations",
+            :description => "Space short_description"
           },
           description: {
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
-            title: "Description translations",
-            description: "Space description"
+            :title => "Description translations",
+            :description => "Space description"
           },
           manifest_name: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_manifest) },
           participatory_space_type: { type: :string, example: "Decidim::Assembly" },

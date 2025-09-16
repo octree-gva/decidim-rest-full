@@ -18,7 +18,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         permissions: ["proposals.draft"]
       ) do
         let!(:organization) { create(:organization) }
-        let!(:participatory_process) { create(:participatory_process, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, organization:) }
         let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
         let(:space_manifest) { "participatory_processes" }
         let(:space_id) { participatory_process.id }

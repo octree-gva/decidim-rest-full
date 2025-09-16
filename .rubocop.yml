@@ -1,10 +1,8 @@
 require: 
   - rubocop-rspec
-inherit_from:
-  - .rubocop_ruby.yml
-  - .rubocop_rails.yml
 inherit_gem:
   rswag-specs: .rubocop_rspec_alias_config.yml
+  decidim-dev: rubocop-decidim.yml
 RSpec/VariableName:
     EnforcedStyle: snake_case
     AllowedPatterns:

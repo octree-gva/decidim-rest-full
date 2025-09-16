@@ -36,15 +36,15 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
         end
         let!(:space_list) do
           3.times.map do
-            create(:assembly, organization: organization)
-            create(:participatory_process, organization: organization)
+            create(:assembly, organization:)
+            create(:participatory_process, organization:)
           end.flatten
         end
-        let!(:assembly) { create(:assembly, id: 6, organization: organization, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+        let!(:assembly) { create(:assembly, id: 6, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
         let(:Authorization) { "Bearer #{bearer_token.token}" }
         let!(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
         let!(:api_client) do
-          api_client = create(:api_client, scopes: ["public"], organization: organization)
+          api_client = create(:api_client, scopes: ["public"], organization:)
           api_client.permissions = [
             api_client.permissions.build(permission: "public.space.read")
           ]
@@ -56,7 +56,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
         before do
           host! organization.host
           Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
-            create(:component, participatory_space: assembly, manifest_name: manifest_name, published_at: Time.zone.now)
+            create(:component, participatory_space: assembly, manifest_name:, published_at: Time.zone.now)
           end
         end
 
@@ -118,7 +118,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           end
 
           it_behaves_like "paginated endpoint" do
-            let(:create_resource) { -> { create(:assembly, organization: organization) } }
+            let(:create_resource) { -> { create(:assembly, organization:) } }
             let(:each_resource) { ->(_resource, _index) {} }
             let(:resources) { Decidim::Assembly.all + Decidim::ParticipatoryProcess.all }
           end

@@ -4,8 +4,8 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization) }
-  let!(:user) { create(:user, organization: organization, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
-  let!(:api_client) { create(:api_client, organization: organization, scopes: "oauth") }
+  let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
+  let!(:api_client) { create(:api_client, organization:, scopes: "oauth") }
   let!(:permissions) do
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),
@@ -31,7 +31,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
 
       response "200", "Token returned" do
         context "with client_credentials grant" do
-          let(:system_api_client) { create(:api_client, organization: organization, scopes: "system") }
+          let(:system_api_client) { create(:api_client, organization:, scopes: "system") }
           let(:body) do
             {
               grant_type: "client_credentials",

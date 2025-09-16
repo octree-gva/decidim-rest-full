@@ -18,7 +18,7 @@ module Decidim
             msg = status == :ok ? "OK" : "ERROR"
             return head(status) if request.method == "HEAD"
 
-            render json: { message: msg }, status: status
+            render json: { message: msg }, status:
           end
 
           private

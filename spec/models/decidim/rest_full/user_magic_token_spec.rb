@@ -12,7 +12,7 @@ module Decidim
       end
 
       it "destroys the rest_full_magic_token when the user is destroyed" do
-        magic_token = create(:magic_token, user: user)
+        magic_token = create(:magic_token, user:)
         user.destroy
         expect { magic_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -25,7 +25,7 @@ module Decidim
       end
 
       it "destroys any existing rest_full_magic_token before creating a new one" do
-        existing_token = create(:magic_token, user: user)
+        existing_token = create(:magic_token, user:)
         user.rest_full_generate_magic_token
         expect(Decidim::RestFull::MagicToken.exists?(existing_token.id)).to be false
       end

@@ -53,7 +53,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
 
           context "when token is expired" do
             let(:magic_token) do
-              token = create(:magic_token, magic_token: "uniqueToken", expires_at: 2.days.ago, user: user)
+              token = create(:magic_token, magic_token: "uniqueToken", expires_at: 2.days.ago, user:)
               token.magic_token
             end
 

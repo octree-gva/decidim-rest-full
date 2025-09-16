@@ -24,13 +24,13 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
         permissions: ["public.component.read"]
       ) do
         let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "meetings", published_at: Time.zone.now) }
-        let!(:assembly) { create(:assembly, organization: organization) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:assembly) { create(:assembly, organization:) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization) }
 
         before do
-          create(:meeting, component: component)
-          create(:meeting, component: component)
+          create(:meeting, component:)
+          create(:meeting, component:)
 
           proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
           create(:proposal, component: proposals)

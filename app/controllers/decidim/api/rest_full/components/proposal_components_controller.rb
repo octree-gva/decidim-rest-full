@@ -19,12 +19,12 @@ module Decidim
                   only: [],
                   locales: available_locales,
                   host: current_organization.host,
-                  act_as: act_as,
-                  client_id: client_id
+                  act_as:,
+                  client_id:
                 }
               ).serializable_hash[:data]
             end)
-            render json: { data: data }
+            render json: { data: }
           end
 
           def show
@@ -36,8 +36,8 @@ module Decidim
                 only: [],
                 locales: available_locales,
                 host: current_organization.host,
-                act_as: act_as,
-                client_id: client_id
+                act_as:,
+                client_id:
               }
             ).serializable_hash
           end

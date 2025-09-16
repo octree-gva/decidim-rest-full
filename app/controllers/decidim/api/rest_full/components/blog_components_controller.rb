@@ -15,10 +15,10 @@ module Decidim
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
               Decidim::Api::RestFull::BlogComponentSerializer.new(
                 result,
-                params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
+                params: { only: [], locales: available_locales, host: current_organization.host, act_as: }
               ).serializable_hash[:data]
             end)
-            render json: { data: data }
+            render json: { data: }
           end
 
           def show
@@ -27,7 +27,7 @@ module Decidim
 
             render json: Decidim::Api::RestFull::BlogComponentSerializer.new(
               match,
-              params: { only: [], locales: available_locales, host: current_organization.host, act_as: act_as }
+              params: { only: [], locales: available_locales, host: current_organization.host, act_as: }
             ).serializable_hash
           end
 

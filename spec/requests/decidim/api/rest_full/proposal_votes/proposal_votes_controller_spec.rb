@@ -33,7 +33,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
         scopes: ["proposals"],
         permissions: ["proposals.vote"]
       ) do
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:proposal_component) { create(:proposal_component, :with_votes_enabled, participatory_space: participatory_process) }
         let!(:proposal) { create(:proposal, component: proposal_component) }
         let(:"locales[]") { %w(en fr) }
@@ -141,7 +141,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
           produces "application/json"
           schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
           context "when vote on draft" do
-            let(:draft_proposal_author) { create(:user, locale: "fr", organization: organization) }
+            let(:draft_proposal_author) { create(:user, locale: "fr", organization:) }
             let!(:draft_proposal) { create(:proposal, component: proposal_component, published_at: nil, users: [draft_proposal_author]) }
             let!(:body) do
               {

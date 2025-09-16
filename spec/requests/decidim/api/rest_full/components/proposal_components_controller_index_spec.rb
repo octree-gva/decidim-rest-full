@@ -21,10 +21,10 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
         scopes: ["public"],
         permissions: ["public.component.read"]
       ) do
-        let(:user) { create(:user, locale: "fr", organization: organization) }
+        let(:user) { create(:user, locale: "fr", organization:) }
         let(:component) { create(:proposal_component) }
-        let!(:assembly) { create(:assembly, organization: organization) }
-        let!(:participatory_process) { create(:participatory_process, :with_steps, organization: organization) }
+        let!(:assembly) { create(:assembly, organization:) }
+        let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization) }
 
         before do

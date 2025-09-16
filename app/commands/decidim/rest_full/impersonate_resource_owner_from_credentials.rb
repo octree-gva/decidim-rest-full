@@ -58,8 +58,8 @@ module Decidim
         name = meta.delete("name") || username.titleize
 
         user = current_organization.users.build(
-          email: email,
-          name: name,
+          email:,
+          name:,
           nickname: username,
           extended_data: extra
         )
