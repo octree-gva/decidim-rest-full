@@ -19,7 +19,7 @@
           <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
         </p>
         <ul>
-        <% ::Decidim::RestFull::events_for_proposals.each do |permission| %>
+        <% ::Decidim::RestFull.config.events_for_proposals.each do |permission| %>
           <li class="my-2">
           <label>
             <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
