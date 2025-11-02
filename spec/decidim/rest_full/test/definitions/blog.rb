@@ -18,7 +18,8 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
           },
           created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) }
+          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) },
+          published_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:publication_date) }
         },
         required: [:created_at, :updated_at, :title, :body],
         additionalProperties: false

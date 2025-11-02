@@ -61,6 +61,8 @@ module Decidim
         attribute :body do |comp, params|
           translated_field(comp.body, params[:locales])
         end
+
+        attribute :published_at, &:published_at
       end
     end
   end
