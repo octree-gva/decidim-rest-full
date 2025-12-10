@@ -88,6 +88,9 @@ en:
             title: "Edit API Client Credentials"
             save: "Save"
             go_back: "Back to the list"
+            info: "Info"
+            webhook: "Webhook"
+          edit_info_tab:
             permissions_title: "Permissions"
             permissions_scopes: "Allowed scopes"
             keys_label: "Credentials"
@@ -145,3 +148,16 @@ en:
               %{aaa_records}</pre>
                 </p>
               </div>
+          edit_webhook_tab:
+            webhook_registrations: "Webhook Registrations"
+            add_webhook: "Add Webhook"
+            webhook_url: "Webhook URL"
+            subscriptions: "Subscriptions"
+            url: "URL"
+            created_at: "Created At"
+            actions: "Actions"
+            delete: "Delete"
+            cancel: "Cancel"
+            create: "Create"
+            confirm_delete: "Are you sure you want to delete this webhook?"
+            no_webhooks: "No webhook registrations found."

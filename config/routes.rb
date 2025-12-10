@@ -8,6 +8,7 @@ Decidim::Core::Engine.routes.draw do
     namespace "system" do
       resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
       resources :api_permissions, only: [:create], controller: "/decidim/rest_full/system/permissions"
+      resources :webhook_registrations, only: [:create, :destroy], controller: "/decidim/rest_full/system/webhook_registrations"
     end
   end
 

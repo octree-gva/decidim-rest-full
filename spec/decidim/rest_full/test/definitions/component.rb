@@ -139,7 +139,7 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :gener
         type: :object,
         title: "Proposal Vote Weight",
         properties: {
-          label: { type: :string, description: "Label to voting button" },
+          label: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop), :description => "Label to voting button" },
           weight: { type: :integer, description: "Value to add to the vote. 0 for abstention" }
         },
         required: [:label, :weight]

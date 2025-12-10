@@ -41,5 +41,9 @@ module Decidim
     def self.configure
       Configuration.configure
     end
+
+    def self.events
+      Configuration.events_for_proposals + Configuration.events_for_oauth + Configuration.events_for_system
+    end
   end
 end

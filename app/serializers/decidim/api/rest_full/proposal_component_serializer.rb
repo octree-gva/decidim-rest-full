@@ -35,6 +35,7 @@ module Decidim
         meta do |component, params|
           metas = ComponentSerializer.default_meta(component)
           component = Decidim::Component.find(component.id) unless component.is_a?(Decidim::Component)
+          available_locales = params[:locales]
 
           settings_h = component.settings.to_h
           current_settings_h = component.current_settings.to_h
@@ -94,14 +95,14 @@ module Decidim
               i18n_key = "decidim.decidim_awesome.voting.#{vote_manifest}.weights"
               default_votes = [
                 {
-                  label: I18n.t("decidim.components.proposals.actions.vote"),
+                  label: available_locales.index_with { |locale| I18n.t("decidim.components.proposals.actions.vote", locale:) },
                   weight: 1
                 }
               ]
 
               if has_abstain
                 default_votes << {
-                  label: I18n.t("decidim.decidim_awesome.voting.voting_cards.weights.weight_0"),
+                  label: available_locales.index_with { |locale| I18n.t("decidim.decidim_awesome.voting.voting_cards.weights.weight_0", locale:) },
                   weight: 0
                 }
               end
@@ -110,7 +111,13 @@ module Decidim
                 i18n_values = I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights", object: true)
                 next default_votes if i18n_values.empty?
 
-                options = i18n_values.reject { |k| k.end_with? "short" }.map { |k, v| { weight: k.to_s.split("_").last.to_i, label: v } }
+                options = i18n_values.reject { |k| k.end_with? "short" }
+                options = options.map do |k, _v|
+                  { weight: k.to_s.split("_").last.to_i, label: available_locales.index_with do |locale|
+                                                                  I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights.#{k}", locale:)
+                                                                end }
+                end
+
                 if has_abstain
                   options
                 else

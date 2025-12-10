@@ -1,45 +1,53 @@
 <% add_decidim_page_title(@api_client.name) %>
-<%= link_to t(".go_back"), system_api_clients_path, class: "button button__sm button__text-primary" %>
 <% provide :title do %>
+  <%= link_to t(".go_back"), system_api_clients_path, class: "button button__sm button__text-primary" %>
   <h1 class="h1"><%= @api_client.name %></h1>
 <% end %>
-<%= decidim_form_for(@form) do |f| %>
-  <%= render partial: "form", object: f, locals: { disabled:true } %>
-<% end %>
-<div class="form__wrapper">
-  <h3 class="h5"><%= t(".keys_label") %></h3>
-  <label>
-    <span><%= t(".client_id") %></span>
-    <input type="text" value="<%= @api_client.client_id %>" name="unnamed" autocomplete="off">
-  </label>
-  <label>
-    <span><%= t(".client_secret") %></span>
-    <input type="text" value="<%= @api_client.client_secret %>" name="unnamed" autocomplete="off">
-  </label>
-</div>
-<h2 class="h2"><%= t(".permissions_title") %></h2>
-<div>
-  <strong><%= t(".permissions_scopes") %></strong><code><%= @api_client.scopes.to_a %></code>
+
+<div class="w-full">
+  <div>
+    <nav class="flex space-x-4" aria-label="Tabs">
+      <button type="button" id="tab-info" class="js-tab-button px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white border border-primary" data-tab="info" aria-current="page">
+        <%= t(".permissions", default: "Permissions") %>
+      </button>
+      <button type="button" id="tab-webhook" class="js-tab-button px-4 py-2 text-sm font-medium rounded-lg bg-white text-gray-700 border border-gray-300 hover:bg-gray-50" data-tab="webhook">
+        <%= t(".webhook", default: "Webhook") %>
+      </button>
+    </nav>
+  </div>
+  <div class="mt-6">
+    <div id="tab-content-info" class="tab-content">
+      <%= render partial: "decidim/rest_full/system/api_clients/edit_info_tab" %>
+    </div>
+    <div id="tab-content-webhook" class="tab-content hidden">
+      <%= render partial: "decidim/rest_full/system/api_clients/edit_webhook_tab" %>
+    </div>
+  </div>
 </div>
 
-<%= form_for(@perm_form, method: :post, url: system_api_permissions_path ) do |form| %>
-  <%= form.hidden_field :api_client_id, value: @api_client.id %>
-  <% if @api_client.scopes.to_a.include?("system") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/system_permissions", locals: { form:, api_client: } %>
-  <% end %>
-  <% if @api_client.scopes.to_a.include?("public") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/public_permissions", locals: { form:, api_client: } %>
-  <% end %>
-  <% if @api_client.scopes.to_a.include?("blogs") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/blog_permissions", locals: { form:, api_client: } %>
-  <% end %>
-  <% if @api_client.scopes.to_a.include?("proposals") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/proposal_permissions", locals: { form:, api_client: } %>
-  <% end %>
-  <% if @api_client.scopes.to_a.include?("oauth") %>
-    <%= render partial: "/decidim/rest_full/system/api_clients/user_permissions", locals: { form:, api_client: } %>
-  <% end %>
-  <div class="my-4">
-    <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
-  </div>
-<% end %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.js-tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetTab = this.getAttribute('data-tab');
+
+        // Update button styles - inactive: outlined, active: filled
+        tabButtons.forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+          btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300', 'hover:bg-gray-50');
+        });
+        this.classList.remove('bg-white', 'text-gray-700', 'border-gray-300', 'hover:bg-gray-50');
+        this.classList.add('bg-primary', 'text-white', 'border-primary');
+
+        // Show/hide content
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById(`tab-content-${targetTab}`).classList.remove('hidden');
+      });
+    });
+  });
+</script>

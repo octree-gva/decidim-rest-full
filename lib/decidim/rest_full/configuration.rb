@@ -30,7 +30,8 @@ module Decidim
             "system.organizations.update",
             "system.organizations.destroy",
             "system.organizations.extended_data.read",
-            "system.organizations.extended_data.update"
+            "system.organizations.extended_data.update",
+            *config.events_for_system
           ],
           "public" => [
             "public.component.read",
@@ -43,7 +44,8 @@ module Decidim
           "oauth" => [
             "oauth.magic_link",
             "oauth.extended_data.read",
-            "oauth.extended_data.update"
+            "oauth.extended_data.update",
+            *config.events_for_oauth
           ]
         }
       end
@@ -55,6 +57,21 @@ module Decidim
           "proposal_creation.succeeded",
           "proposal_update.succeeded",
           "proposal_state_change.succeeded"
+        ]
+      end
+
+      config_accessor :events_for_oauth do
+        [
+          "user.created",
+          "user.updated"
+        ]
+      end
+
+      config_accessor :events_for_system do
+        [
+          "system.organizations.created",
+          "system.organizations.updated",
+          "system.organizations.deleted"
         ]
       end
     end
