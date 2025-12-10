@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.js-tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
