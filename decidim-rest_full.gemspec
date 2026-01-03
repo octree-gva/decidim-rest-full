@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 3.2"
 
   s.name = "decidim-rest_full"
-  s.summary = "Open Vollective in Decidim"
-  s.description = "Open Collective integration for Decidim."
+  s.summary = "Rest Full API for Decidim"
+  s.description = "Rest Full API for Decidim"
 
   s.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
