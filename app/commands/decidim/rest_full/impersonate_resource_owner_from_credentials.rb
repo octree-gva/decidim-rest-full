@@ -43,7 +43,7 @@ module Decidim
         return true if user_exists
 
         # It does not exists, and do not want to register.
-        raise StandardError, "User not found. To create one, user meta.register_on_missing" unless wants_register
+        raise Decidim::RestFull::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing" unless wants_register
 
         # It does not exists, want to register, but has no username
         raise StandardError, "Param .username required. Check your impersonation payload" unless has_username
