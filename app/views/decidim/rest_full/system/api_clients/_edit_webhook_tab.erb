@@ -13,7 +13,7 @@
       <%= hidden_field_tag "webhook_registration_form[api_client_id]", @api_client.id %>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2 required"><%= t(".url", default: "URL") %></label>
-        <%= text_field_tag "webhook_registration_form[url]", nil, placeholder: "https://example.com/webhook", autocomplete: "off", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" %>
+        <%= text_field_tag "webhook_registration_form[url]", nil, placeholder: "https://example.org/webhook", autocomplete: "off", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" %>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2"><%= t(".subscriptions", default: "Subscriptions") %></label>

@@ -4,6 +4,9 @@ module Decidim
   module Api
     module RestFull
       module Users
+        # Exposes passwordless magic-link endpoints backed by
+        # Decidim::RestFull::MagicToken (model) and migration
+        # db/migrate/20250131155931_add_users_magic_token.rb.
         class MagicLinksController < ResourcesController
           include ::Devise::Controllers::Helpers
           before_action only: [:create] do
@@ -24,7 +27,8 @@ module Decidim
             raise Decidim::RestFull::ApiException::BadRequest, "User locked" if user.locked_at
 
             scope = user.admin? ? :admin : :user
-            sign_in_and_redirect user, scope:
+            sign_in(user, scope:)
+            redirect_to "/"
           end
 
           def create

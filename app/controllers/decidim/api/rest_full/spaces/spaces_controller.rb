@@ -9,56 +9,108 @@ module Decidim
           before_action { doorkeeper_authorize! :public }
           before_action { ability.authorize! :read, ::Decidim::ParticipatorySpaceManifest }
 
-          # Search Space resources
           def search
-            sql_queries = spaces_resources.map do |data|
-              model = data[:model].constantize
-              manifest = data[:manifest]
-              select_transparent = if model.column_names.include? :is_transparent
-                                     "#{model.table_name}.is_transparent"
-                                   else
-                                     "FALSE as is_transparent"
-                                   end
-
-              query = model.where(organization: current_organization).visible_for(act_as).select(
-                "#{model.table_name}.created_at",
-                "#{model.table_name}.updated_at",
-                "#{model.table_name}.id",
-                "#{model.table_name}.title",
-                "#{model.table_name}.subtitle",
-                "#{model.table_name}.description",
-                "#{model.table_name}.short_description",
-                "#{model.table_name}.private_space",
-                "#{model.table_name}.decidim_organization_id",
-                select_transparent,
-                "'#{manifest.name}' AS manifest_name",
-                "'#{data[:model]}' AS class_name"
-              ).ransack(params[:filter])
-              query.result.to_sql
-            end
-            union_query = sql_queries.join(" UNION ")
-
-            results = paginate(ActiveRecord::Base.connection.exec_query(union_query).map do |result|
-              Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
-            end)
-            render json: SpaceSerializer.new(
-              results,
-              params: { only: [], locales: available_locales, host: current_organization.host }
-            ).serializable_hash
+            render json: serialize_search_results
           end
 
           def show
-            manifest_name = params.require(:manifest_name)
-            model_class_name = manifest_data(manifest_name)[:model]
-            raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{manifest_name}" unless Object.const_defined?(model_class_name)
+            render json: serialize_space_show
+          end
 
-            model = model_class_name.constantize
-            select_transparent = if model.column_names.include? :is_transparent
-                                   "#{model.table_name}.is_transparent"
-                                 else
-                                   "FALSE as is_transparent"
-                                 end
-            query = model.where(organization: current_organization).visible_for(act_as).select(
+          private
+
+          def serialize_search_results
+            SpaceSerializer.new(paginated_union_results, params: space_serializer_params).serializable_hash
+          end
+
+          def serialize_space_show
+            SpaceSerializer.new(space_show_query, params: space_serializer_params).serializable_hash
+          end
+
+          def space_serializer_params
+            { only: [], locales: available_locales, host: current_organization.host }
+          end
+
+          def paginated_union_results
+            paginate(raw_union_results.map { |row| result_struct(row) })
+          end
+
+          def raw_union_results
+            ActiveRecord::Base.connection.exec_query(union_query)
+          end
+
+          def union_query
+            spaces_resources.map { |data| space_sql_for(data) }.join(" UNION ")
+          end
+
+          def space_sql_for(data)
+            model = data[:model].constantize
+            columns = space_select_columns(model, data[:manifest], data[:model])
+            model_query(model, columns).ransack(params[:filter]).result.to_sql
+          end
+
+          def model_query(model, columns)
+            model.where(organization: current_organization).visible_for(act_as).select(*columns)
+          end
+
+          def space_select_columns(model, manifest, class_name)
+            [
+              "#{model.table_name}.created_at",
+              "#{model.table_name}.updated_at",
+              "#{model.table_name}.id",
+              "#{model.table_name}.title",
+              "#{model.table_name}.subtitle",
+              "#{model.table_name}.description",
+              "#{model.table_name}.short_description",
+              "#{model.table_name}.private_space",
+              "#{model.table_name}.decidim_organization_id",
+              space_transparent_column(model),
+              "'#{manifest.name}' AS manifest_name",
+              "'#{class_name}' AS class_name"
+            ]
+          end
+
+          def space_transparent_column(model)
+            if model.column_names.include?("is_transparent")
+              "#{model.table_name}.is_transparent"
+            else
+              "FALSE as is_transparent"
+            end
+          end
+
+          def result_struct(row)
+            Struct.new(*row.keys.map(&:to_sym)).new(*row.values)
+          end
+
+          def required_manifest_name
+            params.require(:manifest_name)
+          end
+
+          def required_space_model_name
+            manifest_data(required_manifest_name)[:model]
+          end
+
+          def required_space_model
+            name = required_space_model_name
+            raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{required_manifest_name}" unless Object.const_defined?(name)
+
+            name.constantize
+          end
+
+          def required_space_id
+            params.require(:id)
+          end
+
+          def space_show_query
+            model = required_space_model
+            model.where(organization: current_organization)
+                 .visible_for(act_as)
+                 .select(*space_show_columns(model))
+                 .find(required_space_id)
+          end
+
+          def space_show_columns(model)
+            [
               "#{model.table_name}.created_at",
               "#{model.table_name}.updated_at",
               "#{model.table_name}.id",
@@ -68,18 +120,11 @@ module Decidim
               "#{model.table_name}.short_description",
               "#{model.table_name}.decidim_organization_id",
               "#{model.table_name}.private_space",
-              select_transparent,
-              "'#{manifest_name}' AS manifest_name",
-              "'#{model_class_name}' AS class_name"
-            ).find(params.require(:id))
-
-            render json: SpaceSerializer.new(
-              query,
-              params: { only: [], locales: available_locales, host: current_organization.host }
-            ).serializable_hash
+              space_transparent_column(model),
+              "'#{required_manifest_name}' AS manifest_name",
+              "'#{required_space_model_name}' AS class_name"
+            ]
           end
-
-          private
 
           def space_manifest_names
             @space_manifest_names ||= Decidim.participatory_space_registry.manifests.map(&:name)

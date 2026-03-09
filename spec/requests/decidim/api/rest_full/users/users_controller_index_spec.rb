@@ -39,6 +39,18 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
             run_test!(example_name: :ok)
           end
 
+          context "with per_page" do
+            let(:per_page) { 3 }
+            let(:page) { 1 }
+
+            before { create_list(:user, 5, organization:) }
+
+            run_test!(example_name: :ok_paginated) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.size).to eq(3)
+            end
+          end
+
           context "with locale" do
             before do
               create(:user, locale: "fr", organization:)
@@ -163,6 +175,8 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
           end
         end
       end
+
+      it_behaves_like "unauthorized when no Bearer token"
     end
   end
 end

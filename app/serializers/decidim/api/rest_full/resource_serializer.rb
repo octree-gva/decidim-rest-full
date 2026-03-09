@@ -5,6 +5,8 @@ require_relative "helpers/resource_links_helper"
 module Decidim
   module Api
     module RestFull
+      # Base serializer for participatory resources (proposals, results, etc.),
+      # wiring common links, component/space relations and timestamps.
       class ResourceSerializer < ApplicationSerializer
         extend Helpers::ResourceLinksHelper
 

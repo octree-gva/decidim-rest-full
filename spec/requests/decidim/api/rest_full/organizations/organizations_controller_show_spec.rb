@@ -19,7 +19,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         permissions: ["system.organizations.read"]
       ) do
         it_behaves_like "localized endpoint"
-        let(:organization) { create(:organization) }
+        let(:organization) { create(:organization, available_locales: ["en"]) }
         let(:id) { organization.id }
         response "200", "Organization shown" do
           consumes "application/json"

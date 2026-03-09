@@ -62,7 +62,7 @@ module Decidim
       describe "#send_webhook" do
         let(:timestamp) { Time.current.to_i.to_s }
         let(:event) { { "type" => "test.event", "data" => { "data" => "test" } } }
-        let(:url) { "https://example.com/webhook" }
+        let(:url) { "https://example.org/webhook" }
 
         let(:mock_http) { instance_double(Net::HTTP) }
         let(:mock_response) { instance_double(Net::HTTPResponse) }

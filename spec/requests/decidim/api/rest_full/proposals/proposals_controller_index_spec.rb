@@ -32,7 +32,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
         let!(:proposal) { create(:proposal, component: proposal_component) }
         let!(:proposal_component) { create(:proposal_component, participatory_space: participatory_process) }
         let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
-        let!(:organization) { create(:organization) }
+        let!(:organization) { create(:organization, available_locales: ["en"]) }
         let!(:per_page) { 50 }
         let!(:page) { 1 }
 
@@ -198,6 +198,8 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
           end
         end
       end
+
+      it_behaves_like "unauthorized when no Bearer token"
     end
   end
 end

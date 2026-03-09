@@ -1,0 +1,21 @@
+<div class="border border-black my-2">
+  <h2 class="border-b-4 h5 p-4" id="<%= dom_id %>">
+      <%= title %>
+  </h2>
+  <div id="<%= dom_id %>" class="p-4 ">
+    <% groups.each do |group_def| %>
+      <div class="mt-4">
+        <div class="font-bold py-2"><%= group_def[:label] %></div>
+        <div class="flex gap-6 flex-wrap">
+          <% Decidim::RestFull::PermissionRegistry.by_scope_and_group(scope, group_def[:group]).each do |entry| %>
+            <% permission = entry.key %>
+            <label>
+              <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+              <span class="font-normal"><%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission") %></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -25,7 +25,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
         let(:component) { create(:proposal_component) }
         let!(:assembly) { create(:assembly, organization:) }
         let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
-        let!(:organization) { create(:organization) }
+        let!(:organization) { create(:organization, available_locales: ["en"]) }
 
         before do
           proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)

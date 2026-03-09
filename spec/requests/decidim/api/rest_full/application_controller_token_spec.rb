@@ -3,7 +3,7 @@
 # spec/integration/oauth_scopes_spec.rb
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
-  let!(:organization) { create(:organization) }
+  let!(:organization) { create(:organization, available_locales: ["en"]) }
   let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization:, scopes: "oauth") }
   let!(:permissions) do

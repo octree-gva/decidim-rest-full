@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "optparse"
+require "json"
+
+# Boot Rails app (host app when run via bundle exec from host)
+app_root = File.dirname(ENV["BUNDLE_GEMFILE"] || File.join(Dir.pwd, "Gemfile"))
+env_path = File.expand_path("config/environment.rb", app_root)
+unless File.file?(env_path)
+  warn "Expected config/environment.rb in #{app_root}. Run from your Decidim app root or set BUNDLE_GEMFILE."
+  exit 1
+end
+require env_path
+
+# Load gem definitions (schemas + tags) so DefinitionRegistry is populated
+require "decidim/rest_full/test/definitions"
+
+host = ENV.fetch("HOST", nil)
+locales = ENV.fetch("DECIDIM_AVAILABLE_LOCALES", nil)
+output_path = nil
+docs_url = nil
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: decidim-rest_full-openapi [options]"
+  opts.on("--host URL", "API host (e.g. https://example.org). Default: ENV['HOST']") { |v| host = v }
+  opts.on("--locales LIST", "Comma-separated locales. Default: ENV['DECIDIM_AVAILABLE_LOCALES']") { |v| locales = v }
+  opts.on("-o", "--output FILE", "Write OpenAPI JSON to FILE (default: stdout)") { |v| output_path = v }
+  opts.on("--docs-url URL", "Docs base URL for links") { |v| docs_url = v }
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+host = host.to_s.strip
+host = "https://www.example.org" if host.empty?
+
+spec = Decidim::RestFull::OpenAPI::Export.build(host:, locales:, docs_url:)
+json = JSON.pretty_generate(spec)
+
+if output_path
+  File.write(output_path, json)
+  puts "Wrote #{output_path}"
+else
+  puts json
+end

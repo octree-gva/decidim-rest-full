@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "optparse"
+require "open3"
+
+input = nil
+output = nil
+generator = "typescript-axios"
+check_only = false
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: decidim-rest_full-client-gen [options]"
+  opts.on("--input FILE", "OpenAPI spec file (required for generation)") { |v| input = v }
+  opts.on("-o", "--output DIR", "Output directory for generated client") { |v| output = v }
+  opts.on("--generator NAME", "OpenAPI Generator generator (default: typescript-axios)") { |v| generator = v }
+  opts.on("--check", "Only validate the OpenAPI spec and check generator is available") { check_only = true }
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+if check_only
+  unless input && File.file?(input)
+    warn "With --check, --input FILE is required."
+    exit 1
+  end
+  _, err, status = Open3.capture3("npx", "@openapitools/openapi-generator-cli@2", "validate", "-i", input)
+  unless status.success?
+    warn err
+    exit 1
+  end
+  puts "Spec valid. Generator available via: npx @openapitools/openapi-generator-cli@2"
+  exit 0
+end
+
+unless input && File.file?(input)
+  warn "Missing or invalid --input FILE. Provide path to openapi.json."
+  exit 1
+end
+
+unless output
+  warn "Missing --output DIR."
+  exit 1
+end
+
+cmd = [
+  "npx", "@openapitools/openapi-generator-cli@2", "generate",
+  "-i", input,
+  "-o", output,
+  "-g", generator
+]
+cmd += ["--additional-properties=useSingleRequestParameter=true,paramNaming=camelCase,axiosVersion=1.7.7"] if generator == "typescript-axios"
+
+out, err, status = Open3.capture3(*cmd)
+$stderr.print err unless err.empty?
+$stdout.print out
+exit status.exitstatus unless status.success?
+
+puts "Client written to #{output}"

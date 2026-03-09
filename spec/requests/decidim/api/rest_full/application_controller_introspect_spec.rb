@@ -2,7 +2,7 @@
 
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
-  let!(:organization) { create(:organization) }
+  let!(:organization) { create(:organization, available_locales: ["en"]) }
   let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization:, scopes: "public") }
   let!(:permissions) do
@@ -20,13 +20,13 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
   end
 
   path "/oauth/introspect" do
-    post "Introspect a OAuth token" do
+    post "Introspect an OAuth token" do
       tags "OAuth"
       consumes "application/json"
       produces "application/json"
       security [{ credentialFlowBearer: ["public"] }, { resourceOwnerFlowBearer: ["public"] }]
       operationId "introspectToken"
-      description "Get given oauth token details"
+      description "Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization."
       # SEE https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
       parameter name: :body, in: :body, required: true, schema: { type: :object, title: "Introspect Token", properties: { token: { type: :string } }, required: [:token] }
 
@@ -57,7 +57,17 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
         end
       end
 
-      response "401", "When the token is invalid" do
+      response "401", "Introspected token invalid or expired (active: false per RFC 7662)" do
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        context "with unknown introspected token" do
+          let(:Authorization) { "Bearer #{client_credential_token.token}" }
+          let(:body) { { token: "unknown_token_#{SecureRandom.hex(8)}" } }
+
+          run_test!(example_name: :inactive_token)
+        end
+      end
+
+      response "401", "When the authorization Bearer token is invalid" do
         produces "application/json"
         schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
 

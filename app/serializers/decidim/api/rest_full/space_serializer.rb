@@ -3,6 +3,8 @@
 module Decidim
   module Api
     module RestFull
+      # Serializer for participatory spaces (processes, assemblies) with
+      # translated fields, visibility and component listings.
       class SpaceSerializer < ApplicationSerializer
         def self.db_fields
           (attributes_to_serialize.keys || []).reject { |k| [:id, :meta, :visibility, :components, :type].include? k }

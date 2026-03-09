@@ -2,23 +2,48 @@
 
 module Decidim
   module RestFull
+    # Rails engine. Wires the module into the host app and Decidim.
+    # - to_prepare: includes our overrides into Decidim/Doorkeeper classes and registers ransackers.
+    # - rest_full.webhooks: subscribes to Decidim events and dispatches to WebhookDispatcher.
+    # - rest_full.scopes: configures Doorkeeper (scopes, grant flows, introspection, ROPC).
+    # - rest_full.menu: adds items to the system admin menu.
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::RestFull
 
+      # Engine file lives in lib/ but app/, config/, db/ live at gem root. Use gem path so it
+      # works for path gems, published gems, and any bundle location.
+      gem_root = Pathname.new(Gem.loaded_specs["decidim-rest_full"].full_gem_path)
+      # Only append to path keys that exist on Engine (app/jobs, app/commands, etc. are not default)
+      %w(app/controllers app/models app/views db/migrate config).each do |key|
+        config.paths[key] << gem_root.join(key)
+      end
+      config.autoload_paths << gem_root.join("app/jobs")
+      config.autoload_paths << gem_root.join("app/commands")
+      config.autoload_paths << gem_root.join("app/forms")
+      config.autoload_paths << gem_root.join("app/serializers")
+
       config.to_prepare do
+        # Organization: has_many :api_clients for OAuth client registration per org.
         Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
+        # Organization: has_one :extended_data and ensures it on create (e.g. unconfirmed_host).
         Decidim::Organization.include(Decidim::RestFull::OrganizationExtendedDataOverride)
+        # Proposal: has_one :rest_full_application (external client id mapping).
         Decidim::Proposals::Proposal.include(Decidim::RestFull::ProposalClientIdOverride)
+        # ProposalsController: proposal_draft excludes proposals already linked to external clients.
         Decidim::Proposals::ProposalsController.include(Decidim::RestFull::ProposalsControllerOverride)
 
+        # User: ransacker on extended_data for API filtering.
         Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
+        # User: has_one magic_token and rest_full_generate_magic_token for passwordless auth.
         Decidim::User.include(Decidim::RestFull::UserMagicTokenOverride)
+        # Doorkeeper tokens: rescue_from API exceptions → consistent JSON error responses.
         ::Doorkeeper::TokensController.include(Decidim::RestFull::ApiException::Handler)
 
-        # Override mailer to avoid sending emails to @example.org
-        # and send notifications (webhooks)
+        # Mailer: no delivery to @example.org; publish notification for webhooks.
         ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
+        # System org form: unconfirmed_host attribute and validation for host change flow.
         ::Decidim::System::UpdateOrganizationForm.include(Decidim::RestFull::UpdateOrganizationFormOverride)
+        # System org update: persist unconfirmed_host in extended_data and enqueue sync job.
         ::Decidim::System::UpdateOrganization.include(Decidim::RestFull::UpdateOrganizationCommandOverride)
 
         Decidim::RestFull::Ransackers.register_ransackers!
@@ -36,101 +61,55 @@ module Decidim
       initializer "rest_full.scopes" do
         Doorkeeper.configure do
           handle_auth_errors :raise
-          # Define default and optional scopes
           default_scopes :public
           optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth
-
-          # Enable resource owner password credentials
           grant_flows %w(password client_credentials)
-          custom_introspection_response do |token, _context|
-            current_organization = token.application.organization
-            user = (Decidim::User.find(token.resource_owner_id) if token.resource_owner_id)
-            user_details = if user
-                             {
-                               resource: Decidim::Api::RestFull::UserSerializer.new(
-                                 user,
-                                 params: { host: current_organization.host },
-                                 fields: { user: [:email, :name, :id, :created_at, :updated_at, :personal_url, :locale] }
-                               ).serializable_hash[:data]
-                             }
-                           else
-                             {}
-                           end
-            token_valid = token.valid? && !token.expired?
-            active = if user
-                       user_valid = !user.blocked? && user.locked_at.blank?
-                       token_valid && user_valid
-                     else
-                       token_valid
-                     end
 
-            {
-              sub: token.id,
-              # Current organization
-              aud: "https://#{current_organization.host}",
-              active:
-            }.merge(user_details)
+          custom_introspection_response do |token, _context|
+            Decidim::RestFull::DoorkeeperConfig.introspection_response(token)
           end
 
-          # Authenticate resource owner
           resource_owner_from_credentials do |_routes|
-            # forbid system scope, exclusive to credential flow
-            raise ::Decidim::RestFull::ApiException::BadRequest, "can not request system scope with ROPC flow" if (params["scope"] || "").include? "system"
-
-            auth_type = params.require(:auth_type)
-            current_organization = request.env["decidim.current_organization"]
-            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Organization. Check requested host." unless current_organization
-
-            client_id = params.require("client_id")
-            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Api Client, check client_id credentials" if client_id.size < 8
-
-            api_client = Decidim::RestFull::ApiClient.find_by(
-              uid: client_id,
-              organization: current_organization
-            )
-            raise ::Decidim::RestFull::ApiException::BadRequest, "Invalid Api Client, check credentials" unless api_client
-
-            ability = Decidim::RestFull::Ability.new(api_client)
-            case auth_type
-            when "impersonate"
-              impersonation_payload = params.permit(
-                :username,
-                :id,
-                meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :send_welcome_message, :name, :email]
-              ).to_h
-
-              command_result = ImpersonateResourceOwnerFromCredentials.call(
-                api_client,
-                impersonation_payload,
-                current_organization
-              ) do
-                on(:ok) do |user|
-                  user
-                end
-                on(:error) do |error_message|
-                  raise ::Decidim::RestFull::ApiException::BadRequest, error_message
-                end
-              end
-
-              command_result[:ok]
-            when "login"
-              ability.authorize! :login, Decidim::RestFull::ApiClient
-              user = Decidim::User.find_by(
-                nickname: params.require("username"),
-                organization: current_organization
-              )
-              raise ::Decidim::RestFull::ApiException::BadRequest, "User not found" unless user.valid_password?(params.require("password"))
-
-              user
-            else
-              raise ::Decidim::RestFull::ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
-            end
+            Decidim::RestFull::DoorkeeperConfig.resource_owner_from_credentials(params:, request:)
           end
         end
       end
 
       initializer "rest_full.menu" do
         Decidim::RestFull::Menu.register_system_menu!
+      end
+
+      initializer "rest_full.permissions" do
+        registry = Decidim::RestFull::PermissionRegistry
+
+        registry.register(:public, "public.component.read", group: :component)
+        registry.register(:public, "public.space.read", group: :space)
+
+        registry.register(:proposals, "proposals.read", group: :proposals)
+        registry.register(:proposals, "proposals.draft", group: :proposals)
+        registry.register(:proposals, "proposals.vote", group: :proposals)
+
+        registry.register(:blogs, "blogs.read", group: :blogs)
+
+        registry.register(:oauth, "oauth.magic_link", group: :oauth)
+        registry.register(:oauth, "oauth.extended_data.read", group: :oauth)
+        registry.register(:oauth, "oauth.extended_data.update", group: :oauth)
+
+        registry.register(:system, "oauth.impersonate", group: :auth_type)
+        registry.register(:system, "oauth.login", group: :auth_type)
+
+        registry.register(:system, "system.organizations.read", group: :organization)
+        registry.register(:system, "system.organizations.update", group: :organization)
+        registry.register(:system, "system.organizations.destroy", group: :organization)
+        registry.register(:system, "system.organizations.extended_data.read", group: :organization)
+        registry.register(:system, "system.organizations.extended_data.update", group: :organization)
+
+        registry.register(:system, "oauth.read", group: :user)
+        registry.register(:system, "system.users.update", group: :user)
+        registry.register(:system, "system.users.destroy", group: :user)
+
+        registry.register(:system, "system.server.restart", group: :rails)
+        registry.register(:system, "system.server.exec", group: :rails)
       end
     end
   end

@@ -4,6 +4,9 @@ module Decidim
   module Api
     module RestFull
       module DraftProposals
+        # CRUD for draft proposals (unpublished). Uses Decidim ProposalForm for validation.
+        # Allowed writable fields: title, body (see allowed_data_keys). Update applies
+        # payload to form, validates, then copies to draft and saves.
         class DraftProposalsController < ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
@@ -76,49 +79,14 @@ module Decidim
             raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
             payload = data
-            draft_proposal = draft
-            form = form_for(draft_proposal)
+            return render_draft_json(draft) if payload.keys.empty?
 
-            update_keys = payload.keys
+            form = form_for(draft)
+            apply_payload_to_form(form, payload)
+            validate_form_for_update!(form, payload.keys)
+            copy_form_to_draft_and_save(draft, form)
 
-            if update_keys.empty?
-              return render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
-                draft_proposal,
-                params: {
-                  only: [],
-                  locales: [current_locale.to_sym],
-                  host: current_organization.host,
-                  publishable: form.valid?,
-                  fields: allowed_data_keys
-                }
-              ).serializable_hash
-            end
-            allowed_data_keys.each do |field_name|
-              field_name_sym = field_name.to_sym
-              form.send(:"#{field_name}=", Rails::Html::FullSanitizer.new.sanitize(payload[field_name_sym])) if update_keys.include? field_name
-            end
-
-            form.valid?
-            update_errors = form.errors.select { |err| update_keys.include? err.attribute.to_s }
-            raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
-
-            allowed_data_keys.each do |field_name|
-              draft_proposal.send(:"#{field_name}=", { current_locale.to_s => form.send(field_name) })
-            end
-
-            draft_proposal.save(validate: false)
-            draft_proposal.reload
-
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
-              draft_proposal,
-              params: {
-                only: [],
-                locales: [current_locale.to_sym],
-                host: current_organization.host,
-                publishable: form.valid?,
-                fields: allowed_data_keys
-              }
-            ).serializable_hash
+            render_draft_json(draft.reload)
           end
 
           def destroy
@@ -210,6 +178,45 @@ module Decidim
 
           def allowed_data_keys
             %w(title body)
+          end
+
+          def render_draft_json(draft_proposal)
+            form = form_for(draft_proposal)
+            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+              draft_proposal,
+              params: {
+                only: [],
+                locales: [current_locale.to_sym],
+                host: current_organization.host,
+                publishable: form.valid?,
+                fields: allowed_data_keys
+              }
+            ).serializable_hash
+          end
+
+          def apply_payload_to_form(form, payload)
+            sanitizer = Rails::Html::FullSanitizer.new
+            allowed_data_keys.each do |field_name|
+              next unless payload.has_key?(field_name.to_sym)
+
+              form.public_send(:"#{field_name}=", sanitizer.sanitize(payload[field_name.to_sym]))
+            end
+          end
+
+          def validate_form_for_update!(form, update_keys)
+            form.valid?
+            update_errors = form.errors.select { |err| update_keys.include?(err.attribute.to_s) }
+            return if update_errors.empty?
+
+            raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ")
+          end
+
+          def copy_form_to_draft_and_save(draft_proposal, form)
+            allowed_data_keys.each do |field_name|
+              value = form.public_send(field_name)
+              draft_proposal.public_send(:"#{field_name}=", { current_locale.to_s => value })
+            end
+            draft_proposal.save(validate: false)
           end
         end
       end

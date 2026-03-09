@@ -12,7 +12,7 @@ def uniq_nickname
   final_nickname
 end
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
-  let!(:organization) { create(:organization) }
+  let!(:organization) { create(:organization, available_locales: ["en"]) }
   let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) do
     api_client = create(:api_client, organization:, scopes: %w(oauth public))
@@ -29,15 +29,34 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
   end
 
   path "/oauth/token" do
-    post "Request a OAuth token throught ROPC" do
+    post "Request an OAuth token (ROPC)" do
       tags "OAuth"
       consumes "application/json"
       produces "application/json"
       security([])
       operationId "createToken"
-      description "Create a oauth token for the given scopes"
+      description "Create an OAuth token for the given scopes (password or client_credentials grant)."
 
       parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:oauth_grant_param) }
+
+      response "400", "Bad Request when grant_type is invalid" do
+        produces "application/json"
+        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        let(:body) do
+          {
+            grant_type: "invalid_grant",
+            client_id: api_client.client_id,
+            client_secret: api_client.client_secret,
+            scope: "public"
+          }
+        end
+
+        run_test!(example_name: :invalid_grant_type) do |response|
+          # RFC 6749 suggests 400; Doorkeeper may return 400 or 401
+          expect(response.status).to satisfy("be 400 or 401") { |code| [400, 401].include?(code) }
+        end
+      end
+
       response "200", "Token returned" do
         context "when user does not exists" do
           context "with meta.register_on_missing=true" do
@@ -220,7 +239,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
         end
 
         context "with client_id from another organization" do
-          let(:organization_b) { create(:organization) }
+          let(:organization_b) { create(:organization, available_locales: ["en"]) }
           let(:foreign_api_client) { create(:api_client, organization: organization_b, scopes: %w(oauth public)) }
           let(:body) do
             {
@@ -241,7 +260,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
         end
 
         context "with impersonate username from an another tenant" do
-          let(:other_tenant) { create(:organization) }
+          let(:other_tenant) { create(:organization, available_locales: ["en"]) }
           let(:body) do
             {
               grant_type: "password",

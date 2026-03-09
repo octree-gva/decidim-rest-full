@@ -4,6 +4,7 @@ module Decidim
   module RestFull
     module CLI
       module Commands
+        # Base for CLI subcommands (grant, revoke, get, create). Shared options and permission checks.
         class Base
           def initialize
             @options = {

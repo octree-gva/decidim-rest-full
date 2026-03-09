@@ -1,163 +1,136 @@
+---
 en:
   decidim:
     rest_full:
-
-      pages:
-        show:
-          title: "Decidim Rest API"
-          documentation_website: "Documentation website"
-          open_api_spec: "Open API spec"
+      admin:
+        menu:
+          api_clients: API Clients
       models:
         api_client:
           fields:
-            name: Human name
             client_id: Client ID
             created_at: Created At
-            scope_system: "System: manage Organizations and Rails"
-            scope_proposals: "Proposal: manage proposals"
-            scope_blogs: "Blog: manage blog posts"
-            scope_meetings: "Meeting: manage meetings"
-            scope_debates: "Debate: manage debates"
-            scope_pages: "Page: manage pages"
-            scope_public: "Public: navigate components and spaces"
-            scope_oauth: "Oauth: Manage user"
+            name: Human name
+            scope_blogs: 'Blog: manage blog posts'
+            scope_debates: 'Debate: manage debates'
+            scope_meetings: 'Meeting: manage meetings'
+            scope_oauth: 'Oauth: Manage user'
+            scope_pages: 'Page: manage pages'
+            scope_proposals: 'Proposal: manage proposals'
+            scope_public: 'Public: navigate components and spaces'
+            scope_system: 'System: manage Organizations and Rails'
           permission:
+            blogs:
+              read: 'read: list and details of a blog post'
+            draft_proposal_creation:
+              succeeded: 'Draft proposal created: send draft proposal details'
+            draft_proposal_update:
+              succeeded: 'Draft proposal updated: send draft proposal details'
             oauth:
-              impersonate: "impersonate: Login as another user"
-              login: "login: login with username/password"
-              magic_link: "magic_link: Create and sign-in through magic link"
-              read: "read: List and detail of users"
               extended_data:
-                read: "read extended data: can read extended data"
-                update: "write extended data: update and remove extended data"
-
-            system:
-              organizations:
-                read: "read: List and detail of organizations"
-                update: "update: Update an organization"
-                destroy: "destroy: Remove definitly an organization"
-                extended_data:
-                  read: "read extended data: can read extended data"
-                  update: "write extended data: update and remove extended data"
-              users:
-                update: "update: Update a user"
-                destroy: "destroy: Remove definitly a user"
-              server:
-                restart: "restart: Soft restart the server"
-                exec: "exec: Execute jobs"
+                read: 'read extended data: can read extended data'
+                update: 'write extended data: update and remove extended data'
+              impersonate: 'impersonate: Login as another user'
+              login: 'login: login with username/password'
+              magic_link: 'magic_link: Create and sign-in through magic link'
+              read: 'read: List and detail of users'
+            proposal_creation:
+              succeeded: 'Proposal created: send proposal details'
+            proposal_state_change:
+              succeeded: 'Proposal state changed: send proposal details'
+            proposal_update:
+              succeeded: 'Proposal updated: send proposal details'
+            proposals:
+              draft: 'draft: create, update, publish and see a draft proposal'
+              read: 'read: list and details of a proposal'
+              vote: 'vote: vote on proposals'
             public:
               component:
-                read: "read: list and details of a component"
+                read: 'read: list and details of a component'
               space:
-                read: "read: list and details of a space"
-            blogs:
-              read: "read: list and details of a blog post"
-            proposals:
-              read: "read: list and details of a proposal"
-              draft: "draft: create, update, publish and see a draft proposal"
-              vote: "vote: vote on proposals"
-            proposal_creation:
-              succeeded: "Proposal created: send proposal details"
-            proposal_update:
-              succeeded: "Proposal updated: send proposal details"
-            proposal_state_change:
-              succeeded: "Proposal state changed: send proposal details"
-            draft_proposal_creation:
-              succeeded: "Draft proposal created: send draft proposal details"
-            draft_proposal_update:
-              succeeded: "Draft proposal updated: send draft proposal details"
-      admin:
-        menu:
-          api_clients: "API Clients"
-          
+                read: 'read: list and details of a space'
+            system:
+              organizations:
+                destroy: 'destroy: Remove definitly an organization'
+                extended_data:
+                  read: 'read extended data: can read extended data'
+                  update: 'write extended data: update and remove extended data'
+                read: 'read: List and detail of organizations'
+                update: 'update: Update an organization'
+              server:
+                exec: 'exec: Execute jobs'
+                restart: 'restart: Soft restart the server'
+              users:
+                destroy: 'destroy: Remove definitly a user'
+                update: 'update: Update a user'
+      pages:
+        show:
+          documentation_website: Documentation website
+          open_api_spec: Open API spec
+          title: Decidim Rest API
       system:
         api_clients:
-          webhook_events: "Webhook events"
-          webhook_events_description: "Events the API client is allowed to subscribe to."
-
-          form:
-            select_organization: "Select an organization"
-            scopes_label: "Allowed scopes"
-          index: 
-            title: "API Clients"
-            confirm_delete: "This will block all queries using these credentials. Are you sure?"
-          new:
-            title: "New API Client Credentials"
-            save: "Create"
-          edit:
-            title: "Edit API Client Credentials"
-            save: "Save"
-            go_back: "Back to the list"
-            info: "Info"
-            webhook: "Webhook"
-          edit_info_tab:
-            permissions_title: "Permissions"
-            permissions_scopes: "Allowed scopes"
-            keys_label: "Credentials"
-            client_id: "Client Id"
-            client_secret: "Client Secret"
-            update_permissions: "Update permissions"
-          system_permissions:
-            auth_type: "Auth Type"
-            organization_perm: "Organization"
-            user_perm: "User"
-            rails_perm: "Ruby on Rails"
-          public_permissions:
-            component: "Components"
-            space: "Space"
-          proposal_permissions:
-            proposals: Proposals
+          actions:
+            destroy: Revoke
+            edit: Edit
+            new_api_client: New API Client
+            title: Actions
           blog_permissions:
             blogs: Blogs
+          create:
+            success: API Client created
+          edit:
+            go_back: Back to the list
+            info: Info
+            save: Save
+            title: Edit API Client Credentials
+            webhook: Webhook
+          edit_info_tab:
+            client_id: Client Id
+            client_secret: Client Secret
+            keys_label: Credentials
+            permissions_scopes: Allowed scopes
+            permissions_title: Permissions
+            update_permissions: Update permissions
+          form:
+            scopes_label: Allowed scopes
+            select_organization: Select an organization
+          index:
+            confirm_delete: This will block all queries using these credentials. Are you sure?
+            title: API Clients
+          new:
+            save: Create
+            title: New API Client Credentials
+          proposal_permissions:
+            proposals: Proposals
+          public_permissions:
+            component: Components
+            space: Space
+          show:
+            go_back: Back to the list
+          system_permissions:
+            auth_type: Auth Type
+            organization_perm: Organization
+            rails_perm: Ruby on Rails
+            user_perm: User
           user_permissions:
             oauth: User Management
-          show:
-            go_back: "Back to the list"
-          create:
-            success: "API Client created"
-          actions:
-            title: Actions
-            new_api_client: "New API Client"
-            edit: "Edit"
-            destroy: "Revoke"
+          webhook_events: Webhook events
+          webhook_events_description: Events the API client is allowed to subscribe to.
         update_organization:
-          unconfirmed_host_label: "Host"
-          unconfirmed_host_pending_warning_html: |
-              <div class="callout warning">
-                <p class="h4">
-                  An operation is pending
-                </p>
-                <p>
-                  While we are changing the host to <strong>%{unconfirmed_host}</strong>,
-                  the current host is still <strong>%{host}</strong>.
-                </p>
-                <p>
-                  Once we validated your DNS configuration, the host will be updated. <br />
-                  Please make sure to have these DNS records: 
-                  <pre>
-              %{a_records}
-              %{aaa_records}</pre>
-                </p>
-              </div>
-          unconfirmed_host_explaination_html: |
-              <div class="callout info">
-                <p>
-                  Before updating the host, please make sure to configure these DNS records: 
-                  <pre>
-              %{a_records}
-              %{aaa_records}</pre>
-                </p>
-              </div>
           edit_webhook_tab:
-            webhook_registrations: "Webhook Registrations"
-            add_webhook: "Add Webhook"
-            webhook_url: "Webhook URL"
-            subscriptions: "Subscriptions"
-            url: "URL"
-            created_at: "Created At"
-            actions: "Actions"
-            delete: "Delete"
-            cancel: "Cancel"
-            create: "Create"
-            confirm_delete: "Are you sure you want to delete this webhook?"
-            no_webhooks: "No webhook registrations found."
+            actions: Actions
+            add_webhook: Add Webhook
+            cancel: Cancel
+            confirm_delete: Are you sure you want to delete this webhook?
+            create: Create
+            created_at: Created At
+            delete: Delete
+            no_webhooks: No webhook registrations found.
+            subscriptions: Subscriptions
+            url: URL
+            webhook_registrations: Webhook Registrations
+            webhook_url: Webhook URL
+          unconfirmed_host_explaination_html: "<div class=\"callout info\">\n  <p>\n    Before updating the host, please make sure to configure these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"
+          unconfirmed_host_label: Host
+          unconfirmed_host_pending_warning_html: "<div class=\"callout warning\">\n  <p class=\"h4\">\n    An operation is pending\n  </p>\n  <p>\n    While we are changing the host to <strong>%{unconfirmed_host}</strong>,\n    the current host is still <strong>%{host}</strong>.\n  </p>\n  <p>\n    Once we validated your DNS configuration, the host will be updated. <br />\n    Please make sure to have these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"

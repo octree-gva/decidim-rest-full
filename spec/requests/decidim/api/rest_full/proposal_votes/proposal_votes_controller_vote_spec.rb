@@ -3,11 +3,11 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
   path "/proposal_votes" do
-    post "Vote" do
-      tags "Proposals Vote"
+    post "Vote on a proposal" do
+      tags "Proposals"
       produces "application/json"
       operationId "voteProposal"
-      description "Vote on a proposal"
+      description "Cast or update a vote on a proposal. Requires proposals scope and proposals.vote permission. Body: proposal_id and data.weight."
 
       parameter name: :body, in: :body, required: true, schema: {
         type: :object,
@@ -47,6 +47,20 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
         let(:space_id) { participatory_process.id }
         let(:component_id) { proposal_component.id }
         let(:proposal_id) { proposal.id }
+
+        response "400", "Bad Request when user already voted" do
+          produces "application/json"
+          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          let!(:proposal) { create(:proposal, component: proposal_component) }
+
+          before do
+            Decidim::Proposals::ProposalVote.create!(proposal:, author: user, weight: 1)
+          end
+
+          run_test!(example_name: :already_voted) do |response|
+            expect(response).to have_http_status(:bad_request)
+          end
+        end
 
         response "200", "Vote created" do
           produces "application/json"

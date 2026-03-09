@@ -27,7 +27,6 @@ module Decidim
           user = create_user_from_params!
         end
         broadcast(:ok, user)
-        user_from_params
       rescue StandardError => e
         broadcast(:error, e.message)
       end
@@ -118,7 +117,7 @@ module Decidim
 
       def meta
         @meta ||= begin
-          user_meta = params[:meta] || {}
+          user_meta = (params[:meta] || {}).to_h.stringify_keys
           default_meta.merge(user_meta)
         end
       end

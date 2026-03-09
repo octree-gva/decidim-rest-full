@@ -20,6 +20,11 @@ module Decidim
       # Alias mark_as_used to destroy
       alias mark_as_used destroy
 
+      # Deletes expired tokens. Returns the number of deleted records.
+      def self.clean_expired!
+        where("expires_at < ?", Time.current).delete_all
+      end
+
       private
 
       def set_magic_token
