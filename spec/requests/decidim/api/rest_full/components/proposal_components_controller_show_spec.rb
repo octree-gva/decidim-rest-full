@@ -27,7 +27,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
         let(:component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
         let!(:assembly) { create(:assembly, organization:) }
         let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
-        let!(:organization) { create(:organization) }
+        let!(:organization) { create(:organization, available_locales: ["en"]) }
         it_behaves_like "localized endpoint"
 
         response "200", "Proposal Component" do

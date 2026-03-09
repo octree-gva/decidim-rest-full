@@ -1,11 +1,11 @@
 services:
   rest_full:
-    command: bash -c "git config --global --add safe.directory /home/decidim/module && bin/setup-tests && bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml" 
+    command: bash -c "git config --global --add safe.directory /home/module && git config --global --add safe.directory /home/module/tmp && bin/setup-tests && bundle exec rspec spec/lib/ spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml"
     image: ruby:3.2.7
     entrypoint: ""
     volumes:
-      - .:/home/decidim/module
-    working_dir: /home/decidim/module
+      - .:/home/module
+    working_dir: /home/module
     environment:
       - PORT=3000
       - DATABASE_HOST=rest-full-pg
@@ -20,9 +20,19 @@ services:
       - DISABLE_SPRING=1
     ports:
       - 3000:3000
-    links:
-      - rest-full-pg
+    depends_on:
+      rest-full-pg:
+        condition: service_healthy
 
   rest-full-pg:
+    image: postgres:15
     environment:
       - POSTGRES_DB=decidim_module_rest_full_test_app_test
+      - POSTGRES_USER=decidim
+      - POSTGRES_PASSWORD=pleaseChangeMe
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decidim -d decidim_module_rest_full_test_app_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s

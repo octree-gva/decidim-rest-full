@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Decidim::RestFull provides a REST API for Decidim (OAuth2, JSON:API-style resources).
+# Entry point: this file. Load order matters for RouteRegistry and overrides.
+# See CONTRIBUTING.md for vocabulary, entry points, and where the "magic" lives.
+
 require "rails"
 require "active_support/all"
 require "cancan"
@@ -15,14 +19,17 @@ require "decidim/rest_full/menu"
 require "decidim/rest_full/engine"
 require "decidim/rest_full/api_exception"
 require "decidim/rest_full/definition_registry"
+require "decidim/rest_full/permission_registry"
 require "decidim/rest_full/configuration"
+require "decidim/rest_full/doorkeeper_config"
+require "decidim/rest_full/route_registry"
+require "decidim/rest_full/openapi/export"
 require "decidim/rest_full/cli"
 require "decidim/rest_full/ransackers"
 
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
 require "decidim/rest_full/overrides/organization_extended_data_override"
-
 require "decidim/rest_full/overrides/proposal_client_id_override"
 require "decidim/rest_full/overrides/proposals_controller_override"
 require "decidim/rest_full/overrides/user_magic_token_override"

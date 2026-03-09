@@ -3,7 +3,7 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
   path "/me/magic_links" do
-    post "Create a magic-lick" do
+    post "Create a magic link" do
       tags "Users"
       produces "application/json"
       operationId "generateMagicLink"

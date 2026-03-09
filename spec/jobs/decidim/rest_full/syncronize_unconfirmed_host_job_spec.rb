@@ -3,7 +3,7 @@
 module Decidim
   module RestFull
     describe SyncronizeUnconfirmedHostJob do
-      let(:organization) { create(:organization) }
+      let(:organization) { create(:organization, available_locales: ["en"]) }
       let(:organization_id) { organization.id }
 
       it "syncronizes the unconfirmed host" do

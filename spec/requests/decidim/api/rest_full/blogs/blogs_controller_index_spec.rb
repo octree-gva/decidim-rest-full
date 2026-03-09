@@ -36,6 +36,18 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         response "200", "Blogs Found" do
           produces "application/json"
           schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_index_response)
+
+          context "when no posts (empty list)" do
+            before do
+              Decidim::Blogs::Post.where(component:).destroy_all
+            end
+
+            run_test!(example_name: :ok_empty) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data).to eq([])
+            end
+          end
+
           on_security(:impersonationFlow) do
             context "when list own drafts" do
               let!(:draft_post) do

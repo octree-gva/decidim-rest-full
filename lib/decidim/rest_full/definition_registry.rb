@@ -2,6 +2,10 @@
 
 module Decidim
   module RestFull
+    # Singleton that holds OpenAPI 3 schema definitions (components/schemas).
+    # Used by request specs (RSwag) and by OpenAPI::Export. Definitions are registered
+    # via register_object, register_resource, etc. Link helpers (get_action_link,
+    # post_action_link, resource_link) are registered in register_link_helpers.
     class DefinitionRegistry
       include Singleton
 
@@ -239,10 +243,14 @@ module Decidim
 
       private
 
-      ##
-      # Register helpers objects used to generate the open api v3 schema
-      # @return [void]
+      # Register link schemas used in OpenAPI (get_action_link, post_action_link, resource_link).
       def register_link_helpers
+        register_get_action_link_schema
+        register_post_action_link_schema
+        register_resource_link_schema
+      end
+
+      def register_get_action_link_schema
         register_object :get_action_link do
           {
             title: "GET Action URL",
@@ -271,7 +279,9 @@ module Decidim
             required: [:href, :title, :meta, :rel]
           }
         end
+      end
 
+      def register_post_action_link_schema
         register_object :post_action_link do
           {
             title: "Action URL",
@@ -293,17 +303,18 @@ module Decidim
                   resource_id: { type: :string, description: "Resource ID" },
                   action_method: { type: :string, enum: %w(POST DELETE PUT), description: "Action HTTP method" },
                   action_enctype: { type: :string, enum: ["application/x-www-form-urlencoded", "multipart/form-data"], description: "Encoding of the payload" },
-                  action_target: { type: :string, description: "URL to goes after submitting a valid request" }
+                  action_target: { type: :string, description: "URL to open after submitting a valid request" }
                 },
                 required: [:action_method, :action_enctype],
                 additionalProperties: false
               }
-
             },
             required: [:href, :title, :meta, :rel]
           }
         end
+      end
 
+      def register_resource_link_schema
         register_object :resource_link do
           {
             title: "Resource URL",

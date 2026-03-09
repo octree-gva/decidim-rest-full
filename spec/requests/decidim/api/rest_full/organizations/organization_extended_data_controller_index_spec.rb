@@ -10,7 +10,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
       description "Fetch organization extended data"
       parameter name: "object_path", in: :query, required: true, schema: { type: :string, description: "object path, in dot style, like foo.bar" }
       parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the organization" }
-      let(:organization) { create(:organization) }
+      let(:organization) { create(:organization, available_locales: ["en"]) }
 
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Organizations::OrganizationExtendedDataController,

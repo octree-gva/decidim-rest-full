@@ -3,6 +3,9 @@
 module Decidim
   module Api
     module RestFull
+      # Base for resource controllers (index/show/create/update/destroy). Subclasses
+      # must define collection, model_class, component_manifest; optional order_columns,
+      # default_order_column. Uses filter_for_context and in_visible_spaces to scope by component/space.
       class ResourcesController < ApplicationController
         protected
 

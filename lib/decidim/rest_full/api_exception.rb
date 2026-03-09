@@ -2,6 +2,9 @@
 
 module Decidim
   module RestFull
+    # API exception types and HTTP status mapping.
+    # Handler is included in Doorkeeper::TokensController and adds rescue_from for each
+    # EXCEPTIONS entry so API errors return consistent JSON (error + error_description).
     module ApiException
       EXCEPTIONS = {
 
@@ -25,6 +28,8 @@ module Decidim
         "Doorkeeper::Errors::TokenForbidden" => { status: 403, message: "Forbidden" },
         "Doorkeeper::Errors::TokenRevoked" => { status: 403, message: "Forbidden" },
         "Doorkeeper::Errors::TokenExpired" => { status: 403, message: "Forbidden" },
+        "Doorkeeper::Errors::InvalidToken" => { status: 401, message: "Unauthorized access" },
+        "Doorkeeper::Errors::InvalidTokenStrategy" => { status: 400, message: "Bad request" },
 
         # Generic Application-Level Errors
         "Decidim::RestFull::ApiException::BadRequest" => { status: 400, message: "Bad request" },

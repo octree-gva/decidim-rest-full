@@ -34,6 +34,8 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
           end
         end
       end
+
+      it_behaves_like "unauthorized when no Bearer token"
     end
   end
 end

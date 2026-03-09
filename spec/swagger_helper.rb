@@ -3,9 +3,9 @@
 require "spec_helper"
 require "rswag/specs"
 
-require "swagger_openapi_specs"
-require "swagger_shared_examples"
-# spec/swagger_helper.rb
+require "decidim/rest_full/test/definitions"
+require "decidim/rest_full/test/shared_examples"
+require "decidim/rest_full/test/openapi_specs"
 
 RSpec.configure do |config|
   config.openapi_root = Rails.root.join("swagger").to_s

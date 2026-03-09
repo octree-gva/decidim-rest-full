@@ -12,6 +12,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
       it_behaves_like "paginated params"
       it_behaves_like "filtered params", filter: "manifest_name", item_schema: { type: :string, enum: Decidim.participatory_space_registry.manifests.map(&:name) }, only: :string
       it_behaves_like "filtered params", filter: "id", item_schema: { type: :integer }, only: :integer
+      it_behaves_like "filtered params", filter: "slug", item_schema: { type: :string }, only: :string
       it_behaves_like "filtered params", filter: "title", item_schema: { type: :string }, only: :string
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Spaces::SpacesController,
@@ -41,6 +42,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           end.flatten
         end
         let!(:assembly) { create(:assembly, id: 6, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+        let!(:participatory_process) { create(:participatory_process, organization:) }
         let(:Authorization) { "Bearer #{bearer_token.token}" }
         let!(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
         let!(:api_client) do
@@ -51,7 +53,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           api_client.save!
           api_client.reload
         end
-        let!(:organization) { create(:organization) }
+        let!(:organization) { create(:organization, available_locales: ["en"]) }
 
         before do
           host! organization.host
@@ -117,6 +119,56 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             end
           end
 
+          context "with filter[manifest_name_eq] filter" do
+            let(:"filter[manifest_name_eq]") { "assemblies" }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :filter_by_manifest_name_eq) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data).not_to be_empty
+              expect(data.all? { |item| item["attributes"]["manifest_name"] == "assemblies" }).to be(true)
+            end
+          end
+
+          context "with filter[id_eq] filter" do
+            let(:"filter[id_eq]") { assembly.id.to_s }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :filter_by_id_eq) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.size).to eq(1)
+              expect(data.first["id"]).to eq(assembly.id.to_s)
+            end
+          end
+
+          context "with filter[slug_eq] filter" do
+            let(:"filter[slug_eq]") { participatory_process.slug }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :filter_by_slug_eq) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.size).to eq(1)
+              expect(data.first["attributes"]["manifest_name"]).to eq("participatory_processes")
+            end
+          end
+
+          context "with filter[slug_matches] filter on common prefix" do
+            let!(:demospace1) { create(:participatory_process, organization:, slug: "demo-test") }
+            let!(:demospace2) { create(:participatory_process, organization:, slug: "demo-test-2") }
+            let(:"filter[slug_matches]") { "%demo-%" }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :filter_by_slug_matches_prefix) do |example|
+              data = JSON.parse(example.body)["data"]
+              data.map { |item| item["attributes"]["manifest_name"] if item["id"].in?([demospace1.id.to_s, demospace2.id.to_s]) }
+              expect(data.size).to be >= 2
+            end
+          end
+
           it_behaves_like "paginated endpoint" do
             let(:create_resource) { -> { create(:assembly, organization:) } }
             let(:each_resource) { ->(_resource, _index) {} }
@@ -124,6 +176,8 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           end
         end
       end
+
+      it_behaves_like "unauthorized when no Bearer token"
     end
   end
 end

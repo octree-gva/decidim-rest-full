@@ -105,7 +105,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
         permissions: ["system.organization.extended_data.update"]
       ) do
         let(:body) { { data: { "foo" => "bar" }, object_path: "." } }
-        let(:organization) { create(:organization) }
+        let(:organization) { create(:organization, available_locales: ["en"]) }
         let(:id) { organization.id }
 
         response "200", "Update extended data value" do

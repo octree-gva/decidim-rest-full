@@ -3,6 +3,9 @@
 module Decidim
   module Api
     module RestFull
+      # Base for all REST API controllers. Handles API exceptions and provides
+      # helpers for OAuth (current_user, act_as, service_token?), visibility
+      # (visible_spaces, in_visible_spaces), and space_class_from_name.
       class ApplicationController < ActionController::API
         include Decidim::RestFull::ApiException::Handler
         delegate :can?, :cannot?, :authorize!, to: :ability
@@ -115,6 +118,41 @@ module Decidim
         end
 
         private
+
+        def authorization_token
+          @authorization_token ||= begin
+            header = request.headers["Authorization"] || request.authorization
+            header.to_s.split.last if header.present?
+          end
+        end
+
+        def doorkeeper_token
+          return @doorkeeper_token if defined?(@doorkeeper_token)
+
+          @doorkeeper_token = authorization_token && ::Doorkeeper::AccessToken.by_token(authorization_token)
+        end
+
+        def doorkeeper_authorize!(*required_scopes)
+          token = doorkeeper_token
+          unless token&.accessible?
+            auth_env = request.headers.env.select { |k, _| k.to_s.include?("AUTH") }
+            debug = {
+              header_token: authorization_token,
+              auth_env:,
+              token_found: !token.nil?,
+              token_scopes: (token&.scopes || []).to_a,
+              token_revoked_at: token&.revoked_at,
+              token_expires_in: token&.expires_in,
+              token_created_at: token&.created_at
+            }.inspect
+            raise Decidim::RestFull::ApiException::Unauthorized, "The access token is invalid (debug: #{debug})"
+          end
+
+          missing_scopes = required_scopes.map(&:to_s) - token.scopes.to_a
+          raise Decidim::RestFull::ApiException::Forbidden, "Missing required scopes: #{missing_scopes.join(", ")}" if missing_scopes.any?
+
+          token
+        end
 
         def ability
           @ability ||= Decidim::RestFull::Ability.from_doorkeeper_token(doorkeeper_token)

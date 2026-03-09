@@ -3,6 +3,8 @@
 module Decidim
   module Api
     module RestFull
+      # JSON:API serializer for proposals, enriching them with voting
+      # metadata, client ids and translated fields for the REST API.
       class ProposalSerializer < ResourceSerializer
         extend Helpers::ResourceLinksHelper
 

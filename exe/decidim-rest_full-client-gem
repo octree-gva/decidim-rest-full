@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "optparse"
+
+options = {
+  spec_out: "website/static/openapi.json",
+  client_out: "contrib/decidim-node-client",
+  verbose: ENV["VERBOSE"] == "1"
+}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: decidim-rest_full-client-gem [options]\n\n" \
+                "Generates the OpenAPI spec with rswag and builds the TypeScript Axios client."
+
+  opts.on("--spec-out FILE", "Path to write openapi.json (default: #{options[:spec_out]})") do |v|
+    options[:spec_out] = v
+  end
+
+  opts.on("--client-out DIR", "Directory for generated client (default: #{options[:client_out]})") do |v|
+    options[:client_out] = v
+  end
+
+  opts.on("--verbose", "Enable verbose command output (or set VERBOSE=1)") do
+    options[:verbose] = true
+  end
+
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit 0
+  end
+end
+
+parser.parse!(ARGV)
+
+def run!(cmd, verbose:)
+  puts "+ #{cmd}" if verbose
+  success = system(cmd)
+  unless success
+    warn "Command failed: #{cmd}"
+    exit($CHILD_STATUS.exitstatus || 1)
+  end
+end
+
+spec_out = options[:spec_out]
+client_out = options[:client_out]
+
+# 1. Generate OpenAPI spec via rswag (same command as bin/swaggerize, but we call the script)
+run!("bin/swaggerize --out #{spec_out}", verbose: options[:verbose])
+
+# 2. Generate TypeScript Axios client via openapi-generator-cli
+run!("bin/gen-node-client --validate --input #{spec_out}", verbose: options[:verbose])
+
+puts "OpenAPI spec written to #{spec_out}" unless options[:verbose]
+puts "Node client generated in #{client_out}" unless options[:verbose]

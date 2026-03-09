@@ -56,12 +56,12 @@ curl -X POST https://<organization-host>/oauth/token \
             {
                 "id": 1,
                 "name": "Organization A",
-                "host": "org-a.example.com"
+                "host": "org-a.example.org"
             },
             {
                 "id": 2,
                 "name": "Organization B",
-                "host": "org-b.example.com"
+                "host": "org-b.example.org"
             }
         ]
     ```

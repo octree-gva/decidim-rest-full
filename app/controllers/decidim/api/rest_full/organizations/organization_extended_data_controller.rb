@@ -4,6 +4,8 @@ module Decidim
   module Api
     module RestFull
       module Organizations
+        # Exposes read/update endpoints for organization-level extended_data
+        # using a dot-path API. Backed by Decidim::RestFull::OrganizationExtendedData.
         class OrganizationExtendedDataController < ApplicationController
           before_action -> { doorkeeper_authorize! :system }
           before_action :ensure_organization_extended_data

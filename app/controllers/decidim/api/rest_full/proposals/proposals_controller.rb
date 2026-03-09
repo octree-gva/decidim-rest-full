@@ -28,46 +28,7 @@ module Decidim
           end
 
           def show
-            resource = collection.find_by("decidim_proposals_proposals.id" => resource_id)
-            raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless resource
-
-            subquery = ordered(collection.select(
-              "decidim_proposals_proposals.id",
-              "decidim_proposals_proposals.decidim_component_id",
-              "decidim_proposals_proposals.published_at",
-              "LAG(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS previous_id",
-              "LEAD(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS next_id"
-            ).ransack(params[:filter]).result).to_sql
-            aliased_subquery = "(#{subquery}) AS decidim_proposals_proposals"
-            select_for_pagination = <<~SQL.squish
-              decidim_proposals_proposals.id,
-              decidim_proposals_proposals.previous_id as previous_id,
-              decidim_proposals_proposals.next_id as next_id
-            SQL
-            pagination_match = model_class.select(select_for_pagination).from(aliased_subquery).find_by(
-              "decidim_proposals_proposals.id = ? ", resource_id
-            )
-            next_item = pagination_match.next_id
-            prev_item = pagination_match.previous_id
-            pagination_match.previous_id
-            first_item = collection.ids.first
-            last_item = collection.ids.last
-
-            render json: Decidim::Api::RestFull::ProposalSerializer.new(
-              resource,
-              params: {
-                only: [],
-                locales: available_locales,
-                host: current_organization.host,
-                client_id:,
-                act_as:,
-                first: first_item,
-                last: first_item,
-                next: next_item,
-                prev: prev_item,
-                count: last_item
-              }
-            ).serializable_hash
+            render json: serialized_show
           end
 
           protected
@@ -82,6 +43,76 @@ module Decidim
 
           def component_manifest
             "proposals"
+          end
+
+          def serialized_show
+            resource = find_proposal!
+            pagination = proposal_pagination_meta
+            Decidim::Api::RestFull::ProposalSerializer.new(
+              resource,
+              params: show_serializer_params(pagination)
+            ).serializable_hash
+          end
+
+          def show_serializer_params(pagination)
+            {
+              only: [],
+              locales: available_locales,
+              host: current_organization.host,
+              client_id:,
+              act_as:
+            }.merge(pagination)
+          end
+
+          def find_proposal!
+            proposal = collection.find_by("decidim_proposals_proposals.id" => resource_id)
+            raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless proposal
+
+            proposal
+          end
+
+          def proposal_pagination_meta
+            match = proposal_pagination_match
+            {
+              first: collection.ids.first,
+              last: collection.ids.first,
+              next: match&.next_id,
+              prev: match&.previous_id,
+              count: collection.ids.last
+            }
+          end
+
+          def proposal_pagination_match
+            model_class
+              .select(proposal_pagination_select)
+              .from(proposal_pagination_subquery)
+              .find_by("decidim_proposals_proposals.id = ? ", resource_id)
+          end
+
+          def proposal_pagination_select
+            <<~SQL.squish
+              decidim_proposals_proposals.id,
+              decidim_proposals_proposals.previous_id as previous_id,
+              decidim_proposals_proposals.next_id as next_id
+            SQL
+          end
+
+          def proposal_pagination_subquery
+            "(#{proposal_windowed_query}) AS decidim_proposals_proposals"
+          end
+
+          def proposal_windowed_query
+            ordered(paginated_base_scope.ransack(params[:filter]).result).to_sql
+          end
+
+          def paginated_base_scope
+            collection.select(
+              "decidim_proposals_proposals.id",
+              "decidim_proposals_proposals.decidim_component_id",
+              "decidim_proposals_proposals.published_at",
+              "LAG(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS previous_id",
+              "LEAD(decidim_proposals_proposals.id) OVER (ORDER BY #{order_string}) AS next_id"
+            )
           end
 
           def model_class

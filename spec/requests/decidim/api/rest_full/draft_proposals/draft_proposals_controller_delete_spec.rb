@@ -3,11 +3,11 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController do
   path "/draft_proposals/{id}" do
-    delete "Withdrawn a draft proposal" do
+    delete "Withdraw a draft proposal" do
       tags "Draft Proposals"
       produces "application/json"
-      operationId "withdrawnDraftProposal"
-      description "Withdrawn a draft proposal. This action cannot be undone."
+      operationId "withdrawDraftProposal"
+      description "Withdraw (delete) a draft proposal. This action cannot be undone."
       parameter name: "id", in: :path, schema: { type: :integer, description: "Draft Id" }, required: true
 
       describe_api_endpoint(
@@ -17,7 +17,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         scopes: ["proposals"],
         permissions: ["proposals.draft"]
       ) do
-        let!(:organization) { create(:organization) }
+        let!(:organization) { create(:organization, available_locales: ["en"]) }
         let!(:participatory_process) { create(:participatory_process, organization:) }
         let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
         let(:space_manifest) { "participatory_processes" }

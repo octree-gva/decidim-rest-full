@@ -38,7 +38,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         scopes: ["system"],
         permissions: ["system.organizations.update"]
       ) do
-        let(:organization) { create(:organization) }
+        let(:organization) { create(:organization, available_locales: ["en"]) }
         let(:id) { organization.id }
 
         response "200", "Organization updated" do
@@ -59,7 +59,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
           end
 
           context "when update host, unconfirmed host is set" do
-            let(:organization) { create(:organization) }
+            let(:organization) { create(:organization, available_locales: ["en"]) }
             let(:body) { { data: { host: "new-host.com" } } }
 
             run_test!(example_name: :ok) do |example|

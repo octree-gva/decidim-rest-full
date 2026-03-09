@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-# app/serializers/decidim/rest_full/organization_serializer.rb
 module Decidim
   module Api
     module RestFull
+      # JSON:API representation of Decidim::User records for the REST
+      # API, including basic profile fields, extended_data (when allowed),
+      # and meta flags such as blocked/locked state.
       class UserSerializer < ApplicationSerializer
         attributes :name, :nickname, :personal_url, :email, :about
 

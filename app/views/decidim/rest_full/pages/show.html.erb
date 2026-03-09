@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= t(".title") %></title>
+    <title><%= t(".title", default: "Decidim Rest API") %></title>
     <style>
         .container {
             position: fixed;
@@ -45,14 +45,14 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="h1"><%= t(".title") %></h1>
+        <h1 class="h1"><%= t(".title", default: "Decidim Rest API") %></h1>
 
         <div>
           <a class="button" href="https://octree-gva.github.io/decidim-rest-full/" target="_blank">
-              <%= t(".documentation_website") %>
+              <%= t(".documentation_website", default: "Documentation website") %>
           </a>
           <a class="button" href="/api/rest/docs/openapi.json" target="_blank">
-              <%= t(".open_api_spec") %>
+              <%= t(".open_api_spec", default: "Open API spec") %>
           </a>
         </div>
     </div>

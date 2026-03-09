@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-# app/serializers/decidim/rest_full/organization_serializer.rb
 module Decidim
   module Api
     module RestFull
+      # Serializer for organizations, exposing main configuration fields,
+      # translated attributes and optional extended_data for the REST API.
       class OrganizationSerializer < ApplicationSerializer
         def self.db_fields
           (attributes_to_serialize.keys || []).reject { |k| [:meta, :id].include? k }

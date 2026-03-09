@@ -24,45 +24,57 @@ module Decidim
 
           def parse_options(args)
             parser = OptionParser.new do |opts|
-              opts.banner = <<~USAGE
-                Manage Decidim's API Clients (v.#{::Decidim::RestFull.version})
-                Usage: api-client create [options]
-              USAGE
-              default_options(opts)
-
-              opts.on("--scope SCOPE", "API scope") do |scope|
-                @options[:scopes] ||= []
-                @options[:scopes] << scope unless @options[:scopes].include?(scope)
-              end
-              opts.on("--perm PERMISSION", "--permission PERMISSION", "Permission") do |permission|
-                @options[:permissions] ||= []
-                @options[:permissions] << permission unless @options[:permissions].include?(permission)
-              end
-              opts.on("--name NAME", "Client name") do |name|
-                @options[:name] = name
-              end
-
-              opts.on("--id ID", "Client ID") do |id|
-                @options[:id] = id
-              end
-
-              opts.on("--organization-id ORGANIZATION_ID", "Organization ID") do |organization_id|
-                @options[:decidim_organization_id] = organization_id
-              end
-
-              opts.on("--secret SECRET", "Client secret") do |secret|
-                @options[:secret] = secret
-              end
-
-              opts.on("--allow-impersonate", "If client can impersonate a user") do
-                @options[:allow_impersonate] = true
-              end
-
-              opts.on("--allow-login", "If client can insert user/password to login") do
-                @options[:allow_login] = true
-              end
+              banner_options(opts)
+              define_scope_options(opts)
+              define_permission_options(opts)
+              define_identity_options(opts)
+              define_organization_options(opts)
+              define_secret_and_flags(opts)
             end
             parser.parse!(args)
+          end
+
+          def banner_options(opts)
+            opts.banner = <<~USAGE
+              Manage Decidim's API Clients (v.#{::Decidim::RestFull.version})
+              Usage: api-client create [options]
+            USAGE
+            default_options(opts)
+          end
+
+          def define_scope_options(opts)
+            opts.on("--scope SCOPE", "API scope") do |scope|
+              @options[:scopes] ||= []
+              @options[:scopes] << scope unless @options[:scopes].include?(scope)
+            end
+          end
+
+          def define_permission_options(opts)
+            opts.on("--perm PERMISSION", "--permission PERMISSION", "Permission") do |permission|
+              @options[:permissions] ||= []
+              @options[:permissions] << permission unless @options[:permissions].include?(permission)
+            end
+          end
+
+          def define_identity_options(opts)
+            opts.on("--name NAME", "Client name") { |name| @options[:name] = name }
+            opts.on("--id ID", "Client ID") { |id| @options[:id] = id }
+          end
+
+          def define_organization_options(opts)
+            opts.on("--organization-id ORGANIZATION_ID", "Organization ID") do |organization_id|
+              @options[:decidim_organization_id] = organization_id
+            end
+          end
+
+          def define_secret_and_flags(opts)
+            opts.on("--secret SECRET", "Client secret") { |secret| @options[:secret] = secret }
+            opts.on("--allow-impersonate", "If client can impersonate a user") do
+              @options[:allow_impersonate] = true
+            end
+            opts.on("--allow-login", "If client can insert user/password to login") do
+              @options[:allow_login] = true
+            end
           end
 
           def before_execute!

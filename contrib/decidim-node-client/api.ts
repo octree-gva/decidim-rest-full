@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.8_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.9_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.2
  *
@@ -260,13 +260,13 @@ export interface BlogPostComponentAttributes {
    */
   participatory_space_id: string;
   /**
-   * Creation date of the component
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof BlogPostComponentAttributes
    */
   created_at: string;
   /**
-   * Last update date of the component
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof BlogPostComponentAttributes
    */
@@ -544,13 +544,13 @@ export interface ComponentAttributes {
    */
   participatory_space_id: string;
   /**
-   * Creation date of the component
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof ComponentAttributes
    */
   created_at: string;
   /**
-   * Last update date of the component
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof ComponentAttributes
    */
@@ -1170,13 +1170,13 @@ export interface GenericComponentAttributes {
    */
   participatory_space_id: string;
   /**
-   * Creation date of the component
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof GenericComponentAttributes
    */
   created_at: string;
   /**
-   * Last update date of the component
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof GenericComponentAttributes
    */
@@ -1921,7 +1921,7 @@ export interface MetaForWriteRequest {
    */
   action_enctype: MetaForWriteRequestActionEnctypeEnum;
   /**
-   * URL to goes after submitting a valid request
+   * URL to open after submitting a valid request
    * @type {string}
    * @memberof MetaForWriteRequest
    */
@@ -2637,13 +2637,13 @@ export interface ProposalComponentAttributes {
    */
   participatory_space_id: string;
   /**
-   * Creation date of the component
+   * Creation date, in ISO8601 format.
    * @type {string}
    * @memberof ProposalComponentAttributes
    */
   created_at: string;
   /**
-   * Last update date of the component
+   * Last update date, in ISO8601 format.
    * @type {string}
    * @memberof ProposalComponentAttributes
    */
@@ -4241,6 +4241,137 @@ export interface VoteAProposalPayload {
 }
 
 /**
+ * APIApi - axios parameter creator
+ * @export
+ */
+export const APIApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * API entry point. Links to documentation and OpenAPI spec. No authentication required.
+     * @summary API root
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    apiRoot: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * APIApi - functional programming interface
+ * @export
+ */
+export const APIApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = APIApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * API entry point. Links to documentation and OpenAPI spec. No authentication required.
+     * @summary API root
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async apiRoot(
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.apiRoot(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["APIApi.apiRoot"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * APIApi - factory interface
+ * @export
+ */
+export const APIApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = APIApiFp(configuration);
+  return {
+    /**
+     * API entry point. Links to documentation and OpenAPI spec. No authentication required.
+     * @summary API root
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    apiRoot(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+      return localVarFp
+        .apiRoot(options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * APIApi - object-oriented interface
+ * @export
+ * @class APIApi
+ * @extends {BaseAPI}
+ */
+export class APIApi extends BaseAPI {
+  /**
+   * API entry point. Links to documentation and OpenAPI spec. No authentication required.
+   * @summary API root
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof APIApi
+   */
+  public apiRoot(options?: RawAxiosRequestConfig) {
+    return APIApiFp(this.configuration)
+      .apiRoot(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
  * BlogsApi - axios parameter creator
  * @export
  */
@@ -4252,6 +4383,7 @@ export const BlogsApiAxiosParamCreator = function (
      * Get blog post details
      * @summary Show a blog detail
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {BlogSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
@@ -4263,6 +4395,7 @@ export const BlogsApiAxiosParamCreator = function (
      */
     blog: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       spaceManifest?: BlogSpaceManifestEnum,
       spaceId?: number,
@@ -4273,6 +4406,8 @@ export const BlogsApiAxiosParamCreator = function (
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("blog", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("blog", "authorization", authorization);
       const localVarPath = `/blogs/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -4320,6 +4455,10 @@ export const BlogsApiAxiosParamCreator = function (
         localVarQueryParameter["order_direction"] = orderDirection;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -4337,6 +4476,7 @@ export const BlogsApiAxiosParamCreator = function (
     /**
      * Get blog post list
      * @summary Blog Post Lists
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -4349,6 +4489,7 @@ export const BlogsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     blogs: async (
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -4359,6 +4500,8 @@ export const BlogsApiAxiosParamCreator = function (
       orderDirection?: BlogsOrderDirectionEnum,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("blogs", "authorization", authorization);
       const localVarPath = `/blogs`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4411,6 +4554,10 @@ export const BlogsApiAxiosParamCreator = function (
         localVarQueryParameter["order_direction"] = orderDirection;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -4439,6 +4586,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
      * Get blog post details
      * @summary Show a blog detail
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {BlogSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
@@ -4450,6 +4598,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
      */
     async blog(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       spaceManifest?: BlogSpaceManifestEnum,
       spaceId?: number,
@@ -4465,6 +4614,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blog(
         id,
+        authorization,
         locales,
         spaceManifest,
         spaceId,
@@ -4488,6 +4638,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
     /**
      * Get blog post list
      * @summary Blog Post Lists
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -4500,6 +4651,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async blogs(
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -4516,6 +4668,7 @@ export const BlogsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<BlogIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blogs(
+        authorization,
         locales,
         page,
         perPage,
@@ -4566,6 +4719,7 @@ export const BlogsApiFactory = function (
       return localVarFp
         .blog(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.spaceManifest,
           requestParameters.spaceId,
@@ -4584,11 +4738,12 @@ export const BlogsApiFactory = function (
      * @throws {RequiredError}
      */
     blogs(
-      requestParameters: BlogsApiBlogsRequest = {},
+      requestParameters: BlogsApiBlogsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<BlogIndexResponse> {
       return localVarFp
         .blogs(
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -4616,6 +4771,13 @@ export interface BlogsApiBlogRequest {
    * @memberof BlogsApiBlog
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof BlogsApiBlog
+   */
+  readonly authorization: string;
 
   /**
    *
@@ -4666,6 +4828,13 @@ export interface BlogsApiBlogRequest {
  * @interface BlogsApiBlogsRequest
  */
 export interface BlogsApiBlogsRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof BlogsApiBlogs
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {Array<Locale>}
@@ -4745,6 +4914,7 @@ export class BlogsApi extends BaseAPI {
     return BlogsApiFp(this.configuration)
       .blog(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.spaceManifest,
         requestParameters.spaceId,
@@ -4765,11 +4935,12 @@ export class BlogsApi extends BaseAPI {
    * @memberof BlogsApi
    */
   public blogs(
-    requestParameters: BlogsApiBlogsRequest = {},
+    requestParameters: BlogsApiBlogsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return BlogsApiFp(this.configuration)
       .blogs(
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -4833,6 +5004,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * Blog component details
      * @summary Blog Component Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [componentId]
      * @param {BlogComponentSpaceManifestEnum} [spaceManifest]
@@ -4842,6 +5014,7 @@ export const ComponentsApiAxiosParamCreator = function (
      */
     blogComponent: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       componentId?: number,
       spaceManifest?: BlogComponentSpaceManifestEnum,
@@ -4850,6 +5023,8 @@ export const ComponentsApiAxiosParamCreator = function (
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("blogComponent", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("blogComponent", "authorization", authorization);
       const localVarPath = `/components/blog_components/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -4889,6 +5064,10 @@ export const ComponentsApiAxiosParamCreator = function (
         localVarQueryParameter["space_id"] = spaceId;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -4906,6 +5085,7 @@ export const ComponentsApiAxiosParamCreator = function (
     /**
      * List or search blog components of the organization
      * @summary Blog Components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<Locale>} [locales]
@@ -4933,6 +5113,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     blogComponents: async (
+      authorization: string,
       page?: number,
       perPage?: number,
       locales?: Array<Locale>,
@@ -4958,6 +5139,8 @@ export const ComponentsApiAxiosParamCreator = function (
       filterNameBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("blogComponents", "authorization", authorization);
       const localVarPath = `/components/blog_components`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5083,6 +5266,10 @@ export const ComponentsApiAxiosParamCreator = function (
         localVarQueryParameter["filter[name_blank]"] = filterNameBlank;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -5101,6 +5288,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * Find on proposal
      * @summary Proposal Component Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -5115,6 +5303,7 @@ export const ComponentsApiAxiosParamCreator = function (
      */
     proposalComponent: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -5128,6 +5317,8 @@ export const ComponentsApiAxiosParamCreator = function (
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("proposalComponent", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("proposalComponent", "authorization", authorization);
       const localVarPath = `/components/proposal_components/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -5187,6 +5378,10 @@ export const ComponentsApiAxiosParamCreator = function (
         localVarQueryParameter["filter[id_blank]"] = filterIdBlank;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -5204,6 +5399,7 @@ export const ComponentsApiAxiosParamCreator = function (
     /**
      * List or search proposal components of the organization
      * @summary Proposal Components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<string>} [filterNameNotIn]
      * @param {Array<string>} [filterNameIn]
      * @param {string} [filterNameStart]
@@ -5231,6 +5427,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     proposalComponents: async (
+      authorization: string,
       filterNameNotIn?: Array<string>,
       filterNameIn?: Array<string>,
       filterNameStart?: string,
@@ -5256,6 +5453,8 @@ export const ComponentsApiAxiosParamCreator = function (
       locales?: Array<Locale>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("proposalComponents", "authorization", authorization);
       const localVarPath = `/components/proposal_components`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5381,6 +5580,10 @@ export const ComponentsApiAxiosParamCreator = function (
         localVarQueryParameter["locales[]"] = locales;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -5398,6 +5601,7 @@ export const ComponentsApiAxiosParamCreator = function (
     /**
      * List or search components of the organization
      * @summary Search components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<Locale>} [locales]
@@ -5438,6 +5642,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     searchComponents: async (
+      authorization: string,
       page?: number,
       perPage?: number,
       locales?: Array<Locale>,
@@ -5476,6 +5681,8 @@ export const ComponentsApiAxiosParamCreator = function (
       filterNameBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("searchComponents", "authorization", authorization);
       const localVarPath = `/components/search`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5660,6 +5867,10 @@ export const ComponentsApiAxiosParamCreator = function (
         localVarQueryParameter["filter[name_blank]"] = filterNameBlank;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -5689,6 +5900,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * Blog component details
      * @summary Blog Component Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [componentId]
      * @param {BlogComponentSpaceManifestEnum} [spaceManifest]
@@ -5698,6 +5910,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      */
     async blogComponent(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       componentId?: number,
       spaceManifest?: BlogComponentSpaceManifestEnum,
@@ -5711,6 +5924,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blogComponent(
         id,
+        authorization,
         locales,
         componentId,
         spaceManifest,
@@ -5733,6 +5947,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     /**
      * List or search blog components of the organization
      * @summary Blog Components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<Locale>} [locales]
@@ -5760,6 +5975,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async blogComponents(
+      authorization: string,
       page?: number,
       perPage?: number,
       locales?: Array<Locale>,
@@ -5791,6 +6007,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<BlogComponentIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.blogComponents(
+        authorization,
         page,
         perPage,
         locales,
@@ -5833,6 +6050,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * Find on proposal
      * @summary Proposal Component Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -5847,6 +6065,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      */
     async proposalComponent(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -5866,6 +6085,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.proposalComponent(
           id,
+          authorization,
           locales,
           page,
           perPage,
@@ -5893,6 +6113,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     /**
      * List or search proposal components of the organization
      * @summary Proposal Components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<string>} [filterNameNotIn]
      * @param {Array<string>} [filterNameIn]
      * @param {string} [filterNameStart]
@@ -5920,6 +6141,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async proposalComponents(
+      authorization: string,
       filterNameNotIn?: Array<string>,
       filterNameIn?: Array<string>,
       filterNameStart?: string,
@@ -5952,6 +6174,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.proposalComponents(
+          authorization,
           filterNameNotIn,
           filterNameIn,
           filterNameStart,
@@ -5993,6 +6216,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     /**
      * List or search components of the organization
      * @summary Search components
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<Locale>} [locales]
@@ -6033,6 +6257,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async searchComponents(
+      authorization: string,
       page?: number,
       perPage?: number,
       locales?: Array<Locale>,
@@ -6078,6 +6303,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.searchComponents(
+          authorization,
           page,
           perPage,
           locales,
@@ -6157,6 +6383,7 @@ export const ComponentsApiFactory = function (
       return localVarFp
         .blogComponent(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.componentId,
           requestParameters.spaceManifest,
@@ -6173,11 +6400,12 @@ export const ComponentsApiFactory = function (
      * @throws {RequiredError}
      */
     blogComponents(
-      requestParameters: ComponentsApiBlogComponentsRequest = {},
+      requestParameters: ComponentsApiBlogComponentsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<BlogComponentIndexResponse> {
       return localVarFp
         .blogComponents(
+          requestParameters.authorization,
           requestParameters.page,
           requestParameters.perPage,
           requestParameters.locales,
@@ -6219,6 +6447,7 @@ export const ComponentsApiFactory = function (
       return localVarFp
         .proposalComponent(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -6240,11 +6469,12 @@ export const ComponentsApiFactory = function (
      * @throws {RequiredError}
      */
     proposalComponents(
-      requestParameters: ComponentsApiProposalComponentsRequest = {},
+      requestParameters: ComponentsApiProposalComponentsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ProposalComponentIndexResponse> {
       return localVarFp
         .proposalComponents(
+          requestParameters.authorization,
           requestParameters.filterNameNotIn,
           requestParameters.filterNameIn,
           requestParameters.filterNameStart,
@@ -6280,11 +6510,12 @@ export const ComponentsApiFactory = function (
      * @throws {RequiredError}
      */
     searchComponents(
-      requestParameters: ComponentsApiSearchComponentsRequest = {},
+      requestParameters: ComponentsApiSearchComponentsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ComponentIndexResponse> {
       return localVarFp
         .searchComponents(
+          requestParameters.authorization,
           requestParameters.page,
           requestParameters.perPage,
           requestParameters.locales,
@@ -6342,6 +6573,13 @@ export interface ComponentsApiBlogComponentRequest {
   readonly id: number;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ComponentsApiBlogComponent
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof ComponentsApiBlogComponent
@@ -6376,6 +6614,13 @@ export interface ComponentsApiBlogComponentRequest {
  * @interface ComponentsApiBlogComponentsRequest
  */
 export interface ComponentsApiBlogComponentsRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ComponentsApiBlogComponents
+   */
+  readonly authorization: string;
+
   /**
    * Page number for pagination
    * @type {number}
@@ -6552,6 +6797,13 @@ export interface ComponentsApiProposalComponentRequest {
   readonly id: number;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ComponentsApiProposalComponent
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof ComponentsApiProposalComponent
@@ -6621,6 +6873,13 @@ export interface ComponentsApiProposalComponentRequest {
  * @interface ComponentsApiProposalComponentsRequest
  */
 export interface ComponentsApiProposalComponentsRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ComponentsApiProposalComponents
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {Array<string>}
@@ -6789,6 +7048,13 @@ export interface ComponentsApiProposalComponentsRequest {
  * @interface ComponentsApiSearchComponentsRequest
  */
 export interface ComponentsApiSearchComponentsRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ComponentsApiSearchComponents
+   */
+  readonly authorization: string;
+
   /**
    * Page number for pagination
    * @type {number}
@@ -7064,6 +7330,7 @@ export class ComponentsApi extends BaseAPI {
     return ComponentsApiFp(this.configuration)
       .blogComponent(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.componentId,
         requestParameters.spaceManifest,
@@ -7082,11 +7349,12 @@ export class ComponentsApi extends BaseAPI {
    * @memberof ComponentsApi
    */
   public blogComponents(
-    requestParameters: ComponentsApiBlogComponentsRequest = {},
+    requestParameters: ComponentsApiBlogComponentsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return ComponentsApiFp(this.configuration)
       .blogComponents(
+        requestParameters.authorization,
         requestParameters.page,
         requestParameters.perPage,
         requestParameters.locales,
@@ -7130,6 +7398,7 @@ export class ComponentsApi extends BaseAPI {
     return ComponentsApiFp(this.configuration)
       .proposalComponent(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -7153,11 +7422,12 @@ export class ComponentsApi extends BaseAPI {
    * @memberof ComponentsApi
    */
   public proposalComponents(
-    requestParameters: ComponentsApiProposalComponentsRequest = {},
+    requestParameters: ComponentsApiProposalComponentsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return ComponentsApiFp(this.configuration)
       .proposalComponents(
+        requestParameters.authorization,
         requestParameters.filterNameNotIn,
         requestParameters.filterNameIn,
         requestParameters.filterNameStart,
@@ -7195,11 +7465,12 @@ export class ComponentsApi extends BaseAPI {
    * @memberof ComponentsApi
    */
   public searchComponents(
-    requestParameters: ComponentsApiSearchComponentsRequest = {},
+    requestParameters: ComponentsApiSearchComponentsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return ComponentsApiFp(this.configuration)
       .searchComponents(
+        requestParameters.authorization,
         requestParameters.page,
         requestParameters.perPage,
         requestParameters.locales,
@@ -7263,14 +7534,18 @@ export const DraftProposalsApiAxiosParamCreator = function (
     /**
      * Create a draft
      * @summary Create draft proposal
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {CreateDraftProposalPayload} createDraftProposalPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     createDraftProposal: async (
+      authorization: string,
       createDraftProposalPayload: CreateDraftProposalPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("createDraftProposal", "authorization", authorization);
       // verify required parameter 'createDraftProposalPayload' is not null or undefined
       assertParamExists(
         "createDraftProposal",
@@ -7297,6 +7572,10 @@ export const DraftProposalsApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       localVarHeaderParameter["Content-Type"] = "application/json";
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -7322,15 +7601,19 @@ export const DraftProposalsApiAxiosParamCreator = function (
      * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
      * @summary Display a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     draftProposal: async (
       id: number,
+      authorization: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("draftProposal", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("draftProposal", "authorization", authorization);
       const localVarPath = `/draft_proposals/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -7354,6 +7637,10 @@ export const DraftProposalsApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7372,15 +7659,19 @@ export const DraftProposalsApiAxiosParamCreator = function (
      * Publish a draft proposal
      * @summary Publish a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     publishDraftProposal: async (
       id: number,
+      authorization: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("publishDraftProposal", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("publishDraftProposal", "authorization", authorization);
       const localVarPath = `/draft_proposals/{id}/publish`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -7404,6 +7695,10 @@ export const DraftProposalsApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7422,17 +7717,21 @@ export const DraftProposalsApiAxiosParamCreator = function (
      * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Update draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UpdateDraftProposalPayload} updateDraftProposalPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     updateDraftProposal: async (
       id: number,
+      authorization: string,
       updateDraftProposalPayload: UpdateDraftProposalPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("updateDraftProposal", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("updateDraftProposal", "authorization", authorization);
       // verify required parameter 'updateDraftProposalPayload' is not null or undefined
       assertParamExists(
         "updateDraftProposal",
@@ -7462,6 +7761,10 @@ export const DraftProposalsApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       localVarHeaderParameter["Content-Type"] = "application/json";
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -7484,18 +7787,26 @@ export const DraftProposalsApiAxiosParamCreator = function (
       };
     },
     /**
-     * Withdrawn a draft proposal. This action cannot be undone.
-     * @summary Withdrawn a draft proposal
+     * Withdraw (delete) a draft proposal. This action cannot be undone.
+     * @summary Withdraw a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    withdrawnDraftProposal: async (
+    withdrawDraftProposal: async (
       id: number,
+      authorization: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
-      assertParamExists("withdrawnDraftProposal", "id", id);
+      assertParamExists("withdrawDraftProposal", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists(
+        "withdrawDraftProposal",
+        "authorization",
+        authorization,
+      );
       const localVarPath = `/draft_proposals/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -7518,6 +7829,10 @@ export const DraftProposalsApiAxiosParamCreator = function (
       // authentication resourceOwnerFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -7547,11 +7862,13 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
     /**
      * Create a draft
      * @summary Create draft proposal
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {CreateDraftProposalPayload} createDraftProposalPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async createDraftProposal(
+      authorization: string,
       createDraftProposalPayload: CreateDraftProposalPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -7562,6 +7879,7 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.createDraftProposal(
+          authorization,
           createDraftProposalPayload,
           options,
         );
@@ -7582,11 +7900,13 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
      * Detail a draft proposal. Raise HTTP 404 error if no draft is created for now.
      * @summary Display a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async draftProposal(
       id: number,
+      authorization: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -7596,6 +7916,7 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.draftProposal(
         id,
+        authorization,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -7615,11 +7936,13 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
      * Publish a draft proposal
      * @summary Publish a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async publishDraftProposal(
       id: number,
+      authorization: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -7628,7 +7951,11 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<ProposalItemResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.publishDraftProposal(id, options);
+        await localVarAxiosParamCreator.publishDraftProposal(
+          id,
+          authorization,
+          options,
+        );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["DraftProposalsApi.publishDraftProposal"]?.[
@@ -7646,12 +7973,14 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
      * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
      * @summary Update draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UpdateDraftProposalPayload} updateDraftProposalPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async updateDraftProposal(
       id: number,
+      authorization: string,
       updateDraftProposalPayload: UpdateDraftProposalPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -7663,6 +7992,7 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.updateDraftProposal(
           id,
+          authorization,
           updateDraftProposalPayload,
           options,
         );
@@ -7680,14 +8010,16 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     * Withdrawn a draft proposal. This action cannot be undone.
-     * @summary Withdrawn a draft proposal
+     * Withdraw (delete) a draft proposal. This action cannot be undone.
+     * @summary Withdraw a draft proposal
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async withdrawnDraftProposal(
+    async withdrawDraftProposal(
       id: number,
+      authorization: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -7696,10 +8028,14 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<DraftProposalItemResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.withdrawnDraftProposal(id, options);
+        await localVarAxiosParamCreator.withdrawDraftProposal(
+          id,
+          authorization,
+          options,
+        );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["DraftProposalsApi.withdrawnDraftProposal"]?.[
+        operationServerMap["DraftProposalsApi.withdrawDraftProposal"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -7737,6 +8073,7 @@ export const DraftProposalsApiFactory = function (
     ): AxiosPromise<DraftProposalItemResponse> {
       return localVarFp
         .createDraftProposal(
+          requestParameters.authorization,
           requestParameters.createDraftProposalPayload,
           options,
         )
@@ -7754,7 +8091,11 @@ export const DraftProposalsApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<DraftProposalItemResponse> {
       return localVarFp
-        .draftProposal(requestParameters.id, options)
+        .draftProposal(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -7769,7 +8110,11 @@ export const DraftProposalsApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ProposalItemResponse> {
       return localVarFp
-        .publishDraftProposal(requestParameters.id, options)
+        .publishDraftProposal(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -7786,24 +8131,29 @@ export const DraftProposalsApiFactory = function (
       return localVarFp
         .updateDraftProposal(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.updateDraftProposalPayload,
           options,
         )
         .then((request) => request(axios, basePath));
     },
     /**
-     * Withdrawn a draft proposal. This action cannot be undone.
-     * @summary Withdrawn a draft proposal
-     * @param {DraftProposalsApiWithdrawnDraftProposalRequest} requestParameters Request parameters.
+     * Withdraw (delete) a draft proposal. This action cannot be undone.
+     * @summary Withdraw a draft proposal
+     * @param {DraftProposalsApiWithdrawDraftProposalRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    withdrawnDraftProposal(
-      requestParameters: DraftProposalsApiWithdrawnDraftProposalRequest,
+    withdrawDraftProposal(
+      requestParameters: DraftProposalsApiWithdrawDraftProposalRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<DraftProposalItemResponse> {
       return localVarFp
-        .withdrawnDraftProposal(requestParameters.id, options)
+        .withdrawDraftProposal(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
   };
@@ -7815,6 +8165,13 @@ export const DraftProposalsApiFactory = function (
  * @interface DraftProposalsApiCreateDraftProposalRequest
  */
 export interface DraftProposalsApiCreateDraftProposalRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof DraftProposalsApiCreateDraftProposal
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {CreateDraftProposalPayload}
@@ -7835,6 +8192,13 @@ export interface DraftProposalsApiDraftProposalRequest {
    * @memberof DraftProposalsApiDraftProposal
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof DraftProposalsApiDraftProposal
+   */
+  readonly authorization: string;
 }
 
 /**
@@ -7849,6 +8213,13 @@ export interface DraftProposalsApiPublishDraftProposalRequest {
    * @memberof DraftProposalsApiPublishDraftProposal
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof DraftProposalsApiPublishDraftProposal
+   */
+  readonly authorization: string;
 }
 
 /**
@@ -7865,6 +8236,13 @@ export interface DraftProposalsApiUpdateDraftProposalRequest {
   readonly id: number;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof DraftProposalsApiUpdateDraftProposal
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {UpdateDraftProposalPayload}
    * @memberof DraftProposalsApiUpdateDraftProposal
@@ -7873,17 +8251,24 @@ export interface DraftProposalsApiUpdateDraftProposalRequest {
 }
 
 /**
- * Request parameters for withdrawnDraftProposal operation in DraftProposalsApi.
+ * Request parameters for withdrawDraftProposal operation in DraftProposalsApi.
  * @export
- * @interface DraftProposalsApiWithdrawnDraftProposalRequest
+ * @interface DraftProposalsApiWithdrawDraftProposalRequest
  */
-export interface DraftProposalsApiWithdrawnDraftProposalRequest {
+export interface DraftProposalsApiWithdrawDraftProposalRequest {
   /**
    *
    * @type {number}
-   * @memberof DraftProposalsApiWithdrawnDraftProposal
+   * @memberof DraftProposalsApiWithdrawDraftProposal
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof DraftProposalsApiWithdrawDraftProposal
+   */
+  readonly authorization: string;
 }
 
 /**
@@ -7907,6 +8292,7 @@ export class DraftProposalsApi extends BaseAPI {
   ) {
     return DraftProposalsApiFp(this.configuration)
       .createDraftProposal(
+        requestParameters.authorization,
         requestParameters.createDraftProposalPayload,
         options,
       )
@@ -7926,7 +8312,11 @@ export class DraftProposalsApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return DraftProposalsApiFp(this.configuration)
-      .draftProposal(requestParameters.id, options)
+      .draftProposal(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -7943,7 +8333,11 @@ export class DraftProposalsApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return DraftProposalsApiFp(this.configuration)
-      .publishDraftProposal(requestParameters.id, options)
+      .publishDraftProposal(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -7962,6 +8356,7 @@ export class DraftProposalsApi extends BaseAPI {
     return DraftProposalsApiFp(this.configuration)
       .updateDraftProposal(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.updateDraftProposalPayload,
         options,
       )
@@ -7969,151 +8364,23 @@ export class DraftProposalsApi extends BaseAPI {
   }
 
   /**
-   * Withdrawn a draft proposal. This action cannot be undone.
-   * @summary Withdrawn a draft proposal
-   * @param {DraftProposalsApiWithdrawnDraftProposalRequest} requestParameters Request parameters.
+   * Withdraw (delete) a draft proposal. This action cannot be undone.
+   * @summary Withdraw a draft proposal
+   * @param {DraftProposalsApiWithdrawDraftProposalRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof DraftProposalsApi
    */
-  public withdrawnDraftProposal(
-    requestParameters: DraftProposalsApiWithdrawnDraftProposalRequest,
+  public withdrawDraftProposal(
+    requestParameters: DraftProposalsApiWithdrawDraftProposalRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return DraftProposalsApiFp(this.configuration)
-      .withdrawnDraftProposal(requestParameters.id, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * MetricsApi - axios parameter creator
- * @export
- */
-export const MetricsApiAxiosParamCreator = function (
-  configuration?: Configuration,
-) {
-  return {
-    /**
-     * Health metrics
-     * @summary Health
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    healthMetrics: async (
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/metrics/health`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * MetricsApi - functional programming interface
- * @export
- */
-export const MetricsApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = MetricsApiAxiosParamCreator(configuration);
-  return {
-    /**
-     * Health metrics
-     * @summary Health
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async healthMetrics(
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Health>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.healthMetrics(options);
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["MetricsApi.healthMetrics"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-  };
-};
-
-/**
- * MetricsApi - factory interface
- * @export
- */
-export const MetricsApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = MetricsApiFp(configuration);
-  return {
-    /**
-     * Health metrics
-     * @summary Health
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    healthMetrics(options?: RawAxiosRequestConfig): AxiosPromise<Health> {
-      return localVarFp
-        .healthMetrics(options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * MetricsApi - object-oriented interface
- * @export
- * @class MetricsApi
- * @extends {BaseAPI}
- */
-export class MetricsApi extends BaseAPI {
-  /**
-   * Health metrics
-   * @summary Health
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof MetricsApi
-   */
-  public healthMetrics(options?: RawAxiosRequestConfig) {
-    return MetricsApiFp(this.configuration)
-      .healthMetrics(options)
+      .withdrawDraftProposal(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 }
@@ -8127,8 +8394,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8177,8 +8444,8 @@ export const OAuthApiAxiosParamCreator = function (
       };
     },
     /**
-     * Get given oauth token details
-     * @summary Introspect a OAuth token
+     * Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization.
+     * @summary Introspect an OAuth token
      * @param {IntrospectToken} introspectToken
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8245,8 +8512,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8275,8 +8542,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     * Get given oauth token details
-     * @summary Introspect a OAuth token
+     * Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization.
+     * @summary Introspect an OAuth token
      * @param {IntrospectToken} introspectToken
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8319,8 +8586,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8334,8 +8601,8 @@ export const OAuthApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * Get given oauth token details
-     * @summary Introspect a OAuth token
+     * Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization.
+     * @summary Introspect an OAuth token
      * @param {OAuthApiIntrospectTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8387,8 +8654,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create a oauth token for the given scopes
-   * @summary Request a OAuth token through Client Credentials
+   * Create an OAuth token for the given scopes (password or client_credentials grant).
+   * @summary Request an OAuth token (ROPC)
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -8404,8 +8671,8 @@ export class OAuthApi extends BaseAPI {
   }
 
   /**
-   * Get given oauth token details
-   * @summary Introspect a OAuth token
+   * Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization.
+   * @summary Introspect an OAuth token
    * @param {OAuthApiIntrospectTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -8433,17 +8700,21 @@ export const OrganizationsApiAxiosParamCreator = function (
      * Show organization
      * @summary Organization
      * @param {string} id The ID of the organization
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     organization: async (
       id: string,
+      authorization: string,
       locales?: Array<Locale>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("organization", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("organization", "authorization", authorization);
       const localVarPath = `/organizations/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -8471,6 +8742,10 @@ export const OrganizationsApiAxiosParamCreator = function (
         localVarQueryParameter["locales[]"] = locales;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8488,6 +8763,7 @@ export const OrganizationsApiAxiosParamCreator = function (
     /**
      * List available organizations
      * @summary Organizations
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -8495,11 +8771,14 @@ export const OrganizationsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     organizations: async (
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("organizations", "authorization", authorization);
       const localVarPath = `/organizations`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8516,10 +8795,6 @@ export const OrganizationsApiAxiosParamCreator = function (
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
       }
@@ -8530,6 +8805,10 @@ export const OrganizationsApiAxiosParamCreator = function (
 
       if (perPage !== undefined) {
         localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -8550,17 +8829,21 @@ export const OrganizationsApiAxiosParamCreator = function (
      * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
      * @summary Update organization
      * @param {string} id The ID of the organization
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UpdateOrganizationPayload} updateOrganizationPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     updateOrganization: async (
       id: string,
+      authorization: string,
       updateOrganizationPayload: UpdateOrganizationPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("updateOrganization", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("updateOrganization", "authorization", authorization);
       // verify required parameter 'updateOrganizationPayload' is not null or undefined
       assertParamExists(
         "updateOrganization",
@@ -8589,6 +8872,10 @@ export const OrganizationsApiAxiosParamCreator = function (
       // authentication credentialFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
 
       localVarHeaderParameter["Content-Type"] = "application/json";
 
@@ -8626,12 +8913,14 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
      * Show organization
      * @summary Organization
      * @param {string} id The ID of the organization
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async organization(
       id: string,
+      authorization: string,
       locales?: Array<Locale>,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -8642,6 +8931,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.organization(
         id,
+        authorization,
         locales,
         options,
       );
@@ -8661,6 +8951,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
     /**
      * List available organizations
      * @summary Organizations
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -8668,6 +8959,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async organizations(
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -8679,6 +8971,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<OrganizationIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.organizations(
+        authorization,
         locales,
         page,
         perPage,
@@ -8701,12 +8994,14 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
      * This endpoint allows you to update an organization.  ### Update host To update the host, send in your payload the `host` attribute. It will be saved as an `unconfirmed_host` extended data attribute.  Once saved, a job will be enqueued to reverse DNS the unconfirmed host before actually updating the host. The `host` attribute must be unique across all organizations. More information on this update process is documented in the [Safe host update](https://octree-gva.github.io/decidim-rest-full/dev/update-hosts) page.  ### Update name To update the name, send in your payload the `name` attribute. The `name` attribute must be unique across all organizations.
      * @summary Update organization
      * @param {string} id The ID of the organization
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UpdateOrganizationPayload} updateOrganizationPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async updateOrganization(
       id: string,
+      authorization: string,
       updateOrganizationPayload: UpdateOrganizationPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -8718,6 +9013,7 @@ export const OrganizationsApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.updateOrganization(
           id,
+          authorization,
           updateOrganizationPayload,
           options,
         );
@@ -8760,7 +9056,12 @@ export const OrganizationsApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<OrganizationItemResponse> {
       return localVarFp
-        .organization(requestParameters.id, requestParameters.locales, options)
+        .organization(
+          requestParameters.id,
+          requestParameters.authorization,
+          requestParameters.locales,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -8771,11 +9072,12 @@ export const OrganizationsApiFactory = function (
      * @throws {RequiredError}
      */
     organizations(
-      requestParameters: OrganizationsApiOrganizationsRequest = {},
+      requestParameters: OrganizationsApiOrganizationsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<OrganizationIndexResponse> {
       return localVarFp
         .organizations(
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -8797,6 +9099,7 @@ export const OrganizationsApiFactory = function (
       return localVarFp
         .updateOrganization(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.updateOrganizationPayload,
           options,
         )
@@ -8819,6 +9122,13 @@ export interface OrganizationsApiOrganizationRequest {
   readonly id: string;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof OrganizationsApiOrganization
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof OrganizationsApiOrganization
@@ -8832,6 +9142,13 @@ export interface OrganizationsApiOrganizationRequest {
  * @interface OrganizationsApiOrganizationsRequest
  */
 export interface OrganizationsApiOrganizationsRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof OrganizationsApiOrganizations
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {Array<Locale>}
@@ -8868,6 +9185,13 @@ export interface OrganizationsApiUpdateOrganizationRequest {
   readonly id: string;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof OrganizationsApiUpdateOrganization
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {UpdateOrganizationPayload}
    * @memberof OrganizationsApiUpdateOrganization
@@ -8895,7 +9219,12 @@ export class OrganizationsApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return OrganizationsApiFp(this.configuration)
-      .organization(requestParameters.id, requestParameters.locales, options)
+      .organization(
+        requestParameters.id,
+        requestParameters.authorization,
+        requestParameters.locales,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -8908,11 +9237,12 @@ export class OrganizationsApi extends BaseAPI {
    * @memberof OrganizationsApi
    */
   public organizations(
-    requestParameters: OrganizationsApiOrganizationsRequest = {},
+    requestParameters: OrganizationsApiOrganizationsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return OrganizationsApiFp(this.configuration)
       .organizations(
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -8936,6 +9266,7 @@ export class OrganizationsApi extends BaseAPI {
     return OrganizationsApiFp(this.configuration)
       .updateOrganization(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.updateOrganizationPayload,
         options,
       )
@@ -8956,18 +9287,22 @@ export const OrganizationsExtendedDataApiAxiosParamCreator = function (
      * @summary Organization extended data
      * @param {string} objectPath
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     organizationData: async (
       objectPath: string,
       id: number,
+      authorization: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'objectPath' is not null or undefined
       assertParamExists("organizationData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("organizationData", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("organizationData", "authorization", authorization);
       const localVarPath = `/organizations/{id}/extended_data`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -8995,6 +9330,10 @@ export const OrganizationsExtendedDataApiAxiosParamCreator = function (
         localVarQueryParameter["object_path"] = objectPath;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -9013,17 +9352,25 @@ export const OrganizationsExtendedDataApiAxiosParamCreator = function (
      * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update organization extended data
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UserExtendedDataPayload} userExtendedDataPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setOrganizationExtendedData: async (
       id: number,
+      authorization: string,
       userExtendedDataPayload: UserExtendedDataPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setOrganizationExtendedData", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists(
+        "setOrganizationExtendedData",
+        "authorization",
+        authorization,
+      );
       // verify required parameter 'userExtendedDataPayload' is not null or undefined
       assertParamExists(
         "setOrganizationExtendedData",
@@ -9052,6 +9399,10 @@ export const OrganizationsExtendedDataApiAxiosParamCreator = function (
       // authentication credentialFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
 
       localVarHeaderParameter["Content-Type"] = "application/json";
 
@@ -9092,12 +9443,14 @@ export const OrganizationsExtendedDataApiFp = function (
      * @summary Organization extended data
      * @param {string} objectPath
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async organizationData(
       objectPath: string,
       id: number,
+      authorization: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -9109,6 +9462,7 @@ export const OrganizationsExtendedDataApiFp = function (
         await localVarAxiosParamCreator.organizationData(
           objectPath,
           id,
+          authorization,
           options,
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -9128,12 +9482,14 @@ export const OrganizationsExtendedDataApiFp = function (
      * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update organization extended data
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UserExtendedDataPayload} userExtendedDataPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async setOrganizationExtendedData(
       id: number,
+      authorization: string,
       userExtendedDataPayload: UserExtendedDataPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -9145,6 +9501,7 @@ export const OrganizationsExtendedDataApiFp = function (
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.setOrganizationExtendedData(
           id,
+          authorization,
           userExtendedDataPayload,
           options,
         );
@@ -9190,6 +9547,7 @@ export const OrganizationsExtendedDataApiFactory = function (
         .organizationData(
           requestParameters.objectPath,
           requestParameters.id,
+          requestParameters.authorization,
           options,
         )
         .then((request) => request(axios, basePath));
@@ -9208,6 +9566,7 @@ export const OrganizationsExtendedDataApiFactory = function (
       return localVarFp
         .setOrganizationExtendedData(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.userExtendedDataPayload,
           options,
         )
@@ -9235,6 +9594,13 @@ export interface OrganizationsExtendedDataApiOrganizationDataRequest {
    * @memberof OrganizationsExtendedDataApiOrganizationData
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof OrganizationsExtendedDataApiOrganizationData
+   */
+  readonly authorization: string;
 }
 
 /**
@@ -9249,6 +9615,13 @@ export interface OrganizationsExtendedDataApiSetOrganizationExtendedDataRequest 
    * @memberof OrganizationsExtendedDataApiSetOrganizationExtendedData
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof OrganizationsExtendedDataApiSetOrganizationExtendedData
+   */
+  readonly authorization: string;
 
   /**
    *
@@ -9281,6 +9654,7 @@ export class OrganizationsExtendedDataApi extends BaseAPI {
       .organizationData(
         requestParameters.objectPath,
         requestParameters.id,
+        requestParameters.authorization,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -9301,6 +9675,7 @@ export class OrganizationsExtendedDataApi extends BaseAPI {
     return OrganizationsExtendedDataApiFp(this.configuration)
       .setOrganizationExtendedData(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.userExtendedDataPayload,
         options,
       )
@@ -9320,6 +9695,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * Proposal detail
      * @summary Proposal Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {ProposalSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
@@ -9345,6 +9721,7 @@ export const ProposalsApiAxiosParamCreator = function (
      */
     proposal: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       spaceManifest?: ProposalSpaceManifestEnum,
       spaceId?: number,
@@ -9369,6 +9746,8 @@ export const ProposalsApiAxiosParamCreator = function (
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("proposal", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("proposal", "authorization", authorization);
       const localVarPath = `/proposals/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -9478,6 +9857,10 @@ export const ProposalsApiAxiosParamCreator = function (
         localVarQueryParameter["order_direction"] = orderDirection;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -9495,6 +9878,7 @@ export const ProposalsApiAxiosParamCreator = function (
     /**
      * Search proposals
      * @summary Proposals
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -9520,6 +9904,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     proposals: async (
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -9543,6 +9928,8 @@ export const ProposalsApiAxiosParamCreator = function (
       filterStateBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("proposals", "authorization", authorization);
       const localVarPath = `/proposals`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9558,10 +9945,6 @@ export const ProposalsApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
@@ -9650,6 +10033,10 @@ export const ProposalsApiAxiosParamCreator = function (
         localVarQueryParameter["filter[state_blank]"] = filterStateBlank;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -9658,6 +10045,72 @@ export const ProposalsApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Cast or update a vote on a proposal. Requires proposals scope and proposals.vote permission. Body: proposal_id and data.weight.
+     * @summary Vote on a proposal
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {VoteAProposalPayload} voteAProposalPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    voteProposal: async (
+      authorization: string,
+      voteAProposalPayload: VoteAProposalPayload,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("voteProposal", "authorization", authorization);
+      // verify required parameter 'voteAProposalPayload' is not null or undefined
+      assertParamExists(
+        "voteProposal",
+        "voteAProposalPayload",
+        voteAProposalPayload,
+      );
+      const localVarPath = `/proposal_votes`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        voteAProposalPayload,
+        localVarRequestOptions,
+        configuration,
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -9679,6 +10132,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * Proposal detail
      * @summary Proposal Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {ProposalSpaceManifestEnum} [spaceManifest]
      * @param {number} [spaceId]
@@ -9704,6 +10158,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      */
     async proposal(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       spaceManifest?: ProposalSpaceManifestEnum,
       spaceId?: number,
@@ -9733,6 +10188,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.proposal(
         id,
+        authorization,
         locales,
         spaceManifest,
         spaceId,
@@ -9771,6 +10227,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
     /**
      * Search proposals
      * @summary Proposals
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -9796,6 +10253,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async proposals(
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -9825,6 +10283,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<ProposalIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.proposals(
+        authorization,
         locales,
         page,
         perPage,
@@ -9851,6 +10310,42 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["ProposalsApi.proposals"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Cast or update a vote on a proposal. Requires proposals scope and proposals.vote permission. Body: proposal_id and data.weight.
+     * @summary Vote on a proposal
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {VoteAProposalPayload} voteAProposalPayload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async voteProposal(
+      authorization: string,
+      voteAProposalPayload: VoteAProposalPayload,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ProposalItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.voteProposal(
+        authorization,
+        voteAProposalPayload,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["ProposalsApi.voteProposal"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -9889,6 +10384,7 @@ export const ProposalsApiFactory = function (
       return localVarFp
         .proposal(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.spaceManifest,
           requestParameters.spaceId,
@@ -9921,11 +10417,12 @@ export const ProposalsApiFactory = function (
      * @throws {RequiredError}
      */
     proposals(
-      requestParameters: ProposalsApiProposalsRequest = {},
+      requestParameters: ProposalsApiProposalsRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<ProposalIndexResponse> {
       return localVarFp
         .proposals(
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -9951,6 +10448,25 @@ export const ProposalsApiFactory = function (
         )
         .then((request) => request(axios, basePath));
     },
+    /**
+     * Cast or update a vote on a proposal. Requires proposals scope and proposals.vote permission. Body: proposal_id and data.weight.
+     * @summary Vote on a proposal
+     * @param {ProposalsApiVoteProposalRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    voteProposal(
+      requestParameters: ProposalsApiVoteProposalRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<ProposalItemResponse> {
+      return localVarFp
+        .voteProposal(
+          requestParameters.authorization,
+          requestParameters.voteAProposalPayload,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -9966,6 +10482,13 @@ export interface ProposalsApiProposalRequest {
    * @memberof ProposalsApiProposal
    */
   readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ProposalsApiProposal
+   */
+  readonly authorization: string;
 
   /**
    *
@@ -10115,6 +10638,13 @@ export interface ProposalsApiProposalRequest {
  */
 export interface ProposalsApiProposalsRequest {
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ProposalsApiProposals
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof ProposalsApiProposals
@@ -10263,6 +10793,27 @@ export interface ProposalsApiProposalsRequest {
 }
 
 /**
+ * Request parameters for voteProposal operation in ProposalsApi.
+ * @export
+ * @interface ProposalsApiVoteProposalRequest
+ */
+export interface ProposalsApiVoteProposalRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {VoteAProposalPayload}
+   * @memberof ProposalsApiVoteProposal
+   */
+  readonly voteAProposalPayload: VoteAProposalPayload;
+}
+
+/**
  * ProposalsApi - object-oriented interface
  * @export
  * @class ProposalsApi
@@ -10284,6 +10835,7 @@ export class ProposalsApi extends BaseAPI {
     return ProposalsApiFp(this.configuration)
       .proposal(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.spaceManifest,
         requestParameters.spaceId,
@@ -10318,11 +10870,12 @@ export class ProposalsApi extends BaseAPI {
    * @memberof ProposalsApi
    */
   public proposals(
-    requestParameters: ProposalsApiProposalsRequest = {},
+    requestParameters: ProposalsApiProposalsRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return ProposalsApiFp(this.configuration)
       .proposals(
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -10344,6 +10897,27 @@ export class ProposalsApi extends BaseAPI {
         requestParameters.filterStateNotEq,
         requestParameters.filterStateMatches,
         requestParameters.filterStateBlank,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Cast or update a vote on a proposal. Requires proposals scope and proposals.vote permission. Body: proposal_id and data.weight.
+   * @summary Vote on a proposal
+   * @param {ProposalsApiVoteProposalRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProposalsApi
+   */
+  public voteProposal(
+    requestParameters: ProposalsApiVoteProposalRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return ProposalsApiFp(this.configuration)
+      .voteProposal(
+        requestParameters.authorization,
+        requestParameters.voteAProposalPayload,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -10397,187 +10971,6 @@ export type ProposalsOrderDirectionEnum =
   (typeof ProposalsOrderDirectionEnum)[keyof typeof ProposalsOrderDirectionEnum];
 
 /**
- * ProposalsVoteApi - axios parameter creator
- * @export
- */
-export const ProposalsVoteApiAxiosParamCreator = function (
-  configuration?: Configuration,
-) {
-  return {
-    /**
-     * Vote on a proposal
-     * @summary Vote
-     * @param {VoteAProposalPayload} voteAProposalPayload
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    voteProposal: async (
-      voteAProposalPayload: VoteAProposalPayload,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'voteAProposalPayload' is not null or undefined
-      assertParamExists(
-        "voteProposal",
-        "voteAProposalPayload",
-        voteAProposalPayload,
-      );
-      const localVarPath = `/proposal_votes`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        voteAProposalPayload,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * ProposalsVoteApi - functional programming interface
- * @export
- */
-export const ProposalsVoteApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator =
-    ProposalsVoteApiAxiosParamCreator(configuration);
-  return {
-    /**
-     * Vote on a proposal
-     * @summary Vote
-     * @param {VoteAProposalPayload} voteAProposalPayload
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async voteProposal(
-      voteAProposalPayload: VoteAProposalPayload,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<ProposalItemResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.voteProposal(
-        voteAProposalPayload,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["ProposalsVoteApi.voteProposal"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-  };
-};
-
-/**
- * ProposalsVoteApi - factory interface
- * @export
- */
-export const ProposalsVoteApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = ProposalsVoteApiFp(configuration);
-  return {
-    /**
-     * Vote on a proposal
-     * @summary Vote
-     * @param {ProposalsVoteApiVoteProposalRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    voteProposal(
-      requestParameters: ProposalsVoteApiVoteProposalRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<ProposalItemResponse> {
-      return localVarFp
-        .voteProposal(requestParameters.voteAProposalPayload, options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * Request parameters for voteProposal operation in ProposalsVoteApi.
- * @export
- * @interface ProposalsVoteApiVoteProposalRequest
- */
-export interface ProposalsVoteApiVoteProposalRequest {
-  /**
-   *
-   * @type {VoteAProposalPayload}
-   * @memberof ProposalsVoteApiVoteProposal
-   */
-  readonly voteAProposalPayload: VoteAProposalPayload;
-}
-
-/**
- * ProposalsVoteApi - object-oriented interface
- * @export
- * @class ProposalsVoteApi
- * @extends {BaseAPI}
- */
-export class ProposalsVoteApi extends BaseAPI {
-  /**
-   * Vote on a proposal
-   * @summary Vote
-   * @param {ProposalsVoteApiVoteProposalRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProposalsVoteApi
-   */
-  public voteProposal(
-    requestParameters: ProposalsVoteApiVoteProposalRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return ProposalsVoteApiFp(this.configuration)
-      .voteProposal(requestParameters.voteAProposalPayload, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-}
-
-/**
  * SpacesApi - axios parameter creator
  * @export
  */
@@ -10589,17 +10982,21 @@ export const SpacesApiAxiosParamCreator = function (
      * Get detail of a Assemblies given its id
      * @summary Assemblies Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     assemblies: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("assemblies", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("assemblies", "authorization", authorization);
       const localVarPath = `/spaces/assemblies/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -10627,6 +11024,10 @@ export const SpacesApiAxiosParamCreator = function (
         localVarQueryParameter["locales[]"] = locales;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10645,17 +11046,25 @@ export const SpacesApiAxiosParamCreator = function (
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     participatoryProcesses: async (
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists("participatoryProcesses", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists(
+        "participatoryProcesses",
+        "authorization",
+        authorization,
+      );
       const localVarPath = `/spaces/participatory_processes/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
@@ -10683,6 +11092,10 @@ export const SpacesApiAxiosParamCreator = function (
         localVarQueryParameter["locales[]"] = locales;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10700,6 +11113,7 @@ export const SpacesApiAxiosParamCreator = function (
     /**
      * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
      * @summary Search Participatory Spaces
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -10716,6 +11130,13 @@ export const SpacesApiAxiosParamCreator = function (
      * @param {number} [filterIdGt]
      * @param {boolean} [filterIdPresent]
      * @param {boolean} [filterIdBlank]
+     * @param {Array<string>} [filterSlugNotIn]
+     * @param {Array<string>} [filterSlugIn]
+     * @param {string} [filterSlugStart]
+     * @param {string} [filterSlugEq]
+     * @param {string} [filterSlugNotEq]
+     * @param {string} [filterSlugMatches]
+     * @param {boolean} [filterSlugBlank]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -10727,6 +11148,7 @@ export const SpacesApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     searchSpaces: async (
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -10743,6 +11165,13 @@ export const SpacesApiAxiosParamCreator = function (
       filterIdGt?: number,
       filterIdPresent?: boolean,
       filterIdBlank?: boolean,
+      filterSlugNotIn?: Array<string>,
+      filterSlugIn?: Array<string>,
+      filterSlugStart?: string,
+      filterSlugEq?: string,
+      filterSlugNotEq?: string,
+      filterSlugMatches?: string,
+      filterSlugBlank?: boolean,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -10752,6 +11181,8 @@ export const SpacesApiAxiosParamCreator = function (
       filterTitleBlank?: boolean,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("searchSpaces", "authorization", authorization);
       const localVarPath = `/spaces/search`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10767,10 +11198,6 @@ export const SpacesApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-
-      // authentication resourceOwnerFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       if (locales) {
         localVarQueryParameter["locales[]"] = locales;
@@ -10843,6 +11270,34 @@ export const SpacesApiAxiosParamCreator = function (
         localVarQueryParameter["filter[id_blank]"] = filterIdBlank;
       }
 
+      if (filterSlugNotIn) {
+        localVarQueryParameter["filter[slug_not_in][]"] = filterSlugNotIn;
+      }
+
+      if (filterSlugIn) {
+        localVarQueryParameter["filter[slug_in][]"] = filterSlugIn;
+      }
+
+      if (filterSlugStart !== undefined) {
+        localVarQueryParameter["filter[slug_start]"] = filterSlugStart;
+      }
+
+      if (filterSlugEq !== undefined) {
+        localVarQueryParameter["filter[slug_eq]"] = filterSlugEq;
+      }
+
+      if (filterSlugNotEq !== undefined) {
+        localVarQueryParameter["filter[slug_not_eq]"] = filterSlugNotEq;
+      }
+
+      if (filterSlugMatches !== undefined) {
+        localVarQueryParameter["filter[slug_matches]"] = filterSlugMatches;
+      }
+
+      if (filterSlugBlank !== undefined) {
+        localVarQueryParameter["filter[slug_blank]"] = filterSlugBlank;
+      }
+
       if (filterTitleNotIn) {
         localVarQueryParameter["filter[title_not_in][]"] = filterTitleNotIn;
       }
@@ -10869,6 +11324,10 @@ export const SpacesApiAxiosParamCreator = function (
 
       if (filterTitleBlank !== undefined) {
         localVarQueryParameter["filter[title_blank]"] = filterTitleBlank;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -10899,12 +11358,14 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * Get detail of a Assemblies given its id
      * @summary Assemblies Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async assemblies(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -10915,6 +11376,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.assemblies(
         id,
+        authorization,
         locales,
         options,
       );
@@ -10935,12 +11397,14 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async participatoryProcesses(
       id: number,
+      authorization: string,
       locales?: Array<Locale>,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -10952,6 +11416,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.participatoryProcesses(
           id,
+          authorization,
           locales,
           options,
         );
@@ -10971,6 +11436,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
     /**
      * List or search spaces of the organization. Can be processes, assemblies, or any other registred participatory space.
      * @summary Search Participatory Spaces
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {Array<Locale>} [locales]
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
@@ -10987,6 +11453,13 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @param {number} [filterIdGt]
      * @param {boolean} [filterIdPresent]
      * @param {boolean} [filterIdBlank]
+     * @param {Array<string>} [filterSlugNotIn]
+     * @param {Array<string>} [filterSlugIn]
+     * @param {string} [filterSlugStart]
+     * @param {string} [filterSlugEq]
+     * @param {string} [filterSlugNotEq]
+     * @param {string} [filterSlugMatches]
+     * @param {boolean} [filterSlugBlank]
      * @param {Array<string>} [filterTitleNotIn]
      * @param {Array<string>} [filterTitleIn]
      * @param {string} [filterTitleStart]
@@ -10998,6 +11471,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async searchSpaces(
+      authorization: string,
       locales?: Array<Locale>,
       page?: number,
       perPage?: number,
@@ -11014,6 +11488,13 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       filterIdGt?: number,
       filterIdPresent?: boolean,
       filterIdBlank?: boolean,
+      filterSlugNotIn?: Array<string>,
+      filterSlugIn?: Array<string>,
+      filterSlugStart?: string,
+      filterSlugEq?: string,
+      filterSlugNotEq?: string,
+      filterSlugMatches?: string,
+      filterSlugBlank?: boolean,
       filterTitleNotIn?: Array<string>,
       filterTitleIn?: Array<string>,
       filterTitleStart?: string,
@@ -11029,6 +11510,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<SpaceIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.searchSpaces(
+        authorization,
         locales,
         page,
         perPage,
@@ -11045,6 +11527,13 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         filterIdGt,
         filterIdPresent,
         filterIdBlank,
+        filterSlugNotIn,
+        filterSlugIn,
+        filterSlugStart,
+        filterSlugEq,
+        filterSlugNotEq,
+        filterSlugMatches,
+        filterSlugBlank,
         filterTitleNotIn,
         filterTitleIn,
         filterTitleStart,
@@ -11093,7 +11582,12 @@ export const SpacesApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<SpaceItemResponse> {
       return localVarFp
-        .assemblies(requestParameters.id, requestParameters.locales, options)
+        .assemblies(
+          requestParameters.id,
+          requestParameters.authorization,
+          requestParameters.locales,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -11110,6 +11604,7 @@ export const SpacesApiFactory = function (
       return localVarFp
         .participatoryProcesses(
           requestParameters.id,
+          requestParameters.authorization,
           requestParameters.locales,
           options,
         )
@@ -11123,11 +11618,12 @@ export const SpacesApiFactory = function (
      * @throws {RequiredError}
      */
     searchSpaces(
-      requestParameters: SpacesApiSearchSpacesRequest = {},
+      requestParameters: SpacesApiSearchSpacesRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<SpaceIndexResponse> {
       return localVarFp
         .searchSpaces(
+          requestParameters.authorization,
           requestParameters.locales,
           requestParameters.page,
           requestParameters.perPage,
@@ -11144,6 +11640,13 @@ export const SpacesApiFactory = function (
           requestParameters.filterIdGt,
           requestParameters.filterIdPresent,
           requestParameters.filterIdBlank,
+          requestParameters.filterSlugNotIn,
+          requestParameters.filterSlugIn,
+          requestParameters.filterSlugStart,
+          requestParameters.filterSlugEq,
+          requestParameters.filterSlugNotEq,
+          requestParameters.filterSlugMatches,
+          requestParameters.filterSlugBlank,
           requestParameters.filterTitleNotIn,
           requestParameters.filterTitleIn,
           requestParameters.filterTitleStart,
@@ -11172,6 +11675,13 @@ export interface SpacesApiAssembliesRequest {
   readonly id: number;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiAssemblies
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof SpacesApiAssemblies
@@ -11193,6 +11703,13 @@ export interface SpacesApiParticipatoryProcessesRequest {
   readonly id: number;
 
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiParticipatoryProcesses
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {Array<Locale>}
    * @memberof SpacesApiParticipatoryProcesses
@@ -11206,6 +11723,13 @@ export interface SpacesApiParticipatoryProcessesRequest {
  * @interface SpacesApiSearchSpacesRequest
  */
 export interface SpacesApiSearchSpacesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {Array<Locale>}
@@ -11323,6 +11847,55 @@ export interface SpacesApiSearchSpacesRequest {
    * @type {Array<string>}
    * @memberof SpacesApiSearchSpaces
    */
+  readonly filterSlugNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugMatches?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof SpacesApiSearchSpaces
+   */
+  readonly filterSlugBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof SpacesApiSearchSpaces
+   */
   readonly filterTitleNotIn?: Array<string>;
 
   /**
@@ -11388,7 +11961,12 @@ export class SpacesApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return SpacesApiFp(this.configuration)
-      .assemblies(requestParameters.id, requestParameters.locales, options)
+      .assemblies(
+        requestParameters.id,
+        requestParameters.authorization,
+        requestParameters.locales,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -11407,6 +11985,7 @@ export class SpacesApi extends BaseAPI {
     return SpacesApiFp(this.configuration)
       .participatoryProcesses(
         requestParameters.id,
+        requestParameters.authorization,
         requestParameters.locales,
         options,
       )
@@ -11422,11 +12001,12 @@ export class SpacesApi extends BaseAPI {
    * @memberof SpacesApi
    */
   public searchSpaces(
-    requestParameters: SpacesApiSearchSpacesRequest = {},
+    requestParameters: SpacesApiSearchSpacesRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return SpacesApiFp(this.configuration)
       .searchSpaces(
+        requestParameters.authorization,
         requestParameters.locales,
         requestParameters.page,
         requestParameters.perPage,
@@ -11443,6 +12023,13 @@ export class SpacesApi extends BaseAPI {
         requestParameters.filterIdGt,
         requestParameters.filterIdPresent,
         requestParameters.filterIdBlank,
+        requestParameters.filterSlugNotIn,
+        requestParameters.filterSlugIn,
+        requestParameters.filterSlugStart,
+        requestParameters.filterSlugEq,
+        requestParameters.filterSlugNotEq,
+        requestParameters.filterSlugMatches,
+        requestParameters.filterSlugBlank,
         requestParameters.filterTitleNotIn,
         requestParameters.filterTitleIn,
         requestParameters.filterTitleStart,
@@ -11503,15 +12090,19 @@ export const UsersApiAxiosParamCreator = function (
   return {
     /**
      * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
-     * @summary Create a magic-lick
+     * @summary Create a magic link
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {GenerateMagicLinkPayload} [generateMagicLinkPayload]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     generateMagicLink: async (
+      authorization: string,
       generateMagicLinkPayload?: GenerateMagicLinkPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("generateMagicLink", "authorization", authorization);
       const localVarPath = `/me/magic_links`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11531,6 +12122,10 @@ export const UsersApiAxiosParamCreator = function (
       // authentication resourceOwnerFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
 
       localVarHeaderParameter["Content-Type"] = "application/json";
 
@@ -11555,13 +12150,15 @@ export const UsersApiAxiosParamCreator = function (
     },
     /**
      * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
-     * @summary Use a magic-lick
+     * @summary Use a magic link
      * @param {string} magicToken
+     * @param {string} [authorization] Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     magicLinkSignin: async (
       magicToken: string,
+      authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'magicToken' is not null or undefined
@@ -11585,6 +12182,10 @@ export const UsersApiAxiosParamCreator = function (
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11602,14 +12203,18 @@ export const UsersApiAxiosParamCreator = function (
     /**
      * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update user extended data
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UserExtendedDataPayload} userExtendedDataPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setUserData: async (
+      authorization: string,
       userExtendedDataPayload: UserExtendedDataPayload,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("setUserData", "authorization", authorization);
       // verify required parameter 'userExtendedDataPayload' is not null or undefined
       assertParamExists(
         "setUserData",
@@ -11636,6 +12241,10 @@ export const UsersApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       localVarHeaderParameter["Content-Type"] = "application/json";
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -11661,15 +12270,19 @@ export const UsersApiAxiosParamCreator = function (
      * Fetch user extended data
      * @summary Get user extended data
      * @param {string} objectPath
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     userData: async (
       objectPath: string,
+      authorization: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'objectPath' is not null or undefined
       assertParamExists("userData", "objectPath", objectPath);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("userData", "authorization", authorization);
       const localVarPath = `/me/extended_data`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11694,6 +12307,10 @@ export const UsersApiAxiosParamCreator = function (
         localVarQueryParameter["object_path"] = objectPath;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11711,6 +12328,7 @@ export const UsersApiAxiosParamCreator = function (
     /**
      * List or search users of the organization
      * @summary List available Users
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<string>} [filterNicknameNotIn]
@@ -11731,6 +12349,7 @@ export const UsersApiAxiosParamCreator = function (
      * @throws {RequiredError}
      */
     users: async (
+      authorization: string,
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -11749,6 +12368,8 @@ export const UsersApiAxiosParamCreator = function (
       filterExtendedDataCont?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("users", "authorization", authorization);
       const localVarPath = `/users`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11764,10 +12385,6 @@ export const UsersApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       if (page !== undefined) {
         localVarQueryParameter["page"] = page;
@@ -11836,6 +12453,10 @@ export const UsersApiAxiosParamCreator = function (
           filterExtendedDataCont;
       }
 
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11862,12 +12483,14 @@ export const UsersApiFp = function (configuration?: Configuration) {
   return {
     /**
      * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
-     * @summary Create a magic-lick
+     * @summary Create a magic link
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {GenerateMagicLinkPayload} [generateMagicLinkPayload]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async generateMagicLink(
+      authorization: string,
       generateMagicLinkPayload?: GenerateMagicLinkPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -11878,6 +12501,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.generateMagicLink(
+          authorization,
           generateMagicLinkPayload,
           options,
         );
@@ -11896,19 +12520,22 @@ export const UsersApiFp = function (configuration?: Configuration) {
     },
     /**
      * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
-     * @summary Use a magic-lick
+     * @summary Use a magic link
      * @param {string} magicToken
+     * @param {string} [authorization] Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async magicLinkSignin(
       magicToken: string,
+      authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.magicLinkSignin(
         magicToken,
+        authorization,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -11927,11 +12554,13 @@ export const UsersApiFp = function (configuration?: Configuration) {
     /**
      * The extended_data feature allows you to update a hash with recursive merging. Use the body payload with these keys:  1. `data`: The value or hash you want to update. 2. `object_path`: The dot-style path to the key (e.g., access.this.key).  **Root path**<br /> To update data from root of the hash, use `object_path=\".\"`.  Example: ```   body={\"data\": {\"name\": \"Jane\"}, \"object_path\": \"personnal\"} ``` This recursively merges data into the hash without removing existing keys.  **Merge some data**<br /> Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"}   } ``` Patch payload: ```json   {     \"data\": {       \"name\": \"Jane\"     },     \"object_path\": \"personnal\"   } ``` Result: ```   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ```  **Create new Paths**<br /> Paths are created as needed. Exemple: ```json   body = {\"data\": {\"external_user_id\": 12}, \"object_path\": \"data-store.my-app.foo\"} ``` Result: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\"},     \"data-store\": {\"my-app\": {\"foo\": {\"external_user_id\": 12}}}   } ``` Alternatively: ```   body = {\"data\": 12, \"object_path\": \"data-store.my-app.foo.external_user_id\"} ```  **Remove a key**<br /> Set a key to null or an empty value to remove it.  Example: Initial hash: ```json   {     \"personnal\": {\"birthday\": \"1989-05-18\", \"name\": \"Jane\"}   } ``` Patch: ```json   body = {\"data\": {\"birthday\": \"\"}, \"object_path\": \"personnal\"} ```  Result: ``` {   \"personnal\": {\"name\": \"Jane\"} } ```  **Return Value**<br /> The update request returns the updated value at the specified path.
      * @summary Update user extended data
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {UserExtendedDataPayload} userExtendedDataPayload
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async setUserData(
+      authorization: string,
       userExtendedDataPayload: UserExtendedDataPayload,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -11941,6 +12570,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<{ [key: string]: any }>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.setUserData(
+        authorization,
         userExtendedDataPayload,
         options,
       );
@@ -11961,11 +12591,13 @@ export const UsersApiFp = function (configuration?: Configuration) {
      * Fetch user extended data
      * @summary Get user extended data
      * @param {string} objectPath
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async userData(
       objectPath: string,
+      authorization: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -11975,6 +12607,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.userData(
         objectPath,
+        authorization,
         options,
       );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -11992,6 +12625,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
     /**
      * List or search users of the organization
      * @summary List available Users
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
      * @param {number} [page] Page number for pagination
      * @param {number} [perPage] Number of items per page
      * @param {Array<string>} [filterNicknameNotIn]
@@ -12012,6 +12646,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
      * @throws {RequiredError}
      */
     async users(
+      authorization: string,
       page?: number,
       perPage?: number,
       filterNicknameNotIn?: Array<string>,
@@ -12036,6 +12671,7 @@ export const UsersApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<UserIndexResponse>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.users(
+        authorization,
         page,
         perPage,
         filterNicknameNotIn,
@@ -12082,22 +12718,26 @@ export const UsersApiFactory = function (
   return {
     /**
      * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
-     * @summary Create a magic-lick
+     * @summary Create a magic link
      * @param {UsersApiGenerateMagicLinkRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     generateMagicLink(
-      requestParameters: UsersApiGenerateMagicLinkRequest = {},
+      requestParameters: UsersApiGenerateMagicLinkRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<MagicLinkItemResponse> {
       return localVarFp
-        .generateMagicLink(requestParameters.generateMagicLinkPayload, options)
+        .generateMagicLink(
+          requestParameters.authorization,
+          requestParameters.generateMagicLinkPayload,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
      * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
-     * @summary Use a magic-lick
+     * @summary Use a magic link
      * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -12107,7 +12747,11 @@ export const UsersApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<void> {
       return localVarFp
-        .magicLinkSignin(requestParameters.magicToken, options)
+        .magicLinkSignin(
+          requestParameters.magicToken,
+          requestParameters.authorization,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -12122,7 +12766,11 @@ export const UsersApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
-        .setUserData(requestParameters.userExtendedDataPayload, options)
+        .setUserData(
+          requestParameters.authorization,
+          requestParameters.userExtendedDataPayload,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -12137,7 +12785,11 @@ export const UsersApiFactory = function (
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<{ [key: string]: any }> {
       return localVarFp
-        .userData(requestParameters.objectPath, options)
+        .userData(
+          requestParameters.objectPath,
+          requestParameters.authorization,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
     /**
@@ -12148,11 +12800,12 @@ export const UsersApiFactory = function (
      * @throws {RequiredError}
      */
     users(
-      requestParameters: UsersApiUsersRequest = {},
+      requestParameters: UsersApiUsersRequest,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<UserIndexResponse> {
       return localVarFp
         .users(
+          requestParameters.authorization,
           requestParameters.page,
           requestParameters.perPage,
           requestParameters.filterNicknameNotIn,
@@ -12183,6 +12836,13 @@ export const UsersApiFactory = function (
  */
 export interface UsersApiGenerateMagicLinkRequest {
   /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof UsersApiGenerateMagicLink
+   */
+  readonly authorization: string;
+
+  /**
    *
    * @type {GenerateMagicLinkPayload}
    * @memberof UsersApiGenerateMagicLink
@@ -12202,6 +12862,13 @@ export interface UsersApiMagicLinkSigninRequest {
    * @memberof UsersApiMagicLinkSignin
    */
   readonly magicToken: string;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof UsersApiMagicLinkSignin
+   */
+  readonly authorization?: string;
 }
 
 /**
@@ -12210,6 +12877,13 @@ export interface UsersApiMagicLinkSigninRequest {
  * @interface UsersApiSetUserDataRequest
  */
 export interface UsersApiSetUserDataRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof UsersApiSetUserData
+   */
+  readonly authorization: string;
+
   /**
    *
    * @type {UserExtendedDataPayload}
@@ -12230,6 +12904,13 @@ export interface UsersApiUserDataRequest {
    * @memberof UsersApiUserData
    */
   readonly objectPath: string;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof UsersApiUserData
+   */
+  readonly authorization: string;
 }
 
 /**
@@ -12238,6 +12919,13 @@ export interface UsersApiUserDataRequest {
  * @interface UsersApiUsersRequest
  */
 export interface UsersApiUsersRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof UsersApiUsers
+   */
+  readonly authorization: string;
+
   /**
    * Page number for pagination
    * @type {number}
@@ -12360,24 +13048,28 @@ export interface UsersApiUsersRequest {
 export class UsersApi extends BaseAPI {
   /**
    * Generates a uniq magic link, valid for 5minutes. If the user follow this link, it will be signed in automatically
-   * @summary Create a magic-lick
+   * @summary Create a magic link
    * @param {UsersApiGenerateMagicLinkRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApi
    */
   public generateMagicLink(
-    requestParameters: UsersApiGenerateMagicLinkRequest = {},
+    requestParameters: UsersApiGenerateMagicLinkRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
-      .generateMagicLink(requestParameters.generateMagicLinkPayload, options)
+      .generateMagicLink(
+        requestParameters.authorization,
+        requestParameters.generateMagicLinkPayload,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    * Challenge given token, open and a session and redirect. Publically accessible by HTTP.
-   * @summary Use a magic-lick
+   * @summary Use a magic link
    * @param {UsersApiMagicLinkSigninRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -12388,7 +13080,11 @@ export class UsersApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
-      .magicLinkSignin(requestParameters.magicToken, options)
+      .magicLinkSignin(
+        requestParameters.magicToken,
+        requestParameters.authorization,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -12405,7 +13101,11 @@ export class UsersApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
-      .setUserData(requestParameters.userExtendedDataPayload, options)
+      .setUserData(
+        requestParameters.authorization,
+        requestParameters.userExtendedDataPayload,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -12422,7 +13122,11 @@ export class UsersApi extends BaseAPI {
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
-      .userData(requestParameters.objectPath, options)
+      .userData(
+        requestParameters.objectPath,
+        requestParameters.authorization,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -12435,11 +13139,12 @@ export class UsersApi extends BaseAPI {
    * @memberof UsersApi
    */
   public users(
-    requestParameters: UsersApiUsersRequest = {},
+    requestParameters: UsersApiUsersRequest,
     options?: RawAxiosRequestConfig,
   ) {
     return UsersApiFp(this.configuration)
       .users(
+        requestParameters.authorization,
         requestParameters.page,
         requestParameters.perPage,
         requestParameters.filterNicknameNotIn,

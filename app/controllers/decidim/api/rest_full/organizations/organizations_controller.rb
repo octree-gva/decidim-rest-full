@@ -5,14 +5,14 @@ module Decidim
   module Api
     module RestFull
       module Organizations
+        # System-scope CRUD surface for organizations, delegating to Decidim
+        # system/admin commands while returning JSON API responses.
         class OrganizationsController < ApplicationController
           before_action do
             doorkeeper_authorize! :system
           end
           before_action :authorize_read!, only: [:index, :show]
           before_action :authorize_update!, only: [:update]
-          # before_action :authorize_destroy!, only: [:destroy]
-          # before_action :authorize_create!, only: [:create]
           include Decidim::FormFactory
 
           # List all organizations
@@ -32,30 +32,50 @@ module Decidim
           end
 
           def update
-            raise Decidim::RestFull::ApiException::NotFound, "Organization Not Found" unless organization
-
-            # Prepare forms
-            system_form = Decidim::System::UpdateOrganizationForm.from_params(organization_payload)
-            system_form.with_unconfirmed_host(organization)
-            validate_form(system_form)
-            admin_form = form(Decidim::Admin::OrganizationForm).from_params(organization_payload).with_context(
-              current_organization: organization
-            )
-            validate_form(admin_form)
-            appearance_form = Decidim::Admin::OrganizationAppearanceForm.from_params(organization_payload)
-            validate_form(appearance_form)
-
-            # Update the organization
-            system_updates = Decidim::System::UpdateOrganization.call(organization.id, system_form)
-            admin_updates = Decidim::Admin::UpdateOrganization.call(admin_form, organization)
-            appearance_updates = Decidim::Admin::UpdateOrganizationAppearance.call(appearance_form, organization)
-
-            raise Decidim::RestFull::ApiException::BadRequest, "Failed to update organization" unless system_updates[:ok] && admin_updates[:ok] && appearance_updates[:ok]
-
+            ensure_organization!
+            forms = build_update_forms
+            apply_updates(forms)
             render json: serializable_hash(organization.reload)
           end
 
           private
+
+          def ensure_organization!
+            raise Decidim::RestFull::ApiException::NotFound, "Organization Not Found" unless organization
+          end
+
+          def build_update_forms
+            system_form = system_update_form
+            admin_form = admin_update_form
+            appearance_form = appearance_update_form
+            [system_form, admin_form, appearance_form]
+          end
+
+          def system_update_form
+            form = Decidim::System::UpdateOrganizationForm.from_params(organization_payload)
+            form.with_unconfirmed_host(organization)
+            validate_form(form)
+            form
+          end
+
+          def admin_update_form
+            form(Decidim::Admin::OrganizationForm)
+              .from_params(organization_payload)
+              .with_context(current_organization: organization).tap { |f| validate_form(f) }
+          end
+
+          def appearance_update_form
+            Decidim::Admin::OrganizationAppearanceForm
+              .from_params(organization_payload).tap { |f| validate_form(f) }
+          end
+
+          def apply_updates(forms)
+            system_form, admin_form, appearance_form = forms
+            system_ok = Decidim::System::UpdateOrganization.call(organization.id, system_form)[:ok]
+            admin_ok = Decidim::Admin::UpdateOrganization.call(admin_form, organization)[:ok]
+            appearance_ok = Decidim::Admin::UpdateOrganizationAppearance.call(appearance_form, organization)[:ok]
+            raise Decidim::RestFull::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok && appearance_ok
+          end
 
           def validate_form(form)
             return if form.valid?
