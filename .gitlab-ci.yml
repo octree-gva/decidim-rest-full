@@ -115,10 +115,11 @@ crowdin::merge_request:
 ##
 # Execute rspec and expose a spec report
 ruby::rspec:
-  image: ruby:3.2.7
+  image: ruby:3.2.2
   stage: test
   extends: .development_rules
   variables:
+    POSTGRES_DB: "decidim"
     DATABASE_HOST: "postgres"
     # trunk-ignore(gitleaks/generic-api-key)
     DATABASE_PASSWORD: "TEST-insecure_password"

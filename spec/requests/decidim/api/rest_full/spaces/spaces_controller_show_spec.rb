@@ -21,9 +21,27 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
           scopes: ["public"],
           permissions: ["public.space.read"]
         ) do
-          let!(:participatory_process) { create(:participatory_process, id: 6, organization:, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
-          let!(:assembly) { create(:assembly, id: 6, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
-          let(:id) { assembly.id }
+          before do
+            skip "Initiative factory not available" if space_manifest == :initiatives && !FactoryBot.factories.registered?(:initiative)
+            skip "Conference factory not available" if space_manifest == :conferences && !FactoryBot.factories.registered?(:conference)
+            Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
+              create(:component, participatory_space: assembly, manifest_name:, published_at: Time.zone.now)
+            end
+          end
+
+          let!(:participatory_process) { create(:participatory_process, organization:, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
+          let!(:assembly) { create(:assembly, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+          let!(:initiative) { space_manifest == :initiatives ? create(:initiative, organization:, title: { en: "My initiative for testing" }) : nil }
+          let!(:conference) { space_manifest == :conferences ? create(:conference, organization:, title: { en: "My conference for testing" }) : nil }
+
+          let(:id) do
+            case space_manifest.to_s
+            when "participatory_processes" then participatory_process.id
+            when "initiatives" then initiative.id
+            when "conferences" then conference.id
+            else assembly.id
+            end
+          end
 
           let!(:space_list) do
             3.times do
@@ -46,12 +64,6 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             end.flatten
           end
 
-          before do
-            Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
-              create(:component, participatory_space: assembly, manifest_name:, published_at: Time.zone.now)
-            end
-          end
-
           response "200", "#{space_manifest_title} Details" do
             produces "application/json"
             schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_item_response)
@@ -60,7 +72,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
               run_test!(example_name: :ok) do |example|
                 json_response = JSON.parse(example.body)
-                expect(json_response["data"]["id"]).to eq(assembly.id.to_s)
+                expect(json_response["data"]["id"]).to eq(id.to_s)
               end
             end
 

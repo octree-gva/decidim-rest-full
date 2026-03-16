@@ -41,7 +41,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             create(:participatory_process, organization:)
           end.flatten
         end
-        let!(:assembly) { create(:assembly, id: 6, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+        let!(:assembly) { create(:assembly, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
         let!(:participatory_process) { create(:participatory_process, organization:) }
         let(:Authorization) { "Bearer #{bearer_token.token}" }
         let!(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
@@ -73,7 +73,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
             run_test!(example_name: :ok) do |example|
               data = JSON.parse(example.body)["data"]
-              assembly = Decidim::Assembly.find(6)
+              assembly = Decidim::Assembly.first
               assembly_data = data.find { |result| result["id"] == assembly.id.to_s && result["attributes"]["manifest_name"] == "assemblies" }
               expect(assembly_data).to be_truthy
               relationships = assembly_data["relationships"]

@@ -17,6 +17,8 @@ module Decidim
       private
 
       def ensure_organization_extended_data
+        return unless ActiveRecord::Base.connection.table_exists?(:organization_extended_data)
+
         create_extended_data
       end
     end

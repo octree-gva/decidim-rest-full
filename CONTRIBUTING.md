@@ -1,10 +1,10 @@
 # Contributing to decidim-rest_full
 
-This guide helps a new maintainer (about 1–2 years of Rails experience) understand the module with minimal surprises.
+This guide helps a new maintainer understand the module with minimal surprises.
 
 ## Vocabulary (aligned with Decidim core)
 
-We follow the same terms as [Decidim core](https://github.com/decidim/decidim). When in doubt, check `tmp/decidim-core` or decidim-core docs.
+We follow the same terms as [Decidim core](https://github.com/decidim/decidim).
 
 | Term | Meaning in this module |
 |------|------------------------|
@@ -28,7 +28,7 @@ We follow the same terms as [Decidim core](https://github.com/decidim/decidim). 
 3. **`config/routes.rb`**  
    Calls `Decidim::RestFull::RouteRegistry.apply!(Decidim::Core::Engine.routes) { ... }`. The block is the core API routes; any engine that called `RouteRegistry.draw_api_routes { ... }` earlier gets its block run in the same `api/rest_full/vX` scope.
 
-## Where the “magic” is (so you’re not surprised)
+## Where the “magic” is
 
 | Place | What happens | Where to look |
 |-------|----------------|---------------|
@@ -53,7 +53,7 @@ We follow the same terms as [Decidim core](https://github.com/decidim/decidim). 
 
 ```bash
 # Full setup + run (Docker, with DB)
-docker compose -f docker-compose.test.yml run --rm rest_full bash -c 'bin/setup-tests && bundle exec rspec spec/requests/ spec/lib/ spec/commands/ spec/models/ spec/jobs/ --format progress'
+docker compose run --rm rest_full bash -c 'bin/setup-tests && bundle exec rspec spec/requests/ spec/lib/ spec/commands/ spec/models/ spec/jobs/ --format progress'
 ```
 
 Request specs use RSwag: they both hit the API and generate OpenAPI snippets. See `spec/swagger_helper.rb` and `docs/API_TESTS_AND_OPENAPI.md`.
@@ -79,4 +79,4 @@ Request specs use RSwag: they both hit the API and generate OpenAPI snippets. Se
 
 - **Class-level docs**: Key classes have a short comment at the top (Engine, RouteRegistry, ApiException, DefinitionRegistry, ApplicationController, DoorkeeperConfig, etc.).
 - **Tests**: Prefer clear, linear specs over deep nesting. Use `let` for data and one expectation per example when it helps readability. Naming: use the same vocabulary as Decidim (e.g. "organization", "component", "proposal", "form", "command").
-- **OpenAPI**: Request specs drive the generated spec. Keep tags, operationId, and descriptions in sync with the docs site.
+- **OpenAPI**: Request specs drive the generated spec. Keep tags, operationId, and descriptions in sync with the docs site. (run bin/swaggerize in a docker container to update)

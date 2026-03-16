@@ -115,7 +115,7 @@ module Decidim
 
         def rest_full_handle_forbidden_scopes(security_type, options)
           scopes = options[:scopes].map(&:to_s)
-          available_scopes = %w(public oauth blogs proposals users)
+          available_scopes = %w(public oauth blogs proposals users roles)
           response "403", "Forbidden" do
             produces "application/json"
             schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)

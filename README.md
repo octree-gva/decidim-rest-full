@@ -9,21 +9,30 @@ The documentation and the API specification are in the [documentation website](h
 
 ### Resources supported
 
-- [ ] Organizations
+- [x] API entry point and metadata
+- [x] OAuth (token, introspect; client credentials + resource owner flows)
+- [x] Organizations (CRUD, extended data)
+- [x] Spaces (search, participatory processes, assemblies)
+- [x] Components (search, proposal components, blog components)
+- [x] Users
+- [x] Current user (`/me`: extended data, magic links)
+- [x] Proposals (list, get, draft CRUD, publish)
+- [x] Vote on proposals
+- [x] Blogs (articles)
 - [ ] Taxonomies
-- [ ] User authentification
-- [ ] User Impersonation
-- [ ] User Groups
-- [ ] Proposals
-- [ ] Vote on proposals
 - [ ] Meetings
 - [ ] Newsletters
-- [ ] Articles
 - [ ] Official Meetings
 - [ ] Menu and navigation
 - [ ] Term Customizers
 
+### Webhooks supported
 
+API clients can register webhook URLs in the System Admin (per client); subscriptions are scoped by permissions. Payloads are sent as POST with `X-Webhook-SignatureX-Webhook-Signature` (HMAC-SHA256 of `timestamp.body`) and `X-Webhook-Timestamp`.
+
+- [x] **Proposals**: `draft_proposal_creation.succeeded`, `draft_proposal_update.succeeded`, `proposal_creation.succeeded`, `proposal_update.succeeded` (triggered by Decidim proposal create/update/publish)
+- [ ] User lifecycle (`user.created`, `user.updated`) 
+- [ ] System organizations (`system.organizations.created|updated|deleted`)
 
 ### Scripts
 
@@ -43,7 +52,7 @@ API routes are drawn via `Decidim::RestFull::RouteRegistry`. Domain engines (e.g
 ## Run tests
 You can run tests on the same image used by the pipeline, to be confident to push: 
 ```
-docker compose  -f docker-compose.yml -f docker-compose.test.yml up
+docker compose  -f docker-compose.yml bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
 ```
 
 ## Update Versions

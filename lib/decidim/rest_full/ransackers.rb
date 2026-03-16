@@ -30,6 +30,8 @@ module Decidim
             Arel.sql("CAST(\"#{model.table_name}\".\"id\" AS VARCHAR)")
           end
         end
+      rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
+        # Skip when DB is not available (e.g. OpenAPI doc generation, CI without DB).
       end
 
       def self.register_component_id_ransacker!

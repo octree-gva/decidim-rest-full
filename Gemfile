@@ -15,22 +15,27 @@ gem "decidim-rest_full", path: base_path
 
 gem "bootsnap", "~> 1.4"
 gem "concurrent-ruby", "1.3.4"
-gem "decidim-decidim_awesome", git: "https://github.com/decidim-ice/decidim-module-decidim_awesome", tag: "v0.12.0"
+gem "decidim-conferences", Decidim::RestFull.decidim_version
+gem "decidim-decidim_awesome", "~> 0.12.6"
+gem "decidim-initiatives", Decidim::RestFull.decidim_version
+gem "decidim-meetings", Decidim::RestFull.decidim_version
+
 gem "deface", ">= 1.9.0"
 gem "pg"
 gem "puma", ">= 5.5.1"
 gem "uglifier", "~> 4.1"
+gem "uri", ">= 1.1.1"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version
-  gem "decidim-meetings", Decidim::RestFull.decidim_version
   gem "rswag-specs"
   gem "rubocop-rspec"
 end
 
 group :test do
   gem "capybara", "~> 3.40"
+  gem "rexml", "3.4.1" # simplecov-cobertura breaks with 3.4.2+ (Malformed XML)
   gem "rspec_junit_formatter", require: false
   gem "rspec-rails", "~> 6.0"
   gem "rubocop-faker"
@@ -43,3 +48,5 @@ group :development do
   gem "letter_opener_web", "~> 1.3"
   gem "listen", "~> 3.1"
 end
+
+gem "rswag-api", "~> 2.17"

@@ -27,6 +27,11 @@ require "decidim/rest_full/openapi/export"
 require "decidim/rest_full/cli"
 require "decidim/rest_full/ransackers"
 
+# Roles (read/write helpers for /roles endpoints)
+require "decidim/rest_full/roles/role_id_codec"
+require "decidim/rest_full/roles/roles_aggregator"
+require "decidim/rest_full/roles/roles_writer"
+
 # Overrides
 require "decidim/rest_full/overrides/organization_client_ids_override"
 require "decidim/rest_full/overrides/organization_extended_data_override"
@@ -54,3 +59,9 @@ module Decidim
     end
   end
 end
+
+Decidim.register_global_engine(
+  :decidim_rest_full,
+  Decidim::RestFull::Engine,
+  at: "/"
+)

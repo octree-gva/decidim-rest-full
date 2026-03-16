@@ -10,6 +10,7 @@ require_relative "definitions/edition_date"
 require_relative "definitions/publication_date"
 require_relative "definitions/tags"
 require_relative "definitions/manifests"
+require_relative "definitions/role"
 require_relative "definitions/space"
 require_relative "definitions/grant_param"
 

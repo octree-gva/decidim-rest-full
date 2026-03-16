@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Disable SimpleCov when generating the OpenAPI spec so that
+# coverage formatters (e.g. Cobertura) cannot break the task.
+unset SIMPLECOV
+
 # Default values for options
 QUIET=0
 OUTPUT_FILE="./openapi.json"
@@ -53,6 +57,11 @@ log "~~~~~~~~~~~~~~~~~~~~~~~"
 log "quiet: $QUIET"
 log "output: $OUTPUT_FILE"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
+
+# Ensure dummy app test DB is migrated (e.g. when run in a fresh container after setup-tests)
+if [[ -d spec/decidim_dummy_app ]] && [[ -n "${DATABASE_URL:-}" ]]; then
+  (cd spec/decidim_dummy_app && RAILS_ENV=test bundle exec rake db:create db:migrate)
+fi
 
 if [[ $QUIET -eq 1 ]]; then
   SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \

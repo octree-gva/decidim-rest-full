@@ -10,17 +10,9 @@ module Decidim
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::RestFull
 
-      # Engine file lives in lib/ but app/, config/, db/ live at gem root. Use gem path so it
-      # works for path gems, published gems, and any bundle location.
-      gem_root = Pathname.new(Gem.loaded_specs["decidim-rest_full"].full_gem_path)
-      # Only append to path keys that exist on Engine (app/jobs, app/commands, etc. are not default)
-      %w(app/controllers app/models app/views db/migrate config).each do |key|
-        config.paths[key] << gem_root.join(key)
-      end
-      config.autoload_paths << gem_root.join("app/jobs")
-      config.autoload_paths << gem_root.join("app/commands")
-      config.autoload_paths << gem_root.join("app/forms")
-      config.autoload_paths << gem_root.join("app/serializers")
+      # Engine root must be the gem root so db/migrate, app/, and rake tasks resolve.
+      # Without this, find_root stops at lib/decidim/rest_full when lib/decidim/rest_full/lib exists.
+      config.root = Pathname.new(File.expand_path("../../..", __dir__))
 
       config.to_prepare do
         # Organization: has_many :api_clients for OAuth client registration per org.
@@ -62,7 +54,7 @@ module Decidim
         Doorkeeper.configure do
           handle_auth_errors :raise
           default_scopes :public
-          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth
+          optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth, :roles
           grant_flows %w(password client_credentials)
 
           custom_introspection_response do |token, _context|
@@ -110,6 +102,9 @@ module Decidim
 
         registry.register(:system, "system.server.restart", group: :rails)
         registry.register(:system, "system.server.exec", group: :rails)
+
+        registry.register(:roles, "roles.read", group: :roles)
+        registry.register(:roles, "roles.write", group: :roles)
       end
     end
   end

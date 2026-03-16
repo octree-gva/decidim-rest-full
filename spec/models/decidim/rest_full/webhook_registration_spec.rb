@@ -137,7 +137,7 @@ module Decidim
 
           it "does not raise an error when the response is 200" do
             allow(mock_response).to receive_messages(code: "200")
-            expect { webhook_registration.send_webhook(event, timestamp) }.not_to raise_error(WebhookFailedError)
+            expect { webhook_registration.send_webhook(event, timestamp) }.not_to raise_error
           end
         end
       end

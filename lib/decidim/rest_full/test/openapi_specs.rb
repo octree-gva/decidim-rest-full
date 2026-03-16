@@ -54,7 +54,8 @@ module Decidim
               Definitions::Tags::COMPONENT,
               Definitions::Tags::USER,
               Definitions::Tags::BLOG,
-              Definitions::Tags::PROPOSAL
+              Definitions::Tags::PROPOSAL,
+              Definitions::Tags::ROLES
             ],
             components: {
               securitySchemes: {

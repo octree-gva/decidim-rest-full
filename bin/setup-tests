@@ -1,6 +1,14 @@
 #! /bin/bash
 # This scripts aims to run in a docker ruby: container.
 set -euxo pipefail
+
+# Ensure git works inside Docker when running as root on mounted volumes
+git config --global --add safe.directory /home/module || true
+git config --global --add safe.directory /home/module/tmp || true
+
+# Default Node major version if not provided by the environment
+: "${NODE_MAJOR:=18}"
+
 export CI=1
 export NODE_ENV=development
 export RAILS_ENV=test
@@ -21,30 +29,19 @@ if ! command -v node &> /dev/null; then
 fi
 
 echo "Installing Decidim"
-gem install bundler
+gem install bundler -v 2.4.6
 bundle config set path 'vendor'
 bundle install -j $(nproc)
 
 rm -rf spec/decidim_dummy_app
-# Ensure test DB exists before rake test_app (generator loads Rails env)
-if [ -n "${DATABASE_HOST:-}" ]; then
-  echo "Waiting for postgres at $DATABASE_HOST..."
-  until ruby -r pg -e "PG.connect(host: ENV['DATABASE_HOST'], port: ENV.fetch('DATABASE_PORT','5432'), user: ENV['DATABASE_USERNAME'], password: ENV['DATABASE_PASSWORD'], dbname: 'postgres', connect_timeout: 2).close" 2>/dev/null; do sleep 2; done
-  echo "Creating test database if missing..."
-  ruby -r pg -e "
-    c = PG.connect(host: ENV['DATABASE_HOST'], port: ENV.fetch('DATABASE_PORT','5432'), user: ENV['DATABASE_USERNAME'], password: ENV['DATABASE_PASSWORD'], dbname: 'postgres')
-    begin
-      c.exec('CREATE DATABASE decidim_module_rest_full_test_app_test')
-    rescue PG::DuplicateDatabase
-      nil
-    ensure
-      c.close
-    end
-  "
-fi
 echo "Generating Decidim dummy app"
 bundle exec rake test_app
-cd spec/decidim_dummy_app && bundle install
+cd spec/decidim_dummy_app
+bundle install -j $(nproc)
+# Drop and recreate so repeated runs don't hit DuplicateTable (drop no-op if DB missing)
+RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
+
+RAILS_ENV=test bundle exec rake db:create db:migrate
 cd ../..
 
 echo "Test app is ready"

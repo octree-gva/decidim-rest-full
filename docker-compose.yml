@@ -1,6 +1,6 @@
 services:
   rest_full:
-    command: bash -c "sleep infinity"
+    command: bash -c "bundle install; sleep infinity"
     image: octree/decidim-dev:0.29
     entrypoint: ""
     volumes:
@@ -12,7 +12,7 @@ services:
       - DATABASE_HOST=rest-full-pg
       - DATABASE_USERNAME=decidim
       - DATABASE_PASSWORD=pleaseChangeMe
-      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim
+      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test
       - DEV_MODULE=decidim-rest_full
       - RAILS_ENV=development
     ports:
@@ -25,9 +25,15 @@ services:
     volumes:
       - rest_full-pg-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=decidim
+      - POSTGRES_DB=decidim_module_rest_full_test_app_test
       - POSTGRES_USER=decidim
       - POSTGRES_PASSWORD=pleaseChangeMe
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decidim"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
 volumes:
   node_modules: {}

@@ -5,7 +5,7 @@
 # in the same api/rest_full/vX scope. Require domain engines before the core
 # engine in lib/decidim/rest_full.rb so their blocks run when apply! is called.
 
-CRUD_ACTIONS = [:index, :show, :update, :create, :destroy].freeze
+CRUD_ACTIONS = [:index, :show, :update, :create, :destroy].freeze unless defined?(CRUD_ACTIONS)
 
 Decidim::RestFull::RouteRegistry.apply!(Decidim::Core::Engine.routes) do
   get "/", to: "/decidim/rest_full/pages#show"
@@ -61,6 +61,10 @@ Decidim::RestFull::RouteRegistry.apply!(Decidim::Core::Engine.routes) do
   resources :blogs,
             only: [:index, :show],
             controller: "/decidim/api/rest_full/blogs/blogs"
+
+  resources :roles,
+            only: [:index, :show, :create, :destroy],
+            controller: "/decidim/api/rest_full/roles/roles"
 
   resources :proposal_votes,
             only: [:create],

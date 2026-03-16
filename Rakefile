@@ -6,14 +6,16 @@ require "rspec/core/rake_task"
 def install_module(path)
   Dir.chdir(path) do
     system("bundle check || bundle install")
-    system("bundle exec rake decidim_rest_full:install:migrations")
-    system("bundle exec rake db:create db:migrate")
+    system("bundle exec rails decidim_rest_full:install:migrations")
+    system("bundle exec rails decidim_decidim_awesome:install:migrations")
+    system("bundle exec rails decidim:update")
+    system("bundle exec rails db:create db:migrate")
   end
 end
 
 def seed_db(path)
   Dir.chdir(path) do
-    system("bundle exec rake db:seed")
+    system("bundle exec rails db:seed")
   end
 end
 
@@ -38,16 +40,11 @@ task :prepare_tests do
   File.open(config_file, "w") { |f| YAML.dump({ "test" => database_yml, "development" => database_yml }, f) }
   dummy_root = File.expand_path("spec/decidim_dummy_app", __dir__)
   Dir.chdir(dummy_root) do
+    system("bundle add rswag-api") unless File.read("Gemfile").include?("rswag-api")
+    system("bundle add decidim-meetings") unless File.read("Gemfile").include?("decidim-meetings")
+    system("bundle add decidim-conferences") unless File.read("Gemfile").include?("decidim-conferences")
+    system("bundle add decidim-initiatives") unless File.read("Gemfile").include?("decidim-initiatives")
     system("sed -i 's/config.cache_classes = true/config.cache_classes = false/' ./config/environments/test.rb")
-  end
-  # Mount RestFull engine before Core so its config/routes.rb runs first and registers API routes on Core.
-  routes_file = File.join(dummy_root, "config/routes.rb")
-  routes_content = File.read(routes_file)
-  rest_full_line = "  mount Decidim::RestFull::Engine => '/'\n"
-  routes_content.gsub!(/^\s*mount Decidim::RestFull::Engine.*\n/, "")
-  unless routes_content.include?("mount Decidim::RestFull::Engine")
-    routes_content.sub!(%r{^(\s*mount Decidim::Core::Engine => '/'.*\n)}, "#{rest_full_line}\\1")
-    File.write(routes_file, routes_content)
   end
 end
 

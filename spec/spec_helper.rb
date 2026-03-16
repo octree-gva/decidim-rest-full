@@ -21,9 +21,14 @@ require "decidim/core/test/factories"
 gem_config = File.expand_path("../config/routes.rb", __dir__)
 load gem_config if File.file?(gem_config)
 
-# Keep Decidim.available_locales in sync with I18n for tests so translated
-# attributes and generated *_<locale> helpers line up.
-Decidim.available_locales = I18n.available_locales
+# Force a known set of locales so factories and I18n stay valid (dummy app may use different defaults).
+test_locales = %w(en fr es)
+I18n.available_locales = test_locales.map(&:to_sym)
+I18n.enforce_available_locales = false
+Rails.application.config.i18n.available_locales = test_locales
+Rails.application.config.i18n.default_locale = :en
+Decidim.available_locales = test_locales
+Decidim.default_locale = :en
 
 # Ensure engine constants (controllers, models, jobs, commands) are loaded before spec files run
 Rails.application.eager_load!
