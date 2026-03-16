@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.summary = "Rest Full API for Decidim"
   s.description = "Rest Full API for Decidim"
 
-  s.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE*", "Rakefile", "README*", "CHANGELOG*"].reject do |f|
+    f.match(%r{^(test|spec|features|website)/})
   end
 
   s.bindir = "exe"
@@ -29,10 +29,11 @@ Gem::Specification.new do |s|
   s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-comments", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-decidim_awesome", Decidim::RestFull.decidim_awesome_version
   s.add_dependency "deface", "~> 1.9"
   s.add_dependency "doorkeeper"
   s.add_dependency "jsonapi-serializer"
-  s.add_dependency "rswag-api"
+  s.add_dependency "rswag-api", "~> 2.17"
 
   s.metadata["rubygems_mfa_required"] = "true"
 end

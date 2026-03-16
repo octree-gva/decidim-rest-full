@@ -50,7 +50,7 @@ module Decidim
           end
 
           def model_query(model, columns)
-            model.where(organization: current_organization).visible_for(act_as).select(*columns)
+            visible_scope_for(model, act_as).select(*columns)
           end
 
           def space_select_columns(model, manifest, class_name)
@@ -59,15 +59,23 @@ module Decidim
               "#{model.table_name}.updated_at",
               "#{model.table_name}.id",
               "#{model.table_name}.title",
-              "#{model.table_name}.subtitle",
+              space_optional_column(model, "subtitle"),
               "#{model.table_name}.description",
-              "#{model.table_name}.short_description",
-              "#{model.table_name}.private_space",
+              space_optional_column(model, "short_description"),
+              space_optional_column(model, "private_space"),
               "#{model.table_name}.decidim_organization_id",
               space_transparent_column(model),
               "'#{manifest.name}' AS manifest_name",
               "'#{class_name}' AS class_name"
             ]
+          end
+
+          def space_optional_column(model, name)
+            if model.column_names.include?(name)
+              "#{model.table_name}.#{name}"
+            else
+              "NULL AS #{name}"
+            end
           end
 
           def space_transparent_column(model)
@@ -87,14 +95,11 @@ module Decidim
           end
 
           def required_space_model_name
-            manifest_data(required_manifest_name)[:model]
+            space_model_class_name(required_manifest_name)
           end
 
           def required_space_model
-            name = required_space_model_name
-            raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{required_manifest_name}" unless Object.const_defined?(name)
-
-            name.constantize
+            space_model_from(required_manifest_name)
           end
 
           def required_space_id
@@ -103,10 +108,9 @@ module Decidim
 
           def space_show_query
             model = required_space_model
-            model.where(organization: current_organization)
-                 .visible_for(act_as)
-                 .select(*space_show_columns(model))
-                 .find(required_space_id)
+            visible_scope_for(model, act_as)
+              .select(*space_show_columns(model))
+              .find(required_space_id)
           end
 
           def space_show_columns(model)
@@ -115,11 +119,11 @@ module Decidim
               "#{model.table_name}.updated_at",
               "#{model.table_name}.id",
               "#{model.table_name}.title",
-              "#{model.table_name}.subtitle",
+              space_optional_column(model, "subtitle"),
               "#{model.table_name}.description",
-              "#{model.table_name}.short_description",
+              space_optional_column(model, "short_description"),
               "#{model.table_name}.decidim_organization_id",
-              "#{model.table_name}.private_space",
+              space_optional_column(model, "private_space"),
               space_transparent_column(model),
               "'#{required_manifest_name}' AS manifest_name",
               "'#{required_space_model_name}' AS class_name"
@@ -131,22 +135,8 @@ module Decidim
           end
 
           def spaces_resources
-            @spaces_resources ||= begin
-              manifest_info = space_manifest_names.map do |manifest|
-                manifest_data(manifest)
-              end
-              manifest_info.select { |data| data[:model] && Object.const_defined?(data[:model]) }
-            end
-          end
-
-          def manifest_data(manifest)
-            case manifest
-            when :participatory_processes
-              { model: "Decidim::ParticipatoryProcess", manifest: }
-            when :assemblies
-              { model: "Decidim::Assembly", manifest: }
-            else
-              raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{manifest}"
+            @spaces_resources ||= available_space_manifest_names.map do |manifest|
+              { model: space_model_class_name(manifest), manifest: }
             end
           end
         end

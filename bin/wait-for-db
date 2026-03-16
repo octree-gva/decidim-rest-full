@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Wait for rest-full-pg to be ready (used before postcommit:setup-tests).
+set -e
+until docker compose exec rest-full-pg pg_isready -U decidim 2>/dev/null; do
+  echo "Waiting for postgres..."
+  sleep 2
+done

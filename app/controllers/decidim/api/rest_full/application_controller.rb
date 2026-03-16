@@ -10,7 +10,35 @@ module Decidim
         include Decidim::RestFull::ApiException::Handler
         delegate :can?, :cannot?, :authorize!, to: :ability
 
+        # Supported participatory space manifests and their model class names.
+        # A space is only used when its constant is defined (gem loaded).
+        SPACE_MANIFEST_MODELS = {
+          participatory_processes: "Decidim::ParticipatoryProcess",
+          assemblies: "Decidim::Assembly",
+          conferences: "Decidim::Conference",
+          initiatives: "Decidim::Initiative"
+        }.freeze
+
         protected
+
+        def available_space?(manifest)
+          name = space_model_class_name(manifest)
+          name.present? && Object.const_defined?(name)
+        end
+
+        def space_model_class_name(manifest)
+          SPACE_MANIFEST_MODELS[manifest.to_sym]
+        end
+
+        def space_model_from(manifest)
+          raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{manifest}" unless available_space?(manifest)
+
+          space_model_class_name(manifest).constantize
+        end
+
+        def available_space_manifest_names
+          SPACE_MANIFEST_MODELS.keys.select { |m| available_space?(m) }
+        end
 
         def space_class_from_name(manifest_name)
           Decidim.participatory_space_registry.manifests.find do |manifest|
@@ -37,20 +65,37 @@ module Decidim
         end
 
         ##
-        # All the spaces (assembly, participatory process) visible
+        # Scope for spaces visible to the given user. Uses visible_for when the
+        # model supports it (e.g. Assembly, ParticipatoryProcess), else .published.
+        def visible_scope_for(klass, user)
+          base = klass.where(organization: current_organization)
+          if base.respond_to?(:visible_for)
+            base.visible_for(user)
+          elsif base.respond_to?(:published)
+            base.published
+          else
+            base
+          end
+        end
+
+        ##
+        # All the spaces (assembly, participatory process, conference, initiative) visible
         # for the current actor.
         # @returns participatory_space_type, participatory_space_id values
         def visible_spaces
           @visible_spaces ||= begin
             spaces = Decidim.participatory_space_registry.manifests.map do |space|
               model = space.model_class_name
-              query = model.constantize.visible_for(act_as).where(organization: current_organization)
+              next unless Object.const_defined?(model)
+
+              klass = model.constantize
+              query = visible_scope_for(klass, act_as)
               {
                 participatory_space_type: model,
                 participatory_space_id: query.ids
               }
             end
-            spaces.reject do |space_params|
+            spaces.compact.reject do |space_params|
               space_params[:participatory_space_id].empty?
             end
           end

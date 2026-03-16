@@ -26,6 +26,7 @@ module Decidim
         perms_for_public if scopes.include? "public"
         perms_for_system if scopes.include? "system"
         perms_for_proposals if scopes.include? "proposals"
+        perms_for_roles if scopes.include? "roles"
         perms_for_blogs if scopes.include? "blogs"
       end
 
@@ -69,6 +70,14 @@ module Decidim
 
       def perms_for_blogs
         can :read, ::Decidim::Blogs::Post if permissions.include? "blogs.read"
+      end
+
+      def perms_for_roles
+        can :read, :role if permissions.include? "roles.read"
+        if permissions.include? "roles.write"
+          can :create, :role
+          can :destroy, :role
+        end
       end
 
       def perms_for_proposals

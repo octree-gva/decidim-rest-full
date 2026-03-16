@@ -1,5 +1,8 @@
-require: 
+require:
   - rubocop-rspec
+Naming/FileName:
+  Exclude:
+    - lib/decidim-rest_full.rb  # Gem entry point; name must match gem (hyphen).
 inherit_gem:
   rswag-specs: .rubocop_rspec_alias_config.yml
   decidim-dev: rubocop-decidim.yml

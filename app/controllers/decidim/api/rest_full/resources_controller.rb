@@ -83,7 +83,7 @@ module Decidim
 
         def space
           @space ||= begin
-            raise Decidim::RestFull::ApiException::BadRequest, "Unkown space type #{space_manifest}" unless space_manifest_names.include?(space_manifest)
+            raise Decidim::RestFull::ApiException::BadRequest, "Unkown space type #{space_manifest}" unless available_space_manifest_names.include?(space_manifest.to_sym)
 
             match = space_model_from(space_manifest).find_by(id: space_id, organization: current_organization)
             raise Decidim::RestFull::ApiException::NotFound, "Space not found" unless match
@@ -106,19 +106,8 @@ module Decidim
           end
         end
 
-        def space_model_from(manifest)
-          case manifest
-          when :participatory_processes
-            Decidim::ParticipatoryProcess
-          when :assemblies
-            Decidim::Assembly
-          else
-            raise Decidim::RestFull::ApiException::BadRequest, "manifest not supported: #{manifest}"
-          end
-        end
-
         def space_manifest_names
-          @space_manifest_names ||= Decidim.participatory_space_registry.manifests.map(&:name)
+          @space_manifest_names ||= available_space_manifest_names
         end
 
         def component_id
