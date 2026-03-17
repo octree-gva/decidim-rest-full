@@ -24,6 +24,6 @@
     "format:erb": "docker compose run -u root -w /home/module --rm rest_full bash -lc 'bundle config set path vendor && bundle install -j $(nproc) && bundle exec erblint --lint-all --enable-all-linters --autocorrect'",
     "format": "yarn format:ruby && yarn format:erb",
     "postcommit": "yarn postcommit:setup-tests && yarn format && yarn gen:openapi-spec && yarn gen:node-client && yarn docs:compile_re_doc",
-    "postversion": "bin/postversion && yarn postcommit"
+    "postversion": "bin/postversion && yarn postcommit && bin/postversion"
   }
 }
