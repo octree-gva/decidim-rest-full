@@ -502,6 +502,7 @@ export const ClientCredentialScopeEnum = {
   Pages: "pages",
   Blogs: "blogs",
   Oauth: "oauth",
+  Roles: "roles",
 } as const;
 
 export type ClientCredentialScopeEnum =
@@ -726,6 +727,85 @@ export interface CreateDraftProposalPayload {
    */
   data: DraftProposalData;
 }
+/**
+ *
+ * @export
+ * @interface CreateRoleRequest
+ */
+export interface CreateRoleRequest {
+  /**
+   *
+   * @type {CreateRoleRequestData}
+   * @memberof CreateRoleRequest
+   */
+  data: CreateRoleRequestData;
+}
+/**
+ *
+ * @export
+ * @interface CreateRoleRequestData
+ */
+export interface CreateRoleRequestData {
+  /**
+   *
+   * @type {CreateRoleRequestDataAttributes}
+   * @memberof CreateRoleRequestData
+   */
+  attributes: CreateRoleRequestDataAttributes;
+}
+/**
+ *
+ * @export
+ * @interface CreateRoleRequestDataAttributes
+ */
+export interface CreateRoleRequestDataAttributes {
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRoleRequestDataAttributes
+   */
+  resource_type: CreateRoleRequestDataAttributesResourceTypeEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof CreateRoleRequestDataAttributes
+   */
+  resource_id: number;
+  /**
+   *
+   * @type {number}
+   * @memberof CreateRoleRequestDataAttributes
+   */
+  user_id: number;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRoleRequestDataAttributes
+   */
+  type: CreateRoleRequestDataAttributesTypeEnum;
+}
+
+export const CreateRoleRequestDataAttributesResourceTypeEnum = {
+  ParticipatoryProcess: "Decidim::ParticipatoryProcess",
+  Assembly: "Decidim::Assembly",
+  Conference: "Decidim::Conference",
+  Initiative: "Decidim::Initiative",
+  Organization: "Decidim::Organization",
+} as const;
+
+export type CreateRoleRequestDataAttributesResourceTypeEnum =
+  (typeof CreateRoleRequestDataAttributesResourceTypeEnum)[keyof typeof CreateRoleRequestDataAttributesResourceTypeEnum];
+export const CreateRoleRequestDataAttributesTypeEnum = {
+  GeneralAdmin: "general_admin",
+  SpacePrivateMember: "space_private_member",
+  SpaceAdministrator: "space_administrator",
+  SpaceModerator: "space_moderator",
+  SpaceValuator: "space_valuator",
+} as const;
+
+export type CreateRoleRequestDataAttributesTypeEnum =
+  (typeof CreateRoleRequestDataAttributesTypeEnum)[keyof typeof CreateRoleRequestDataAttributesTypeEnum];
+
 /**
  *
  * @export
@@ -1602,6 +1682,8 @@ export interface LinkedSpaceData {
 export const LinkedSpaceDataTypeEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 
 export type LinkedSpaceDataTypeEnum =
@@ -2335,6 +2417,7 @@ export const PasswordGrantImpersonateScopeEnum = {
   Pages: "pages",
   Blogs: "blogs",
   Oauth: "oauth",
+  Roles: "roles",
 } as const;
 
 export type PasswordGrantImpersonateScopeEnum =
@@ -2411,6 +2494,7 @@ export const PasswordGrantLoginScopeEnum = {
   Pages: "pages",
   Blogs: "blogs",
   Oauth: "oauth",
+  Roles: "roles",
 } as const;
 
 export type PasswordGrantLoginScopeEnum =
@@ -3432,6 +3516,131 @@ export interface ResourceURLMetadata {
 /**
  *
  * @export
+ * @interface Role
+ */
+export interface Role {
+  /**
+   *
+   * @type {string}
+   * @memberof Role
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Role
+   */
+  type: RoleTypeEnum;
+  /**
+   *
+   * @type {RoleAttributes}
+   * @memberof Role
+   */
+  attributes: RoleAttributes;
+}
+
+export const RoleTypeEnum = {
+  Role: "role",
+} as const;
+
+export type RoleTypeEnum = (typeof RoleTypeEnum)[keyof typeof RoleTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface RoleAttributes
+ */
+export interface RoleAttributes {
+  /**
+   * ID of the user associated to the role (nullable for pending invitations)
+   * @type {number}
+   * @memberof RoleAttributes
+   */
+  user_id?: number;
+  /**
+   * ID of the resource (organization or participatory space) the role is attached to
+   * @type {number}
+   * @memberof RoleAttributes
+   */
+  resource_id: number;
+  /**
+   * Type of the resource (e.g. Organization, Decidim::ParticipatoryProcess)
+   * @type {string}
+   * @memberof RoleAttributes
+   */
+  resource_type: string;
+  /**
+   * Kind of role
+   * @type {string}
+   * @memberof RoleAttributes
+   */
+  type: RoleAttributesTypeEnum;
+  /**
+   * Invitation timestamp if the role was created via invitation
+   * @type {string}
+   * @memberof RoleAttributes
+   */
+  invited_at?: string | null;
+  /**
+   * Whether the invitation has been accepted
+   * @type {boolean}
+   * @memberof RoleAttributes
+   */
+  accepted_invite?: boolean;
+  /**
+   * Creation date, in ISO8601 format.
+   * @type {string}
+   * @memberof RoleAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date, in ISO8601 format.
+   * @type {string}
+   * @memberof RoleAttributes
+   */
+  updated_at?: string;
+}
+
+export const RoleAttributesTypeEnum = {
+  GeneralAdmin: "general_admin",
+  SpacePrivateMember: "space_private_member",
+  SpaceAdministrator: "space_administrator",
+  SpaceModerator: "space_moderator",
+  SpaceValuator: "space_valuator",
+} as const;
+
+export type RoleAttributesTypeEnum =
+  (typeof RoleAttributesTypeEnum)[keyof typeof RoleAttributesTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface RoleIndexResponse
+ */
+export interface RoleIndexResponse {
+  /**
+   *
+   * @type {Array<Role>}
+   * @memberof RoleIndexResponse
+   */
+  data: Array<Role>;
+}
+/**
+ *
+ * @export
+ * @interface RoleItemResponse
+ */
+export interface RoleItemResponse {
+  /**
+   *
+   * @type {Role}
+   * @memberof RoleItemResponse
+   */
+  data: Role;
+}
+/**
+ *
+ * @export
  * @interface Space
  */
 export interface Space {
@@ -3553,6 +3762,8 @@ export type SpaceAttributesVisibilityEnum =
 export const SpaceClasses = {
   ParticipatoryProcess: "Decidim::ParticipatoryProcess",
   Assembly: "Decidim::Assembly",
+  Conference: "Decidim::Conference",
+  Initiative: "Decidim::Initiative",
 } as const;
 
 export type SpaceClasses = (typeof SpaceClasses)[keyof typeof SpaceClasses];
@@ -3668,6 +3879,8 @@ export interface SpaceLinks {
 export const SpaceManifest = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 
 export type SpaceManifest = (typeof SpaceManifest)[keyof typeof SpaceManifest];
@@ -3694,6 +3907,8 @@ export interface SpaceRelationships {
 export const SpaceType = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 
 export type SpaceType = (typeof SpaceType)[keyof typeof SpaceType];
@@ -4788,7 +5003,7 @@ export interface BlogsApiBlogRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof BlogsApiBlog
    */
   readonly spaceManifest?: BlogSpaceManifestEnum;
@@ -4858,7 +5073,7 @@ export interface BlogsApiBlogsRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof BlogsApiBlogs
    */
   readonly spaceManifest?: BlogsSpaceManifestEnum;
@@ -4961,6 +5176,8 @@ export class BlogsApi extends BaseAPI {
 export const BlogSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type BlogSpaceManifestEnum =
   (typeof BlogSpaceManifestEnum)[keyof typeof BlogSpaceManifestEnum];
@@ -4979,6 +5196,8 @@ export type BlogOrderDirectionEnum =
 export const BlogsSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type BlogsSpaceManifestEnum =
   (typeof BlogsSpaceManifestEnum)[keyof typeof BlogsSpaceManifestEnum];
@@ -6595,7 +6814,7 @@ export interface ComponentsApiBlogComponentRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof ComponentsApiBlogComponent
    */
   readonly spaceManifest?: BlogComponentSpaceManifestEnum;
@@ -7519,6 +7738,8 @@ export class ComponentsApi extends BaseAPI {
 export const BlogComponentSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type BlogComponentSpaceManifestEnum =
   (typeof BlogComponentSpaceManifestEnum)[keyof typeof BlogComponentSpaceManifestEnum];
@@ -8394,8 +8615,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8512,8 +8733,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8586,8 +8807,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8654,8 +8875,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create an OAuth token for the given scopes (password or client_credentials grant).
-   * @summary Request an OAuth token (ROPC)
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -10499,7 +10720,7 @@ export interface ProposalsApiProposalRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof ProposalsApiProposal
    */
   readonly spaceManifest?: ProposalSpaceManifestEnum;
@@ -10667,7 +10888,7 @@ export interface ProposalsApiProposalsRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof ProposalsApiProposals
    */
   readonly spaceManifest?: ProposalsSpaceManifestEnum;
@@ -10930,6 +11151,8 @@ export class ProposalsApi extends BaseAPI {
 export const ProposalSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type ProposalSpaceManifestEnum =
   (typeof ProposalSpaceManifestEnum)[keyof typeof ProposalSpaceManifestEnum];
@@ -10948,6 +11171,8 @@ export type ProposalOrderDirectionEnum =
 export const ProposalsSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type ProposalsSpaceManifestEnum =
   (typeof ProposalsSpaceManifestEnum)[keyof typeof ProposalsSpaceManifestEnum];
@@ -10969,6 +11194,1143 @@ export const ProposalsOrderDirectionEnum = {
 } as const;
 export type ProposalsOrderDirectionEnum =
   (typeof ProposalsOrderDirectionEnum)[keyof typeof ProposalsOrderDirectionEnum];
+
+/**
+ * RolesApi - axios parameter creator
+ * @export
+ */
+export const RolesApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Create a role (general_admin or space_*). Mutates Decidim state (User admin, ParticipatoryProcessUserRole, AssemblyUserRole, AssemblyMember).
+     * @summary Create role
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {CreateRoleRequest} createRoleRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createRole: async (
+      authorization: string,
+      createRoleRequest: CreateRoleRequest,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("createRole", "authorization", authorization);
+      // verify required parameter 'createRoleRequest' is not null or undefined
+      assertParamExists("createRole", "createRoleRequest", createRoleRequest);
+      const localVarPath = `/roles`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createRoleRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Remove a role (revoke admin, or delete ParticipatoryProcessUserRole/AssemblyUserRole/AssemblyMember). Id is the composite encoded id.
+     * @summary Destroy role
+     * @param {string} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    destroyRole: async (
+      id: string,
+      authorization: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("destroyRole", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("destroyRole", "authorization", authorization);
+      const localVarPath = `/roles/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Show a single role by id (composite id from Decidim state)
+     * @summary Show role
+     * @param {string} id The composite role ID (base64url-encoded JSON of resource_type, resource_id, user_id, invited_at, type)
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    role: async (
+      id: string,
+      authorization: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("role", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("role", "authorization", authorization);
+      const localVarPath = `/roles/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List roles scoped to the current organization (from Decidim state: admin users, participatory space roles, assembly members)
+     * @summary List roles
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<number>} [filterUserIdIn]
+     * @param {number} [filterUserIdEq]
+     * @param {number} [filterUserIdLt]
+     * @param {number} [filterUserIdGt]
+     * @param {boolean} [filterUserIdPresent]
+     * @param {boolean} [filterUserIdBlank]
+     * @param {Array<number>} [filterResourceIdIn]
+     * @param {number} [filterResourceIdEq]
+     * @param {number} [filterResourceIdLt]
+     * @param {number} [filterResourceIdGt]
+     * @param {boolean} [filterResourceIdPresent]
+     * @param {boolean} [filterResourceIdBlank]
+     * @param {Array<string>} [filterResourceTypeNotIn]
+     * @param {Array<string>} [filterResourceTypeIn]
+     * @param {string} [filterResourceTypeStart]
+     * @param {string} [filterResourceTypeEq]
+     * @param {string} [filterResourceTypeNotEq]
+     * @param {string} [filterResourceTypeMatches]
+     * @param {boolean} [filterResourceTypeBlank]
+     * @param {Array<string>} [filterTypeNotIn]
+     * @param {Array<string>} [filterTypeIn]
+     * @param {string} [filterTypeStart]
+     * @param {string} [filterTypeEq]
+     * @param {string} [filterTypeNotEq]
+     * @param {string} [filterTypeMatches]
+     * @param {boolean} [filterTypeBlank]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    roles: async (
+      authorization: string,
+      page?: number,
+      perPage?: number,
+      filterUserIdIn?: Array<number>,
+      filterUserIdEq?: number,
+      filterUserIdLt?: number,
+      filterUserIdGt?: number,
+      filterUserIdPresent?: boolean,
+      filterUserIdBlank?: boolean,
+      filterResourceIdIn?: Array<number>,
+      filterResourceIdEq?: number,
+      filterResourceIdLt?: number,
+      filterResourceIdGt?: number,
+      filterResourceIdPresent?: boolean,
+      filterResourceIdBlank?: boolean,
+      filterResourceTypeNotIn?: Array<string>,
+      filterResourceTypeIn?: Array<string>,
+      filterResourceTypeStart?: string,
+      filterResourceTypeEq?: string,
+      filterResourceTypeNotEq?: string,
+      filterResourceTypeMatches?: string,
+      filterResourceTypeBlank?: boolean,
+      filterTypeNotIn?: Array<string>,
+      filterTypeIn?: Array<string>,
+      filterTypeStart?: string,
+      filterTypeEq?: string,
+      filterTypeNotEq?: string,
+      filterTypeMatches?: string,
+      filterTypeBlank?: boolean,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("roles", "authorization", authorization);
+      const localVarPath = `/roles`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (filterUserIdIn) {
+        localVarQueryParameter["filter[user_id_in][]"] = filterUserIdIn;
+      }
+
+      if (filterUserIdEq !== undefined) {
+        localVarQueryParameter["filter[user_id_eq]"] = filterUserIdEq;
+      }
+
+      if (filterUserIdLt !== undefined) {
+        localVarQueryParameter["filter[user_id_lt]"] = filterUserIdLt;
+      }
+
+      if (filterUserIdGt !== undefined) {
+        localVarQueryParameter["filter[user_id_gt]"] = filterUserIdGt;
+      }
+
+      if (filterUserIdPresent !== undefined) {
+        localVarQueryParameter["filter[user_id_present]"] = filterUserIdPresent;
+      }
+
+      if (filterUserIdBlank !== undefined) {
+        localVarQueryParameter["filter[user_id_blank]"] = filterUserIdBlank;
+      }
+
+      if (filterResourceIdIn) {
+        localVarQueryParameter["filter[resource_id_in][]"] = filterResourceIdIn;
+      }
+
+      if (filterResourceIdEq !== undefined) {
+        localVarQueryParameter["filter[resource_id_eq]"] = filterResourceIdEq;
+      }
+
+      if (filterResourceIdLt !== undefined) {
+        localVarQueryParameter["filter[resource_id_lt]"] = filterResourceIdLt;
+      }
+
+      if (filterResourceIdGt !== undefined) {
+        localVarQueryParameter["filter[resource_id_gt]"] = filterResourceIdGt;
+      }
+
+      if (filterResourceIdPresent !== undefined) {
+        localVarQueryParameter["filter[resource_id_present]"] =
+          filterResourceIdPresent;
+      }
+
+      if (filterResourceIdBlank !== undefined) {
+        localVarQueryParameter["filter[resource_id_blank]"] =
+          filterResourceIdBlank;
+      }
+
+      if (filterResourceTypeNotIn) {
+        localVarQueryParameter["filter[resource_type_not_in][]"] =
+          filterResourceTypeNotIn;
+      }
+
+      if (filterResourceTypeIn) {
+        localVarQueryParameter["filter[resource_type_in][]"] =
+          filterResourceTypeIn;
+      }
+
+      if (filterResourceTypeStart !== undefined) {
+        localVarQueryParameter["filter[resource_type_start]"] =
+          filterResourceTypeStart;
+      }
+
+      if (filterResourceTypeEq !== undefined) {
+        localVarQueryParameter["filter[resource_type_eq]"] =
+          filterResourceTypeEq;
+      }
+
+      if (filterResourceTypeNotEq !== undefined) {
+        localVarQueryParameter["filter[resource_type_not_eq]"] =
+          filterResourceTypeNotEq;
+      }
+
+      if (filterResourceTypeMatches !== undefined) {
+        localVarQueryParameter["filter[resource_type_matches]"] =
+          filterResourceTypeMatches;
+      }
+
+      if (filterResourceTypeBlank !== undefined) {
+        localVarQueryParameter["filter[resource_type_blank]"] =
+          filterResourceTypeBlank;
+      }
+
+      if (filterTypeNotIn) {
+        localVarQueryParameter["filter[type_not_in][]"] = filterTypeNotIn;
+      }
+
+      if (filterTypeIn) {
+        localVarQueryParameter["filter[type_in][]"] = filterTypeIn;
+      }
+
+      if (filterTypeStart !== undefined) {
+        localVarQueryParameter["filter[type_start]"] = filterTypeStart;
+      }
+
+      if (filterTypeEq !== undefined) {
+        localVarQueryParameter["filter[type_eq]"] = filterTypeEq;
+      }
+
+      if (filterTypeNotEq !== undefined) {
+        localVarQueryParameter["filter[type_not_eq]"] = filterTypeNotEq;
+      }
+
+      if (filterTypeMatches !== undefined) {
+        localVarQueryParameter["filter[type_matches]"] = filterTypeMatches;
+      }
+
+      if (filterTypeBlank !== undefined) {
+        localVarQueryParameter["filter[type_blank]"] = filterTypeBlank;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * RolesApi - functional programming interface
+ * @export
+ */
+export const RolesApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = RolesApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Create a role (general_admin or space_*). Mutates Decidim state (User admin, ParticipatoryProcessUserRole, AssemblyUserRole, AssemblyMember).
+     * @summary Create role
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {CreateRoleRequest} createRoleRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createRole(
+      authorization: string,
+      createRoleRequest: CreateRoleRequest,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createRole(
+        authorization,
+        createRoleRequest,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["RolesApi.createRole"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Remove a role (revoke admin, or delete ParticipatoryProcessUserRole/AssemblyUserRole/AssemblyMember). Id is the composite encoded id.
+     * @summary Destroy role
+     * @param {string} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async destroyRole(
+      id: string,
+      authorization: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.destroyRole(
+        id,
+        authorization,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["RolesApi.destroyRole"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Show a single role by id (composite id from Decidim state)
+     * @summary Show role
+     * @param {string} id The composite role ID (base64url-encoded JSON of resource_type, resource_id, user_id, invited_at, type)
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async role(
+      id: string,
+      authorization: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<RoleItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.role(
+        id,
+        authorization,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["RolesApi.role"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List roles scoped to the current organization (from Decidim state: admin users, participatory space roles, assembly members)
+     * @summary List roles
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {Array<number>} [filterUserIdIn]
+     * @param {number} [filterUserIdEq]
+     * @param {number} [filterUserIdLt]
+     * @param {number} [filterUserIdGt]
+     * @param {boolean} [filterUserIdPresent]
+     * @param {boolean} [filterUserIdBlank]
+     * @param {Array<number>} [filterResourceIdIn]
+     * @param {number} [filterResourceIdEq]
+     * @param {number} [filterResourceIdLt]
+     * @param {number} [filterResourceIdGt]
+     * @param {boolean} [filterResourceIdPresent]
+     * @param {boolean} [filterResourceIdBlank]
+     * @param {Array<string>} [filterResourceTypeNotIn]
+     * @param {Array<string>} [filterResourceTypeIn]
+     * @param {string} [filterResourceTypeStart]
+     * @param {string} [filterResourceTypeEq]
+     * @param {string} [filterResourceTypeNotEq]
+     * @param {string} [filterResourceTypeMatches]
+     * @param {boolean} [filterResourceTypeBlank]
+     * @param {Array<string>} [filterTypeNotIn]
+     * @param {Array<string>} [filterTypeIn]
+     * @param {string} [filterTypeStart]
+     * @param {string} [filterTypeEq]
+     * @param {string} [filterTypeNotEq]
+     * @param {string} [filterTypeMatches]
+     * @param {boolean} [filterTypeBlank]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async roles(
+      authorization: string,
+      page?: number,
+      perPage?: number,
+      filterUserIdIn?: Array<number>,
+      filterUserIdEq?: number,
+      filterUserIdLt?: number,
+      filterUserIdGt?: number,
+      filterUserIdPresent?: boolean,
+      filterUserIdBlank?: boolean,
+      filterResourceIdIn?: Array<number>,
+      filterResourceIdEq?: number,
+      filterResourceIdLt?: number,
+      filterResourceIdGt?: number,
+      filterResourceIdPresent?: boolean,
+      filterResourceIdBlank?: boolean,
+      filterResourceTypeNotIn?: Array<string>,
+      filterResourceTypeIn?: Array<string>,
+      filterResourceTypeStart?: string,
+      filterResourceTypeEq?: string,
+      filterResourceTypeNotEq?: string,
+      filterResourceTypeMatches?: string,
+      filterResourceTypeBlank?: boolean,
+      filterTypeNotIn?: Array<string>,
+      filterTypeIn?: Array<string>,
+      filterTypeStart?: string,
+      filterTypeEq?: string,
+      filterTypeNotEq?: string,
+      filterTypeMatches?: string,
+      filterTypeBlank?: boolean,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<RoleIndexResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.roles(
+        authorization,
+        page,
+        perPage,
+        filterUserIdIn,
+        filterUserIdEq,
+        filterUserIdLt,
+        filterUserIdGt,
+        filterUserIdPresent,
+        filterUserIdBlank,
+        filterResourceIdIn,
+        filterResourceIdEq,
+        filterResourceIdLt,
+        filterResourceIdGt,
+        filterResourceIdPresent,
+        filterResourceIdBlank,
+        filterResourceTypeNotIn,
+        filterResourceTypeIn,
+        filterResourceTypeStart,
+        filterResourceTypeEq,
+        filterResourceTypeNotEq,
+        filterResourceTypeMatches,
+        filterResourceTypeBlank,
+        filterTypeNotIn,
+        filterTypeIn,
+        filterTypeStart,
+        filterTypeEq,
+        filterTypeNotEq,
+        filterTypeMatches,
+        filterTypeBlank,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["RolesApi.roles"]?.[localVarOperationServerIndex]
+          ?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * RolesApi - factory interface
+ * @export
+ */
+export const RolesApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = RolesApiFp(configuration);
+  return {
+    /**
+     * Create a role (general_admin or space_*). Mutates Decidim state (User admin, ParticipatoryProcessUserRole, AssemblyUserRole, AssemblyMember).
+     * @summary Create role
+     * @param {RolesApiCreateRoleRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createRole(
+      requestParameters: RolesApiCreateRoleRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .createRole(
+          requestParameters.authorization,
+          requestParameters.createRoleRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Remove a role (revoke admin, or delete ParticipatoryProcessUserRole/AssemblyUserRole/AssemblyMember). Id is the composite encoded id.
+     * @summary Destroy role
+     * @param {RolesApiDestroyRoleRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    destroyRole(
+      requestParameters: RolesApiDestroyRoleRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .destroyRole(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Show a single role by id (composite id from Decidim state)
+     * @summary Show role
+     * @param {RolesApiRoleRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    role(
+      requestParameters: RolesApiRoleRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<RoleItemResponse> {
+      return localVarFp
+        .role(requestParameters.id, requestParameters.authorization, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List roles scoped to the current organization (from Decidim state: admin users, participatory space roles, assembly members)
+     * @summary List roles
+     * @param {RolesApiRolesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    roles(
+      requestParameters: RolesApiRolesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<RoleIndexResponse> {
+      return localVarFp
+        .roles(
+          requestParameters.authorization,
+          requestParameters.page,
+          requestParameters.perPage,
+          requestParameters.filterUserIdIn,
+          requestParameters.filterUserIdEq,
+          requestParameters.filterUserIdLt,
+          requestParameters.filterUserIdGt,
+          requestParameters.filterUserIdPresent,
+          requestParameters.filterUserIdBlank,
+          requestParameters.filterResourceIdIn,
+          requestParameters.filterResourceIdEq,
+          requestParameters.filterResourceIdLt,
+          requestParameters.filterResourceIdGt,
+          requestParameters.filterResourceIdPresent,
+          requestParameters.filterResourceIdBlank,
+          requestParameters.filterResourceTypeNotIn,
+          requestParameters.filterResourceTypeIn,
+          requestParameters.filterResourceTypeStart,
+          requestParameters.filterResourceTypeEq,
+          requestParameters.filterResourceTypeNotEq,
+          requestParameters.filterResourceTypeMatches,
+          requestParameters.filterResourceTypeBlank,
+          requestParameters.filterTypeNotIn,
+          requestParameters.filterTypeIn,
+          requestParameters.filterTypeStart,
+          requestParameters.filterTypeEq,
+          requestParameters.filterTypeNotEq,
+          requestParameters.filterTypeMatches,
+          requestParameters.filterTypeBlank,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for createRole operation in RolesApi.
+ * @export
+ * @interface RolesApiCreateRoleRequest
+ */
+export interface RolesApiCreateRoleRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof RolesApiCreateRole
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {CreateRoleRequest}
+   * @memberof RolesApiCreateRole
+   */
+  readonly createRoleRequest: CreateRoleRequest;
+}
+
+/**
+ * Request parameters for destroyRole operation in RolesApi.
+ * @export
+ * @interface RolesApiDestroyRoleRequest
+ */
+export interface RolesApiDestroyRoleRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiDestroyRole
+   */
+  readonly id: string;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof RolesApiDestroyRole
+   */
+  readonly authorization: string;
+}
+
+/**
+ * Request parameters for role operation in RolesApi.
+ * @export
+ * @interface RolesApiRoleRequest
+ */
+export interface RolesApiRoleRequest {
+  /**
+   * The composite role ID (base64url-encoded JSON of resource_type, resource_id, user_id, invited_at, type)
+   * @type {string}
+   * @memberof RolesApiRole
+   */
+  readonly id: string;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof RolesApiRole
+   */
+  readonly authorization: string;
+}
+
+/**
+ * Request parameters for roles operation in RolesApi.
+ * @export
+ * @interface RolesApiRolesRequest
+ */
+export interface RolesApiRolesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly authorization: string;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly perPage?: number;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdIn?: Array<number>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdEq?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdLt?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdGt?: number;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdPresent?: boolean;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterUserIdBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdIn?: Array<number>;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdEq?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdLt?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdGt?: number;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdPresent?: boolean;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceIdBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeMatches?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterResourceTypeBlank?: boolean;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeNotIn?: Array<string>;
+
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeIn?: Array<string>;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeStart?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeNotEq?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeMatches?: string;
+
+  /**
+   *
+   * @type {boolean}
+   * @memberof RolesApiRoles
+   */
+  readonly filterTypeBlank?: boolean;
+}
+
+/**
+ * RolesApi - object-oriented interface
+ * @export
+ * @class RolesApi
+ * @extends {BaseAPI}
+ */
+export class RolesApi extends BaseAPI {
+  /**
+   * Create a role (general_admin or space_*). Mutates Decidim state (User admin, ParticipatoryProcessUserRole, AssemblyUserRole, AssemblyMember).
+   * @summary Create role
+   * @param {RolesApiCreateRoleRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof RolesApi
+   */
+  public createRole(
+    requestParameters: RolesApiCreateRoleRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return RolesApiFp(this.configuration)
+      .createRole(
+        requestParameters.authorization,
+        requestParameters.createRoleRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Remove a role (revoke admin, or delete ParticipatoryProcessUserRole/AssemblyUserRole/AssemblyMember). Id is the composite encoded id.
+   * @summary Destroy role
+   * @param {RolesApiDestroyRoleRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof RolesApi
+   */
+  public destroyRole(
+    requestParameters: RolesApiDestroyRoleRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return RolesApiFp(this.configuration)
+      .destroyRole(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Show a single role by id (composite id from Decidim state)
+   * @summary Show role
+   * @param {RolesApiRoleRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof RolesApi
+   */
+  public role(
+    requestParameters: RolesApiRoleRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return RolesApiFp(this.configuration)
+      .role(requestParameters.id, requestParameters.authorization, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List roles scoped to the current organization (from Decidim state: admin users, participatory space roles, assembly members)
+   * @summary List roles
+   * @param {RolesApiRolesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof RolesApi
+   */
+  public roles(
+    requestParameters: RolesApiRolesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return RolesApiFp(this.configuration)
+      .roles(
+        requestParameters.authorization,
+        requestParameters.page,
+        requestParameters.perPage,
+        requestParameters.filterUserIdIn,
+        requestParameters.filterUserIdEq,
+        requestParameters.filterUserIdLt,
+        requestParameters.filterUserIdGt,
+        requestParameters.filterUserIdPresent,
+        requestParameters.filterUserIdBlank,
+        requestParameters.filterResourceIdIn,
+        requestParameters.filterResourceIdEq,
+        requestParameters.filterResourceIdLt,
+        requestParameters.filterResourceIdGt,
+        requestParameters.filterResourceIdPresent,
+        requestParameters.filterResourceIdBlank,
+        requestParameters.filterResourceTypeNotIn,
+        requestParameters.filterResourceTypeIn,
+        requestParameters.filterResourceTypeStart,
+        requestParameters.filterResourceTypeEq,
+        requestParameters.filterResourceTypeNotEq,
+        requestParameters.filterResourceTypeMatches,
+        requestParameters.filterResourceTypeBlank,
+        requestParameters.filterTypeNotIn,
+        requestParameters.filterTypeIn,
+        requestParameters.filterTypeStart,
+        requestParameters.filterTypeEq,
+        requestParameters.filterTypeNotEq,
+        requestParameters.filterTypeMatches,
+        requestParameters.filterTypeBlank,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
 
 /**
  * SpacesApi - axios parameter creator
@@ -10998,6 +12360,134 @@ export const SpacesApiAxiosParamCreator = function (
       // verify required parameter 'authorization' is not null or undefined
       assertParamExists("assemblies", "authorization", authorization);
       const localVarPath = `/spaces/assemblies/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get detail of a Conferences given its id
+     * @summary Conferences Details
+     * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    conferences: async (
+      id: number,
+      authorization: string,
+      locales?: Array<Locale>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("conferences", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("conferences", "authorization", authorization);
+      const localVarPath = `/spaces/conferences/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication resourceOwnerFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get detail of a Initiatives given its id
+     * @summary Initiatives Details
+     * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    initiatives: async (
+      id: number,
+      authorization: string,
+      locales?: Array<Locale>,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("initiatives", "id", id);
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("initiatives", "authorization", authorization);
+      const localVarPath = `/spaces/initiatives/{id}`.replace(
         `{${"id"}}`,
         encodeURIComponent(String(id)),
       );
@@ -11394,6 +12884,84 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
+     * Get detail of a Conferences given its id
+     * @summary Conferences Details
+     * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async conferences(
+      id: number,
+      authorization: string,
+      locales?: Array<Locale>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.conferences(
+        id,
+        authorization,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.conferences"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Get detail of a Initiatives given its id
+     * @summary Initiatives Details
+     * @param {number} id
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async initiatives(
+      id: number,
+      authorization: string,
+      locales?: Array<Locale>,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.initiatives(
+        id,
+        authorization,
+        locales,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.initiatives"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {number} id
@@ -11591,6 +13159,46 @@ export const SpacesApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * Get detail of a Conferences given its id
+     * @summary Conferences Details
+     * @param {SpacesApiConferencesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    conferences(
+      requestParameters: SpacesApiConferencesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceItemResponse> {
+      return localVarFp
+        .conferences(
+          requestParameters.id,
+          requestParameters.authorization,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get detail of a Initiatives given its id
+     * @summary Initiatives Details
+     * @param {SpacesApiInitiativesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    initiatives(
+      requestParameters: SpacesApiInitiativesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceItemResponse> {
+      return localVarFp
+        .initiatives(
+          requestParameters.id,
+          requestParameters.authorization,
+          requestParameters.locales,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {SpacesApiParticipatoryProcessesRequest} requestParameters Request parameters.
@@ -11690,6 +13298,62 @@ export interface SpacesApiAssembliesRequest {
 }
 
 /**
+ * Request parameters for conferences operation in SpacesApi.
+ * @export
+ * @interface SpacesApiConferencesRequest
+ */
+export interface SpacesApiConferencesRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof SpacesApiConferences
+   */
+  readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiConferences
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiConferences
+   */
+  readonly locales?: Array<Locale>;
+}
+
+/**
+ * Request parameters for initiatives operation in SpacesApi.
+ * @export
+ * @interface SpacesApiInitiativesRequest
+ */
+export interface SpacesApiInitiativesRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof SpacesApiInitiatives
+   */
+  readonly id: number;
+
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiInitiatives
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiInitiatives
+   */
+  readonly locales?: Array<Locale>;
+}
+
+/**
  * Request parameters for participatoryProcesses operation in SpacesApi.
  * @export
  * @interface SpacesApiParticipatoryProcessesRequest
@@ -11753,14 +13417,14 @@ export interface SpacesApiSearchSpacesRequest {
 
   /**
    *
-   * @type {Array<'participatory_processes' | 'assemblies'>}
+   * @type {Array<'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'>}
    * @memberof SpacesApiSearchSpaces
    */
   readonly filterManifestNameNotIn?: Array<SearchSpacesFilterManifestNameNotInEnum>;
 
   /**
    *
-   * @type {Array<'participatory_processes' | 'assemblies'>}
+   * @type {Array<'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'>}
    * @memberof SpacesApiSearchSpaces
    */
   readonly filterManifestNameIn?: Array<SearchSpacesFilterManifestNameInEnum>;
@@ -11774,14 +13438,14 @@ export interface SpacesApiSearchSpacesRequest {
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof SpacesApiSearchSpaces
    */
   readonly filterManifestNameEq?: SearchSpacesFilterManifestNameEqEnum;
 
   /**
    *
-   * @type {'participatory_processes' | 'assemblies'}
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
    * @memberof SpacesApiSearchSpaces
    */
   readonly filterManifestNameNotEq?: SearchSpacesFilterManifestNameNotEqEnum;
@@ -11971,6 +13635,50 @@ export class SpacesApi extends BaseAPI {
   }
 
   /**
+   * Get detail of a Conferences given its id
+   * @summary Conferences Details
+   * @param {SpacesApiConferencesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public conferences(
+    requestParameters: SpacesApiConferencesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .conferences(
+        requestParameters.id,
+        requestParameters.authorization,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get detail of a Initiatives given its id
+   * @summary Initiatives Details
+   * @param {SpacesApiInitiativesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public initiatives(
+    requestParameters: SpacesApiInitiativesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .initiatives(
+        requestParameters.id,
+        requestParameters.authorization,
+        requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * Get detail of a Participatory Processes given its id
    * @summary Participatory Processes Details
    * @param {SpacesApiParticipatoryProcessesRequest} requestParameters Request parameters.
@@ -12049,6 +13757,8 @@ export class SpacesApi extends BaseAPI {
 export const SearchSpacesFilterManifestNameNotInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type SearchSpacesFilterManifestNameNotInEnum =
   (typeof SearchSpacesFilterManifestNameNotInEnum)[keyof typeof SearchSpacesFilterManifestNameNotInEnum];
@@ -12058,6 +13768,8 @@ export type SearchSpacesFilterManifestNameNotInEnum =
 export const SearchSpacesFilterManifestNameInEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type SearchSpacesFilterManifestNameInEnum =
   (typeof SearchSpacesFilterManifestNameInEnum)[keyof typeof SearchSpacesFilterManifestNameInEnum];
@@ -12067,6 +13779,8 @@ export type SearchSpacesFilterManifestNameInEnum =
 export const SearchSpacesFilterManifestNameEqEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type SearchSpacesFilterManifestNameEqEnum =
   (typeof SearchSpacesFilterManifestNameEqEnum)[keyof typeof SearchSpacesFilterManifestNameEqEnum];
@@ -12076,6 +13790,8 @@ export type SearchSpacesFilterManifestNameEqEnum =
 export const SearchSpacesFilterManifestNameNotEqEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
 } as const;
 export type SearchSpacesFilterManifestNameNotEqEnum =
   (typeof SearchSpacesFilterManifestNameNotEqEnum)[keyof typeof SearchSpacesFilterManifestNameNotEqEnum];
