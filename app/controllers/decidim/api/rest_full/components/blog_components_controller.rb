@@ -13,7 +13,7 @@ module Decidim
             query = query.reorder(nil).ransack(params[:filter])
             data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
-              Decidim::Api::RestFull::BlogComponentSerializer.new(
+              Decidim::Api::RestFull::Blogs::BlogComponentSerializer.new(
                 result,
                 params: { only: [], locales: available_locales, host: current_organization.host, act_as: }
               ).serializable_hash[:data]
@@ -25,7 +25,7 @@ module Decidim
             resource_id = params.require(:id).to_i
             match = collection.find(resource_id)
 
-            render json: Decidim::Api::RestFull::BlogComponentSerializer.new(
+            render json: Decidim::Api::RestFull::Blogs::BlogComponentSerializer.new(
               match,
               params: { only: [], locales: available_locales, host: current_organization.host, act_as: }
             ).serializable_hash

@@ -24,7 +24,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         response "200", "Organization shown" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_item_response)
 
           context "with locale[] filter translated results" do
             let(:"locales[]") { %w(en fr) }
@@ -35,7 +35,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
 
         response "404", "Organization Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "when id=bad_string" do
             let(:id) { "bad_string" }

@@ -21,7 +21,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         # Default `id` so shared examples (401/403/500) can build the request.
         let!(:default_admin_user) { create(:user, :admin, organization:) }
         let(:id) do
-          Decidim::RestFull::Roles::RoleIdCodec.encode(
+          Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
             resource_type: "Decidim::Organization",
             resource_id: organization.id,
             user_id: default_admin_user.id,
@@ -33,11 +33,11 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Role shown (general_admin)" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_item_response)
 
           let!(:admin_user) { create(:user, :admin, organization:) }
           let(:id) do
-            Decidim::RestFull::Roles::RoleIdCodec.encode(
+            Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
               resource_type: "Decidim::Organization",
               resource_id: organization.id,
               user_id: admin_user.id,
@@ -59,7 +59,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Role shown (space_administrator)" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_item_response)
 
           let!(:user) { create(:user, organization:) }
           let!(:space) { create(:participatory_process, :with_steps, organization:) }
@@ -67,7 +67,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             create(:participatory_process_user_role, user:, participatory_process: space, role: "admin")
           end
           let(:id) do
-            Decidim::RestFull::Roles::RoleIdCodec.encode(
+            Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
               resource_type: "Decidim::ParticipatoryProcess",
               resource_id: space.id,
               user_id: user.id,
@@ -89,7 +89,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Role shown (space_moderator)" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_item_response)
 
           let!(:user) { create(:user, organization:) }
           let!(:space) { create(:participatory_process, :with_steps, organization:) }
@@ -97,7 +97,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             create(:participatory_process_user_role, user:, participatory_process: space, role: "moderator")
           end
           let(:id) do
-            Decidim::RestFull::Roles::RoleIdCodec.encode(
+            Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
               resource_type: "Decidim::ParticipatoryProcess",
               resource_id: space.id,
               user_id: user.id,
@@ -119,7 +119,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Role shown (space_valuator)" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_item_response)
 
           let!(:user) { create(:user, organization:) }
           let!(:space) { create(:participatory_process, :with_steps, organization:) }
@@ -127,7 +127,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             create(:participatory_process_user_role, user:, participatory_process: space, role: "valuator")
           end
           let(:id) do
-            Decidim::RestFull::Roles::RoleIdCodec.encode(
+            Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
               resource_type: "Decidim::ParticipatoryProcess",
               resource_id: space.id,
               user_id: user.id,
@@ -149,7 +149,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Role shown (space_private_member)" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_item_response)
 
           let!(:user) { create(:user, organization:) }
           let!(:space) { create(:participatory_process, :with_steps, organization:) }
@@ -157,7 +157,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             create(:participatory_process_user_role, user:, participatory_process: space, role: "collaborator")
           end
           let(:id) do
-            Decidim::RestFull::Roles::RoleIdCodec.encode(
+            Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
               resource_type: "Decidim::ParticipatoryProcess",
               resource_id: space.id,
               user_id: user.id,
@@ -178,7 +178,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
 
         response "404", "Role Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "when id is invalid" do
             let(:id) { "invalid" }
@@ -190,7 +190,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             let!(:other_organization) { create(:organization, available_locales: ["en"]) }
             let!(:other_admin) { create(:user, :admin, organization: other_organization) }
             let(:id) do
-              Decidim::RestFull::Roles::RoleIdCodec.encode(
+              Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
                 resource_type: "Decidim::Organization",
                 resource_id: other_organization.id,
                 user_id: other_admin.id,

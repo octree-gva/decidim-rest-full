@@ -26,7 +26,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         title: "Update Organization Payload",
         properties: {
           data: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_attributes)
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_attributes)
           }
         }, required: [:data]
       }
@@ -44,7 +44,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         response "200", "Organization updated" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_item_response)
 
           context "with new name in one locale" do
             let(:organization) { create(:organization, available_locales: %w(en fr), default_locale: "en", name: { "en" => "Organization Name", "fr" => "Nom de l'organisation" }) }
@@ -74,7 +74,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
 
         response "400", "Organization Bad Request" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           let!(:organization2) { create(:organization, name: { "en" => "Existing Organization Name", "fr" => "Nom de l'organisation" }) }
           let(:body) { { data: { name: { "en" => "Existing Organization Name" } } } }
 
@@ -99,7 +99,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
 
         response "404", "Organization Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           let(:body) { { data: { name: { "en" => "New Name" } } } }
 
           context "when id=bad_string" do

@@ -25,7 +25,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         response "200", "Roles listed" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_index_response)
 
           let(:page) { 1 }
           let(:per_page) { 50 }
@@ -44,21 +44,21 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
               data = JSON.parse(example.body)["data"]
               ids = data.map { |item| item["id"] }
               types = data.map { |item| item["attributes"]["type"] }
-              admin_role_id = Decidim::RestFull::Roles::RoleIdCodec.encode(
+              admin_role_id = Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
                 resource_type: "Decidim::Organization",
                 resource_id: organization.id,
                 user_id: admin_user.id,
                 invited_at: nil,
                 type: "general_admin"
               )
-              process_role_id = Decidim::RestFull::Roles::RoleIdCodec.encode(
+              process_role_id = Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
                 resource_type: "Decidim::ParticipatoryProcess",
                 resource_id: space.id,
                 user_id: admin_user.id,
                 invited_at: nil,
                 type: "space_administrator"
               )
-              other_admin_id = Decidim::RestFull::Roles::RoleIdCodec.encode(
+              other_admin_id = Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
                 resource_type: "Decidim::Organization",
                 resource_id: other_organization.id,
                 user_id: other_admin.id,

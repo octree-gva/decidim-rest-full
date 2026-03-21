@@ -15,7 +15,7 @@ module Decidim
             query = collection.ransack(params[:filter])
 
             results = query.result
-            render json: Decidim::Api::RestFull::ProposalSerializer.new(
+            render json: Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
               paginate(ordered(results)),
               params: {
                 only: [],
@@ -48,7 +48,7 @@ module Decidim
           def serialized_show
             resource = find_proposal!
             pagination = proposal_pagination_meta
-            Decidim::Api::RestFull::ProposalSerializer.new(
+            Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
               resource,
               params: show_serializer_params(pagination)
             ).serializable_hash
@@ -66,7 +66,7 @@ module Decidim
 
           def find_proposal!
             proposal = collection.find_by("decidim_proposals_proposals.id" => resource_id)
-            raise Decidim::RestFull::ApiException::NotFound, "Proposal Not Found" unless proposal
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Proposal Not Found" unless proposal
 
             proposal
           end

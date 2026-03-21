@@ -28,7 +28,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
         response "200", "Users listed" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:user_index_response)
 
           context "with no params" do
             before do
@@ -157,7 +157,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
 
         response "403", "Forbidden" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           context "with extended_data_cont" do
             before do
               create(:user, nickname: "specific-data", extended_data: { foo: "bar" }, organization:)

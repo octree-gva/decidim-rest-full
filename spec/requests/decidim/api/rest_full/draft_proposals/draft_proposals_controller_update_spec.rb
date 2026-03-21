@@ -81,7 +81,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
         let!(:proposal) do
           prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
-          prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+          prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
           prop.body = nil
           prop.title = nil
           prop.save(validate: false)
@@ -94,7 +94,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
 
         response "200", "Draft updated" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:draft_proposal_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:draft_proposal_item_response)
 
           context "when update title" do
             let(:body) { { data: { title: "This is a valid proposal title sample" } } }
@@ -132,7 +132,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         response "400", "Bad Request" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "with invalid title payload data" do
             let(:body) { { data: { title: "lol!" } } }

@@ -28,12 +28,12 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         let(:id) { proposal.id }
         response "200", "Draft Proposal published" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_item_response)
 
           context "when all fields are valid" do
             let!(:proposal) do
               prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
-              prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+              prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
               prop
             end
             let(:id) { proposal.id }
@@ -48,12 +48,12 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
 
         response "400", "Bad request" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "when body is invalid" do
             let!(:proposal) do
               prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
-              prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+              prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
               prop
             end
             let(:id) { proposal.id }
@@ -72,7 +72,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         response "404", "Not Found" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "with no draft" do
             let(:id) { Decidim::Proposals::Proposal.maximum(:id).to_i + 1 }

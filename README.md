@@ -40,19 +40,51 @@ API clients can register webhook URLs in the System Admin (per client); subscrip
 Start a docusaurus website
 
 **yarn docs:build**<br />
-Build the API Redoc and the Docusaurus site. Requires Node 20 (use `nvm use` with the repo’s `.nvmrc`).
+Build the API Redoc and the Docusaurus site. Requires Node 20 (use `nvm use` with the repo’s `.node-version` or `.nvmrc`).
 
 **yarn docs:update**<br />
 Generates again the openapi spec, add it to docusaurus, and compile again.
 
+## Engines and configuration
+
+The gem splits into **Core**, **Proposals**, and **Blogs** (see `lib/decidim/rest_full/core/engine.rb`, `proposals/engine.rb`, `blogs/engine.rb`). Only **Core** is registered with `Decidim.register_global_engine`; Proposals/Blogs are plain `Rails::Engine` classes required from `lib/decidim/rest_full.rb` so their initializers register `RouteRegistry.draw_api_routes` before `config/routes.rb` calls `apply!`.
+
+Configure via `Decidim::RestFull.configure` (delegates to `Decidim::RestFull::Core::Configuration`):
+
+- **`enable_proposals_api`** (default `true`): when `false`, proposal-related API routes are not routable (route constraints return 404); proposal overrides and webhook subscriptions are skipped when disabled at boot for webhooks/permissions initializers.
+- **`enable_blogs_api`** (default `true`): same pattern for blog routes.
+
+Doorkeeper optional scopes still include `proposals` and `blogs`; behaviour when a feature is off is **404** on those paths (not 403 from Doorkeeper for missing route).
+
 ## Route registration (for contributors)
 
-API routes are drawn via `Decidim::RestFull::RouteRegistry`. Domain engines (e.g. Proposals, Blogs) register route blocks with `RouteRegistry.draw_api_routes { ... }`. **Load order**: require domain engines in `lib/decidim/rest_full.rb` **before** the core engine so their initializers run before `config/routes.rb` calls `RouteRegistry.apply!`.
+API routes are drawn via `Decidim::RestFull::Core::RouteRegistry`. Core routes live in `config/routes.rb` inside `RouteRegistry.apply!`. Proposals and Blogs append blocks with `RouteRegistry.draw_api_routes { ... }`. Maintainer checklist: [CONTRIBUTING.md](CONTRIBUTING.md) (entry points and engine inventory).
 
-## Run tests
-You can run tests on the same image used by the pipeline, to be confident to push: 
+## Development and checks (Docker)
+
+Toolchain versions match the **`rest_full`** Compose image (`octree/decidim-dev:0.29`), not your laptop. Prefer running checks **inside** the container.
+
+```bash
+docker compose up -d
+docker compose exec rest_full bash -lc 'cd /home/module && bundle install'
+docker compose exec rest_full bash -lc 'cd /home/module && bundle exec rubocop .'
+docker compose exec rest_full bash -lc 'cd /home/module && bundle exec erblint --lint-all --enable-all-linters'
+docker compose exec rest_full bash -lc 'cd /home/module && yarn install --frozen-lockfile && yarn format:check'
 ```
-docker compose  -f docker-compose.yml bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
+
+Generate the dummy app once (`DISABLED_DOCKER_COMPOSE=true` so the Rake task does not restart Compose), then migrate and run specs (unset `DATABASE_URL` so the dummy app’s `config/database.yml` is used):
+
+```bash
+docker compose exec rest_full bash -lc 'cd /home/module && DISABLED_DOCKER_COMPOSE=true bundle exec rake test_app'
+docker compose exec rest_full bash -lc 'cd /home/module/spec/decidim_dummy_app && unset DATABASE_URL && export DISABLE_SPRING=1 && RAILS_ENV=test bundle exec rails db:create db:migrate'
+docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/'
+```
+
+Or use the CI-style setup script from the repo root (matches GitLab `ruby::rspec`):
+
+```bash
+docker compose exec rest_full bash -lc 'cd /home/module && bin/setup-tests'
+docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/'
 ```
 
 ## Update Versions
@@ -78,26 +110,21 @@ git add .
 git tag $(yarn postversion)
 ```
 
-## OpenAPI export and client generation (from your app)
+## OpenAPI spec and client generation
 
-From your Decidim app (with `decidim-rest_full` in the bundle), you can export a base OpenAPI spec and generate API clients without touching the module internals.
-
-**Export base OpenAPI (info, servers, tags, components.schemas only; no paths)**
+The OpenAPI document (including **paths**) is produced by **[rswag](https://github.com/rswag/rswag)** request specs, not by a separate exporter. From this repo, run:
 
 ```bash
-bundle exec decidim-rest_full-openapi --host https://your-decidim.org --locales ca,en,es -o base.json
+bin/swaggerize -o openapi.json
 ```
 
-Defaults: `--host` from `ENV['HOST']`, `--locales` from `ENV['DECIDIM_AVAILABLE_LOCALES']`. Omit `-o` to print JSON to stdout.
+That runs RSpec against `spec/requests/` (and any extra paths you register; see below), then writes `spec/decidim_dummy_app/swagger/v1/swagger.json` to your `-o` file.
 
-**Full openapi.json (with paths from Rswag)**  
-Paths come from the module’s Rswag request specs. Two-step flow:
+**Extra request specs (e.g. another gem in the same app)**  
+If a module registers routes and schemas but its RSwag specs live outside this gem, merge those paths into the same run:
 
-1. Run the binstub: `bundle exec decidim-rest_full-openapi --host https://your-decidim.org -o base.json`
-2. From the module repo, run `bin/swaggerize -o paths.json` (or your CI that runs Rswag and writes the spec)
-3. Merge `paths` from the Rswag output into `base.json` (e.g. script or manual merge)
-
-Optionally, use the module’s `yarn gen:openapi-spec` if you have the module checked out and Docker.
+- Set `DECIDIM_REST_FULL_SWAGGER_SPEC_PATHS` to comma-separated RSpec path globs, and/or
+- Add `spec/rest_full_swagger_spec_paths.rb` at the project root calling `Decidim::RestFull::Core::SwaggerSpecPaths.register(...)` (or `DefinitionRegistry.register_swagger_spec_path(...)`).
 
 **Generate API client**
 

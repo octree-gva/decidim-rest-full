@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:magic_link_redirect) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:magic_link_redirect) do
   {
     type: :object,
     title: "Magic Redirect",
@@ -20,8 +20,8 @@ Decidim::RestFull::DefinitionRegistry.register_object(:magic_link_redirect) do
         type: :object,
         title: "Magic Link links",
         properties: {
-          self: Decidim::RestFull::DefinitionRegistry.get_action_link,
-          magic_link: Decidim::RestFull::DefinitionRegistry.get_action_link
+          self: Decidim::RestFull::Core::DefinitionRegistry.get_action_link,
+          magic_link: Decidim::RestFull::Core::DefinitionRegistry.get_action_link
         },
         required: [:self, :magic_link]
       }

@@ -80,7 +80,7 @@ module Decidim
                   README
                 }
               },
-              schemas: Decidim::RestFull::DefinitionRegistry.as_json
+              schemas: Decidim::RestFull::Core::DefinitionRegistry.as_json
             }
           }
         }

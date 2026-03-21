@@ -17,6 +17,11 @@ Decidim::Dev.dummy_app_path = dummy_app_path
 require "decidim/dev/test/base_spec_helper"
 require "decidim/core/test/factories"
 
+# Do not load gem specs vendored under the dummy app (bundle path leakage).
+RSpec.configure do |config|
+  config.exclude_pattern = "spec/decidim_dummy_app/vendor/**/*_spec.rb"
+end
+
 # Apply RestFull API routes to Core (dummy app may not mount our engine, or mount order can miss registration).
 gem_config = File.expand_path("../config/routes.rb", __dir__)
 load gem_config if File.file?(gem_config)

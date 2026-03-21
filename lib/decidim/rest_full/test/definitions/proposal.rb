@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:proposal) do
   {
     type: :object,
     title: "Proposal",
@@ -12,15 +12,15 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
         title: "Proposal Attributes",
         properties: {
           title: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
             :description => "Proposal title"
           },
           body: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
             :description => "Proposal content"
           },
-          created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) }
+          created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }
         },
         required: [:created_at, :updated_at, :title, :body],
         additionalProperties: false
@@ -54,7 +54,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
               type: :string
             },
             {
-              "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+              "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop)
             }
           ]
         },
@@ -64,11 +64,11 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
         type: :object,
         title: "Proposal Links",
         properties: {
-          self: Decidim::RestFull::DefinitionRegistry.resource_link,
-          collection: Decidim::RestFull::DefinitionRegistry.resource_link,
-          related: Decidim::RestFull::DefinitionRegistry.resource_link,
-          prev: Decidim::RestFull::DefinitionRegistry.resource_link,
-          next: Decidim::RestFull::DefinitionRegistry.resource_link
+          self: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          collection: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          related: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          prev: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          next: Decidim::RestFull::Core::DefinitionRegistry.resource_link
         },
         additionalProperties: false,
         required: [:self, :collection, :related]
@@ -77,7 +77,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
         type: :object,
         title: "Proposal Relationships",
         properties: {
-          state: Decidim::RestFull::DefinitionRegistry.belongs_to("proposal_state", title: "Proposal State Relationship") do |state_schema|
+          state: Decidim::RestFull::Core::DefinitionRegistry.belongs_to("proposal_state", title: "Proposal State Relationship") do |state_schema|
             state_schema[:properties][:meta] = {
               type: :object,
               title: "Proposal State Relationship Metadata",
@@ -90,12 +90,12 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:proposal) do
             state_schema[:required].push(:meta)
             state_schema
           end,
-          space: Decidim::RestFull::DefinitionRegistry.belongs_to_relation({
-                                                                             "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type)
-                                                                           }, title: "Linked Space"),
-          component: Decidim::RestFull::DefinitionRegistry.belongs_to("proposal_component", title: "Linked Proposal Component"),
-          author: Decidim::RestFull::DefinitionRegistry.belongs_to("user", "user_group", title: "Proposal's Author"),
-          coauthors: Decidim::RestFull::DefinitionRegistry.has_many("user", "user_group", title: "Proposal's Coauthors")
+          space: Decidim::RestFull::Core::DefinitionRegistry.belongs_to_relation({
+                                                                                   "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_type)
+                                                                                 }, title: "Linked Space"),
+          component: Decidim::RestFull::Core::DefinitionRegistry.belongs_to("proposal_component", title: "Linked Proposal Component"),
+          author: Decidim::RestFull::Core::DefinitionRegistry.belongs_to("user", "user_group", title: "Proposal's Author"),
+          coauthors: Decidim::RestFull::Core::DefinitionRegistry.has_many("user", "user_group", title: "Proposal's Coauthors")
         },
         required: [:component, :space],
         additionalProperties: false

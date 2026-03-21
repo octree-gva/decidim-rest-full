@@ -27,12 +27,12 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
 
         response "200", "Draft Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:draft_proposal_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:draft_proposal_item_response)
 
           context "when some fields are invalid" do
             let!(:proposal) do
               prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
-              prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+              prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
               prop
             end
             let(:id) { proposal.id }
@@ -58,7 +58,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         response "404", "Not Found" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "with no draft" do
             let(:id) { Decidim::Proposals::Proposal.maximum(:id).to_i + 1 }

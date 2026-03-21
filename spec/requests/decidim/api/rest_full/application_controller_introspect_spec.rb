@@ -31,7 +31,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       parameter name: :body, in: :body, required: true, schema: { type: :object, title: "Introspect Token", properties: { token: { type: :string } }, required: [:token] }
 
       response "200", "User details returned" do
-        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:introspect_data)
+        schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:introspect_data)
         context "with client_credentials grant" do
           let!(:client_credential_token_b) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client) }
 
@@ -58,7 +58,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       end
 
       response "401", "Introspected token invalid or expired (active: false per RFC 7662)" do
-        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
         context "with unknown introspected token" do
           let(:Authorization) { "Bearer #{client_credential_token.token}" }
           let(:body) { { token: "unknown_token_#{SecureRandom.hex(8)}" } }
@@ -69,7 +69,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
 
       response "401", "When the authorization Bearer token is invalid" do
         produces "application/json"
-        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
         context "with expired token" do
           let!(:client_credential_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client, created_at: 1.month.ago, expires_in: 1.minute) }

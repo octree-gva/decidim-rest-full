@@ -56,15 +56,15 @@ module Decidim
       end
 
       def draft_serializer(proposal, params)
-        ::Decidim::Api::RestFull::DraftProposalSerializer.new(proposal, params:)
+        ::Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(proposal, params:)
       end
 
       def proposal_serializer(proposal, params)
-        ::Decidim::Api::RestFull::ProposalSerializer.new(proposal, params:)
+        ::Decidim::Api::RestFull::Proposals::ProposalSerializer.new(proposal, params:)
       end
 
       def permissions_for(event_name, organization)
-        Decidim::RestFull::Permission.where(permission: event_name, api_client: organization.api_clients)
+        Decidim::RestFull::Core::Permission.where(permission: event_name, api_client: organization.api_clients)
       end
 
       def dispatch_for_permission(permission, event_name, data, organization)
@@ -89,13 +89,13 @@ module Decidim
       end
 
       def webhook_registrations_for(api_client, event_name)
-        Decidim::RestFull::WebhookRegistration.where(api_client_id: api_client.id).where(
+        Decidim::RestFull::Core::WebhookRegistration.where(api_client_id: api_client.id).where(
           "subscriptions @> ?", [event_name].to_json
         )
       end
 
       def enqueue_webhook(webhook_registration, payload)
-        WebhookJob.perform_later(webhook_registration, payload.as_json, current_timestamp)
+        ::Decidim::RestFull::WebhookJob.perform_later(webhook_registration, payload.as_json, current_timestamp)
       end
 
       def current_timestamp

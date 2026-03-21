@@ -38,7 +38,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
         response "200", "Proposal List" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_index_response)
           it_behaves_like "paginated endpoint" do
             let(:create_resource) { -> { create(:proposal, :accepted, component: proposal_component, published_at: 1.day.ago) } }
             let(:each_resource) { ->(_resource, _index) {} }

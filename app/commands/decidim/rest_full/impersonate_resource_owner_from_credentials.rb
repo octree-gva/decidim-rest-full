@@ -12,7 +12,7 @@ module Decidim
       end
 
       def call
-        ability.authorize! :impersonate, Decidim::RestFull::ApiClient
+        ability.authorize! :impersonate, Decidim::RestFull::Core::ApiClient
         validate_params!
         user = user_from_params
         if user
@@ -42,7 +42,7 @@ module Decidim
         return true if user_exists
 
         # It does not exists, and do not want to register.
-        raise Decidim::RestFull::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing" unless wants_register
+        raise Decidim::RestFull::Core::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing" unless wants_register
 
         # It does not exists, want to register, but has no username
         raise StandardError, "Param .username required. Check your impersonation payload" unless has_username
@@ -129,7 +129,7 @@ module Decidim
       end
 
       def ability
-        @ability ||= Decidim::RestFull::Ability.new(api_client)
+        @ability ||= Decidim::RestFull::Core::Ability.new(api_client)
       end
     end
   end

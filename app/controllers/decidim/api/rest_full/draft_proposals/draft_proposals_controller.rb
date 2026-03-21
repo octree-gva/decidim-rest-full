@@ -11,16 +11,14 @@ module Decidim
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
 
-          before_action do
-            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
-          end
+          before_action { require_user! }
 
           def show
-            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
             form = form_for(draft)
 
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+            render json: Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(
               draft,
               params: {
                 only: [],
@@ -34,11 +32,11 @@ module Decidim
 
           def create
             component_id = params.require(:data).require(:component_id)
-            raise Decidim::RestFull::ApiException::BadRequest, "Draft Proposal already exists for this component" if collection.find_by(decidim_component_id: component_id)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Draft Proposal already exists for this component" if collection.find_by(decidim_component_id: component_id)
 
             draft_proposal = create_new_draft(component_id)
             form = form_for(draft_proposal)
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+            render json: Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(
               draft_proposal,
               params: {
                 only: [],
@@ -51,15 +49,15 @@ module Decidim
           end
 
           def publish
-            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
             form = form_for(draft)
-            raise Decidim::RestFull::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+            raise Decidim::RestFull::Core::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
 
             draft.update!(published_at: Time.now.utc)
             Decidim::Proposals::PublishProposal.call(draft, current_user) do
               on(:ok) do
-                render json: Decidim::Api::RestFull::ProposalSerializer.new(
+                render json: Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
                   draft,
                   params: {
                     locales: available_locales,
@@ -70,13 +68,13 @@ module Decidim
               end
 
               on(:invalid) do
-                raise Decidim::RestFull::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+                raise Decidim::RestFull::Core::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
               end
             end
           end
 
           def update
-            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
             payload = data
             return render_draft_json(draft) if payload.keys.empty?
@@ -90,9 +88,9 @@ module Decidim
           end
 
           def destroy
-            raise Decidim::RestFull::ApiException::NotFound, "Draft Proposal Not Found" unless draft
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Draft Proposal Not Found" unless draft
 
-            serialized_draft = Decidim::Api::RestFull::DraftProposalSerializer.new(
+            serialized_draft = Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(
               draft,
               params: {
                 only: [],
@@ -142,14 +140,14 @@ module Decidim
 
           def create_new_draft(component_id)
             component = in_visible_spaces(Decidim::Component.all).find(component_id)
-            raise Decidim::RestFull::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, I18n.t("decidim.proposals.new.limit_reached").to_s if limit_reached?(component)
 
             proposal = Decidim::Proposals::Proposal.new(component:, published_at: nil)
             raise ::ActiveRecord::RecordNotSaved, "Could not add new draft" unless proposal.save!(validate: false)
 
             coauthorship = proposal.coauthorships.build(author: current_user)
             proposal.coauthorships << coauthorship
-            proposal.rest_full_application = Decidim::RestFull::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
+            proposal.rest_full_application = Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: proposal.id, api_client_id: client_id)
             raise ::ActiveRecord::RecordNotSaved, "Could not save draft relationships" unless proposal.save!(validate: false)
 
             proposal
@@ -182,7 +180,7 @@ module Decidim
 
           def render_draft_json(draft_proposal)
             form = form_for(draft_proposal)
-            render json: Decidim::Api::RestFull::DraftProposalSerializer.new(
+            render json: Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(
               draft_proposal,
               params: {
                 only: [],
@@ -208,7 +206,7 @@ module Decidim
             update_errors = form.errors.select { |err| update_keys.include?(err.attribute.to_s) }
             return if update_errors.empty?
 
-            raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ")
+            raise Decidim::RestFull::Core::ApiException::BadRequest, update_errors.map(&:full_message).join(". ")
           end
 
           def copy_form_to_draft_and_save(draft_proposal, form)

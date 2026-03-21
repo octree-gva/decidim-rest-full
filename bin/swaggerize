@@ -25,8 +25,14 @@ Options:
   --quiet, -q       Suppress output messages.
   --out, -o FILE    Specify the output file (default: $OUTPUT_FILE).
   --help, -h        Display this help menu.
+
+Extra RSpec paths (beyond spec/requests): set DECIDIM_REST_FULL_SWAGGER_SPEC_PATHS
+to comma-separated globs, and/or add spec/rest_full_swagger_spec_paths.rb calling
+Decidim::RestFull::Core::SwaggerSpecPaths.register(...).
 EOF
 }
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -51,6 +57,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+cd "$ROOT"
 bundle check || bundle install
 log "Generating OpenAPI spec"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
@@ -58,16 +65,30 @@ log "quiet: $QUIET"
 log "output: $OUTPUT_FILE"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
 
+RSPEC_TARGETS="$(bundle exec ruby -I lib -e '
+  require "decidim/rest_full/core/swagger_spec_paths"
+  hook = File.expand_path("spec/rest_full_swagger_spec_paths.rb", Dir.pwd)
+  load hook if File.exist?(hook)
+  print Decidim::RestFull::Core::SwaggerSpecPaths.rspec_paths.join(" ")
+')"
+log "rspec targets: $RSPEC_TARGETS"
+
 # Ensure dummy app test DB is migrated (e.g. when run in a fresh container after setup-tests)
 if [[ -d spec/decidim_dummy_app ]] && [[ -n "${DATABASE_URL:-}" ]]; then
-  (cd spec/decidim_dummy_app && RAILS_ENV=test bundle exec rake db:create db:migrate)
+  cd spec/decidim_dummy_app
+  log "> bundle check || bundle install"
+  RAILS_ENV=test bundle check || bundle install
+  log "> rake db:create db:migrate"
+  RAILS_ENV=test bundle exec rake db:create db:migrate
+  cd ../..
 fi
 
+log "> rspec $RSPEC_TARGETS"
 if [[ $QUIET -eq 1 ]]; then
-  SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
+  SWAGGER_DRY_RUN=0 bundle exec rspec $RSPEC_TARGETS \
     --format Rswag::Specs::SwaggerFormatter > /dev/null 2>&1
 else
-  SWAGGER_DRY_RUN=0 bundle exec rspec spec/requests/ \
+  SWAGGER_DRY_RUN=0 bundle exec rspec $RSPEC_TARGETS \
     --format Rswag::Specs::SwaggerFormatter
 fi
 

@@ -9,26 +9,24 @@ module Decidim
           before_action { ability.authorize! :vote, ::Decidim::Proposals::Proposal }
           before_action do
             unless proposal_component.current_settings[:votes_enabled]
-              raise Decidim::RestFull::ApiException::BadRequest,
+              raise Decidim::RestFull::Core::ApiException::BadRequest,
                     "Vote are disabled"
             end
           end
 
-          before_action do
-            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
-          end
+          before_action { require_user! }
 
           def create
-            raise Decidim::RestFull::ApiException::BadRequest, "Already voted" if voted?
-            raise Decidim::RestFull::ApiException::BadRequest, "Weight: error in the weight field. Negative weight not supported" if weight.negative?
-            raise Decidim::RestFull::ApiException::BadRequest, "Weight: error in the weight field. Abstention not supported" if weight.zero? && !support_abstention?
-            raise Decidim::RestFull::ApiException::BadRequest, "Weight: error in the weight field. Weight not supported" if !support_weight? && weight > 1
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Already voted" if voted?
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Weight: error in the weight field. Negative weight not supported" if weight.negative?
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Weight: error in the weight field. Abstention not supported" if weight.zero? && !support_abstention?
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Weight: error in the weight field. Weight not supported" if !support_weight? && weight > 1
 
             Decidim::Proposals::VoteProposal.call(proposal, current_user) do
               on(:ok) do |proposal_vote|
                 proposal_vote.weight = weight if support_weight?
                 proposal.reload
-                render json: Decidim::Api::RestFull::ProposalSerializer.new(
+                render json: Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
                   proposal,
                   params: {
                     only: [],
@@ -40,7 +38,7 @@ module Decidim
               end
 
               on(:invalid) do |_error|
-                raise Decidim::RestFull::ApiException::BadRequest, "Vote is invalid"
+                raise Decidim::RestFull::Core::ApiException::BadRequest, "Vote is invalid"
               end
             end
           end

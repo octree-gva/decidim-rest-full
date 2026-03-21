@@ -25,7 +25,7 @@ module Decidim
 
           # Show a single organization
           def show
-            raise Decidim::RestFull::ApiException::NotFound, "Organization Not Found" unless organization
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Organization Not Found" unless organization
 
             # Render the response
             render json: serializable_hash(organization)
@@ -41,7 +41,7 @@ module Decidim
           private
 
           def ensure_organization!
-            raise Decidim::RestFull::ApiException::NotFound, "Organization Not Found" unless organization
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Organization Not Found" unless organization
           end
 
           def build_update_forms
@@ -74,16 +74,16 @@ module Decidim
             system_ok = Decidim::System::UpdateOrganization.call(organization.id, system_form)[:ok]
             admin_ok = Decidim::Admin::UpdateOrganization.call(admin_form, organization)[:ok]
             appearance_ok = Decidim::Admin::UpdateOrganizationAppearance.call(appearance_form, organization)[:ok]
-            raise Decidim::RestFull::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok && appearance_ok
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok && appearance_ok
           end
 
           def validate_form(form)
             return if form.valid?
 
             update_errors = form.errors.select { |err| allowed_form_attributes.include? err.attribute.to_s }
-            raise Decidim::RestFull::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
+            raise Decidim::RestFull::Core::ApiException::BadRequest, update_errors.map(&:full_message).join(". ") unless update_errors.empty?
 
-            raise Decidim::RestFull::ApiException::BadRequest, "Failed to update organization"
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Failed to update organization"
           end
 
           def allowed_form_attributes
@@ -103,7 +103,7 @@ module Decidim
           end
 
           def serializable_hash(resource)
-            OrganizationSerializer.new(
+            Core::OrganizationSerializer.new(
               resource,
               params: { locales: available_locales }
             ).serializable_hash

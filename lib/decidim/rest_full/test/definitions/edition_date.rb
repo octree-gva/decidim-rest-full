@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:edition_date) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:edition_date) do
   {
     title: "Last Update Date",
     description: "Last update date, in ISO8601 format.",

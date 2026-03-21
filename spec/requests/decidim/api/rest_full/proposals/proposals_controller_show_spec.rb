@@ -37,7 +37,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
         response "200", "Proposal Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_item_response)
 
           context "when published" do
             run_test!(example_name: :ok) do |example|
@@ -162,7 +162,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
         response "404", "Not Found" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           on_security(:impersonationFlow) do
             context "with draft that did not co-authored" do
               let!(:draft_proposal) do

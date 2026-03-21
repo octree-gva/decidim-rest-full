@@ -66,7 +66,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
           response "200", "#{space_manifest_title} Details" do
             produces "application/json"
-            schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_item_response)
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_item_response)
             context "with a valid #{space_manifest} id" do
               let(:manifest_name) { space_manifest.to_s }
 
@@ -81,7 +81,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
           response "404", "Not found" do
             produces "application/json"
-            schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
             context "with a valid #{space_manifest_title} id" do
               let(:id) { "404" }
 

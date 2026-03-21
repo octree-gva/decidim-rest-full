@@ -27,7 +27,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       operationId "createToken"
       description "Create a oauth token for the given scopes"
 
-      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:oauth_grant_param) }
+      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:oauth_grant_param) }
 
       response "200", "Token returned" do
         context "with client_credentials grant" do

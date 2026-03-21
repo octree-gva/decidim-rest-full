@@ -9,9 +9,9 @@ This page explains how to plug your own endpoints or modules into `decidim-rest_
 
 - **Clients and tokens**: System admins create API clients and permissions from the Decidim backoffice. See [Client API admin](../user_documentation/client-api-admin.md) and the auth docs for the [client credential flow](../user_documentation/auth/client-credential-flow.md) and the [user credential flow](../user_documentation/auth/user-credential-flow.md).
 - **OAuth gateway**: All requests hit `/oauth/token` or `/oauth/introspect` first (Doorkeeper), then go through `Decidim::Api::RestFull::ApplicationController`, which exposes helpers like `current_organization`, `current_user`, `act_as` and `ability`.
-- **Scopes and permissions**: Tokens carry **scopes** (e.g. `proposals`, `blogs`, `system`) and **permissions** (e.g. `proposals.read`, `oauth.impersonate`). `Decidim::RestFull::Ability` turns those into `can?`/`authorize!` rules.
-- **Routes and controllers**: Core routes are drawn via `Decidim::RestFull::RouteRegistry.apply!` (see `config/routes.rb`). External modules register additional routes by calling `RouteRegistry.draw_api_routes { ... }`. Controllers live under `app/controllers/decidim/api/rest_full/<domain>/`.
-- **OpenAPI and docs**: Request specs (rswag) + `DefinitionRegistry` build the OpenAPI document, which powers the `/api` documentation page and client generation (`exe/decidim-rest_full-openapi`, `exe/decidim-rest_full-client-gen`). See the refactoring plan in `docs/REFACTORING_PLAN.md` for more internals.
+- **Scopes and permissions**: Tokens carry **scopes** (e.g. `proposals`, `blogs`, `system`) and **permissions** (e.g. `proposals.read`, `oauth.impersonate`). `Decidim::RestFull::Core::Ability` turns those into `can?`/`authorize!` rules.
+- **Routes and controllers**: Core routes are drawn via `Decidim::RestFull::Core::RouteRegistry.apply!` (see `config/routes.rb`). External modules register additional routes by calling `RouteRegistry.draw_api_routes { ... }`. Controllers live under `app/controllers/decidim/api/rest_full/<domain>/`.
+- **OpenAPI and docs**: Request specs ([rswag](https://github.com/rswag/rswag)) + `DefinitionRegistry` (schemas) + `spec/swagger_helper.rb` metadata build the OpenAPI document; `bin/swaggerize` runs those specs and writes the JSON. Client generation uses `exe/decidim-rest_full-client-gen`. Register extra request spec paths with `SwaggerSpecPaths` / `DefinitionRegistry.register_swagger_spec_path` when your specs live outside this gem.
 
 Once you understand this flow, adding a new endpoint is “just” wiring a route, a controller, optional serializers, permissions and OpenAPI definitions.
 
@@ -19,10 +19,11 @@ Once you understand this flow, adding a new endpoint is “just” wiring a rout
 
 You normally extend the API from **your own gem/module** (or from the host app) by:
 
-- Registering routes with `Decidim::RestFull::RouteRegistry.draw_api_routes`.
+- Registering routes with `Decidim::RestFull::Core::RouteRegistry.draw_api_routes`.
 - Implementing controllers under `app/controllers/decidim/api/rest_full/<your_domain>/`.
 - Optionally adding serializers under `app/serializers/decidim/api/rest_full/`.
-- Optionally registering OpenAPI schemas with `Decidim::RestFull::DefinitionRegistry`.
+- Optionally registering OpenAPI schemas with `Decidim::RestFull::Core::DefinitionRegistry`.
+- If your RSwag request specs are **not** under this gem’s `spec/requests/` (e.g. they live in another engine/gem), register those paths for `bin/swaggerize` via `Decidim::RestFull::Core::DefinitionRegistry.register_swagger_spec_path("path/or/glob/**/*_spec.rb")` (e.g. in your engine’s `initializer`), or `DECIDIM_REST_FULL_SWAGGER_SPEC_PATHS`, or `spec/rest_full_swagger_spec_paths.rb` at the project root.
 
 You **do not** need to change the core gem to expose extra endpoints.
 
@@ -44,8 +45,8 @@ You would:
 
 ```ruby
 # in your engine initializer
-Decidim::RestFull::PermissionRegistry.register(:groups, "groups.read", group: :groups)
-Decidim::RestFull::PermissionRegistry.register(:groups, "groups.write", group: :groups)
+Decidim::RestFull::Core::PermissionRegistry.register(:groups, "groups.read", group: :groups)
+Decidim::RestFull::Core::PermissionRegistry.register(:groups, "groups.write", group: :groups)
 ```
 
 Then assign them to API clients via the existing system UI. See [Client API admin](../user_documentation/client-api-admin.md) for how clients and permissions are exposed to admins.
@@ -55,7 +56,7 @@ Then assign them to API clients via the existing system UI. See [Client API admi
 In your module’s engine initializer (e.g. `lib/decidim/my_module/engine.rb`):
 
 ```ruby
-Decidim::RestFull::RouteRegistry.draw_api_routes do
+Decidim::RestFull::Core::RouteRegistry.draw_api_routes do
   resources :groups,
             only: [:index, :show, :create, :update, :destroy],
             controller: "/decidim/api/rest_full/groups/groups"
@@ -188,7 +189,7 @@ To expose your `group` resource in the OpenAPI document, define a schema under y
 
 ```ruby
 # lib/decidim/rest_full/test/definitions/group.rb (or your own gem)
-Decidim::RestFull::DefinitionRegistry.register_resource(:group) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:group) do
   {
     type: :object,
     title: "Group",
@@ -217,7 +218,7 @@ Then use rswag request specs to document the paths, following the existing specs
 
 ### 5.1 OpenAPI helper methods reference
 
-`Decidim::RestFull::DefinitionRegistry` exposes a small DSL to help you build schemas consistently:
+`Decidim::RestFull::Core::DefinitionRegistry` exposes a small DSL to help you build schemas consistently:
 
 - **Registering schemas**
   - `register_object(:key) { ... }` – register a reusable object schema.

@@ -5,7 +5,7 @@ module Decidim
     module RestFull
       module Organizations
         # Exposes read/update endpoints for organization-level extended_data
-        # using a dot-path API. Backed by Decidim::RestFull::OrganizationExtendedData.
+        # using a dot-path API. Backed by Decidim::RestFull::Core::OrganizationExtendedData.
         class OrganizationExtendedDataController < ApplicationController
           before_action -> { doorkeeper_authorize! :system }
           before_action :ensure_organization_extended_data
@@ -52,8 +52,8 @@ module Decidim
             return extended_data if object_path == "."
 
             object_path.split(".").reduce(extended_data) do |current, key|
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
 
               current[key]
             end
@@ -65,7 +65,7 @@ module Decidim
 
             parts = object_path.split(".")
             selected = parts[..-2].reduce(merged_extra) do |current, key|
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
 
               current[key] = {} unless current.has_key?(key)
               current[key]

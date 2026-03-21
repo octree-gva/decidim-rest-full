@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:space_manifest) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:space_manifest) do
   {
     title: "Space Manifest",
     type: :string,
@@ -8,7 +8,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:space_manifest) do
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:component_manifest) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:component_manifest) do
   {
     title: "Component Manifest",
     type: :string,
@@ -16,7 +16,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:component_manifest) do
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:resource_manifest) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:resource_manifest) do
   {
     title: "Resource Type",
     type: :string,

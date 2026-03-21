@@ -1,36 +1,34 @@
 # frozen_string_literal: true
 
-module Decidim
-  module RestFull
-    describe SyncronizeUnconfirmedHostJob do
-      let(:organization) { create(:organization, available_locales: ["en"]) }
-      let(:organization_id) { organization.id }
+require "spec_helper"
 
-      it "syncronizes the unconfirmed host" do
-        expect(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).with(organization)
-        described_class.perform_now(organization_id)
-      end
+RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHostJob do
+  let(:organization) { create(:organization, available_locales: ["en"]) }
+  let(:organization_id) { organization.id }
 
-      it "retries the job on Decidim::RestFull::ApiException::NotFound" do
-        allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(Decidim::RestFull::ApiException::NotFound)
-        described_class.perform_now(organization_id)
+  it "syncronizes the unconfirmed host" do
+    expect(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).with(organization)
+    described_class.perform_now(organization_id)
+  end
 
-        expect(described_class).to have_been_enqueued.with(organization_id)
-      end
+  it "retries the job on Decidim::RestFull::Core::ApiException::NotFound" do
+    allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(Decidim::RestFull::Core::ApiException::NotFound)
+    described_class.perform_now(organization_id)
 
-      it "discards the job on IPAddr::InvalidAddressError" do
-        allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(IPAddr::InvalidAddressError)
-        described_class.perform_now(organization_id)
+    expect(described_class).to have_been_enqueued.with(organization_id)
+  end
 
-        expect(described_class).not_to have_been_enqueued.with(organization_id)
-      end
+  it "discards the job on IPAddr::InvalidAddressError" do
+    allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(IPAddr::InvalidAddressError)
+    described_class.perform_now(organization_id)
 
-      it "discards the job on Decidim::RestFull::ApiException::BadRequest" do
-        allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(Decidim::RestFull::ApiException::BadRequest)
-        described_class.perform_now(organization_id)
+    expect(described_class).not_to have_been_enqueued.with(organization_id)
+  end
 
-        expect(described_class).not_to have_been_enqueued.with(organization_id)
-      end
-    end
+  it "discards the job on Decidim::RestFull::Core::ApiException::BadRequest" do
+    allow(Decidim::RestFull::SyncronizeUnconfirmedHost).to receive(:call).and_raise(Decidim::RestFull::Core::ApiException::BadRequest)
+    described_class.perform_now(organization_id)
+
+    expect(described_class).not_to have_been_enqueued.with(organization_id)
   end
 end

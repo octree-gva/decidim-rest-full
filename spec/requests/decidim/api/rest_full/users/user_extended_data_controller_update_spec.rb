@@ -110,7 +110,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
         response "200", "Update extended data value" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_extended_data)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:user_extended_data)
 
           context "with root path '.'" do
             let(:user) { create(:user, locale: "fr", organization:, extended_data: { "foo" => { "bar" => "true" } }) }

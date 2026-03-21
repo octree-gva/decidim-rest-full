@@ -111,7 +111,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
         response "200", "Update extended data value" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_extended_data)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_extended_data)
 
           context "with root path '.'" do
             before do

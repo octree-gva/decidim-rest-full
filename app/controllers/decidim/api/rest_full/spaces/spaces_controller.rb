@@ -13,18 +13,45 @@ module Decidim
             render json: serialize_search_results
           end
 
+          def index
+            render json: serialize_index_results
+          end
+
           def show
             render json: serialize_space_show
           end
 
           private
 
+          def serialize_index_results
+            Core::SpaceSerializer.new(paginated_index_results, params: space_serializer_params).serializable_hash
+          end
+
+          def paginated_index_results
+            paginate(raw_index_results.map { |row| result_struct(row) })
+          end
+
+          def raw_index_results
+            ActiveRecord::Base.connection.exec_query(index_query)
+          end
+
+          def index_query
+            space_sql_for(index_space_resource)
+          end
+
+          def index_space_resource
+            manifest_sym = required_manifest_name.to_sym
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "manifest not supported: #{manifest_sym}" unless available_space?(manifest_sym)
+
+            spaces_resources.find { |d| d[:manifest] == manifest_sym }
+          end
+
           def serialize_search_results
-            SpaceSerializer.new(paginated_union_results, params: space_serializer_params).serializable_hash
+            Core::SpaceSerializer.new(paginated_union_results, params: space_serializer_params).serializable_hash
           end
 
           def serialize_space_show
-            SpaceSerializer.new(space_show_query, params: space_serializer_params).serializable_hash
+            Core::SpaceSerializer.new(space_show_query, params: space_serializer_params).serializable_hash
           end
 
           def space_serializer_params

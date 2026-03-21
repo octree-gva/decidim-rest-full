@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 # config/routes.rb
-# Routes are drawn via RouteRegistry so domain engines can register API routes
-# in the same api/rest_full/vX scope. Require domain engines before the core
-# engine in lib/decidim/rest_full.rb so their blocks run when apply! is called.
+# Core API routes; Proposals/Blogs register via RouteRegistry.draw_api_routes in their engines.
+# Require domain engines before Core engine in lib/decidim/rest_full.rb so draw_api_routes runs first.
 
 CRUD_ACTIONS = [:index, :show, :update, :create, :destroy].freeze unless defined?(CRUD_ACTIONS)
 
-Decidim::RestFull::RouteRegistry.apply!(Decidim::Core::Engine.routes) do
+Decidim::RestFull::Core::RouteRegistry.apply!(Decidim::Core::Engine.routes) do
   get "/", to: "/decidim/rest_full/pages#show"
   post "/oauth/token", to: "/doorkeeper/tokens#create"
   post "/oauth/introspect", to: "/doorkeeper/tokens#introspect"
@@ -37,38 +36,12 @@ Decidim::RestFull::RouteRegistry.apply!(Decidim::Core::Engine.routes) do
   resources :components, only: [] do
     collection do
       get "/search", to: "/decidim/api/rest_full/components/components#search"
-      resources :proposal_components,
-                only: [:index, :show],
-                controller: "/decidim/api/rest_full/components/proposal_components"
-      resources :blog_components,
-                only: [:index, :show],
-                controller: "/decidim/api/rest_full/components/blog_components"
     end
   end
-
-  resources :proposals,
-            only: [:index, :show],
-            controller: "/decidim/api/rest_full/proposals/proposals"
-
-  resources :draft_proposals,
-            only: CRUD_ACTIONS,
-            controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
-    member do
-      post "/publish", action: :publish
-    end
-  end
-
-  resources :blogs,
-            only: [:index, :show],
-            controller: "/decidim/api/rest_full/blogs/blogs"
 
   resources :roles,
             only: [:index, :show, :create, :destroy],
             controller: "/decidim/api/rest_full/roles/roles"
-
-  resources :proposal_votes,
-            only: [:create],
-            controller: "/decidim/api/rest_full/proposal_votes/proposal_votes"
 
   resources :users,
             only: [:index],

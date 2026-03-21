@@ -3,9 +3,9 @@
 module Decidim
   module RestFull
     class SyncronizeUnconfirmedHostJob < ApplicationJob
-      retry_on Decidim::RestFull::ApiException::NotFound, wait: 1.minute, attempts: 10
+      retry_on Decidim::RestFull::Core::ApiException::NotFound, wait: 1.minute, attempts: 10
       discard_on IPAddr::InvalidAddressError
-      discard_on Decidim::RestFull::ApiException::BadRequest
+      discard_on Decidim::RestFull::Core::ApiException::BadRequest
 
       def perform(organization_id)
         organization = Decidim::Organization.find(organization_id)

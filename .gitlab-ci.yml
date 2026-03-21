@@ -18,7 +18,7 @@ variables:
   POSTGRES_PASSWORD: "TEST-insecure_password"
 
 services:
-  - postgres:15
+  - postgres:17
   - redis:latest
 
 
@@ -37,7 +37,7 @@ services:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual
+      when: always
     - if: '$CI_COMMIT_TAG'
       when: always
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -46,7 +46,7 @@ services:
 # Lint ruby code
 ruby::rubocop:  
   extends: .development_rules
-  image: ruby:3.2.7
+  image: ruby:3.2.2
   stage: lint
   script:
     - bundle
@@ -54,16 +54,34 @@ ruby::rubocop:
 
 ruby::erb:  
   extends: .development_rules
-  image: ruby:3.2.7
+  image: ruby:3.2.2
   stage: lint
   script:
     - bundle
     - bundle exec erblint --lint-all --enable-all-linters
 
+node::prettier:
+  extends: .development_rules
+  image: node:20
+  stage: lint
+  script:
+    - yarn install --frozen-lockfile
+    - yarn format:check
+
+##
+# Lint crowdin.yml configuration file
+crowdin::lint:  
+  extends: .development_rules
+  image: node:20
+  stage: lint
+  script:
+    - npm install -g @crowdin/cli
+    - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
+  allow_failure: true
 ##
 # Publish the gem un ruby gem.
 ruby::rubygem:
-  image: ruby:3.2.7
+  image: ruby:3.2.2
   stage: publish
   script:
     - echo "---" > .credentials
@@ -78,23 +96,21 @@ ruby::rubygem:
 # Upload new translation keys to crowdin
 crowdin::upload:
   stage: translate
-  image: node:18.20
+  image: node:20
   script:
     - npm install -g @crowdin/cli
     - crowdin upload -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
     - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual
+  when: manual
 ##
 # Create a Merge request in the project with updated 
 # crowndin translations.
 crowdin::merge_request:
   stage: translate
-  image: node:18.20
+  image: node:20
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual
+    - if: '$CI_COMMIT_BRANCH == "main" && $GITLAB_USER_ID != $TRANSLATIONBOT_ID'
+      when: always
   before_script:
     - apt-get update && apt-get install -y git
   script:
@@ -111,29 +127,12 @@ crowdin::merge_request:
     - git add config/locales
     - git commit -m "Crowdin Updates"
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
-
 ##
 # Execute rspec and expose a spec report
 ruby::rspec:
   image: ruby:3.2.2
   stage: test
   extends: .development_rules
-  variables:
-    POSTGRES_DB: "decidim"
-    DATABASE_HOST: "postgres"
-    # trunk-ignore(gitleaks/generic-api-key)
-    DATABASE_PASSWORD: "TEST-insecure_password"
-    DATABASE_USERNAME: "decidim"
-    DISABLED_DOCKER_COMPOSE: "true"
-    NODE_MAJOR: 18
-    SIMPLECOV: 1
-    CI: 1
-    RAILS_ENV: test
-    DISABLE_SPRING: 1
-  before_script:
-  - bin/setup-tests
-  script:
-    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
   artifacts:
     when: always
     paths:
@@ -143,9 +142,25 @@ ruby::rspec:
       coverage_report:
         coverage_format: cobertura
         path: coverage/coverage.xml
+  variables:
+    DATABASE_HOST: "postgres"
+    # trunk-ignore(gitleaks/generic-api-key)
+    DATABASE_PASSWORD: "TEST-insecure_password"
+    DATABASE_USERNAME: "decidim"
+    DISABLED_DOCKER_COMPOSE: "true"
+    TRAEFIK_REDIS_URL: "redis://localhost:6379/1"
+    NODE_MAJOR: 18
+    SIMPLECOV: 1
+    CI: 1
+    RAILS_ENV: test
+    DISABLE_SPRING: 1
+  before_script:
+    - bin/setup-tests
+  script:
+    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
 # Publish decidim rest full api package
 decidim-client::publish:
-  image: node:18.20
+  image: node:20
   variables:
     CI: 1
   before_script:
@@ -159,5 +174,5 @@ decidim-client::publish:
     - echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/" >> .npmrc
     - echo "${CI_API_V4_URL#http*:}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}" >> .npmrc
     - PACKAGE_VERSION=$(jq -r '.version' package.json); 
-    - npm publish --non-interactive --access=public --tag$PACKAGE_VERSION --registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/
+    - npm publish --non-interactive --access=public --tag=$PACKAGE_VERSION --registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/
   extends: .publication_rules

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:user_extended_data) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:user_extended_data) do
   {
     type: :object,
     title: "User extended data",

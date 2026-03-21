@@ -38,7 +38,7 @@ RSpec.describe Decidim::Api::RestFull::Components::BlogComponentsController do
 
         response "200", "Blog Component" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_component_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:blog_component_item_response)
 
           context "with no filter params" do
             let(:"locales[]") { %w(en fr) }

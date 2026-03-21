@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:error) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:error) do
   {
     type: :object,
     title: "Api Error Payload",
@@ -14,8 +14,8 @@ Decidim::RestFull::DefinitionRegistry.register_object(:error) do
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:error_response) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:error_response) do
   {
-    "$ref": Decidim::RestFull::DefinitionRegistry.reference(:error)
+    "$ref": Decidim::RestFull::Core::DefinitionRegistry.reference(:error)
   }.freeze
 end

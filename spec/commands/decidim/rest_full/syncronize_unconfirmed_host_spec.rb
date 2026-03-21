@@ -38,7 +38,7 @@ RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHost do
       end
 
       it "raise an bad request error" do
-        expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::ApiException::BadRequest)
+        expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::Core::ApiException::BadRequest)
       end
     end
 
@@ -63,7 +63,7 @@ RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHost do
         end
 
         it "raise an not found error" do
-          expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::ApiException::NotFound)
+          expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::Core::ApiException::NotFound)
         end
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHost do
         end
 
         it "raise an not found error" do
-          expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::ApiException::NotFound)
+          expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::Core::ApiException::NotFound)
         end
       end
     end
@@ -100,7 +100,7 @@ RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHost do
       end
 
       it "raise an not found error" do
-        expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::ApiException::NotFound)
+        expect { described_class.call(organization) }.to raise_error(Decidim::RestFull::Core::ApiException::NotFound)
       end
     end
 

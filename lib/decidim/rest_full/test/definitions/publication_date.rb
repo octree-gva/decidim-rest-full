@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:publication_date) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:publication_date) do
   {
     title: "Publication Date",
     description: "Publication date, in ISO8601 format.",

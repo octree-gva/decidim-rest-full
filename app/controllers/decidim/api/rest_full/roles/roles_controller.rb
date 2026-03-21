@@ -14,7 +14,7 @@ module Decidim
             roles = filtered_roles
             paginated = paginate_array(roles)
 
-            render json: RoleSerializer.new(
+            render json: Core::RoleSerializer.new(
               paginated,
               params: serializer_params
             ).serializable_hash
@@ -22,9 +22,9 @@ module Decidim
 
           def show
             role = aggregator.find_by(id: params.require(:id))
-            raise Decidim::RestFull::ApiException::NotFound, "Role Not Found" unless role
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Role Not Found" unless role
 
-            render json: RoleSerializer.new(
+            render json: Core::RoleSerializer.new(
               role,
               params: serializer_params
             ).serializable_hash
@@ -33,7 +33,7 @@ module Decidim
           def create
             attrs = role_params_from_body
             role = writer.create(attrs)
-            render json: RoleSerializer.new(role, params: serializer_params).serializable_hash, status: :created
+            render json: Core::RoleSerializer.new(role, params: serializer_params).serializable_hash, status: :created
           rescue ArgumentError => e
             render json: { errors: [{ title: e.message }] }, status: :unprocessable_entity
           end
@@ -73,11 +73,11 @@ module Decidim
           end
 
           def aggregator
-            @aggregator ||= Decidim::RestFull::Roles::RolesAggregator.new(current_organization)
+            @aggregator ||= Decidim::RestFull::Core::Roles::RolesAggregator.new(current_organization)
           end
 
           def writer
-            @writer ||= Decidim::RestFull::Roles::RolesWriter.new(current_organization)
+            @writer ||= Decidim::RestFull::Core::Roles::RolesWriter.new(current_organization)
           end
 
           def filtered_roles

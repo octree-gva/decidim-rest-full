@@ -33,7 +33,7 @@ RSpec.describe Decidim::RestFull::ImpersonateResourceOwnerFromCredentials do
       it "raises NotFound exception" do
         expect do
           command.send(:validate_params!)
-        end.to raise_error(Decidim::RestFull::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing")
+        end.to raise_error(Decidim::RestFull::Core::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing")
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Decidim::RestFull::ImpersonateResourceOwnerFromCredentials do
       it "raises NotFound exception" do
         expect do
           command.send(:validate_params!)
-        end.to raise_error(Decidim::RestFull::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing")
+        end.to raise_error(Decidim::RestFull::Core::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing")
       end
     end
 
