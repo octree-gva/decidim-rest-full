@@ -23,7 +23,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
         response "200", "Extended Data for a given object_path given" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:user_extended_data)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:user_extended_data)
           context "with extended_data={'foo' => {'bar' => 'true'}}, can access object_path=foo.bar" do
             let(:user) { create(:user, locale: "fr", organization:, extended_data: { "foo" => { "bar" => "true" } }) }
             let!(:object_path) { "foo.bar" }
@@ -60,7 +60,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
 
         response "404", "Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "with a object_path=unknown" do
             let(:user) { create(:user, locale: "fr", organization:, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }

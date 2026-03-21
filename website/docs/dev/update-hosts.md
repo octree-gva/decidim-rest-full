@@ -64,6 +64,6 @@ end
 ## Related Resources
 - [hold configuration: configuration.rb](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/lib/decidim/rest_full/configuration.rb)
 - [command to syncronize host - syncronize_unconfirmed_host.rb](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/app/commands/decidim/rest_full/syncronize_unconfirmed_host.rb)
-- [monkey path of UpdateOrganization Form - update_organization_form_override.rb](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/lib/decidim/rest_full/overrides/update_organization_form_override.rb)
+- [monkey path of UpdateOrganization Form - update_organization_form_override.rb](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/lib/decidim/rest_full/core/overrides/update_organization_form_override.rb)
 - [`Resolv` documentation for Reverse DNS](https://github.com/ruby/resolv)
 - [`IPAddr` documentation for IP parsing](https://github.com/ruby/ipaddr)

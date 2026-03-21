@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:time_zone) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:time_zone) do
   {
     type: :string,
     title: "Time Zone",

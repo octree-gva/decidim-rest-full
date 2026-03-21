@@ -61,7 +61,7 @@ module Decidim
         end
 
         def collection
-          @collection = Decidim::RestFull::ApiClient.includes([:organization])
+          @collection = Decidim::RestFull::Core::ApiClient.includes([:organization])
         end
       end
     end

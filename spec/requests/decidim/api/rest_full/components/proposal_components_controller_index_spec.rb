@@ -45,7 +45,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
 
         response "200", "List of proposal components" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_component_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_component_index_response)
 
           context "with no filter params" do
             let(:"locales[]") { %w(en fr) }
@@ -75,7 +75,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
             let!(:draft) do
               proposal_component = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
               prop = create(:proposal, published_at: nil, component: proposal_component, users: [user])
-              prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+              prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
               prop
             end
 

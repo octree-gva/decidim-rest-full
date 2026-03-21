@@ -3,6 +3,7 @@ glob: "app/{cells,views}/**/*.erb"
 exclude:
   - '**/vendor/**/*'
   - '**/node_modules/**/*'
+  - '**/*.js.erb'
 
 linters:
   ErbSafety:

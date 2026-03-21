@@ -5,7 +5,7 @@ RSpec.shared_examples "unauthorized when no Bearer token" do
   response "401", "Unauthorized when no Bearer token" do
     security []
     produces "application/json"
-    schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+    schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
     let(:Authorization) { nil }
     let!(:organization) { create(:organization, available_locales: ["en"]) }
 
@@ -143,7 +143,7 @@ RSpec.shared_examples "localized endpoint" do
   response "400", "Bad Request" do
     consumes "application/json"
     produces "application/json"
-    schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+    schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
     context "with invalid locales[] fields" do
       let(:"locales[]") { ["invalid_locale"] }
@@ -157,7 +157,7 @@ RSpec.shared_examples "localized endpoint" do
 end
 
 RSpec.shared_examples "localized params" do
-  parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Decidim::RestFull::DefinitionRegistry.schema_for(:locales), required: false
+  parameter name: "locales[]", in: :query, style: :form, explode: true, schema: Decidim::RestFull::Core::DefinitionRegistry.schema_for(:locales), required: false
 end
 
 RSpec.shared_examples "resource params" do

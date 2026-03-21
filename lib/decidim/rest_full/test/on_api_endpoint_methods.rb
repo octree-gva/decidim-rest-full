@@ -118,7 +118,7 @@ module Decidim
           available_scopes = %w(public oauth blogs proposals users roles)
           response "403", "Forbidden" do
             produces "application/json"
-            schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
             scopes.each do |scope|
               wrong_scope = available_scopes.find { |s| scopes.exclude?(s) && s != scope }
               context "with invalid `#{wrong_scope}` scope" do
@@ -139,7 +139,7 @@ module Decidim
 
           response "403", "Forbidden" do
             produces "application/json"
-            schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
             permissions.each do |permission|
               context "without #{permission} permission" do
                 let(:api_client) { create(:api_client, organization:, scopes:) }
@@ -174,7 +174,7 @@ module Decidim
               allow(controller).to receive(:new).and_return(controller_instance)
             end
 
-            schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
             run_test! do |response|
               expect(response.status).to eq(500)

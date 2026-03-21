@@ -79,7 +79,7 @@ module Decidim
 
           def before_execute!
             puts_error("Error: at least one --scope is required") unless @options[:scopes]
-            if @options[:id] && Decidim::RestFull::ApiClient.exists?(uid: @options[:id])
+            if @options[:id] && Decidim::RestFull::Core::ApiClient.exists?(uid: @options[:id])
               # Check uniq id
               puts_error("Error: client with ID #{@options[:id]} already exists")
             end
@@ -97,7 +97,7 @@ module Decidim
             permissions << "oauth.impersonate" if @options[:allow_impersonate]
             permissions << "oauth.login" if @options[:allow_login]
 
-            api_client = Decidim::RestFull::ApiClient.new(
+            api_client = Decidim::RestFull::Core::ApiClient.new(
               scopes: @options[:scopes].uniq,
               name: @options[:name],
               uid: @options[:id],

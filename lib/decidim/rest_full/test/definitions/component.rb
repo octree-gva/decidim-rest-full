@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:generic_component) do
   {
     type: :object,
     title: "Component",
     properties: {
       id: { type: :string, description: "Component Id" },
-      type: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_type) },
+      type: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:component_type) },
       attributes: {
         title: "Component Attributes",
         type: :object,
         properties: {
           name: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
             :description => "Component name"
           },
           global_announcement: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
             :description => "Component announcement (intro)"
           },
           participatory_space_type: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_classes)
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_classes)
           },
           participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },
-          created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) }
+          created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }
         },
         required: [:created_at, :updated_at, :name, :manifest_name, :participatory_space_type, :participatory_space_id],
         additionalProperties: false
@@ -48,7 +48,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
               type: :string
             },
             {
-              "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+              "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop)
             }
           ]
         },
@@ -58,8 +58,8 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
         type: :object,
         title: "Component Links",
         properties: {
-          self: Decidim::RestFull::DefinitionRegistry.resource_link,
-          related: Decidim::RestFull::DefinitionRegistry.resource_link
+          self: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          related: Decidim::RestFull::Core::DefinitionRegistry.resource_link
         },
         additionalProperties: false,
         required: [:self]
@@ -68,9 +68,9 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
         type: :object,
         title: "Component Relationships",
         properties: {
-          resources: Decidim::RestFull::DefinitionRegistry.has_many_relation({
-                                                                               type: :string
-                                                                             }, title: "Component Linked Resources") do |component_schema|
+          resources: Decidim::RestFull::Core::DefinitionRegistry.has_many_relation({
+                                                                                     type: :string
+                                                                                   }, title: "Component Linked Resources") do |component_schema|
                        component_schema[:properties][:meta] = {
                          type: :object,
                          title: "Component Linked Resources Metadata",
@@ -87,7 +87,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:generic_component) do
     }
   }.freeze
 end
-Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :generic_component) do |proposal_component|
+Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, :generic_component) do |proposal_component|
   proposal_component[:title] = "Proposal Component"
   proposal_component[:description] = <<~README
     A proposal component can host proposals from participants, and official proposals (proposals from the organization).
@@ -103,7 +103,7 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :gener
   README
   proposal_component[:properties][:type] = { type: :string, enum: ["proposal_component"] }
   proposal_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["proposals"] }
-  proposal_component[:properties][:links][:properties][:draft] = Decidim::RestFull::DefinitionRegistry.resource_link
+  proposal_component[:properties][:links][:properties][:draft] = Decidim::RestFull::Core::DefinitionRegistry.resource_link
   additional_properties = {
     can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
     can_vote: { type: :boolean, description: "If the current user can vote on the component" },
@@ -139,7 +139,7 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :gener
         type: :object,
         title: "Proposal Vote Weight",
         properties: {
-          label: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop), :description => "Label to voting button" },
+          label: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop), :description => "Label to voting button" },
           weight: { type: :integer, description: "Value to add to the vote. 0 for abstention" }
         },
         required: [:label, :weight]
@@ -150,17 +150,17 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:proposal_component, :gener
   proposal_component[:properties][:meta][:required].push(:can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit)
   proposal_component
 end
-Decidim::RestFull::DefinitionRegistry.register_response_for(:proposal_component)
+Decidim::RestFull::Core::DefinitionRegistry.register_response_for(:proposal_component)
 
-Decidim::RestFull::DefinitionRegistry.extends_object(:blog_component, :generic_component) do |blog_component|
+Decidim::RestFull::Core::DefinitionRegistry.extends_object(:blog_component, :generic_component) do |blog_component|
   blog_component[:title] = "Blog Post Component"
   blog_component[:properties][:type] = { type: :string, enum: ["blog_component"] }
   blog_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["blogs"] }
   blog_component
 end
-Decidim::RestFull::DefinitionRegistry.register_response_for(:blog_component)
+Decidim::RestFull::Core::DefinitionRegistry.register_response_for(:blog_component)
 
-Decidim::RestFull::DefinitionRegistry.extends_object(:other_component, :generic_component) do |other_component|
+Decidim::RestFull::Core::DefinitionRegistry.extends_object(:other_component, :generic_component) do |other_component|
   used = %w(proposals blogs)
   others = Decidim.component_registry.manifests.map { |manifest| manifest.name.to_s }.reject { |manifest_name| manifest_name.to_s == "dummy" || used.include?(manifest_name) }
   other_types = others.map { |manifest_name| "#{manifest_name.singularize}_component" }
@@ -172,13 +172,13 @@ Decidim::RestFull::DefinitionRegistry.extends_object(:other_component, :generic_
   other_component
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:component) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:component) do
   {
     oneOf: [
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_component) },
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_component) },
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:other_component) }
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_component) },
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:blog_component) },
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:other_component) }
     ]
   }.freeze
 end
-Decidim::RestFull::DefinitionRegistry.register_response_for(:component)
+Decidim::RestFull::Core::DefinitionRegistry.register_response_for(:component)

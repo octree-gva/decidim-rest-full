@@ -27,9 +27,11 @@ Gem::Specification.new do |s|
   s.add_dependency "api-pagination", "~> 6.0"
   s.add_dependency "cancancan"
   s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-blogs", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-comments", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
   s.add_dependency "decidim-decidim_awesome", Decidim::RestFull.decidim_awesome_version
+  s.add_dependency "decidim-proposals", Decidim::RestFull.decidim_version
   s.add_dependency "deface", "~> 1.9"
   s.add_dependency "doorkeeper"
   s.add_dependency "jsonapi-serializer"

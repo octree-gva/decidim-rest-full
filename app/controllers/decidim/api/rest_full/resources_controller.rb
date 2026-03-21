@@ -6,6 +6,8 @@ module Decidim
       # Base for resource controllers (index/show/create/update/destroy). Subclasses
       # must define collection, model_class, component_manifest; optional order_columns,
       # default_order_column. Uses filter_for_context and in_visible_spaces to scope by component/space.
+      #
+      # Resource-owner guards: ApplicationController#require_user!
       class ResourcesController < ApplicationController
         protected
 
@@ -35,21 +37,21 @@ module Decidim
         end
 
         def collection
-          raise Decidim::RestFull::ApiException::NotImplemented, "#{name}#collection not implemented"
+          raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#collection not implemented"
         end
 
         def model_class
-          raise Decidim::RestFull::ApiException::NotImplemented, "#{name}#model_class not implemented"
+          raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#model_class not implemented"
         end
 
         def component_manifest
-          raise Decidim::RestFull::ApiException::NotImplemented, "#{name}#component_manifest not implemented"
+          raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#component_manifest not implemented"
         end
 
         def order
           @order ||= begin
             ord = params.permit(:order)[:order] || default_order_column
-            raise Decidim::RestFull::ApiException::BadRequest, "Unknown order #{ord}" unless [default_order_direction, *order_columns].include?(ord)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown order #{ord}" unless [default_order_direction, *order_columns].include?(ord)
 
             ord == "rand" ? "RANDOM()" : { ord.to_s => order_direction.to_sym }
           end
@@ -67,7 +69,7 @@ module Decidim
         def order_direction
           @order_direction ||= begin
             ord_dir = params.permit(:order_direction)[:order_direction] || default_order_direction
-            raise Decidim::RestFull::ApiException::BadRequest, "Unknown order direction #{ord_dir}" unless %w(asc desc).include?(ord_dir)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown order direction #{ord_dir}" unless %w(asc desc).include?(ord_dir)
 
             ord_dir
           end
@@ -83,10 +85,10 @@ module Decidim
 
         def space
           @space ||= begin
-            raise Decidim::RestFull::ApiException::BadRequest, "Unkown space type #{space_manifest}" unless available_space_manifest_names.include?(space_manifest.to_sym)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Unkown space type #{space_manifest}" unless available_space_manifest_names.include?(space_manifest.to_sym)
 
             match = space_model_from(space_manifest).find_by(id: space_id, organization: current_organization)
-            raise Decidim::RestFull::ApiException::NotFound, "Space not found" unless match
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Space not found" unless match
 
             match
           end
@@ -100,7 +102,7 @@ module Decidim
               id: component_id,
               manifest_name: component_manifest
             )
-            raise Decidim::RestFull::ApiException::BadRequest, "Component not found" unless match
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Component not found" unless match
 
             match
           end

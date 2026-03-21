@@ -13,7 +13,7 @@ module Decidim
             query = query.reorder(nil).ransack(params[:filter])
             data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
-              Decidim::Api::RestFull::ProposalComponentSerializer.new(
+              Decidim::Api::RestFull::Proposals::ProposalComponentSerializer.new(
                 result,
                 params: {
                   only: [],
@@ -30,7 +30,7 @@ module Decidim
           def show
             resource_id = params.require(:id).to_i
             match = collection.find(resource_id)
-            render json: Decidim::Api::RestFull::ProposalComponentSerializer.new(
+            render json: Decidim::Api::RestFull::Proposals::ProposalComponentSerializer.new(
               match,
               params: {
                 only: [],

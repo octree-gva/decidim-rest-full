@@ -37,7 +37,7 @@ module Decidim
           def execute
             puts_error("Error: --id is required for revoke command") unless @options[:id]
 
-            api_client = Decidim::RestFull::ApiClient.find_by(uid: @options[:id])
+            api_client = Decidim::RestFull::Core::ApiClient.find_by(uid: @options[:id])
             permissions = @options[:permissions]
             # Check if permission are valid for granted scopes
             validate_permissions(permissions, api_client.scopes)

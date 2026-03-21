@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:client_credential) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:client_credential) do
   {
     type: :object,
     title: "Client Credential",
@@ -13,7 +13,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:client_credential) do
     required: %w(grant_type client_id client_secret scope)
   }
 end
-Decidim::RestFull::DefinitionRegistry.register_object(:password_grant_login) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:password_grant_login) do
   {
     type: :object,
     title: "Login",
@@ -30,7 +30,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:password_grant_login) do
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:password_grant_impersonate) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:password_grant_impersonate) do
   {
     type: :object,
     title: "Impersonation",
@@ -61,21 +61,21 @@ Decidim::RestFull::DefinitionRegistry.register_object(:password_grant_impersonat
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:oauth_grant_param) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:oauth_grant_param) do
   {
     oneOf: [
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:client_credential) },
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:password_grant_impersonate) },
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:password_grant_login) }
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:client_credential) },
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:password_grant_impersonate) },
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:password_grant_login) }
     ]
   }
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:password_grant_param) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:password_grant_param) do
   {
     oneOf: [
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:password_grant_impersonate) },
-      { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:password_grant_login) }
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:password_grant_impersonate) },
+      { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:password_grant_login) }
     ]
   }
 end

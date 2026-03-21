@@ -14,7 +14,7 @@ module Decidim
 
         def create
           @form = form(ApiPermissions).from_params(params)
-          api_client = Decidim::RestFull::ApiClient.find(@form.api_client_id)
+          api_client = Decidim::RestFull::Core::ApiClient.find(@form.api_client_id)
           api_client.permissions = @form.permissions.map do |perm_string|
             api_client.permissions.build(
               permission: perm_string,

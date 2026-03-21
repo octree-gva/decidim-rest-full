@@ -5,35 +5,46 @@ module Decidim
     module RestFull
       module Users
         # Exposes passwordless magic-link endpoints backed by
-        # Decidim::RestFull::MagicToken (model) and migration
+        # Decidim::RestFull::Core::MagicToken (model) and migration
         # db/migrate/20250131155931_add_users_magic_token.rb.
         class MagicLinksController < ResourcesController
           include ::Devise::Controllers::Helpers
           before_action only: [:create] do
             doorkeeper_authorize! :oauth
             ability.authorize! :magic_link, ::Decidim::User
-            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
-            raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at
-            raise Decidim::RestFull::ApiException::BadRequest, "User locked" if current_user.locked_at
+            require_user!
           end
           def show
             token = params.require(:id)
-            magic_token = Decidim::RestFull::MagicToken.find_by(magic_token: token)
-            raise Decidim::RestFull::ApiException::BadRequest, "Token not found" unless magic_token
-            raise Decidim::RestFull::ApiException::BadRequest, "Invalid Token" unless magic_token.valid_token?
+            magic_token = Decidim::RestFull::Core::MagicToken.find_by(magic_token: token)
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Token not found" unless magic_token
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Invalid Token" unless magic_token.valid_token?
 
             user = magic_token.user
-            raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if user.blocked_at
-            raise Decidim::RestFull::ApiException::BadRequest, "User locked" if user.locked_at
+            require_user!(user)
 
             scope = user.admin? ? :admin : :user
             sign_in(user, scope:)
-            redirect_to "/"
+            destination = magic_token.redirect_url.presence
+            if destination
+              redirect_to destination, allow_other_host: true
+            else
+              redirect_to "/"
+            end
           end
 
           def create
-            token = current_user.rest_full_generate_magic_token
-            render json: Decidim::Api::RestFull::MagicLinkSerializer.new(
+            form = Decidim::RestFull::MagicLinkRedirectUrlForm.new(
+              redirect_url: params.dig(:data, :redirect_url),
+              organization: current_organization
+            )
+            unless form.valid?
+              render json: magic_link_redirect_validation_errors(form), status: :unprocessable_entity
+              return
+            end
+
+            token = current_user.rest_full_generate_magic_token(redirect_url: form.normalized_redirect_url)
+            render json: Decidim::Api::RestFull::Core::MagicLinkSerializer.new(
               token,
               params: {
                 only: [],
@@ -45,6 +56,12 @@ module Decidim
           end
 
           protected
+
+          def magic_link_redirect_validation_errors(form)
+            {
+              errors: form.errors.map { |error| { attribute: error.attribute.to_s, message: error.message } }
+            }
+          end
 
           def model_class
             ::Decidim::User

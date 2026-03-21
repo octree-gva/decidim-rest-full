@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:health) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:health) do
   {
     type: :object,
     title: "Health Status",

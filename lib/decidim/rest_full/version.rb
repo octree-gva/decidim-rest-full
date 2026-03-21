@@ -3,7 +3,7 @@
 module Decidim
   module RestFull
     def self.version
-      "0.2.9" # DO NOT UPDATE MANUALLY
+      "0.2.10" # DO NOT UPDATE MANUALLY
     end
 
     def self.major_minor_version
@@ -11,7 +11,7 @@ module Decidim
     end
 
     def self.decidim_version
-      [">= 0.28", "<0.30"].freeze
+      "~> 0.29"
     end
 
     def self.decidim_awesome_version

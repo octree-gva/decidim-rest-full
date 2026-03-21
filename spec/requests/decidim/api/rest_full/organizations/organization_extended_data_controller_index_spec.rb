@@ -25,7 +25,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
         response "200", "Extended Data for a given object_path given" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_extended_data)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_extended_data)
           context "with extended_data={'foo' => {'bar' => 'true'}}, can access object_path=foo.bar" do
             before do
               organization.extended_data.update(data: { "foo" => { "bar" => "true" } })
@@ -71,7 +71,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
 
         response "404", "Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "with a object_path=unknown" do
             before do

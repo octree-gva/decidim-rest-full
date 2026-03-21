@@ -1,6 +1,6 @@
 services:
   rest_full:
-    command: bash -c "bundle install; sleep infinity"
+    command: bash -c "sleep infinity"
     image: octree/decidim-dev:0.29
     entrypoint: ""
     volumes:
@@ -15,13 +15,16 @@ services:
       - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test
       - DEV_MODULE=decidim-rest_full
       - RAILS_ENV=development
+      - DISABLED_DOCKER_COMPOSE=true # To run tests in docker
+    depends_on:
+      - rest-full-pg
     ports:
       - 3000:3000
     links:
       - rest-full-pg
 
   rest-full-pg:
-    image: postgres:15
+    image: postgres:17
     volumes:
       - rest_full-pg-data:/var/lib/postgresql/data
     environment:

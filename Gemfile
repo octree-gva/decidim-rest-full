@@ -16,7 +16,7 @@ gem "decidim-rest_full", path: base_path
 gem "bootsnap", "~> 1.4"
 gem "concurrent-ruby", "1.3.4"
 gem "decidim-conferences", Decidim::RestFull.decidim_version
-gem "decidim-decidim_awesome", "~> 0.12.6"
+gem "decidim-decidim_awesome", Decidim::RestFull.decidim_awesome_version
 gem "decidim-initiatives", Decidim::RestFull.decidim_version
 gem "decidim-meetings", Decidim::RestFull.decidim_version
 
@@ -29,6 +29,7 @@ gem "uri", ">= 1.1.1"
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version
+  gem "erb_lint"
   gem "rswag-specs"
   gem "rubocop-rspec"
 end

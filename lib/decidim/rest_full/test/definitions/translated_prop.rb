@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:translated_prop) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:translated_prop) do
   {
     type: :object,
     title: "Translated data",

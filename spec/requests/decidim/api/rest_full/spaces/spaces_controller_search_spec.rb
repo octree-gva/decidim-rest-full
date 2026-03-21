@@ -64,7 +64,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
         response "200", "Search Results" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_index_response)
 
           context "with no filter params" do
             let(:"locales[]") { %w(en fr) }

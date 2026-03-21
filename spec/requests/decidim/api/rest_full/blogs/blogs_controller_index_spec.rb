@@ -35,7 +35,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
 
         response "200", "Blogs Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:blog_index_response)
 
           context "when no posts (empty list)" do
             before do

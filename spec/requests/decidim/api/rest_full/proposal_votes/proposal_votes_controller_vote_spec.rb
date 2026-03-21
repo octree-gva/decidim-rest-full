@@ -50,7 +50,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
 
         response "400", "Bad Request when user already voted" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           let!(:proposal) { create(:proposal, component: proposal_component) }
 
           before do
@@ -64,7 +64,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
 
         response "200", "Vote created" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_item_response)
 
           context "when vote is active" do
             let!(:proposal) { create(:proposal, component: proposal_component) }
@@ -153,7 +153,7 @@ RSpec.describe Decidim::Api::RestFull::ProposalVotes::ProposalVotesController do
         response "404", "Not Found" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           context "when vote on draft" do
             let(:draft_proposal_author) { create(:user, locale: "fr", organization:) }
             let!(:draft_proposal) { create(:proposal, component: proposal_component, published_at: nil, users: [draft_proposal_author]) }

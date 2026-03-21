@@ -19,7 +19,7 @@ module Decidim
           private
 
           def serialized_index
-            Decidim::Api::RestFull::BlogSerializer.new(
+            Decidim::Api::RestFull::Blogs::BlogSerializer.new(
               paginate(collection),
               params: serializer_params
             ).serializable_hash
@@ -28,7 +28,7 @@ module Decidim
           def serialized_show
             resource = find_resource!
             pagination = pagination_meta
-            Decidim::Api::RestFull::BlogSerializer.new(
+            Decidim::Api::RestFull::Blogs::BlogSerializer.new(
               resource,
               params: serializer_params.merge(pagination)
             ).serializable_hash
@@ -62,7 +62,7 @@ module Decidim
 
           def find_resource!
             resource = collection.find_by(id: resource_id)
-            raise Decidim::RestFull::ApiException::NotFound, "Blog Post Not Found" unless resource
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Blog Post Not Found" unless resource
 
             resource
           end

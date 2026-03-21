@@ -2,6 +2,17 @@
 en:
   decidim:
     rest_full:
+      forms:
+        magic_link_redirect_url:
+          errors:
+            organization_required: Organization is required
+            redirect_url:
+              ascii_only: Must contain only printable ASCII characters
+              https_only: Must use the https scheme
+              host_blank: Must include a valid host
+              userinfo: Must not include user information
+              host_not_allowed: Host is not allowed for this organization
+              invalid_url: Is not a valid URL
       admin:
         menu:
           api_clients: API Clients

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:role_attributes) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:role_attributes) do
   {
     title: "Role Attributes",
     type: :object,
@@ -33,10 +33,10 @@ Decidim::RestFull::DefinitionRegistry.register_object(:role_attributes) do
         description: "Whether the invitation has been accepted"
       },
       created_at: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date)
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date)
       },
       updated_at: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date)
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date)
       }
     },
     required: [:type, :resource_id, :resource_type, :created_at],
@@ -44,7 +44,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:role_attributes) do
   }
 end
 
-Decidim::RestFull::DefinitionRegistry.register_resource(:role) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:role) do
   {
     type: :object,
     title: "Role",
@@ -52,7 +52,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:role) do
       id: { type: :string },
       type: { type: :string, enum: ["role"] },
       attributes: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:role_attributes)
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:role_attributes)
       }
     },
     required: [:id, :type, :attributes],

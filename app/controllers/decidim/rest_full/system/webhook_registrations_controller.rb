@@ -13,14 +13,14 @@ module Decidim
         end
 
         def create
-          api_client = Decidim::RestFull::ApiClient.find(webhook_registration_params[:api_client_id])
+          api_client = Decidim::RestFull::Core::ApiClient.find(webhook_registration_params[:api_client_id])
           @form = form(WebhookRegistrationForm).from_params(
             webhook_registration_params,
             api_client:
           )
 
           if @form.valid?
-            Decidim::RestFull::WebhookRegistration.create!(
+            Decidim::RestFull::Core::WebhookRegistration.create!(
               api_client:,
               url: @form.url,
               subscriptions: @form.subscriptions
@@ -33,7 +33,7 @@ module Decidim
         end
 
         def destroy
-          webhook_registration = Decidim::RestFull::WebhookRegistration.find(params[:id])
+          webhook_registration = Decidim::RestFull::Core::WebhookRegistration.find(params[:id])
           webhook_registration.destroy
           redirect_to core_engine_routes.edit_system_api_client_path(webhook_registration.api_client)
         end

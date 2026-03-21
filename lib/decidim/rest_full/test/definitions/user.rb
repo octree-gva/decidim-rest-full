@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:user) do
   {
     type: :object,
     title: "User",
@@ -66,7 +66,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
             type: :string
           },
           locale: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:locale),
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:locale),
             :description => "User locale. Fallback to default locale of the organization. Private"
           },
           email: {
@@ -80,8 +80,8 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:user) do
             properties: {},
             additionalProperties: true
           },
-          created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) }
+          created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }
         },
         additionalProperties: false,
         required: [:created_at, :updated_at, :name, :nickname, :locale, :extended_data]

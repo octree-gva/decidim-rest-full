@@ -15,11 +15,7 @@ module Decidim
             authorize! :update_extended_data, ::Decidim::User
           end
 
-          before_action do
-            raise Decidim::RestFull::ApiException::BadRequest, "User required" unless current_user
-            raise Decidim::RestFull::ApiException::BadRequest, "User blocked" if current_user.blocked_at
-            raise Decidim::RestFull::ApiException::BadRequest, "User locked" if current_user.locked_at
-          end
+          before_action { require_user! }
           # display an extended data
           def index
             render json: {
@@ -47,8 +43,8 @@ module Decidim
             return extended_data if object_path == "."
 
             object_path.split(".").reduce(extended_data) do |current, key|
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
 
               current[key]
             end
@@ -60,7 +56,7 @@ module Decidim
 
             parts = object_path.split(".")
             selected = parts[..-2].reduce(merged_extra) do |current, key|
-              raise Decidim::RestFull::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
 
               current[key] = {} unless current.has_key?(key)
               current[key]

@@ -10,10 +10,10 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
       description "List or search components of the organization"
       it_behaves_like "paginated params"
       it_behaves_like "localized params"
-      it_behaves_like "filtered params", filter: "manifest_name", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_manifest) }, only: :string
+      it_behaves_like "filtered params", filter: "manifest_name", item_schema: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:component_manifest) }, only: :string
       it_behaves_like "filtered params", filter: "id", item_schema: { type: :integer }, only: :integer
       it_behaves_like "filtered params", filter: "participatory_space_id", item_schema: { type: :string }, only: :integer
-      it_behaves_like "filtered params", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:space_type) }, only: :string
+      it_behaves_like "filtered params", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_type) }, only: :string
       it_behaves_like "filtered params", filter: "name", item_schema: { type: :string }, only: :string
 
       describe_api_endpoint(
@@ -52,7 +52,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
 
         response "200", "List of components" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:component_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:component_index_response)
 
           context "with no filter params" do
             let(:"locales[]") { %w(en fr) }

@@ -24,7 +24,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
           create(:participatory_process_user_role, user:, participatory_process: space, role: "moderator")
         end
         let(:id) do
-          Decidim::RestFull::Roles::RoleIdCodec.encode(
+          Decidim::RestFull::Core::Roles::RoleIdCodec.encode(
             resource_type: "Decidim::ParticipatoryProcess",
             resource_id: space.id,
             user_id: user.id,

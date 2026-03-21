@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:blog) do
   {
     type: :object,
     title: "Blog Post",
@@ -12,14 +12,14 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
         title: "Blog Post Attributes",
         properties: {
           title: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop)
           },
           body: {
-            "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+            "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop)
           },
-          created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) },
-          published_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:publication_date) }
+          created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) },
+          published_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:publication_date) }
         },
         required: [:created_at, :updated_at, :title, :body],
         additionalProperties: false
@@ -43,7 +43,7 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
               type: :string
             },
             {
-              "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop)
+              "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop)
             }
           ]
         },
@@ -53,11 +53,11 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
         type: :object,
         title: "Blog Post Links",
         properties: {
-          self: Decidim::RestFull::DefinitionRegistry.resource_link,
-          collection: Decidim::RestFull::DefinitionRegistry.resource_link,
-          related: Decidim::RestFull::DefinitionRegistry.resource_link,
-          prev: Decidim::RestFull::DefinitionRegistry.resource_link,
-          next: Decidim::RestFull::DefinitionRegistry.resource_link
+          self: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          collection: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          related: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          prev: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          next: Decidim::RestFull::Core::DefinitionRegistry.resource_link
         },
         additionalProperties: false,
         required: [:self, :collection, :related]
@@ -66,8 +66,8 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:blog) do
         type: :object,
         title: "Blog Post Relationships",
         properties: {
-          space: Decidim::RestFull::DefinitionRegistry.belongs_to(*Decidim.participatory_space_registry.manifests.map(&:name), title: "Linked Space"),
-          component: Decidim::RestFull::DefinitionRegistry.belongs_to("blog_component", title: "Linked Blog Component")
+          space: Decidim::RestFull::Core::DefinitionRegistry.belongs_to(*Decidim.participatory_space_registry.manifests.map(&:name), title: "Linked Space"),
+          component: Decidim::RestFull::Core::DefinitionRegistry.belongs_to("blog_component", title: "Linked Blog Component")
         },
         required: [:component, :space],
         additionalProperties: false

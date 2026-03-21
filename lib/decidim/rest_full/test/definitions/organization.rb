@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:organization_attributes) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:organization_attributes) do
   {
     title: "Organization Attributes",
     type: :object,
     properties: {
       name: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
         :additionalProperties => { type: :string }
       },
       description: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:translated_prop),
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
         :additionalProperties => { type: :string }
       },
       reference_prefix: { type: :string, description: "Prefix for the organization. Used to prefix uplodaded files and reference resources" },
       host: { type: :string },
       send_welcome_notification: { type: :boolean, description: "True if welcome email is sent to users" },
       secondary_hosts: { type: :array, items: { type: :string, description: "Additional host, will redirect (301) to `host`" } },
-      available_locales: Decidim::RestFull::DefinitionRegistry.schema_for(:locales),
+      available_locales: Decidim::RestFull::Core::DefinitionRegistry.schema_for(:locales),
       default_locale: { type: :string, description: "defaut locale for the organization" },
       users_registration_mode: { type: :string, enum: %w(enabled existing disabled), description: <<~README
         Define user registration mode:#{" "}
@@ -37,11 +37,11 @@ Decidim::RestFull::DefinitionRegistry.register_object(:organization_attributes) 
         description: "Enable machine translations (must be configured, see [Using machine translations](https://docs.decidim.org/en/develop/develop/machine_translations.html))"
       },
       user_groups_enabled: { type: :boolean, description: "Enable user groups in public views" },
-      time_zone: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:time_zone) },
+      time_zone: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:time_zone) },
       comments_max_length: { type: :integer, description: "Default maximum length of comments" },
       rich_text_editor_in_public_views: { type: :boolean, description: "Enable rich text editor in public views" },
-      created_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:creation_date) },
-      updated_at: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:edition_date) },
+      created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
+      updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) },
       extended_data: { type: :object, title: "Extended data for the organization" }
     },
     additionalProperties: false,
@@ -49,7 +49,7 @@ Decidim::RestFull::DefinitionRegistry.register_object(:organization_attributes) 
   }
 end
 
-Decidim::RestFull::DefinitionRegistry.register_resource(:organization) do
+Decidim::RestFull::Core::DefinitionRegistry.register_resource(:organization) do
   {
     type: :object,
     title: "Organization",
@@ -57,13 +57,13 @@ Decidim::RestFull::DefinitionRegistry.register_resource(:organization) do
       id: { type: :string },
       type: { type: :string, enum: ["organization"] },
       attributes: {
-        "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_attributes)
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_attributes)
       },
       meta: {
         title: "Organization Metadata",
         type: :object,
         properties: {
-          locales: Decidim::RestFull::DefinitionRegistry.schema_for(:locales),
+          locales: Decidim::RestFull::Core::DefinitionRegistry.schema_for(:locales),
           unconfirmed_host: { type: :string, description: "If host update is pending, unconfirmed host for the organization" }
         },
         required: [:locales],

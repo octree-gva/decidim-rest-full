@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::RestFull::DefinitionRegistry.register_object(:locale) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:locale) do
   {
     title: "Current locale",
     type: :string,
@@ -8,10 +8,10 @@ Decidim::RestFull::DefinitionRegistry.register_object(:locale) do
   }.freeze
 end
 
-Decidim::RestFull::DefinitionRegistry.register_object(:locales) do
+Decidim::RestFull::Core::DefinitionRegistry.register_object(:locales) do
   {
     type: :array,
     title: "Available locales",
-    items: { "$ref": Decidim::RestFull::DefinitionRegistry.reference(:locale) }
+    items: { "$ref": Decidim::RestFull::Core::DefinitionRegistry.reference(:locale) }
   }.freeze
 end

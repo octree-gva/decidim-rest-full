@@ -33,7 +33,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
 
         response "200", "Blog Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:blog_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:blog_item_response)
 
           context "when blog post is alone" do
             run_test! do |example|
@@ -182,7 +182,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
 
         response "404", "Blog Not Found" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
           context "when id=bad_string" do
             let(:id) { "bad_string" }

@@ -15,7 +15,7 @@ module Decidim
             # Fetch users and paginate
             users = paginate(Decidim::User.where(organization: current_organization).ransack(params[:filter]).result)
             # Render the response
-            render json: UserSerializer.new(
+            render json: Core::UserSerializer.new(
               users,
               params: { host: current_organization.host, includes_extended: can_include_extended? }
             ).serializable_hash

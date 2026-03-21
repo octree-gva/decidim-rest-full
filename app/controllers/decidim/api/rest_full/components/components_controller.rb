@@ -13,7 +13,7 @@ module Decidim
             query = query.reorder(nil).ransack(params[:filter])
             data = paginate(ActiveRecord::Base.connection.exec_query(in_visible_spaces(query.result).to_sql).map do |result|
               result = Struct.new(*result.keys.map(&:to_sym)).new(*result.values)
-              serializer = "Decidim::Api::RestFull::#{result.manifest_name.singularize.camelize}ComponentSerializer".constantize
+              serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(result.manifest_name)
               serializer.new(
                 result,
                 params: {
@@ -32,9 +32,9 @@ module Decidim
           def show
             component_id = params.require(:id).to_i
             component = in_visible_spaces(Decidim::Component.where(id: component_id)).first
-            raise Decidim::RestFull::ApiException::NotFound, "Component not found" unless component
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Component not found" unless component
 
-            serializer = "Decidim::Api::RestFull::#{component.manifest_name.singularize.camelize}ComponentSerializer".constantize
+            serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(component.manifest_name)
 
             render json: serializer.new(
               component,

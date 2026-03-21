@@ -32,7 +32,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
 
         response "200", "Proposal Component" do
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:proposal_component_item_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:proposal_component_item_response)
 
           context "with no filter params" do
             let(:"locales[]") { %w(en fr) }
@@ -50,7 +50,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
               let(:unrelated_component) { create(:component, participatory_space: unrelated_participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
               let!(:unrelated_draft) do
                 prop = create(:proposal, published_at: nil, component: unrelated_component, users: [user])
-                prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+                prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
                 prop
               end
 
@@ -71,12 +71,12 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
               let(:unrelated_component) { create(:component, participatory_space: unrelated_participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
               let!(:unrelated_draft) do
                 prop = create(:proposal, published_at: nil, component: unrelated_component, users: [user])
-                prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+                prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
                 prop
               end
               let!(:draft) do
                 prop = create(:proposal, published_at: nil, component:, users: [user])
-                prop.update(rest_full_application: Decidim::RestFull::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
+                prop.update(rest_full_application: Decidim::RestFull::Proposals::ProposalApplicationId.new(proposal_id: prop.id, api_client_id: api_client.id))
                 prop
               end
               let(:bearer_token) { create(:oauth_access_token, scopes: "public", resource_owner_id: user.id, application: api_client) }

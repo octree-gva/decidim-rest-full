@@ -19,6 +19,7 @@ RSpec.configure do |config|
   # an example in the swagger file.
   config.after do |example|
     next unless example.metadata[:type] == :request
+    next unless example.metadata[:response]
 
     content = example.metadata[:response][:content] || {}
     example_name = example.metadata[:example_name]

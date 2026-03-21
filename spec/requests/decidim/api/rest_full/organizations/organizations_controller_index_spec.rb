@@ -23,7 +23,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
         response "200", "Organizations listed" do
           consumes "application/json"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:organization_index_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:organization_index_response)
 
           context "with locale[] filter translated results" do
             let(:"locales[]") { %w(en fr) }

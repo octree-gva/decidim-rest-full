@@ -20,20 +20,25 @@ module Decidim
 
     describe "#rest_full_generate_magic_token" do
       it "creates a new rest_full_magic_token for the user" do
-        expect { user.rest_full_generate_magic_token }.to change(Decidim::RestFull::MagicToken, :count).by(1)
+        expect { user.rest_full_generate_magic_token }.to change(Decidim::RestFull::Core::MagicToken, :count).by(1)
         expect(user.rest_full_magic_token).to be_present
       end
 
       it "destroys any existing rest_full_magic_token before creating a new one" do
         existing_token = create(:magic_token, user:)
         user.rest_full_generate_magic_token
-        expect(Decidim::RestFull::MagicToken.exists?(existing_token.id)).to be false
+        expect(Decidim::RestFull::Core::MagicToken.exists?(existing_token.id)).to be false
       end
 
       it "returns the newly created rest_full_magic_token" do
         magic_token = user.rest_full_generate_magic_token
-        expect(magic_token).to be_a(Decidim::RestFull::MagicToken)
+        expect(magic_token).to be_a(Decidim::RestFull::Core::MagicToken)
         expect(magic_token.user).to eq(user)
+      end
+
+      it "persists optional redirect_url" do
+        magic_token = user.rest_full_generate_magic_token(redirect_url: "https://example.org/cb")
+        expect(magic_token.reload.redirect_url).to eq("https://example.org/cb")
       end
 
       it "raises an error if the rest_full_magic_token cannot be created" do

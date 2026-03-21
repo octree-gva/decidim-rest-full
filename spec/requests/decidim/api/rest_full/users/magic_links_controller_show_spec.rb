@@ -31,12 +31,26 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
               expect(example.body).to include("You are being ")
             end
           end
+
+          context "when token has redirect_url" do
+            before do
+              organization.update!(external_domain_allowlist: ["dest.example"])
+            end
+
+            let(:magic_token) do
+              user.rest_full_generate_magic_token(redirect_url: "https://dest.example/after").magic_token
+            end
+
+            run_test!(example_name: :ok_redirect) do
+              expect(response).to redirect_to("https://dest.example/after")
+            end
+          end
         end
 
         response "400", "Bad Request" do
           consumes "text/html"
           produces "application/json"
-          schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           context "when user is blocked" do
             before do
               user.update(blocked_at: Time.zone.now)

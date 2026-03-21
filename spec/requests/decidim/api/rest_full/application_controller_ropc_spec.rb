@@ -37,11 +37,11 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       operationId "createToken"
       description "Create an OAuth token for the given scopes (password or client_credentials grant)."
 
-      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:oauth_grant_param) }
+      parameter name: :body, in: :body, required: true, schema: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:oauth_grant_param) }
 
       response "400", "Bad Request when grant_type is invalid" do
         produces "application/json"
-        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
         let(:body) do
           {
             grant_type: "invalid_grant",
@@ -192,7 +192,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
 
       response "400", "Bad Request" do
         produces "application/json"
-        schema "$ref" => Decidim::RestFull::DefinitionRegistry.reference(:error_response)
+        schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
         context "when user does not exists" do
           context "with meta.register_on_missing=false" do

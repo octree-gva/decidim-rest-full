@@ -32,9 +32,9 @@ module Decidim
 
           def execute
             matches = if @options[:id]
-                        Decidim::RestFull::ApiClient.where(uid: @options[:id]).limit(1)
+                        Decidim::RestFull::Core::ApiClient.where(uid: @options[:id]).limit(1)
                       else
-                        Decidim::RestFull::ApiClient.all
+                        Decidim::RestFull::Core::ApiClient.all
                       end
             if matches.any?
               if matches.size > 1
