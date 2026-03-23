@@ -104,6 +104,7 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
   proposal_component[:properties][:type] = { type: :string, enum: ["proposal_component"] }
   proposal_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["proposals"] }
   proposal_component[:properties][:links][:properties][:draft] = Decidim::RestFull::Core::DefinitionRegistry.resource_link
+  proposal_component[:properties][:links][:properties][:comment] = Decidim::RestFull::Core::DefinitionRegistry.resource_link
   additional_properties = {
     can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
     can_vote: { type: :boolean, description: "If the current user can vote on the component" },
@@ -156,6 +157,7 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:blog_component, :gen
   blog_component[:title] = "Blog Post Component"
   blog_component[:properties][:type] = { type: :string, enum: ["blog_component"] }
   blog_component[:properties][:attributes][:properties][:manifest_name] = { type: :string, enum: ["blogs"] }
+  blog_component[:properties][:links][:properties][:comment] = Decidim::RestFull::Core::DefinitionRegistry.resource_link
   blog_component
 end
 Decidim::RestFull::Core::DefinitionRegistry.register_response_for(:blog_component)

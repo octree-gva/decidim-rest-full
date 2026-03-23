@@ -31,7 +31,7 @@ module Decidim
           Doorkeeper.configure do
             handle_auth_errors :raise
             default_scopes :public
-            optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :oauth, :roles
+            optional_scopes :spaces, :system, :proposals, :meetings, :debates, :pages, :blogs, :comments, :oauth, :roles
             grant_flows %w(password client_credentials)
 
             custom_introspection_response do |token, _context|

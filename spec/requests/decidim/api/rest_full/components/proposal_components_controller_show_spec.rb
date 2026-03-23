@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "swagger_helper"
+require "decidim/proposals/test/factories"
+
 RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController do
   path "/components/proposal_components/{id}" do
     get "Proposal Component Details" do
@@ -40,6 +42,32 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
             let(:per_page) { 10 }
 
             run_test!(example_name: :ok)
+          end
+
+          context "with comment collection link when comments are enabled" do
+            let(:component) { create(:proposal_component, participatory_space: participatory_process, published_at: Time.zone.now) }
+
+            let(:"locales[]") { %w(en fr) }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :with_comment_link) do |example|
+              comp = JSON.parse(example.body)["data"]
+              expect(comp["links"]["comment"]["href"]).to include("filter[decidim_component_id_eq]=#{component.id}")
+            end
+          end
+
+          context "without comment link when comments are disabled" do
+            let(:component) { create(:proposal_component, :with_comments_disabled, participatory_space: participatory_process, published_at: Time.zone.now) }
+
+            let(:"locales[]") { %w(en fr) }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :without_comment_link) do |example|
+              comp = JSON.parse(example.body)["data"]
+              expect(comp["links"]["comment"]).to be_nil
+            end
           end
 
           on_security(:impersonationFlow) do

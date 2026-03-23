@@ -327,7 +327,7 @@ module Decidim
                 title: { type: :string, description: "Page Title" },
                 hreflang: { type: :array, items: { type: :string }, description: "Available locales" },
                 describedby: { type: :string, description: "JSONSchema URL describing the request" },
-                rel: { type: :string, enum: %w(public_page resource) },
+                rel: { type: :string, enum: %w(public_page resource collection) },
                 meta: {
                   type: :object,
                   title: "Resource URL Metadata",
@@ -336,7 +336,8 @@ module Decidim
                     component_manifest: { type: :string, description: "Component manifest" },
                     space_id: { type: :string, description: "Space ID" },
                     space_manifest: { type: :string, description: "Space Manifest" },
-                    resource_id: { type: :string, description: "Resource ID" }
+                    resource_id: { type: :string, description: "Resource ID" },
+                    action_method: { type: :string, description: "HTTP method for the linked action" }
                   }
                 }
               },

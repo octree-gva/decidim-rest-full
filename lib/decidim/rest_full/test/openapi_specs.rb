@@ -55,6 +55,7 @@ module Decidim
               Definitions::Tags::USER,
               Definitions::Tags::BLOG,
               Definitions::Tags::PROPOSAL,
+              Definitions::Tags::COMMENT,
               Definitions::Tags::ROLES
             ],
             components: {

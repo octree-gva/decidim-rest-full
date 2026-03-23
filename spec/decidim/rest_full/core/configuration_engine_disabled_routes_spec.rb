@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-# When enable_proposals_api / enable_blogs_api is false, route constraints return 404
+# When enable_proposals_api / enable_blogs_api / enable_comments_api is false, route constraints return 404
 # (see lib/decidim/rest_full/proposals/engine.rb and blogs/engine.rb).
 RSpec.describe Decidim::RestFull::Core::Configuration, type: :request do
   let(:organization) { create(:organization, host: "test.example.org") }
@@ -37,6 +37,21 @@ RSpec.describe Decidim::RestFull::Core::Configuration, type: :request do
     it "does not register blogs routes when disabled" do
       expect do
         get "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/blogs"
+      end.to raise_error(ActionController::RoutingError, /No route matches/)
+    end
+  end
+
+  describe "comments" do
+    around do |example|
+      prev = Decidim::RestFull::Core::Configuration.enable_comments_api
+      Decidim::RestFull::Core::Configuration.enable_comments_api = false
+      example.run
+      Decidim::RestFull::Core::Configuration.enable_comments_api = prev
+    end
+
+    it "does not register comments routes when disabled" do
+      expect do
+        get "/api/rest_full/v#{Decidim::RestFull.major_minor_version}/comments"
       end.to raise_error(ActionController::RoutingError, /No route matches/)
     end
   end

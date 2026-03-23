@@ -86,6 +86,24 @@ module Decidim
               }
             }
           end
+
+          link :comment, if: (proc do |object|
+            settings = ComponentSerializer.settings_for(object)
+            h = settings.is_a?(Hash) ? settings : settings.to_h
+            comments_on = h["comments_enabled"] == true || h.dig("global", "comments_enabled") == true
+            blocked = h["comments_blocked"] == true || h.dig("global", "comments_blocked") == true
+            comments_on && !blocked
+          end) do |object, params|
+            {
+              href: "https://#{params[:host]}/comments?filter[decidim_component_id_eq]=#{object.id}",
+              title: "Comments for this component",
+              rel: "collection",
+              meta: {
+                component_id: object.id.to_s,
+                action_method: "GET"
+              }
+            }
+          end
         end
       end
     end

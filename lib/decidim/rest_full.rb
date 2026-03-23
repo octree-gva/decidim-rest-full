@@ -42,8 +42,12 @@ require "decidim/rest_full/core/overrides/update_organization_command_override"
 require "decidim/rest_full/proposals/proposal_client_id_override"
 require "decidim/rest_full/proposals/proposals_controller_override"
 
+require "decidim/rest_full/comment/comment_ransackers"
+require "decidim/rest_full/comment/comment_visibility"
+require "decidim/rest_full/comment/webhook_subscription"
 require "decidim/rest_full/proposals/engine"
 require "decidim/rest_full/blogs/engine"
+require "decidim/rest_full/comment/engine"
 require "decidim/rest_full/core/engine"
 
 require "decidim/rest_full/cli"
@@ -60,7 +64,7 @@ module Decidim
 
     def self.events
       c = Core::Configuration.config
-      c.events_for_proposals + c.events_for_oauth + c.events_for_system
+      c.events_for_proposals + c.events_for_oauth + c.events_for_system + c.events_for_comments
     end
   end
 end

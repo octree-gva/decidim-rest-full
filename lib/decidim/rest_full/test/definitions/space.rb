@@ -94,9 +94,10 @@ Decidim::RestFull::Core::DefinitionRegistry.register_resource(:space) do
         title: "Space Links",
         properties: {
           self: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
-          related: Decidim::RestFull::Core::DefinitionRegistry.resource_link
+          related: Decidim::RestFull::Core::DefinitionRegistry.resource_link,
+          comment: Decidim::RestFull::Core::DefinitionRegistry.resource_link
         },
-        required: [:self, :related],
+        required: [:self, :related, :comment],
         additionalProperties: false
       }
     },

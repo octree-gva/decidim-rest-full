@@ -24,6 +24,11 @@ module Decidim
           true
         end
 
+        # When false, Blogs engine does not mount comment API routes.
+        config_accessor :enable_comments_api do
+          true
+        end
+
         # When false, Blogs engine does not mount blog API routes.
         config_accessor :enable_blogs_api do
           true
@@ -33,6 +38,15 @@ module Decidim
           {
             "blogs" => [
               "blogs.read"
+            ],
+            "comments" => [
+              "comments.read",
+              "comments.create",
+              "comments.update",
+              "comments.destroy",
+              "comments.vote",
+              "comments.moderate",
+              *config.events_for_comments
             ],
             "system" => [
               "oauth.impersonate",
@@ -83,6 +97,13 @@ module Decidim
             "system.organizations.created",
             "system.organizations.updated",
             "system.organizations.deleted"
+          ]
+        end
+
+        config_accessor :events_for_comments do
+          [
+            "comment_creation.succeeded",
+            "comment_update.succeeded"
           ]
         end
       end

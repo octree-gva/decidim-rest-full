@@ -29,6 +29,7 @@ module Decidim
           perms_for_proposals if scopes.include? "proposals"
           perms_for_roles if scopes.include? "roles"
           perms_for_blogs if scopes.include? "blogs"
+          perms_for_comments if scopes.include? "comments"
         end
 
         def self.from_doorkeeper_token(doorkeeper_token)
@@ -85,6 +86,15 @@ module Decidim
           can :read, ::Decidim::Proposals::Proposal if permissions.include? "proposals.read"
           can :draft, ::Decidim::Proposals::Proposal if permissions.include? "proposals.draft"
           can :vote, ::Decidim::Proposals::Proposal if permissions.include? "proposals.vote"
+        end
+
+        def perms_for_comments
+          can :read, ::Decidim::Comments::Comment if permissions.include? "comments.read"
+          can :create, ::Decidim::Comments::Comment if permissions.include? "comments.create"
+          can :update, ::Decidim::Comments::Comment if permissions.include? "comments.update"
+          can :destroy, ::Decidim::Comments::Comment if permissions.include? "comments.destroy"
+          can :vote, ::Decidim::Comments::CommentVote if permissions.include? "comments.vote"
+          can :moderate, ::Decidim::Comments::Comment if permissions.include? "comments.moderate"
         end
       end
     end
