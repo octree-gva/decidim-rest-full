@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decidim-rest_full (0.2.10)
+    decidim-rest_full (0.2.11)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (~> 0.29)

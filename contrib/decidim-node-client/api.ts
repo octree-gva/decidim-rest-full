@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.9_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.2.11_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant Decidim is multi-tenant, and this API supports it. - The **`system` scope** endpoints are available in any tenant - The tenant `host` attribute will be used to guess which tenant you are requesting.   For example, given a tenant `example.org` and `foobar.org`, the endpoint   * `example.org/oauth/token` will ask a token for the example.org organization   * `foobar.org/oauth/token` for foobar.org.
  *
  * The version of the OpenAPI document: v0.2
  *
@@ -343,7 +343,7 @@ export interface BlogPostComponentLinks {
  * @interface BlogPostComponentMetadata
  */
 export interface BlogPostComponentMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published component?
@@ -414,7 +414,7 @@ export interface BlogPostLinks {
  * @interface BlogPostMetadata
  */
 export interface BlogPostMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published blog post?
@@ -430,12 +430,6 @@ export interface BlogPostMetadata {
   scope?: number;
 }
 /**
- * @type BlogPostMetadataValue
- * @export
- */
-export type BlogPostMetadataValue = TranslatedProp | boolean | number | string;
-
-/**
  *
  * @export
  * @interface BlogPostRelationships
@@ -443,10 +437,10 @@ export type BlogPostMetadataValue = TranslatedProp | boolean | number | string;
 export interface BlogPostRelationships {
   /**
    *
-   * @type {LinkedSpace}
+   * @type {LinkedSpace1}
    * @memberof BlogPostRelationships
    */
-  space: LinkedSpace;
+  space: LinkedSpace1;
   /**
    *
    * @type {LinkedBlogComponent}
@@ -664,7 +658,7 @@ export type ComponentManifest =
  * @interface ComponentMetadata
  */
 export interface ComponentMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published component?
@@ -679,6 +673,12 @@ export interface ComponentMetadata {
    */
   scopes_enabled: boolean;
 }
+/**
+ * @type ComponentMetadataValue
+ * @export
+ */
+export type ComponentMetadataValue = TranslatedProp | boolean | number | string;
+
 /**
  *
  * @export
@@ -851,10 +851,10 @@ export interface DraftProposal {
   meta: DraftPropositionMetadata;
   /**
    *
-   * @type {ProposalLinks}
+   * @type {ProposalLinks1}
    * @memberof DraftProposal
    */
-  links: ProposalLinks;
+  links: ProposalLinks1;
   /**
    *
    * @type {DraftProposalRelationships}
@@ -1122,7 +1122,7 @@ export interface DraftProposalValidationErrors {
  * @interface DraftPropositionMetadata
  */
 export interface DraftPropositionMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Draft is published as it is now?
@@ -1150,17 +1150,49 @@ export interface DraftPropositionMetadata {
   fields: Array<string>;
 }
 /**
+ *
+ * @export
+ * @interface GenerateMagicLink422Response
+ */
+export interface GenerateMagicLink422Response {
+  /**
+   *
+   * @type {Array<GenerateMagicLink422ResponseErrorsInner>}
+   * @memberof GenerateMagicLink422Response
+   */
+  errors: Array<GenerateMagicLink422ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface GenerateMagicLink422ResponseErrorsInner
+ */
+export interface GenerateMagicLink422ResponseErrorsInner {
+  /**
+   *
+   * @type {string}
+   * @memberof GenerateMagicLink422ResponseErrorsInner
+   */
+  attribute?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof GenerateMagicLink422ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
  * Optional payload to configure the magic link
  * @export
  * @interface GenerateMagicLinkData
  */
 export interface GenerateMagicLinkData {
   /**
-   * Redirect url after sign-in
+   * Optional HTTPS redirect URL after sign-in (host must be allowlisted)
    * @type {string}
    * @memberof GenerateMagicLinkData
    */
-  redirect_url: string;
+  redirect_url?: string;
 }
 /**
  *
@@ -1341,7 +1373,7 @@ export interface GenericComponentLinks {
  * @interface GenericComponentMetadata
  */
 export interface GenericComponentMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published component?
@@ -1673,21 +1705,11 @@ export interface LinkedSpaceData {
   id: string;
   /**
    *
-   * @type {string}
+   * @type {SpaceType}
    * @memberof LinkedSpaceData
    */
-  type: LinkedSpaceDataTypeEnum;
+  type: SpaceType;
 }
-
-export const LinkedSpaceDataTypeEnum = {
-  ParticipatoryProcesses: "participatory_processes",
-  Assemblies: "assemblies",
-  Conferences: "conferences",
-  Initiatives: "initiatives",
-} as const;
-
-export type LinkedSpaceDataTypeEnum =
-  (typeof LinkedSpaceDataTypeEnum)[keyof typeof LinkedSpaceDataTypeEnum];
 
 /**
  *
@@ -1703,11 +1725,21 @@ export interface LinkedSpaceData1 {
   id: string;
   /**
    *
-   * @type {SpaceType}
+   * @type {string}
    * @memberof LinkedSpaceData1
    */
-  type: SpaceType;
+  type: LinkedSpaceData1TypeEnum;
 }
+
+export const LinkedSpaceData1TypeEnum = {
+  ParticipatoryProcesses: "participatory_processes",
+  Assemblies: "assemblies",
+  Conferences: "conferences",
+  Initiatives: "initiatives",
+} as const;
+
+export type LinkedSpaceData1TypeEnum =
+  (typeof LinkedSpaceData1TypeEnum)[keyof typeof LinkedSpaceData1TypeEnum];
 
 /**
  *
@@ -1780,6 +1812,12 @@ export interface MagicLinkAttributes {
    * @memberof MagicLinkAttributes
    */
   label: string;
+  /**
+   * If set at create time, the GET sign-in flow redirects here after successful sign-in (HTTPS, allowlisted host)
+   * @type {string}
+   * @memberof MagicLinkAttributes
+   */
+  redirect_url?: string | null;
 }
 /**
  *
@@ -2589,10 +2627,10 @@ export interface Proposal {
   meta: ProposalMetadata;
   /**
    *
-   * @type {ProposalLinks1}
+   * @type {ProposalLinks}
    * @memberof Proposal
    */
-  links: ProposalLinks1;
+  links: ProposalLinks;
   /**
    *
    * @type {ProposalRelationships}
@@ -2836,7 +2874,7 @@ export interface ProposalComponentLinks {
  * @interface ProposalComponentMetadata
  */
 export interface ProposalComponentMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published component?
@@ -3087,6 +3125,18 @@ export interface ProposalLinks {
    * @memberof ProposalLinks
    */
   related: ResourceLink;
+  /**
+   *
+   * @type {ResourceLink}
+   * @memberof ProposalLinks
+   */
+  prev?: ResourceLink;
+  /**
+   *
+   * @type {ResourceLink}
+   * @memberof ProposalLinks
+   */
+  next?: ResourceLink;
 }
 /**
  *
@@ -3112,18 +3162,6 @@ export interface ProposalLinks1 {
    * @memberof ProposalLinks1
    */
   related: ResourceLink;
-  /**
-   *
-   * @type {ResourceLink}
-   * @memberof ProposalLinks1
-   */
-  prev?: ResourceLink;
-  /**
-   *
-   * @type {ResourceLink}
-   * @memberof ProposalLinks1
-   */
-  next?: ResourceLink;
 }
 /**
  *
@@ -3131,7 +3169,7 @@ export interface ProposalLinks1 {
  * @interface ProposalMetadata
  */
 export interface ProposalMetadata {
-  [key: string]: BlogPostMetadataValue | any;
+  [key: string]: ComponentMetadataValue | any;
 
   /**
    * Published blog post?
@@ -3166,10 +3204,10 @@ export interface ProposalRelationships {
   state?: ProposalStateRelationship;
   /**
    *
-   * @type {LinkedSpace1}
+   * @type {LinkedSpace}
    * @memberof ProposalRelationships
    */
-  space: LinkedSpace1;
+  space: LinkedSpace;
   /**
    *
    * @type {LinkedProposalComponent}
@@ -8615,8 +8653,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8733,8 +8771,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8807,8 +8845,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create a oauth token for the given scopes
-     * @summary Request a OAuth token through Client Credentials
+     * Create an OAuth token for the given scopes (password or client_credentials grant).
+     * @summary Request an OAuth token (ROPC)
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8875,8 +8913,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create a oauth token for the given scopes
-   * @summary Request a OAuth token through Client Credentials
+   * Create an OAuth token for the given scopes (password or client_credentials grant).
+   * @summary Request an OAuth token (ROPC)
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -12533,6 +12571,270 @@ export const SpacesApiAxiosParamCreator = function (
       };
     },
     /**
+     * List participatory spaces of type Assemblies for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Assemblies
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listAssemblies: async (
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("listAssemblies", "authorization", authorization);
+      const localVarPath = `/spaces/assemblies`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List participatory spaces of type Conferences for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Conferences
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listConferences: async (
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("listConferences", "authorization", authorization);
+      const localVarPath = `/spaces/conferences`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List participatory spaces of type Initiatives for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Initiatives
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listInitiatives: async (
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists("listInitiatives", "authorization", authorization);
+      const localVarPath = `/spaces/initiatives`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List participatory spaces of type Participatory Processes for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Participatory Processes
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listParticipatoryProcesses: async (
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'authorization' is not null or undefined
+      assertParamExists(
+        "listParticipatoryProcesses",
+        "authorization",
+        authorization,
+      );
+      const localVarPath = `/spaces/participatory_processes`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {number} id
@@ -12962,6 +13264,175 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
+     * List participatory spaces of type Assemblies for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Assemblies
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listAssemblies(
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceIndexResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listAssemblies(
+        authorization,
+        locales,
+        page,
+        perPage,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.listAssemblies"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List participatory spaces of type Conferences for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Conferences
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listConferences(
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceIndexResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listConferences(
+        authorization,
+        locales,
+        page,
+        perPage,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.listConferences"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List participatory spaces of type Initiatives for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Initiatives
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listInitiatives(
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceIndexResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listInitiatives(
+        authorization,
+        locales,
+        page,
+        perPage,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.listInitiatives"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List participatory spaces of type Participatory Processes for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Participatory Processes
+     * @param {string} authorization Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+     * @param {Array<Locale>} [locales]
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listParticipatoryProcesses(
+      authorization: string,
+      locales?: Array<Locale>,
+      page?: number,
+      perPage?: number,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<SpaceIndexResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listParticipatoryProcesses(
+          authorization,
+          locales,
+          page,
+          perPage,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["SpacesApi.listParticipatoryProcesses"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {number} id
@@ -13199,6 +13670,90 @@ export const SpacesApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * List participatory spaces of type Assemblies for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Assemblies
+     * @param {SpacesApiListAssembliesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listAssemblies(
+      requestParameters: SpacesApiListAssembliesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceIndexResponse> {
+      return localVarFp
+        .listAssemblies(
+          requestParameters.authorization,
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List participatory spaces of type Conferences for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Conferences
+     * @param {SpacesApiListConferencesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listConferences(
+      requestParameters: SpacesApiListConferencesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceIndexResponse> {
+      return localVarFp
+        .listConferences(
+          requestParameters.authorization,
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List participatory spaces of type Initiatives for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Initiatives
+     * @param {SpacesApiListInitiativesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listInitiatives(
+      requestParameters: SpacesApiListInitiativesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceIndexResponse> {
+      return localVarFp
+        .listInitiatives(
+          requestParameters.authorization,
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List participatory spaces of type Participatory Processes for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+     * @summary List Participatory Processes
+     * @param {SpacesApiListParticipatoryProcessesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listParticipatoryProcesses(
+      requestParameters: SpacesApiListParticipatoryProcessesRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<SpaceIndexResponse> {
+      return localVarFp
+        .listParticipatoryProcesses(
+          requestParameters.authorization,
+          requestParameters.locales,
+          requestParameters.page,
+          requestParameters.perPage,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Get detail of a Participatory Processes given its id
      * @summary Participatory Processes Details
      * @param {SpacesApiParticipatoryProcessesRequest} requestParameters Request parameters.
@@ -13351,6 +13906,146 @@ export interface SpacesApiInitiativesRequest {
    * @memberof SpacesApiInitiatives
    */
   readonly locales?: Array<Locale>;
+}
+
+/**
+ * Request parameters for listAssemblies operation in SpacesApi.
+ * @export
+ * @interface SpacesApiListAssembliesRequest
+ */
+export interface SpacesApiListAssembliesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiListAssemblies
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiListAssemblies
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SpacesApiListAssemblies
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SpacesApiListAssemblies
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for listConferences operation in SpacesApi.
+ * @export
+ * @interface SpacesApiListConferencesRequest
+ */
+export interface SpacesApiListConferencesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiListConferences
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiListConferences
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SpacesApiListConferences
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SpacesApiListConferences
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for listInitiatives operation in SpacesApi.
+ * @export
+ * @interface SpacesApiListInitiativesRequest
+ */
+export interface SpacesApiListInitiativesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiListInitiatives
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiListInitiatives
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SpacesApiListInitiatives
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SpacesApiListInitiatives
+   */
+  readonly perPage?: number;
+}
+
+/**
+ * Request parameters for listParticipatoryProcesses operation in SpacesApi.
+ * @export
+ * @interface SpacesApiListParticipatoryProcessesRequest
+ */
+export interface SpacesApiListParticipatoryProcessesRequest {
+  /**
+   * Bearer access token: &#x60;Bearer &lt;token&gt;&#x60;
+   * @type {string}
+   * @memberof SpacesApiListParticipatoryProcesses
+   */
+  readonly authorization: string;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof SpacesApiListParticipatoryProcesses
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof SpacesApiListParticipatoryProcesses
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof SpacesApiListParticipatoryProcesses
+   */
+  readonly perPage?: number;
 }
 
 /**
@@ -13673,6 +14368,98 @@ export class SpacesApi extends BaseAPI {
         requestParameters.id,
         requestParameters.authorization,
         requestParameters.locales,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List participatory spaces of type Assemblies for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+   * @summary List Assemblies
+   * @param {SpacesApiListAssembliesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public listAssemblies(
+    requestParameters: SpacesApiListAssembliesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .listAssemblies(
+        requestParameters.authorization,
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List participatory spaces of type Conferences for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+   * @summary List Conferences
+   * @param {SpacesApiListConferencesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public listConferences(
+    requestParameters: SpacesApiListConferencesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .listConferences(
+        requestParameters.authorization,
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List participatory spaces of type Initiatives for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+   * @summary List Initiatives
+   * @param {SpacesApiListInitiativesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public listInitiatives(
+    requestParameters: SpacesApiListInitiativesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .listInitiatives(
+        requestParameters.authorization,
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List participatory spaces of type Participatory Processes for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type.
+   * @summary List Participatory Processes
+   * @param {SpacesApiListParticipatoryProcessesRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SpacesApi
+   */
+  public listParticipatoryProcesses(
+    requestParameters: SpacesApiListParticipatoryProcessesRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return SpacesApiFp(this.configuration)
+      .listParticipatoryProcesses(
+        requestParameters.authorization,
+        requestParameters.locales,
+        requestParameters.page,
+        requestParameters.perPage,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
