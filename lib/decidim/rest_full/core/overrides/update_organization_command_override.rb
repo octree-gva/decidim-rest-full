@@ -19,7 +19,7 @@ module Decidim
           end
           decidim_rest_full_save_organization
           organization.extended_data.save!
-          Decidim::RestFull::SyncronizeUnconfirmedHostJob.perform_later(organization.id)
+          Decidim::RestFull::Core::SyncronizeUnconfirmedHostJob.perform_later(organization.id)
         end
       end
     end

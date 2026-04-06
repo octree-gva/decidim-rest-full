@@ -7,7 +7,7 @@ module Decidim
         # CRUD for draft proposals (unpublished). Uses Decidim ProposalForm for validation.
         # Allowed writable fields: title, body (see allowed_data_keys). Update applies
         # payload to form, validates, then copies to draft and saves.
-        class DraftProposalsController < ResourcesController
+        class DraftProposalsController < Decidim::Api::RestFull::Core::ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :draft, ::Decidim::Proposals::Proposal }
 

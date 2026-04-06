@@ -128,7 +128,7 @@ crowdin::merge_request:
     - git commit -m "Crowdin Updates"
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
 ##
-# Execute rspec and expose a spec report
+# Execute rspec and expose a spec report (local parity: bin/check after bin/setup-tests; see README).
 ruby::rspec:
   image: ruby:3.2.2
   stage: test
@@ -157,7 +157,8 @@ ruby::rspec:
   before_script:
     - bin/setup-tests
   script:
-    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ --format progress --format RspecJunitFormatter --out rspec.xml
+    # Include spec/forms, spec/lib, spec/decidim (not only commands/requests/models/jobs) so refactors stay covered.
+    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/ --format progress --format RspecJunitFormatter --out rspec.xml
 # Publish decidim rest full api package
 decidim-client::publish:
   image: node:20

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Decidim::RestFull::WebhookJob do
+RSpec.describe Decidim::RestFull::Core::WebhookJob do
   let(:webhook) { create(:webhook_registration) }
   let(:event) { { "type" => "test.event", "data" => { "data" => { "id" => 1 } } } }
   let(:timestamp) { Time.current.to_i.to_s }

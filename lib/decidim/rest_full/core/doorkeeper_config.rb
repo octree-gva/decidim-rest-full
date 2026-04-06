@@ -28,16 +28,16 @@ module Decidim
           # Doorkeeper token request params and the Rails request. Returns a User or raises
           # ApiException::BadRequest / ApiException::Unauthorized.
           def resource_owner_from_credentials(params:, request:)
-            raise ApiException::BadRequest, "can not request system scope with ROPC flow" if (params["scope"] || "").include?("system")
+            raise ::Decidim::RestFull::Core::ApiException::BadRequest, "can not request system scope with ROPC flow" if (params["scope"] || "").include?("system")
 
             current_organization = request.env["decidim.current_organization"]
-            raise ApiException::BadRequest, "Invalid Organization. Check requested host." unless current_organization
+            raise ::Decidim::RestFull::Core::ApiException::BadRequest, "Invalid Organization. Check requested host." unless current_organization
 
             client_id = params.require("client_id")
-            raise ApiException::BadRequest, "Invalid Api Client, check client_id credentials" if client_id.size < 8
+            raise ::Decidim::RestFull::Core::ApiException::BadRequest, "Invalid Api Client, check client_id credentials" if client_id.size < 8
 
-            api_client = ApiClient.find_by(uid: client_id, organization: current_organization)
-            raise ApiException::BadRequest, "Invalid Api Client, check credentials" unless api_client
+            api_client = ::Decidim::RestFull::Core::ApiClient.find_by(uid: client_id, organization: current_organization)
+            raise ::Decidim::RestFull::Core::ApiException::BadRequest, "Invalid Api Client, check credentials" unless api_client
 
             auth_type = params.require(:auth_type)
             case auth_type
@@ -46,7 +46,7 @@ module Decidim
             when "login"
               find_user_via_login(api_client, params, current_organization)
             else
-              raise ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
+              raise ::Decidim::RestFull::Core::ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
             end
           end
 
@@ -78,23 +78,23 @@ module Decidim
             ).to_h
 
             user = nil
-            ::Decidim::RestFull::ImpersonateResourceOwnerFromCredentials.call(
+            ::Decidim::RestFull::Core::ImpersonateResourceOwnerFromCredentials.call(
               api_client,
               impersonation_payload,
               current_organization
             ) do
               on(:ok) { |u| user = u }
-              on(:error) { |msg| raise ApiException::BadRequest, msg }
+              on(:error) { |msg| raise ::Decidim::RestFull::Core::ApiException::BadRequest, msg }
             end
             user
           end
 
           def find_user_via_login(api_client, params, current_organization)
-            ability = Ability.new(api_client)
-            ability.authorize! :login, ApiClient
+            ability = ::Decidim::RestFull::Core::Ability.new(api_client)
+            ability.authorize! :login, ::Decidim::RestFull::Core::ApiClient
 
             user = Decidim::User.find_by(nickname: params.require("username"), organization: current_organization)
-            raise ApiException::BadRequest, "User not found" unless user&.valid_password?(params.require("password"))
+            raise ::Decidim::RestFull::Core::ApiException::BadRequest, "User not found" unless user&.valid_password?(params.require("password"))
 
             user
           end

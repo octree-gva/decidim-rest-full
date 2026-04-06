@@ -28,7 +28,7 @@ The documentation and the API specification are in the [documentation website](h
 
 ### Webhooks supported
 
-API clients can register webhook URLs in the System Admin (per client); subscriptions are scoped by permissions. Payloads are sent as POST with `X-Webhook-SignatureX-Webhook-Signature` (HMAC-SHA256 of `timestamp.body`) and `X-Webhook-Timestamp`.
+API clients can register webhook URLs in the System Admin (per client); subscriptions are scoped by permissions. Payloads are sent as POST with `X-Webhook-Signature` (HMAC-SHA256 of `timestamp.body`) and `X-Webhook-Timestamp`.
 
 - [x] **Proposals**: `draft_proposal_creation.succeeded`, `draft_proposal_update.succeeded`, `proposal_creation.succeeded`, `proposal_update.succeeded` (triggered by Decidim proposal create/update/publish)
 - [ ] User lifecycle (`user.created`, `user.updated`) 
@@ -60,12 +60,22 @@ Doorkeeper optional scopes still include `proposals` and `blogs`; behaviour when
 
 API routes are drawn via `Decidim::RestFull::Core::RouteRegistry`. Core routes live in `config/routes.rb` inside `RouteRegistry.apply!`. Proposals and Blogs append blocks with `RouteRegistry.draw_api_routes { ... }`. Maintainer checklist: [CONTRIBUTING.md](CONTRIBUTING.md) (entry points and engine inventory).
 
-## Development and checks (Docker)
+## Run locally / Development and checks (Docker)
 
-Toolchain versions match the **`rest_full`** Compose image (`octree/decidim-dev:0.29`), not your laptop. Prefer running checks **inside** the container.
+Toolchain versions match the **`rest_full`** Compose image (`octree/decidim-dev:0.29`), not your laptop. Run Ruby and Yarn **inside** the container (`docker compose exec rest_full bash -lc 'cd /home/module && …'`).
+
+**One-shot pre-push (lint + default RSpec paths, same spirit as GitLab `ruby::rubocop` + `ruby::erb` + `node::prettier` + `ruby::rspec`):**
 
 ```bash
 docker compose up -d
+docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
+```
+
+`./bin/check` runs RuboCop, ERB Lint, Prettier (`yarn format:check`), then RSpec with the same default directories as `.gitlab-ci.yml` (`spec/commands/`, `spec/requests/`, `spec/models/`, `spec/jobs/`, `spec/forms/`, `spec/lib/`, `spec/decidim/`). Full CI also runs **Crowdin lint** (optional / `allow_failure: true`) and **decidim-client publish** on tags — not part of `bin/check`.
+
+**À la carte:**
+
+```bash
 docker compose exec rest_full bash -lc 'cd /home/module && bundle install'
 docker compose exec rest_full bash -lc 'cd /home/module && bundle exec rubocop .'
 docker compose exec rest_full bash -lc 'cd /home/module && bundle exec erblint --lint-all --enable-all-linters'
@@ -77,15 +87,17 @@ Generate the dummy app once (`DISABLED_DOCKER_COMPOSE=true` so the Rake task doe
 ```bash
 docker compose exec rest_full bash -lc 'cd /home/module && DISABLED_DOCKER_COMPOSE=true bundle exec rake test_app'
 docker compose exec rest_full bash -lc 'cd /home/module/spec/decidim_dummy_app && unset DATABASE_URL && export DISABLE_SPRING=1 && RAILS_ENV=test bundle exec rails db:create db:migrate'
-docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/'
+docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/'
 ```
 
-Or use the CI-style setup script from the repo root (matches GitLab `ruby::rspec`):
+Or use the CI-style setup script from the repo root (matches GitLab `ruby::rspec` `before_script`):
 
 ```bash
 docker compose exec rest_full bash -lc 'cd /home/module && bin/setup-tests'
-docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/'
+docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/'
 ```
+
+**Reproduce GitLab’s RSpec job locally** (alternative Compose file): `bin/ci-local` (uses `docker-compose.ci.yml`; paths updated to match CI).
 
 ## Update Versions
 > Release a version is up to the maintainer of this repo. 
@@ -112,13 +124,13 @@ git tag $(yarn postversion)
 
 ## OpenAPI spec and client generation
 
-The OpenAPI document (including **paths**) is produced by **[rswag](https://github.com/rswag/rswag)** request specs, not by a separate exporter. From this repo, run:
+The OpenAPI document (including **paths**) is produced by **[rswag](https://github.com/rswag/rswag)** request specs, not by a separate exporter. Run **inside Docker** (dummy app + DB; same as `yarn gen:openapi-spec`):
 
 ```bash
-bin/swaggerize -o openapi.json
+docker compose exec rest_full bash -lc 'cd /home/module && ./bin/swaggerize -o openapi.json'
 ```
 
-That runs RSpec against `spec/requests/` (and any extra paths you register; see below), then writes `spec/decidim_dummy_app/swagger/v1/swagger.json` to your `-o` file.
+That runs RSpec targets from `Decidim::RestFull::Core::SwaggerSpecPaths` (and any extra paths you register; see below), then writes `spec/decidim_dummy_app/swagger/v1/swagger.json` to your `-o` file.
 
 **Extra request specs (e.g. another gem in the same app)**  
 If a module registers routes and schemas but its RSwag specs live outside this gem, merge those paths into the same run:

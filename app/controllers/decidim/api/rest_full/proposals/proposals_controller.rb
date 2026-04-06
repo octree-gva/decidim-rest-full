@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       module Proposals
-        class ProposalsController < ResourcesController
+        class ProposalsController < Decidim::Api::RestFull::Core::ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :read, ::Decidim::Proposals::Proposal }
           class CurrentUser < ActiveSupport::CurrentAttributes

@@ -14,7 +14,7 @@ module Decidim
 
         def create
           api_client = Decidim::RestFull::Core::ApiClient.find(webhook_registration_params[:api_client_id])
-          @form = form(WebhookRegistrationForm).from_params(
+          @form = form(Decidim::RestFull::Core::WebhookRegistrationForm).from_params(
             webhook_registration_params,
             api_client:
           )

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Pre-push checks aligned with .gitlab-ci.yml lint + test jobs (ruby::rubocop, ruby::erb, node::prettier, ruby::rspec).
+# Run inside the dev container (see README): docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
+set -euo pipefail
+cd "$(dirname "$0")/.."
+unset DATABASE_URL
+export RAILS_ENV=test
+export DISABLE_SPRING=1
+
+bundle exec rubocop .
+bundle exec erblint --lint-all --enable-all-linters
+
+if command -v yarn >/dev/null 2>&1; then
+  yarn install --frozen-lockfile
+  yarn format:check
+else
+  echo "warn: yarn not in PATH; skipping Prettier (node::prettier in CI)" >&2
+fi
+
+RSPEC_PATHS="${RSPEC_PATHS:-spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/}"
+bundle exec rspec ${RSPEC_PATHS} --format progress "$@"

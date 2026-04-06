@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Decidim::RestFull::MagicLinkRedirectUrlForm do
+RSpec.describe Decidim::RestFull::Core::MagicLinkRedirectUrlForm do
   let(:errors_scope) { "decidim.rest_full.forms.magic_link_redirect_url.errors" }
 
   let(:organization) do

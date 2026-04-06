@@ -36,8 +36,8 @@ module Decidim
 
           # Raise an error if Status code is not >200 <300
           # This will trigger a retry in active job mecanisms
-          # @see jobs/decidim/rest_full/webhook_job.rb
-          raise WebhookFailedError unless response.code.to_i.between?(200, 300)
+          # @see app/jobs/decidim/rest_full/core/webhook_job.rb
+          raise ::Decidim::RestFull::WebhookFailedError unless response.code.to_i.between?(200, 300)
 
           response.body
         end

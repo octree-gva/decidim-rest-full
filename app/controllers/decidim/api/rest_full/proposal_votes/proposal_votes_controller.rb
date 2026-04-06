@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       module ProposalVotes
-        class ProposalVotesController < ResourcesController
+        class ProposalVotesController < Decidim::Api::RestFull::Core::ResourcesController
           before_action { doorkeeper_authorize! :proposals }
           before_action { ability.authorize! :vote, ::Decidim::Proposals::Proposal }
           before_action do

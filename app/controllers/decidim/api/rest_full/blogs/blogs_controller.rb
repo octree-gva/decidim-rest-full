@@ -4,7 +4,7 @@ module Decidim
   module Api
     module RestFull
       module Blogs
-        class BlogsController < ResourcesController
+        class BlogsController < Decidim::Api::RestFull::Core::ResourcesController
           before_action { doorkeeper_authorize! :blogs }
           before_action { ability.authorize! :read, ::Decidim::Blogs::Post }
 

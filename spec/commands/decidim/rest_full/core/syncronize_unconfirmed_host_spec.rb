@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Decidim::RestFull::SyncronizeUnconfirmedHost do
+RSpec.describe Decidim::RestFull::Core::SyncronizeUnconfirmedHost do
   let(:unconfirmed_host) { "unconfirmed.host.org" }
   let(:organization) do
     org = create(:organization, host: "my.host.org")

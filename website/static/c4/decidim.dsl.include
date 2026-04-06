@@ -1,7 +1,7 @@
 decidimSystem = softwareSystem "decidim" "Decidim Instance" {
 
   worker = container "activejob-runner" "running sidekiq" "worker-process" "sidekiq,good_job" {
-    syncronize_unconfirmed_host = component "SyncronizeUnconfirmedHost" "job" "Decidim::RestFull::SyncronizeUnconfirmedHost"
+    syncronize_unconfirmed_host = component "SyncronizeUnconfirmedHost" "job" "Decidim::RestFull::Core::SyncronizeUnconfirmedHost"
   }
 
   decidim = container "decidim" "decidim with decidim rest_full module" {

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Decidim::RestFull::ImpersonateResourceOwnerFromCredentials do
+RSpec.describe Decidim::RestFull::Core::ImpersonateResourceOwnerFromCredentials do
   let(:organization) { create(:organization, available_locales: ["en"]) }
   let(:api_client) do
     api_client = create(:api_client, organization:, scopes: %w(oauth public))

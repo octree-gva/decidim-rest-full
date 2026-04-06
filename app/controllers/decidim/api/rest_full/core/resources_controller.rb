@@ -1,0 +1,127 @@
+# frozen_string_literal: true
+
+module Decidim
+  module Api
+    module RestFull
+      module Core
+        # Base for resource controllers (index/show/create/update/destroy). Subclasses
+        # must define collection, model_class, component_manifest; optional order_columns,
+        # default_order_column. Uses filter_for_context and in_visible_spaces to scope by component/space.
+        #
+        # Resource-owner guards: ApplicationController#require_user!
+        class ResourcesController < Decidim::Api::RestFull::ApplicationController
+          protected
+
+          def filter_for_context(query)
+            components_filters = Decidim::Component.all
+            if params.has_key? :space_manifest
+              components_filters = components_filters.where(participatory_space_type: space_class_from_name(params.require(:space_manifest)))
+              components_filters = components_filters.where(participatory_space_id: params.require(:space_id)) if params.has_key? :space_id
+            end
+            query.where(decidim_component_id: in_visible_spaces(components_filters).ids)
+          end
+
+          def order_columns
+            ["rand"]
+          end
+
+          def ordered(collection)
+            collection.reorder(order)
+          end
+
+          def default_order_column
+            "rand"
+          end
+
+          def default_order_direction
+            "asc"
+          end
+
+          def collection
+            raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#collection not implemented"
+          end
+
+          def model_class
+            raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#model_class not implemented"
+          end
+
+          def component_manifest
+            raise Decidim::RestFull::Core::ApiException::NotImplemented, "#{name}#component_manifest not implemented"
+          end
+
+          def order
+            @order ||= begin
+              ord = params.permit(:order)[:order] || default_order_column
+              raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown order #{ord}" unless [default_order_direction, *order_columns].include?(ord)
+
+              ord == "rand" ? "RANDOM()" : { ord.to_s => order_direction.to_sym }
+            end
+          end
+
+          def order_string
+            @order_string ||= if order.is_a?(Hash)
+                                key = order.keys.first
+                                "#{model_class.table_name}.#{key} #{order[key]}"
+                              else
+                                order
+                              end
+          end
+
+          def order_direction
+            @order_direction ||= begin
+              ord_dir = params.permit(:order_direction)[:order_direction] || default_order_direction
+              raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown order direction #{ord_dir}" unless %w(asc desc).include?(ord_dir)
+
+              ord_dir
+            end
+          end
+
+          def space_id
+            @space_id ||= params.require(:id).to_i
+          end
+
+          def space_manifest
+            @space_manifest ||= params.require(:manifest_name)
+          end
+
+          def space
+            @space ||= begin
+              raise Decidim::RestFull::Core::ApiException::BadRequest, "Unkown space type #{space_manifest}" unless available_space_manifest_names.include?(space_manifest.to_sym)
+
+              match = space_model_from(space_manifest).find_by(id: space_id, organization: current_organization)
+              raise Decidim::RestFull::Core::ApiException::NotFound, "Space not found" unless match
+
+              match
+            end
+          end
+
+          def component
+            @component = begin
+              match = Decidim::Component.find_by(
+                participatory_space_id: space_id,
+                participatory_space_type: space_model_from(space_manifest).name,
+                id: component_id,
+                manifest_name: component_manifest
+              )
+              raise Decidim::RestFull::Core::ApiException::BadRequest, "Component not found" unless match
+
+              match
+            end
+          end
+
+          def space_manifest_names
+            @space_manifest_names ||= available_space_manifest_names
+          end
+
+          def component_id
+            @component_id ||= params.require(:component_id).to_i
+          end
+
+          def resource_id
+            @resource_id ||= params.require(:id).to_i
+          end
+        end
+      end
+    end
+  end
+end

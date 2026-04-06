@@ -21,22 +21,22 @@ module Decidim
         end
 
         def show
-          @form = form(ApiClientForm).from_model(api_client)
+          @form = form(Decidim::RestFull::Core::ApiClientForm).from_model(api_client)
         end
 
         def new
-          @form = form(ApiClientForm).instance
+          @form = form(Decidim::RestFull::Core::ApiClientForm).instance
         end
 
         def edit
-          @form = form(ApiClientForm).from_model(api_client)
-          @perm_form = form(ApiPermissions).from_model(api_client)
+          @form = form(Decidim::RestFull::Core::ApiClientForm).from_model(api_client)
+          @perm_form = form(Decidim::RestFull::Core::ApiPermissions).from_model(api_client)
         end
 
         def create
-          @form = form(ApiClientForm).from_params(params)
+          @form = form(Decidim::RestFull::Core::ApiClientForm).from_params(params)
 
-          CreateApiClient.call(@form) do
+          Decidim::RestFull::Core::CreateApiClient.call(@form) do
             on(:ok) do |api_client|
               flash[:notice] = I18n.t("create.success", scope: "decidim.rest_full.system.api_clients")
               redirect_to core_engine_routes.edit_system_api_client_path(api_client)

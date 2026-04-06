@@ -7,7 +7,7 @@ module Decidim
         # Exposes passwordless magic-link endpoints backed by
         # Decidim::RestFull::Core::MagicToken (model) and migration
         # db/migrate/20250131155931_add_users_magic_token.rb.
-        class MagicLinksController < ResourcesController
+        class MagicLinksController < Decidim::Api::RestFull::Core::ResourcesController
           include ::Devise::Controllers::Helpers
           before_action only: [:create] do
             doorkeeper_authorize! :oauth
@@ -34,7 +34,7 @@ module Decidim
           end
 
           def create
-            form = Decidim::RestFull::MagicLinkRedirectUrlForm.new(
+            form = Decidim::RestFull::Core::MagicLinkRedirectUrlForm.new(
               redirect_url: params.dig(:data, :redirect_url),
               organization: current_organization
             )

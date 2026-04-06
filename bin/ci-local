@@ -4,5 +4,5 @@
 # Example: bin/ci-local spec/requests/decidim/api/rest_full/spaces/
 set -e
 cd "$(dirname "$0")/.."
-RSPEC_ARGS="${*:-spec/commands/ spec/requests/ spec/models/ spec/jobs/}"
+RSPEC_ARGS="${*:-spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/}"
 docker compose -f docker-compose.ci.yml run --rm --no-deps -e RSPEC_ARGS="$RSPEC_ARGS" rspec /bin/bash -c 'git config --global --add safe.directory /app || true; bin/setup-tests && bundle exec rspec $RSPEC_ARGS --format progress --format RspecJunitFormatter --out rspec.xml'

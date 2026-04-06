@@ -22,7 +22,7 @@ module Decidim
         end
 
         private
-        
+
         def extended_data(model)
           model.extended_data&.data || {}
         end

@@ -1,4 +1,4 @@
-<% webhook_registrations = Decidim::RestFull::WebhookRegistration.where(api_client_id: @api_client.id) %>
+<% webhook_registrations = Decidim::RestFull::Core::WebhookRegistration.where(api_client_id: @api_client.id) %>
 
 <div class="space-y-6">
   <div class="flex justify-between items-center">
@@ -9,7 +9,7 @@
   </div>
 
   <div id="new-webhook-form" class="hidden p-4 bg-gray-50 rounded-lg border border-gray-200">
-    <%= form_for(Decidim::RestFull::WebhookRegistrationForm.new, url: system_webhook_registrations_path, html: { class: "space-y-4" }) do |form| %>
+    <%= form_for(Decidim::RestFull::Core::WebhookRegistrationForm.new, url: system_webhook_registrations_path, html: { class: "space-y-4" }) do |form| %>
       <%= hidden_field_tag "webhook_registration_form[api_client_id]", @api_client.id %>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2 required"><%= t(".url", default: "URL") %></label>

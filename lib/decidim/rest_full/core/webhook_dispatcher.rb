@@ -22,7 +22,7 @@ module Decidim
                                    # Published a proposal
                                    "proposal_creation.succeeded"
                                  end
-          ::Decidim::RestFull::ProposalWebhookJob.perform_later(published_event_name, proposal.id, organization.id)
+          ::Decidim::RestFull::Proposals::ProposalWebhookJob.perform_later(published_event_name, proposal.id, organization.id)
         end
 
         private

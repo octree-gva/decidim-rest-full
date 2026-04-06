@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Decidim::RestFull::ProposalWebhookJob do
+RSpec.describe Decidim::RestFull::Proposals::ProposalWebhookJob do
   let(:proposal) { create(:proposal) }
   let(:organization) { proposal.organization }
   let(:proposal_id) { proposal.id }
@@ -10,7 +10,7 @@ RSpec.describe Decidim::RestFull::ProposalWebhookJob do
   let(:api_client) { create(:api_client, organization:, scopes: ["proposals"]) }
 
   before do
-    allow(Decidim::RestFull::WebhookJob).to receive(:perform_later).and_return(true)
+    allow(Decidim::RestFull::Core::WebhookJob).to receive(:perform_later).and_return(true)
   end
 
   context "when sending a proposal_creation.succeeded event" do
@@ -26,14 +26,14 @@ RSpec.describe Decidim::RestFull::ProposalWebhookJob do
     end
 
     it "call subscribed webhooks" do
-      expect(Decidim::RestFull::WebhookJob).to receive(:perform_later) do |webhook_registration, _payload, _timestamp|
+      expect(Decidim::RestFull::Core::WebhookJob).to receive(:perform_later) do |webhook_registration, _payload, _timestamp|
         expect(webhook_registration).to be_in(webhooks)
       end
       described_class.perform_now(event_name, proposal_id, organization_id)
     end
 
     it "does not call other webhooks" do
-      expect(Decidim::RestFull::WebhookJob).not_to receive(:perform_later).with(webhook_other)
+      expect(Decidim::RestFull::Core::WebhookJob).not_to receive(:perform_later).with(webhook_other)
       described_class.perform_now(event_name, proposal_id, organization_id)
     end
 
