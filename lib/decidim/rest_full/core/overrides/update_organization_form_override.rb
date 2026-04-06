@@ -18,10 +18,14 @@ module Decidim
         end
 
         def with_unconfirmed_host(model)
-          self.unconfirmed_host = model.extended_data.data["unconfirmed_host"] || model.host unless unconfirmed_host
+          self.unconfirmed_host = extended_data(model)["unconfirmed_host"]&.to_s || model.host unless unconfirmed_host
         end
 
         private
+        
+        def extended_data(model)
+          model.extended_data&.data || {}
+        end
 
         def unique_host
           if unconfirmed_host.present? && unconfirmed_host != host && Decidim::Organization.where(host: unconfirmed_host).where.not(id:).exists?

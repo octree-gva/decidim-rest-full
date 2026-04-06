@@ -15,7 +15,7 @@ module Decidim
         return broadcast(:invalid) unless @form.valid?
 
         api_client = Decidim.traceability.create!(
-          ApiClient,
+          Decidim::RestFull::Core::ApiClient,
           @form.current_user,
           **api_client_attributes
         )
