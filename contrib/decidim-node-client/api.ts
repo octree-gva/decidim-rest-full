@@ -8653,8 +8653,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8771,8 +8771,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8845,8 +8845,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8913,8 +8913,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create an OAuth token for the given scopes (password or client_credentials grant).
-   * @summary Request an OAuth token (ROPC)
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

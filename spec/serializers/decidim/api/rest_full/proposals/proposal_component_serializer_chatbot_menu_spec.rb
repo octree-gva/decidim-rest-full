@@ -3,11 +3,6 @@
 require "swagger_helper"
 
 RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
-  let(:organization) { create(:organization, available_locales: %w(en)) }
-  let(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
-  let(:user) { create(:user, organization:, confirmed_at: Time.zone.now) }
-  let(:api_client) { create(:api_client, organization:, scopes: ["public"]) }
-
   subject(:serialized) do
     described_class.new(
       proposal_component.reload,
@@ -21,11 +16,15 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
     ).serializable_hash
   end
 
+  let(:organization) { create(:organization, available_locales: %w(en)) }
   let(:data) { serialized.fetch(:data) }
   let(:meta) { data.fetch(:meta).symbolize_keys }
   let(:resource_count) do
     data.dig(:relationships, :resources, :meta, :count)
   end
+  let(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
+  let(:user) { create(:user, organization:, confirmed_at: Time.zone.now) }
+  let(:api_client) { create(:api_client, organization:, scopes: ["public"]) }
 
   describe "fields read by chat-platform when building proposal component menu buttons" do
     context "when participants can create proposals and voting is off" do
