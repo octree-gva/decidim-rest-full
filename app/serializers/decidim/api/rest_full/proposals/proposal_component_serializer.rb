@@ -33,6 +33,26 @@ module Decidim
             ).limit(1)
           end
 
+          # Mirrors chat-platform VoteSDK filtering (published, not rejected; user has no vote row yet).
+          def self.unvoted_voteable_proposals_exist?(component, user)
+            base = ::Decidim::Proposals::Proposal
+              .where(decidim_component_id: component.id)
+              .published
+              .not_withdrawn
+              .except_rejected
+
+            return false unless base.exists?
+
+            voted_ids = ::Decidim::Proposals::ProposalVote
+              .where(decidim_author_id: user.id)
+              .distinct
+              .pluck(:decidim_proposal_id)
+
+            return true if voted_ids.blank?
+
+            base.where.not(id: voted_ids).exists?
+          end
+
           def self.vote_weights_from_i18n(i18n_values, vote_manifest, available_locales, has_abstain)
             options = i18n_values.reject { |k| k.end_with? "short" }
             options = options.map do |k, _v|
@@ -101,6 +121,14 @@ module Decidim
                                              ).count < proposal_limit
             end
             metas[:can_vote] = metas[:votes_enabled]
+            if metas[:can_vote]
+              metas[:can_vote] =
+                if act_as.present?
+                  unvoted_voteable_proposals_exist?(component, act_as)
+                else
+                  true
+                end
+            end
             metas[:can_endorse] = metas[:endorsements_enabled]
             metas[:can_comment] = metas[:comments_enabled]
 

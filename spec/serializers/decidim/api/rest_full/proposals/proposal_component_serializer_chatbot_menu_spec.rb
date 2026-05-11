@@ -44,7 +44,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
 
       context "with published proposals in the component" do
         before do
-          create(:proposal, component: proposal_component)
+          create(:proposal, :accepted, component: proposal_component)
         end
 
         it "exposes non-zero published resource count" do
@@ -66,20 +66,30 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
         )
       end
 
-      it "reports can_vote from step settings and may have zero proposals" do
+      it "reports votes phase on but can_vote false when there is nothing to vote (no pending unvoted proposals)" do
         expect(meta[:can_create_proposals]).to be(true)
-        expect(meta[:can_vote]).to be(true)
+        expect(meta[:can_vote]).to be(false)
         expect(resource_count).to eq(0)
       end
 
       context "with published proposals" do
-        before do
-          create(:proposal, component: proposal_component)
+        let!(:published_proposal) do
+          create(:proposal, :accepted, component: proposal_component)
         end
 
-        it "exposes positive resource count alongside can_vote" do
+        it "exposes positive resource count and can_vote while the user has unvoted proposals" do
           expect(resource_count).to eq(1)
           expect(meta[:can_vote]).to be(true)
+        end
+
+        context "when the participant has voted on every voteable proposal" do
+          before do
+            create(:proposal_vote, proposal: published_proposal, author: user)
+          end
+
+          it "sets can_vote false" do
+            expect(meta[:can_vote]).to be(false)
+          end
         end
       end
     end
