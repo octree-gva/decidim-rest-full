@@ -1,0 +1,11 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_sortitions: 'Sortitions: manage sortitions'
+          permission:
+            sortitions:
+              read: 'read: list sortitions exposed via the API'

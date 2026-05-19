@@ -1,34 +1,43 @@
 #! /bin/bash
 #
-# This script will sync the version of the different packaged software
-# to the same main version, governed by the ./package.json version attribute. 
+# Sync version across package.json, lib/decidim/rest_full/version.rb, and all
+# decidim-restfull-* gemspecs / nested package.json / openapi.json.
 #
-# This allow us to have a versionned client api, ruby gem, and api documentation 
-# aligned with the same version, making things simpler.
-#
-PACKAGE_VERSION=$(jq -r '.version' package.json); 
+set -euo pipefail
 
-# Update version.rb
-file=lib/decidim/rest_full/version.rb
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+PACKAGE_VERSION=$(jq -r '.version' package.json)
+
+file=decidim-restfull-core/lib/decidim/rest_full/version.rb
 if [ -f "$file" ]; then
-    sed -i "/# DO NOT UPDATE MANUALLY/s/\".*\"/\"$PACKAGE_VERSION\"/" $file; 
+  sed -i "/# DO NOT UPDATE MANUALLY/s/\".*\"/\"$PACKAGE_VERSION\"/" "$file"
 fi
-# Update all package.json (website, node clients)
-for file in $(find contrib website -name "node_modules" -prune -o -name "package.json" -print); do 
-    jq --arg version "$PACKAGE_VERSION" '.version = $version' "$file" > tmp.json
-    # If tmp.json is empty, exit with error
-    if [ ! -s tmp.json ]; then
-        echo "Error: tmp.json is empty check $file"
-        exit 1
-    fi
-    mv tmp.json "$file"; 
-done;
 
-# Update generated openapi spec version info
+for gemspec in decidim-restfull/decidim-restfull.gemspec \
+  decidim-restfull-core/decidim-restfull-core.gemspec \
+  decidim-restfull-proposals/decidim-restfull-proposals.gemspec \
+  decidim-restfull-blogs/decidim-restfull-blogs.gemspec \
+  decidim-restfull-dev/decidim-restfull-dev.gemspec; do
+  if [ -f "$gemspec" ]; then
+  sed -i "s/s\.version = .*/s.version = Decidim::RestFull.version/" "$gemspec" 2>/dev/null || true
+  fi
+done
+
+for file in $(find contrib website -name "node_modules" -prune -o -name "package.json" -print); do
+  jq --arg version "$PACKAGE_VERSION" '.version = $version' "$file" > tmp.json
+  if [ ! -s tmp.json ]; then
+    echo "Error: tmp.json is empty check $file"
+    exit 1
+  fi
+  mv tmp.json "$file"
+done
+
 file=website/static/openapi.json
 if [ -f "$file" ]; then
-    jq --arg version "$PACKAGE_VERSION" '.info.version = $version' "$file" > tmp.json
-    mv -f tmp.json "$file"
+  jq --arg version "$PACKAGE_VERSION" '.info.version = $version' "$file" > tmp.json
+  mv -f tmp.json "$file"
 fi
 
-echo $PACKAGE_VERSION
+echo "$PACKAGE_VERSION"

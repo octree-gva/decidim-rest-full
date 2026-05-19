@@ -1,0 +1,11 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_debates: 'Debate: manage debates'
+          permission:
+            debates:
+              read: 'read: list debates exposed via the API'

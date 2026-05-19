@@ -51,6 +51,9 @@ end
 desc "Generates a decidim_dummy_app app for testing"
 task :test_app do
   puts "Generates spec/decidim_dummy_app"
+  # Path is relative to the generated app dir (cwd during generator): ../.. = module root.
+  # decidim-generators copies Gemfile from there and regexp-parses the first *.gemspec for current_gem
+  # (see AppGenerator#current_gem): root decidim-restfull.gemspec must contain a matching `s.name = "..."` line.
   generate_decidim_app(
     "spec/decidim_dummy_app",
     "--app_name",

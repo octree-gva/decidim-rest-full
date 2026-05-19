@@ -22,9 +22,8 @@ RSpec.configure do |config|
   config.exclude_pattern = "spec/decidim_dummy_app/vendor/**/*_spec.rb"
 end
 
-# Apply RestFull API routes to Core (dummy app may not mount our engine, or mount order can miss registration).
-gem_config = File.expand_path("../config/routes.rb", __dir__)
-load gem_config if File.file?(gem_config)
+# Dummy app: draw after environment boot if Decidim route reload cleared API routes (same as to_prepare).
+Decidim::RestFull::Routes.draw! unless Decidim::RestFull::Routes.routes_drawn?
 
 # Force a known set of locales so factories and I18n stay valid (dummy app may use different defaults).
 test_locales = %w(en fr es)
@@ -35,12 +34,15 @@ Rails.application.config.i18n.default_locale = :en
 Decidim.available_locales = test_locales
 Decidim.default_locale = :en
 
-# Ensure engine constants (controllers, models, jobs, commands) are loaded before spec files run
 Rails.application.eager_load!
 
 require "decidim/rest_full/test/definitions"
 require "decidim/rest_full/test/global_context"
 require "decidim/rest_full/test/on_api_endpoint_methods"
+
+Decidim::RestFull.configure do |config|
+  config.strict_rest_enhancement_http_cache = true if ENV["CI"] == "1"
+end
 
 if ENV["SIMPLECOV"]
   require "simplecov"

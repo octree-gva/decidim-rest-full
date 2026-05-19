@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# OpenAPI spec freshness check; optional interactive regenerate (~40 min via Docker).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+OUTPUT="${ROOT}/website/static/openapi.json"
+CHECK_ONLY=0
+ASSUME_YES=0
+QUIET=0
+
+log() {
+  [[ $QUIET -eq 1 ]] || echo "$@"
+}
+
+usage() {
+  cat <<EOF
+Usage: bin/openapi-stale [options]
+
+Exit 0 when website/static/openapi.json exists and is newer than RSwag sources.
+Otherwise prompt to run bin/swaggerize (Docker, often ~40 minutes).
+
+Options:
+  --check       Exit 1 if stale/missing, 0 if fresh (no generate)
+  --yes         Regenerate when stale without prompting
+  --quiet, -q   Less output
+  -o FILE       Output file (default: website/static/openapi.json)
+  -h, --help    This help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --check) CHECK_ONLY=1; shift ;;
+    --yes) ASSUME_YES=1; shift ;;
+    --quiet|-q) QUIET=1; shift ;;
+    -o) OUTPUT="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown option: $1" >&2; usage; exit 1 ;;
+  esac
+done
+
+stale_reason() {
+  if [[ ! -f "$OUTPUT" ]]; then
+    echo "missing $(realpath --relative-to="$ROOT" "$OUTPUT" 2>/dev/null || echo "$OUTPUT")"
+    return 0
+  fi
+  local newer
+  newer="$(find "$ROOT"/decidim-restfull-*/spec/requests \
+    "$ROOT"/decidim-restfull-*/lib/decidim/rest_full \
+    -type f \( -name '*_spec.rb' -o -path '*/test/definitions/*.rb' \) \
+    -newer "$OUTPUT" -print -quit 2>/dev/null || true)"
+  if [[ -n "$newer" ]]; then
+    echo "RSwag sources changed (e.g. $newer)"
+    return 0
+  fi
+  return 1
+}
+
+if ! stale_reason >/dev/null; then
+  log "OpenAPI spec is up to date: $OUTPUT"
+  exit 0
+fi
+
+reason="$(stale_reason)"
+log "OpenAPI spec is stale: $reason"
+
+if [[ $CHECK_ONLY -eq 1 ]]; then
+  exit 1
+fi
+
+if [[ $ASSUME_YES -eq 0 ]] && [[ -t 0 ]]; then
+  echo ""
+  echo "Regenerate OpenAPI via Docker + RSpec? This often takes ~40 minutes."
+  read -r -p "Run bin/swaggerize now? [y/N] " reply
+  case "$reply" in
+    [yY]|[yY][eE][sS]) ;;
+    *) log "Skipped. Run: yarn gen:openapi-spec"; exit 0 ;;
+  esac
+elif [[ $ASSUME_YES -eq 0 ]]; then
+  log "Non-interactive shell: skip generate. Use: bin/openapi-stale --yes"
+  exit 0
+fi
+
+log "Running bin/swaggerize -> $OUTPUT"
+QUIET_FLAG=()
+[[ $QUIET -eq 1 ]] && QUIET_FLAG=(--quiet)
+REL_OUT="$(realpath --relative-to="$ROOT" "$OUTPUT" 2>/dev/null || echo "$OUTPUT")"
+
+if [[ -f "$ROOT/docker-compose.yml" ]] && command -v docker >/dev/null 2>&1; then
+  exec docker compose -f "$ROOT/docker-compose.yml" run -u root -w /home/module \
+    -e DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test \
+    -e RAILS_ENV=test --rm rest_full \
+    bin/swaggerize --out "$REL_OUT" "${QUIET_FLAG[@]}"
+fi
+
+exec "$ROOT/bin/swaggerize" --out "$OUTPUT" "${QUIET_FLAG[@]}"

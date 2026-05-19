@@ -9,7 +9,15 @@ preserve_hierarchy: true
 
 files: [
   {
-    "source": "/config/locales/decidim_rest_full.en.yml",
-    "translation": "/config/locales/decidim_rest_full.%two_letters_code%.yml",
+    "source": "/decidim-restfull-core/config/locales/decidim_rest_full.en.yml",
+    "translation": "/decidim-restfull-core/config/locales/decidim_rest_full.%two_letters_code%.yml",
+  },
+  {
+    "source": "/decidim-restfull-blogs/config/locales/decidim_rest_full_blogs.en.yml",
+    "translation": "/decidim-restfull-blogs/config/locales/decidim_rest_full_blogs.%two_letters_code%.yml",
+  },
+  {
+    "source": "/decidim-restfull-proposals/config/locales/decidim_rest_full_proposals.en.yml",
+    "translation": "/decidim-restfull-proposals/config/locales/decidim_rest_full_proposals.%two_letters_code%.yml",
   }
 ]

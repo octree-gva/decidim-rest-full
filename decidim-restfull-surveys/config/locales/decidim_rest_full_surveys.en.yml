@@ -1,0 +1,11 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_surveys: 'Surveys: manage questionnaires'
+          permission:
+            surveys:
+              read: 'read: list surveys exposed via the API'

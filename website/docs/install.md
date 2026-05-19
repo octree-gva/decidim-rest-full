@@ -5,48 +5,41 @@ title: Installation
 description: How to install the module
 ---
 
-### Support Table
-| Decidim Version | Supported?  |
-|-----------------|-------------|
-| 0.24            | no          |
-| 0.26            | no         |
-| 0.27            | no         |
-| 0.28            | yes |
-| 0.29            | yes |
+Install the gem on your **host application** so Decidim keeps owning domain logic; this module only adds the HTTP API surface described in the [overview](/).
 
-# Install the rest-full integration
+## Decidim compatibility
 
-**Add the gem to your Gemfile**<br />
+| Decidim | Supported |
+|---------|-----------|
+| 0.28    | yes       |
+| 0.29    | yes       |
+| 0.27 and older | no |
+
+## Install
+
+Add the metagem to your host app `Gemfile`:
+
 ```ruby
-gem "decidim-rest_full", "~> 0.0.1"
+gem "decidim-restfull", "~> 0.3"
 ```
 
-**Install the module**<br />
-```ruby
+Then:
+
+```bash
 bundle install
-```
-
-**Copy migrations files**<br />
-```ruby
+bundle add deface
 bundle exec rails decidim_rest_full:install:migrations
-```
-
-**Migrate**<br />
-```ruby
 bundle exec rails db:migrate
+bundle exec rails deface:precompile
 ```
-(you can make sure migrations pass with bundle exec rails db:migrate:status)
-
-**Get the binstubs**
-```ruby
-bundle binstub decidim-rest_full
-``` 
 
 
 ## Environment variables
 
-| Name | Description | Default Value |
-|------|-------------|---------------|
-| `DECIDIM_REST_QUEUE_NAME`| Name of the queue used by the module | `default` |
-| `DECIDIM_REST_LOADBALANCER_IPS`| CSV of ips to a loadbalancer to safely save `host` attribute. See [Safe Host Update](/dev/update-hosts) | `127.0.0.1, ::1` |
-| `DOCS_URL`| Base URL for this doc, to build the documentation website | `https://octree-gva.github.io/decidim-rest-full` |
+| Name | Description | Default |
+|------|-------------|---------|
+| `DECIDIM_REST_QUEUE_NAME` | Active Job queue name | `default` |
+| `DECIDIM_REST_LOADBALANCER_IPS` | CSV of load balancer IPs for safe `host` handling. See [Safe host update](/dev/update-hosts). | `127.0.0.1, ::1` |
+| `DOCS_URL` | Base URL for generated docs | `https://octree-gva.github.io/decidim-rest-full` |
+
+For capacity planning (Puma, Redis, Sidekiq, k6, client patterns), see [Production mode](/production-mode).

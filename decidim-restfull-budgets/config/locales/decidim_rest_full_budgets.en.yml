@@ -1,0 +1,11 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_budgets: 'Budgets: manage budgets'
+          permission:
+            budgets:
+              read: 'read: list budgets exposed via the API'

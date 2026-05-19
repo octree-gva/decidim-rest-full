@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${DECIDIM_REST_FULL_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}"
+exec "${ROOT}/bin/swaggerize" "$@"

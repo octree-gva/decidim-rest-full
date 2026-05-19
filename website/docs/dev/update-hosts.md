@@ -42,8 +42,8 @@ The Extended Data `unconfirmed_host` behaves like this:
 2. Else: we need to check if the DNS lookup of the unconfirmed host match the IPs of the loadbalancer.
 
 **related endpoints**  
-- [Update extended data](/api#tag/Organizations-Extended-Data/operation/organizationData)
-- [Fetch extended data](/api#tag/Organizations-Extended-Data/operation/setOrganizationExtendedData)
+- [Update extended data](/api#tag/Organizations-Extended-Data/operation/setOrganizationExtendedData)
+- [Fetch extended data](/api#tag/Organizations-Extended-Data/operation/getOrganizationExtendedData)
 
 ## Register IPs for the loadbalancer
 A configuration for the `Decidim::Restfull` module is available under `Decidim::Restfull.config.loadbalancer_ips`. 

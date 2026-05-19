@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# OpenAPI freshness check and optional regeneration (see bin/openapi-stale).
+root = File.expand_path("..", __dir__)
+exec File.join(root, "bin/openapi-stale"), *ARGV

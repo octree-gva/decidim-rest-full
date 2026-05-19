@@ -1,7 +1,6 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import plugin from '@aldridged/docusaurus-plugin-lunr';
 
 const config: Config = {
   title: 'Decidim Rest API',
@@ -22,6 +21,7 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
+  onBrokenAnchors: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -77,7 +77,7 @@ const config: Config = {
         indexBlog: false,
         indexDocs: true,
         docsRouteBasePath: "/",
-        docsDir: ["docs","api.html"],
+        docsDir: ["docs"],
         // For Docs using Chinese, it is recomended to set:
         language: ["en"],
         highlightSearchTermsOnTargetPage: true
@@ -211,6 +211,8 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      // Default Prism bundle omits Ruby; add-endpoint docs use ```ruby fences heavily.
+      additionalLanguages: ['ruby', 'yaml'],
     },
   } satisfies Preset.ThemeConfig,
 };
