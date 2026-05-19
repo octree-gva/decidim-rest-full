@@ -38,4 +38,4 @@ services:
       - postgres
       - redis
     entrypoint: []
-    command: ["/bin/bash", "-c", "git config --global --add safe.directory /app || true; bin/setup-tests && bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/ --format progress --format RspecJunitFormatter --out rspec.xml"]
+    command: ["/bin/bash", "-c", "git config --global --add safe.directory /app || true; bin/setup-tests && bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec.xml"]

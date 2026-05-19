@@ -1,0 +1,13 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_meetings: 'Meeting: manage meetings'
+          permission:
+            meetings:
+              read: 'read: list and details of meetings'
+              upcoming_reminder:
+                succeeded: 'Upcoming meeting reminder: webhook with meeting snapshot'

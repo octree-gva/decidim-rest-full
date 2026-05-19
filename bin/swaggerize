@@ -93,4 +93,30 @@ else
 fi
 
 mv -f spec/decidim_dummy_app/swagger/v1/swagger.json "$OUTPUT_FILE"
+
+bundle exec ruby - "$OUTPUT_FILE" <<'RUBY'
+path = ARGV.fetch(0)
+doc = JSON.parse(File.read(path))
+doc.fetch("paths", {}).each_value do |methods|
+  methods.each_value do |operation|
+    params = operation["parameters"]
+    next unless params.is_a?(Array)
+
+    seen = {}
+    operation["parameters"] = params.reject do |param|
+      name = param["name"]
+      next false unless name
+
+      if seen[name]
+        true
+      else
+        seen[name] = true
+        false
+      end
+    end
+  end
+end
+File.write(path, JSON.pretty_generate(doc))
+RUBY
+
 log "done, $OUTPUT_FILE written."

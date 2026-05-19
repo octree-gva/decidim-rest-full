@@ -1,0 +1,34 @@
+# Perf overlay: Redis for async jobs + k6 runner on the Compose network.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.perf.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.perf.yml run --rm k6 run scenarios/smoke.js
+#
+# See perf/k6/README.md for full workflow (API server, Sidekiq, .env).
+services:
+  rest_full:
+    environment:
+      TRAEFIK_REDIS_URL: redis://redis:6379/1
+    depends_on:
+      redis:
+        condition: service_started
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  k6:
+    image: grafana/k6:0.54.0
+    working_dir: /perf/k6
+    volumes:
+      - ./perf/k6:/perf/k6:ro
+    env_file:
+      - path: ./perf/k6/.env
+        required: false
+    environment:
+      K6_BASE_URL: http://rest_full:3000
+    depends_on:
+      rest_full:
+        condition: service_started
+    profiles:
+      - perf

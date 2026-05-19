@@ -1,19 +1,102 @@
 PATH
-  remote: .
+  remote: decidim-restfull-accountabilities
   specs:
-    decidim-rest_full (0.2.12)
+    decidim-restfull-accountabilities (0.3.0)
+      decidim-accountability (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-blogs
+  specs:
+    decidim-restfull-blogs (0.3.0)
+      decidim-blogs (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-budgets
+  specs:
+    decidim-restfull-budgets (0.3.0)
+      decidim-budgets (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-core
+  specs:
+    decidim-restfull-core (0.3.0)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (~> 0.29)
-      decidim-blogs (~> 0.29)
-      decidim-comments (~> 0.29)
       decidim-core (~> 0.29)
-      decidim-decidim_awesome (= 0.12.6)
-      decidim-proposals (~> 0.29)
       deface (~> 1.9)
       doorkeeper
       jsonapi-serializer
       rswag-api (~> 2.17)
+
+PATH
+  remote: decidim-restfull-debates
+  specs:
+    decidim-restfull-debates (0.3.0)
+      decidim-debates (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-dev
+  specs:
+    decidim-restfull-dev (0.3.0)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-forms
+  specs:
+    decidim-restfull-forms (0.3.0)
+      decidim-forms (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+      decidim-surveys (~> 0.29)
+
+PATH
+  remote: decidim-restfull-meetings
+  specs:
+    decidim-restfull-meetings (0.3.0)
+      decidim-meetings (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-proposals
+  specs:
+    decidim-restfull-proposals (0.3.0)
+      decidim-decidim_awesome (= 0.12.6)
+      decidim-proposals (~> 0.29)
+      decidim-restfull-core (= 0.3.0)
+
+PATH
+  remote: decidim-restfull-sortition
+  specs:
+    decidim-restfull-sortition (0.3.0)
+      decidim-restfull-core (= 0.3.0)
+      decidim-sortitions (~> 0.29)
+
+PATH
+  remote: decidim-restfull-surveys
+  specs:
+    decidim-restfull-surveys (0.3.0)
+      decidim-restfull-core (= 0.3.0)
+      decidim-restfull-forms (= 0.3.0)
+      decidim-surveys (~> 0.29)
+
+PATH
+  remote: decidim-restfull
+  specs:
+    decidim-restfull (0.3.0)
+      decidim-restfull-accountabilities (= 0.3.0)
+      decidim-restfull-blogs (= 0.3.0)
+      decidim-restfull-budgets (= 0.3.0)
+      decidim-restfull-core (= 0.3.0)
+      decidim-restfull-debates (= 0.3.0)
+      decidim-restfull-forms (= 0.3.0)
+      decidim-restfull-meetings (= 0.3.0)
+      decidim-restfull-proposals (= 0.3.0)
+      decidim-restfull-sortition (= 0.3.0)
+      decidim-restfull-surveys (= 0.3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -876,7 +959,18 @@ DEPENDENCIES
   decidim-dev (~> 0.29)
   decidim-initiatives (~> 0.29)
   decidim-meetings (~> 0.29)
-  decidim-rest_full!
+  decidim-restfull!
+  decidim-restfull-accountabilities!
+  decidim-restfull-blogs!
+  decidim-restfull-budgets!
+  decidim-restfull-core!
+  decidim-restfull-debates!
+  decidim-restfull-dev!
+  decidim-restfull-forms!
+  decidim-restfull-meetings!
+  decidim-restfull-proposals!
+  decidim-restfull-sortition!
+  decidim-restfull-surveys!
   deface (>= 1.9.0)
   erb_lint
   faker (~> 3.2)

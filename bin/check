@@ -7,8 +7,14 @@ unset DATABASE_URL
 export RAILS_ENV=test
 export DISABLE_SPRING=1
 
+./bin/lint-spec-harness
 bundle exec rubocop .
-bundle exec erblint --lint-all --enable-all-linters
+mapfile -t erb_files < <(find decidim-restfull-* -path "*/app/views/*.erb" 2>/dev/null || true)
+if [ "${#erb_files[@]}" -gt 0 ]; then
+  bundle exec erblint "${erb_files[@]}"
+else
+  echo "warn: no ERB files to lint" >&2
+fi
 
 if command -v yarn >/dev/null 2>&1; then
   yarn install --frozen-lockfile
@@ -17,5 +23,7 @@ else
   echo "warn: yarn not in PATH; skipping Prettier (node::prettier in CI)" >&2
 fi
 
-RSPEC_PATHS="${RSPEC_PATHS:-spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/}"
+if [ -z "${RSPEC_PATHS:-}" ]; then
+  RSPEC_PATHS="$(bundle exec ruby -I decidim-restfull-core/lib -r decidim/rest_full/core/gem_spec_paths -e 'print Decidim::RestFull::Core::GemSpecPaths.existing_spec_dirs.join(" ")')"
+fi
 bundle exec rspec ${RSPEC_PATHS} --format progress "$@"

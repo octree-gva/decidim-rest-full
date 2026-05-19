@@ -1,0 +1,98 @@
+# frozen_string_literal: true
+
+require "swagger_helper"
+
+RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
+  Decidim.participatory_space_registry.manifests.map(&:name).each do |space_manifest|
+    space_manifest_title = space_manifest.to_s.titleize
+    path "/spaces/#{space_manifest}/{id}" do
+      get "#{space_manifest_title} Details" do
+        tags "Spaces"
+        produces "application/json"
+        operationId "show#{space_manifest.to_s.singularize.camelize}"
+        description "Get detail of a #{space_manifest_title} given its id"
+        it_behaves_like "localized params"
+        parameter name: "id", in: :path, schema: { type: :integer, description: "Id of the space" }
+
+        describe_api_endpoint(
+          controller: Decidim::Api::RestFull::Spaces::SpacesController,
+          action: :show,
+          security_types: [:credentialFlow, :impersonationFlow],
+          scopes: ["public"],
+          permissions: ["public.space.read"]
+        ) do
+          before do
+            skip "Initiative factory not available" if space_manifest == :initiatives && !FactoryBot.factories.registered?(:initiative)
+            skip "Conference factory not available" if space_manifest == :conferences && !FactoryBot.factories.registered?(:conference)
+            Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }.each do |manifest_name|
+              create(:component, participatory_space: assembly, manifest_name:, published_at: Time.zone.now)
+            end
+          end
+
+          let!(:participatory_process) { create(:participatory_process, organization:, title: { en: "My participatory_process for testing purpose", fr: "c'est une concertation" }) }
+          let!(:assembly) { create(:assembly, organization:, title: { en: "My assembly for testing purpose", fr: "c'est une assemblée" }) }
+          let!(:initiative) { space_manifest == :initiatives ? create(:initiative, organization:, title: { en: "My initiative for testing" }) : nil }
+          let!(:conference) { space_manifest == :conferences ? create(:conference, organization:, title: { en: "My conference for testing" }) : nil }
+
+          let(:id) do
+            case space_manifest.to_s
+            when "participatory_processes" then participatory_process.id
+            when "initiatives" then initiative.id
+            when "conferences" then conference.id
+            else assembly.id
+            end
+          end
+
+          let!(:space_list) do
+            3.times do
+              create(:assembly, organization:)
+              create(:participatory_process, organization:)
+            end
+          end
+
+          let!(:component_list) do
+            Array.new(3) do
+              proposals = create(:component, participatory_space: assembly, manifest_name: "proposals", published_at: Time.zone.now)
+              create(:proposal, component: proposals)
+              create(:proposal, :accepted, component: proposals)
+              create(:proposal, :rejected, component: proposals)
+
+              meeting = create(:component, participatory_space: assembly, manifest_name: "meetings", published_at: Time.zone.now)
+              create(:meeting, component: meeting)
+              create(:meeting, component: meeting)
+              [meeting, proposals]
+            end.flatten
+          end
+
+          response "200", "#{space_manifest_title} Details" do
+            produces "application/json"
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_item_response)
+            context "with a valid #{space_manifest} id" do
+              let(:manifest_name) { space_manifest.to_s }
+
+              run_test!(example_name: :ok) do |example|
+                json_response = JSON.parse(example.body)
+                expect(json_response["data"]["id"]).to eq(id.to_s)
+              end
+            end
+
+            it_behaves_like "localized endpoint"
+          end
+
+          response "404", "Not found" do
+            produces "application/json"
+            schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
+            context "with a valid #{space_manifest_title} id" do
+              let(:id) { "404" }
+
+              run_test!(example_name: :not_found) do |example|
+                JSON.parse(example.body)
+                expect(example.status).to eq(404)
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

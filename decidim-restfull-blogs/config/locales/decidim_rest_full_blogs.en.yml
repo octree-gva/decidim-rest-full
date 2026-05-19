@@ -1,0 +1,15 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_blogs: 'Blogs: manage posts (Blogs::Post)'
+          permission:
+            blogs:
+              read: 'read: list and details of a post'
+      system:
+        api_clients:
+          blog_permissions:
+            blogs: Blogs

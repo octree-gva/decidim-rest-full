@@ -1,0 +1,16 @@
+en:
+  decidim:
+    rest_full:
+      forms:
+        oauth_scopes:
+          surveys: Surveys & questionnaires
+        permissions:
+          surveys:
+            questionnaires:
+              read: Read questionnaires (JSON Forms projection)
+            questions:
+              manage: Manage questionnaire questions
+            answers:
+              read: Read answers and submissions
+              submit: Submit questionnaire answers
+              destroy: Delete submissions

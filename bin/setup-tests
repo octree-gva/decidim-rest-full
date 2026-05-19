@@ -33,7 +33,15 @@ gem install bundler -v 2.4.6
 bundle config set path 'vendor'
 bundle install -j $(nproc)
 
-rm -rf spec/decidim_dummy_app
+# Bind mounts / Bootsnap can leave dirs not fully removable with plain rm -rf
+if [ -d spec/decidim_dummy_app ]; then
+  chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
+  rm -rf spec/decidim_dummy_app || {
+    sleep 1
+    chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
+    rm -rf spec/decidim_dummy_app
+  }
+fi
 echo "Generating Decidim dummy app"
 bundle exec rake test_app
 cd spec/decidim_dummy_app

@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+module Decidim
+  module Api
+    module RestFull
+      module Components
+        class ComponentsController < ApplicationController
+          before_action { doorkeeper_authorize! :public }
+          before_action { ability.authorize! :read, ::Decidim::Component }
+
+          def search
+            query = Decidim::Component.all
+            query = query.reorder(nil).ransack(params[:filter]).result
+            page = paginate(in_visible_spaces(query))
+
+            data = page.map do |component|
+              serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(component.manifest_name)
+              serializer.new(
+                component,
+                params: {
+                  only: [],
+                  locales: available_locales,
+                  host: current_organization.host,
+                  act_as:,
+                  client_id:
+                }
+              ).serializable_hash[:data]
+            end
+
+            render_json_with_conditional_get({ data: }, fingerprint: collection_fingerprint_for(page))
+          end
+
+          def show
+            component_id = params.require(:id).to_i
+            component = in_visible_spaces(Decidim::Component.where(id: component_id)).first
+            raise Decidim::RestFull::Core::ApiException::NotFound, "Component not found" unless component
+
+            serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(component.manifest_name)
+
+            payload = serializer.new(
+              component,
+              params: {
+                only: [],
+                locales: available_locales,
+                host: current_organization.host,
+                act_as:,
+                client_id:
+              }
+            ).serializable_hash
+            render_json_with_conditional_get(payload, fingerprint: resource_fingerprint_for(component))
+          end
+
+          private
+
+          def space_manifest_names
+            @space_manifest_names ||= Decidim.participatory_space_registry.manifests.map(&:name)
+          end
+
+          def component_manifest_names
+            @component_manifest_names ||= Decidim.component_registry.manifests.map(&:name).reject { |manifest_name| manifest_name == :dummy }
+          end
+        end
+      end
+    end
+  end
+end

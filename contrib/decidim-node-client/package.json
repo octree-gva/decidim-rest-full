@@ -1,7 +1,7 @@
 {
   "name": "@octree/decidim-sdk",
-  "version": "0.2.12",
-  "description": "Typescript-fetch client for Decidim Restfull APi",
+  "version": "0.3.0",
+  "description": "TypeScript Axios client for the Decidim REST Full API",
   "keywords": [],
   "license": "AGPL-3.0-only",
   "author": "Hadrien Froger <hadrien@octree.ch>",

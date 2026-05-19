@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Fail when request/unit specs live under repo-root spec/ (harness only: helpers, dummy app, swagger paths).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+violations=()
+while IFS= read -r -d '' f; do
+  violations+=("$f")
+done < <(find spec -name '*_spec.rb' -not -path 'spec/decidim_dummy_app/vendor/*' -print0 2>/dev/null || true)
+
+if [ "${#violations[@]}" -gt 0 ]; then
+  echo "error: *_spec.rb files must live under decidim-restfull-*/spec/, not repo-root spec/:" >&2
+  printf '  %s\n' "${violations[@]}" >&2
+  echo "see spec/README.md" >&2
+  exit 1
+fi
+
+echo "ok: repo-root spec/ has no *_spec.rb (harness only)"

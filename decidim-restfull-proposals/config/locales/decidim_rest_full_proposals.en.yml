@@ -1,0 +1,27 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_proposals: 'Proposal: manage proposals'
+          permission:
+            draft_proposal_creation:
+              succeeded: 'Draft proposal created: send draft proposal details'
+            draft_proposal_update:
+              succeeded: 'Draft proposal updated: send draft proposal details'
+            proposal_creation:
+              succeeded: 'Proposal created: send proposal details'
+            proposal_state_change:
+              succeeded: 'Proposal state changed: send proposal details'
+            proposal_update:
+              succeeded: 'Proposal updated: send proposal details'
+            proposals:
+              draft: 'draft: create, update, publish and see a draft proposal'
+              read: 'read: list and details of a proposal'
+              vote: 'vote: vote on proposals'
+      system:
+        api_clients:
+          proposal_permissions:
+            proposals: Proposals

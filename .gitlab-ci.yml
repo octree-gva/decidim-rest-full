@@ -1,12 +1,7 @@
 ##
-# Set of re-usable rules for decidim module development. 
-# You are required to set the following CI/CD variables: 
-# 
-# - CROWDIN_PERSONAL_TOKEN: protected & masked. // API Token from crowdin
-# - CROWDIN_PROJECT_ID: masked. // Project ID from crowdin
-# - TRANSLATIONBOT_ID: masked. // Project Bot `mr-translation` user id (see in repo>members tab)
-# - TRANSLATIONBOT_ACCESS_TOKEN: masked. // Project Token with name `mr-translations`
-# - GEM_HOST_API_KEY: protected & masked. // 
+# decidim-restfull monorepo CI: lint, per-gem RSpec, then metagem aggregate.
+# Ruby commands mirror docker compose service `rest_full` (see CONTRIBUTING.md).
+##
 stages:
   - lint
   - test
@@ -21,8 +16,19 @@ services:
   - postgres:17
   - redis:latest
 
+.rspec_variables: &rspec_variables
+  DATABASE_HOST: "postgres"
+  DATABASE_PASSWORD: "TEST-insecure_password"
+  DATABASE_USERNAME: "decidim"
+  DISABLED_DOCKER_COMPOSE: "true"
+  TRAEFIK_REDIS_URL: "redis://localhost:6379/1"
+  NODE_MAJOR: 18
+  SIMPLECOV: 1
+  CI: 1
+  RAILS_ENV: test
+  DISABLE_SPRING: 1
 
-.development_rules:  
+.development_rules:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
@@ -32,6 +38,7 @@ services:
       when: always
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
+
 .publication_rules:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
@@ -42,9 +49,28 @@ services:
       when: always
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
-##
-# Lint ruby code
-ruby::rubocop:  
+
+.rspec_before:
+  before_script:
+    - bin/setup-tests
+
+.rspec_template:
+  extends: .development_rules
+  image: ruby:3.2.2
+  stage: test
+  variables:
+    <<: *rspec_variables
+  before_script:
+    - bin/setup-tests
+
+ruby::spec_harness:
+  extends: .development_rules
+  image: ruby:3.2.2
+  stage: lint
+  script:
+    - ./bin/lint-spec-harness
+
+ruby::rubocop:
   extends: .development_rules
   image: ruby:3.2.2
   stage: lint
@@ -52,7 +78,7 @@ ruby::rubocop:
     - bundle
     - bundle exec rubocop .
 
-ruby::erb:  
+ruby::erb:
   extends: .development_rules
   image: ruby:3.2.2
   stage: lint
@@ -68,9 +94,7 @@ node::prettier:
     - yarn install --frozen-lockfile
     - yarn format:check
 
-##
-# Lint crowdin.yml configuration file
-crowdin::lint:  
+crowdin::lint:
   extends: .development_rules
   image: node:20
   stage: lint
@@ -78,8 +102,73 @@ crowdin::lint:
     - npm install -g @crowdin/cli
     - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
   allow_failure: true
-##
-# Publish the gem un ruby gem.
+
+k6:smoke:
+  image: grafana/k6:0.54.0
+  stage: test
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - when: manual
+  variables:
+    K6_VUS: "10"
+    K6_DURATION: "30s"
+  script:
+    - |
+      if [ -z "${K6_BASE_URL}" ] || [ -z "${K6_CLIENT_ID}" ] || [ -z "${K6_CLIENT_SECRET}" ]; then
+        echo "Skipping k6 smoke (set K6_BASE_URL, K6_CLIENT_ID, K6_CLIENT_SECRET on the pipeline to enable)"
+        exit 0
+      fi
+    - k6 run perf/k6/scenarios/smoke.js
+
+rspec:decidim-restfull-core:
+  extends: .rspec_template
+  script:
+    - bundle exec rspec decidim-restfull-core/spec --format progress
+
+rspec:decidim-restfull-proposals:
+  extends: .rspec_template
+  script:
+    - bundle exec rspec decidim-restfull-proposals/spec --format progress
+
+rspec:decidim-restfull-blogs:
+  extends: .rspec_template
+  script:
+    - bundle exec rspec decidim-restfull-blogs/spec --format progress
+
+rspec:decidim-restfull-forms:
+  extends: .rspec_template
+  script:
+    - bundle exec rspec decidim-restfull-forms/spec --format progress
+
+rspec:decidim-restfull-adapters:
+  extends: .rspec_template
+  script:
+    - bundle exec rspec decidim-restfull-meetings/spec decidim-restfull-surveys/spec decidim-restfull-budgets/spec
+      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec decidim-restfull-sortition/spec
+      decidim-restfull-dev/spec --format progress
+
+rspec:decidim-restfull:
+  extends: .rspec_template
+  needs:
+    - rspec:decidim-restfull-core
+    - rspec:decidim-restfull-proposals
+    - rspec:decidim-restfull-blogs
+    - rspec:decidim-restfull-forms
+    - rspec:decidim-restfull-adapters
+  artifacts:
+    when: always
+    paths:
+      - rspec.xml
+    reports:
+      junit: rspec.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+  script:
+    - bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec.xml
+
 ruby::rubygem:
   image: ruby:3.2.2
   stage: publish
@@ -88,12 +177,21 @@ ruby::rubygem:
     - |
       echo ":ci_rubygems_api_key: $GEM_HOST_API_KEY" >> .credentials
     - chmod 0600 .credentials
-    - gem build decidim*.gemspec
-    - gem push decidim*.gem -k ci_rubygems_api_key --config-file .credentials
+    - gem build decidim-restfull/decidim-restfull.gemspec
+    - gem build decidim-restfull-accountabilities/decidim-restfull-accountabilities.gemspec
+    - gem build decidim-restfull-core/decidim-restfull-core.gemspec
+    - gem build decidim-restfull-blogs/decidim-restfull-blogs.gemspec
+    - gem build decidim-restfull-budgets/decidim-restfull-budgets.gemspec
+    - gem build decidim-restfull-debates/decidim-restfull-debates.gemspec
+    - gem build decidim-restfull-meetings/decidim-restfull-meetings.gemspec
+    - gem build decidim-restfull-proposals/decidim-restfull-proposals.gemspec
+    - gem build decidim-restfull-sortition/decidim-restfull-sortition.gemspec
+    - gem build decidim-restfull-surveys/decidim-restfull-surveys.gemspec
+    - gem build decidim-restfull-forms/decidim-restfull-forms.gemspec
+    - gem push decidim-restfull-*.gem -k ci_rubygems_api_key --config-file .credentials
   only:
     - tags
-##
-# Upload new translation keys to crowdin
+
 crowdin::upload:
   stage: translate
   image: node:20
@@ -102,9 +200,7 @@ crowdin::upload:
     - crowdin upload -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
     - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
   when: manual
-##
-# Create a Merge request in the project with updated 
-# crowndin translations.
+
 crowdin::merge_request:
   stage: translate
   image: node:20
@@ -121,45 +217,12 @@ crowdin::merge_request:
     - crowdin status -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
     - export BRANCH_NAME="i18n/$(date +%Y%m%d%H%M%S)"
     - export ORIGIN="crowndin_$(date +%Y%m%d%H%M%S)"
-    - echo "add $ORIGIN=https://$TRANSLATIONBOT_ID:$TRANSLATIONBOT_ACCESS_TOKEN@git.octree.ch/$CI_PROJECT_PATH.git"
     - git remote add $ORIGIN https://$TRANSLATIONBOT_ID:$TRANSLATIONBOT_ACCESS_TOKEN@git.octree.ch/$CI_PROJECT_PATH.git
     - git checkout -b $BRANCH_NAME
-    - git add config/locales
+    - git add decidim-restfull-core/config/locales decidim-restfull-blogs/config/locales decidim-restfull-proposals/config/locales
     - git commit -m "Crowdin Updates"
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
-##
-# Execute rspec and expose a spec report (local parity: bin/check after bin/setup-tests; see README).
-ruby::rspec:
-  image: ruby:3.2.2
-  stage: test
-  extends: .development_rules
-  artifacts:
-    when: always
-    paths:
-      - rspec.xml
-    reports:
-      junit: rspec.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/coverage.xml
-  variables:
-    DATABASE_HOST: "postgres"
-    # trunk-ignore(gitleaks/generic-api-key)
-    DATABASE_PASSWORD: "TEST-insecure_password"
-    DATABASE_USERNAME: "decidim"
-    DISABLED_DOCKER_COMPOSE: "true"
-    TRAEFIK_REDIS_URL: "redis://localhost:6379/1"
-    NODE_MAJOR: 18
-    SIMPLECOV: 1
-    CI: 1
-    RAILS_ENV: test
-    DISABLE_SPRING: 1
-  before_script:
-    - bin/setup-tests
-  script:
-    # Include spec/forms, spec/lib, spec/decidim (not only commands/requests/models/jobs) so refactors stay covered.
-    - bundle exec rspec spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/ --format progress --format RspecJunitFormatter --out rspec.xml
-# Publish decidim rest full api package
+
 decidim-client::publish:
   image: node:20
   variables:
