@@ -66,6 +66,10 @@ export DECIDIM_REST_FULL_SWAGGER_SPEC_PATHS="decidim-restfull-forms/spec/request
 bin/swaggerize --out /tmp/openapi.json
 ```
 
+### Host app (merged spec)
+
+Decidim **host applications** ship extra paths via `Extension.register` in an initializer. They merge the monorepo base OpenAPI with local RSwag specs instead of re-running every gem spec. See [Host app extensions](../host-app-extension.md).
+
 ## Rules
 
 | Rule | Detail |

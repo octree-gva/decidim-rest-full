@@ -17,6 +17,8 @@ The monorepo ships **shell entry points** at the repository root. They fall into
 | `decidim-restfull-dev` gem → `decidim_restfull_swaggerize` | Thin wrapper around `bin/swaggerize` |
 | `exe/api-client` | CLI: create / get / grant / revoke API clients (needs a loaded Rails app) |
 
+Host Decidim apps can register extensions from an initializer (no feature gem). See [Host app extensions](./host-app-extension.md).
+
 Repo-local pointer: [exe/README.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/exe/README.md).
 
 :::info

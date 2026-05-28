@@ -33,6 +33,9 @@ bundle exec rails db:migrate
 bundle exec rails deface:precompile
 ```
 
+## Host app extensions
+
+Tenant-specific routes (chatbot bridges, legacy paths, one-deployment APIs) can register on the RestFull mount from the host app via **`Extension.register`** — no feature gem required. See [Host app extensions](/dev/host-app-extension).
 
 ## Environment variables
 
