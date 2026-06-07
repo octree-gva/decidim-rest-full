@@ -24,6 +24,8 @@ module Decidim
             return if core_block.nil? && route_blocks.empty?
 
             blocks = route_blocks
+            # Append RestFull routes without clearing Decidim::Core (Doorkeeper /oauth/token at org root).
+            routes.disable_clear_and_finalize = true
             routes.draw do
               authenticate(:admin) do
                 namespace "system" do
@@ -42,6 +44,8 @@ module Decidim
                 end
               end
             end
+            routes.disable_clear_and_finalize = false
+            routes.finalize!
           end
 
           def route_blocks

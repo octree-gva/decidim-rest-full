@@ -33,6 +33,23 @@ module Decidim
             path_specs = isolated.routes.map { |r| r.path.spec.to_s }
             expect(path_specs).to include(include("_spec_ping"))
           end
+
+          it "preserves pre-existing routes (e.g. Doorkeeper /oauth/token at org root)" do
+            isolated = ActionDispatch::Routing::RouteSet.new
+            isolated.draw do
+              post "/oauth/token", to: "doorkeeper/tokens#create"
+            end
+            count_before = isolated.routes.count
+
+            described_class.apply!(isolated) do
+              get "/", to: "/decidim/rest_full/pages#show"
+            end
+
+            path_specs = isolated.routes.map { |r| r.path.spec.to_s }
+            expect(isolated.routes.count).to be > count_before
+            expect(path_specs).to include("/oauth/token(.:format)")
+            expect(path_specs).to include(a_string_matching(%r{/api/rest_full/v[\d.]+/}))
+          end
         end
 
         describe ".reset!" do
