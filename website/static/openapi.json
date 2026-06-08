@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.  \n_current version: 0.3.0_\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant **Organizations**\nOne deployment hosts many **Organizations** (tenants by **`host`**).\n- The **`system` scope** endpoints apply in the context of the resolved organization\n- The request **`host`** selects which **Organization** you target.\n  For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations' OAuth applications.\n\n### Integrators\nStart with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).\n\nTypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).\n\nOutbound **webhook** events are listed under the **Webhooks** tag (subscribe in System admin).\n"
   },
   "servers": [
