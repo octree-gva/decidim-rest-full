@@ -73,7 +73,24 @@ module Decidim
           end
 
           def union_query
-            spaces_resources.map { |data| space_sql_for(data) }.join(" UNION ")
+            union_spaces_resources.map { |data| space_sql_for(data) }.join(" UNION ")
+          end
+
+          def union_spaces_resources
+            filter = params[:filter] || {}
+            filter = filter.to_unsafe_h if filter.respond_to?(:to_unsafe_h)
+            filter = filter.with_indifferent_access
+            manifest_eq = filter[:manifest_name_eq].presence
+            manifest_in = Array.wrap(filter[:manifest_name_in]).presence
+
+            if manifest_eq
+              spaces_resources.select { |data| data[:manifest].to_s == manifest_eq.to_s }
+            elsif manifest_in
+              allowed = manifest_in.map(&:to_s)
+              spaces_resources.select { |data| data[:manifest].to_s.in?(allowed) }
+            else
+              spaces_resources
+            end
           end
 
           def space_sql_for(data)
