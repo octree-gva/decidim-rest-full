@@ -95,9 +95,14 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
             run_test!(example_name: :filter_by_id_in) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data.map { |d| [d["id"], d["attributes"]["participatory_space_type"]] }).to match_array(
-                space_list.map { |s| [s.id.to_s, s.class.name] }
-              )
+              space_list.each do |space|
+                match = data.find do |row|
+                  row["id"] == space.id.to_s &&
+                    row["attributes"]["participatory_space_type"] == space.class.name
+                end
+                expect(match).to be_present,
+                                 "expected #{space.class.name}##{space.id} in search results"
+              end
             end
           end
 
@@ -129,6 +134,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
 
           context "with filter[id_eq] filter" do
             let(:"filter[id_eq]") { assembly.id.to_s }
+            let(:"filter[manifest_name_eq]") { "assemblies" }
             let(:"locales[]") { %w(en) }
             let(:page) { 1 }
             let(:per_page) { 10 }
@@ -136,6 +142,33 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             run_test!(example_name: :filter_by_id_eq) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).to contain_exactly(assembly.id.to_s)
+            end
+          end
+
+          context "with filter[id_eq] when assembly and process share numeric id" do
+            before do
+              Decidim::Assembly.where(id: 1).delete_all
+              Decidim::ParticipatoryProcess.where(id: 1).delete_all
+            end
+
+            let!(:assembly_with_id_one) do
+              # rubocop:disable Rails/SkipsModelValidations:
+              create(:assembly, organization:).tap { |record| record.update_column(:id, 1) }
+              # rubocop:enable Rails/SkipsModelValidations:
+            end
+            let!(:process_with_id_one) do
+              # rubocop:disable Rails/SkipsModelValidations:
+              create(:participatory_process, organization:).tap { |record| record.update_column(:id, 1) }
+              # rubocop:enable Rails/SkipsModelValidations:
+            end
+
+            let(:"filter[id_eq]") { "1" }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test!(example_name: :filter_by_id_eq_returns_both_space_types) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| [d["id"], d["attributes"]["participatory_space_type"]] }).to contain_exactly(["1", "Decidim::Assembly"], ["1", "Decidim::ParticipatoryProcess"])
             end
           end
 

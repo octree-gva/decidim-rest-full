@@ -19,8 +19,6 @@ namespace :decidim_rest_full do
     end
 
     def install_rest_full_npm
-      raise "decidim-rest_full gem is not loaded (check Gem.loaded_specs['decidim-rest_full'])" if rest_full_path.nil?
-
       return if rest_full_npm_dependencies.empty?
 
       puts "install NPM packages. You can also do this manually with this command:"
@@ -29,22 +27,16 @@ namespace :decidim_rest_full do
     end
 
     def rest_full_npm_dependencies
-      @rest_full_npm_dependencies ||= begin
-        package_json = JSON.parse(File.read(rest_full_path.join("package.json")))
-
-        (package_json["dependencies"] || {}).map { |package, version| "#{package}@#{version}" }
-      end
+      @rest_full_npm_dependencies ||= if rest_full_path.nil? || !File.exist?(rest_full_path.join("package.json"))
+                                        []
+                                      else
+                                        package_json = JSON.parse(File.read(rest_full_path.join("package.json")))
+                                        (package_json["dependencies"] || {}).map { |package, version| "#{package}@#{version}" }
+                                      end
     end
 
     def rest_full_path
-      @rest_full_path ||= begin
-        spec = rest_full_gemspec
-        Pathname.new(spec.full_gem_path) if spec
-      end
-    end
-
-    def rest_full_gemspec
-      Gem.loaded_specs[rest_full_gem_name]
+      @rest_full_path ||= Pathname.new(rest_full_gemspec.full_gem_path) if Gem.loaded_specs.has_key?(rest_full_gem_name)
     end
 
     def rails_app_path
@@ -53,6 +45,10 @@ namespace :decidim_rest_full do
 
     def rest_full_system!(command)
       system("cd #{rails_app_path} && #{command}") || abort("\n== Command #{command} failed ==")
+    end
+
+    def rest_full_gemspec
+      @rest_full_gemspec ||= Gem.loaded_specs[rest_full_gem_name]
     end
 
     def rest_full_gem_name
