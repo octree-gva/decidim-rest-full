@@ -20,10 +20,23 @@ module Decidim
 
           def apply!(routes, &core_block)
             core_block ||= @core_routes_block
-            return if routes.routes.any? { |r| r.path.spec.to_s.include?("/api/rest_full/v") }
+            return if core_block.nil? && route_blocks.empty?
+
+            rest_full_drawn = routes.routes.any? { |r| r.path.spec.to_s.include?("/api/rest_full/v") }
+            pending_blocks = route_blocks.drop(@applied_blocks_count.to_i)
+
+            if rest_full_drawn
+              return if pending_blocks.empty?
+
+              append_rest_full_blocks!(routes, pending_blocks)
+              return
+            end
+
             return if core_block.nil? && route_blocks.empty?
 
             blocks = route_blocks
+            # Append RestFull routes without clearing Decidim::Core (Doorkeeper /oauth/token at org root).
+            routes.disable_clear_and_finalize = true
             routes.draw do
               authenticate(:admin) do
                 namespace "system" do
@@ -42,6 +55,25 @@ module Decidim
                 end
               end
             end
+            routes.disable_clear_and_finalize = false
+            routes.finalize!
+            @applied_blocks_count = route_blocks.size
+          end
+
+          def append_rest_full_blocks!(routes, blocks)
+            routes.disable_clear_and_finalize = true
+            routes.draw do
+              namespace :api do
+                namespace :rest_full do
+                  scope "v#{Decidim::RestFull.major_minor_version}" do
+                    blocks.each { |block| instance_eval(&block) }
+                  end
+                end
+              end
+            end
+            routes.disable_clear_and_finalize = false
+            routes.finalize!
+            @applied_blocks_count = route_blocks.size
           end
 
           def route_blocks
@@ -51,6 +83,7 @@ module Decidim
           def reset!
             @route_blocks = []
             @core_routes_block = nil
+            @applied_blocks_count = 0
           end
         end
       end
