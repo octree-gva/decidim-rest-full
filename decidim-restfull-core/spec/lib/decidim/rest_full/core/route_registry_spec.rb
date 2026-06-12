@@ -48,7 +48,7 @@ module Decidim
             path_specs = isolated.routes.map { |r| r.path.spec.to_s }
             expect(isolated.routes.count).to be > count_before
             expect(path_specs).to include("/oauth/token(.:format)")
-            expect(path_specs).to include(a_string_matching(%r{/api/rest_full/v[\d.]+/}))
+            expect(path_specs).to include(a_string_matching(%r{/api/rest_full/v[\d.]+(\(\.:format\)|/)}))
           end
         end
 
