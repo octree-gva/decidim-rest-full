@@ -110,8 +110,6 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
             end
           end
         end
-
-        1
       end
     end
   end

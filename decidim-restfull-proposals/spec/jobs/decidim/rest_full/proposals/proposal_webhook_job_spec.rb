@@ -44,9 +44,7 @@ RSpec.describe Decidim::RestFull::Proposals::ProposalWebhookJob do
       described_class.perform_now(event_name, proposal_id, organization_id)
     end
 
-    it "serialize proposal with ProposalSerializer if it is a draft" do
-      proposal.update(published_at: nil)
-
+    it "serialize proposal with ProposalSerializer if it is published" do
       expect(Decidim::Api::RestFull::Proposals::ProposalSerializer).to receive(:new).with(proposal, kind_of(Hash)).and_call_original
       described_class.perform_now(event_name, proposal_id, organization_id)
     end

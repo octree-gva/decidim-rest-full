@@ -15,7 +15,8 @@ module Decidim
             query = collection.ransack(params[:filter])
 
             results = query.result
-            page = paginate(ordered(results).includes(:component))
+            scoped = ordered(results).includes(:component)
+            page = paginate(scoped)
             payload = Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
               page,
               params: {
@@ -26,7 +27,10 @@ module Decidim
                 act_as:
               }
             ).serializable_hash
-            fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(self, relation: page)
+            fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(
+              self,
+              relation: index_fingerprint_relation(scoped)
+            )
             render_json_with_conditional_get(payload, fingerprint: fp)
           end
 
@@ -147,6 +151,11 @@ module Decidim
             return false unless params.has_key?(:filter)
 
             params[:filter].to_unsafe_h.any? { |key, _value| key.to_s.start_with?("voted_weight") }
+          end
+
+          # Conditional GET must not re-run ORDER BY RANDOM() or other expensive sort keys.
+          def index_fingerprint_relation(scoped)
+            scoped.except(:order, :reorder)
           end
         end
       end

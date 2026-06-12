@@ -99,7 +99,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
           it_behaves_like "paginated endpoint" do
             let(:create_resource) { -> { create(:component, participatory_space: assembly, manifest_name: "proposals", published_at: Time.zone.now) } }
             let(:each_resource) { ->(_resource, _index) {} }
-            let(:resources) { Decidim::Component.all }
+            let(:resources) { Decidim::Component.where(manifest_name: "proposals") }
           end
         end
       end

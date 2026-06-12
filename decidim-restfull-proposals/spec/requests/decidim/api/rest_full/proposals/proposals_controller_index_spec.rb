@@ -42,7 +42,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
           it_behaves_like "paginated endpoint" do
             let(:create_resource) { -> { create(:proposal, :accepted, component: proposal_component, published_at: 1.day.ago) } }
             let(:each_resource) { ->(_resource, _index) {} }
-            let(:resources) { Decidim::Proposals::Proposal.all }
+            let(:resources) { Decidim::Proposals::Proposal.where(component: proposal_component) }
           end
 
           context "when voting_cards is enabled" do
@@ -60,7 +60,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
             let!(:proposals) do
               create(:proposal, :accepted, component: proposal_component)
               create(:proposal, :rejected, component: proposal_component)
-              create_list(:proposal, 5, component: proposal_component)
+              create_list(:proposal, 2, component: proposal_component)
             end
 
             context "with filter state_eq accepted, filter only published accepted proposal" do
@@ -115,31 +115,13 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               end
 
               context "with filter voted_weight" do
-                before do
-                  # Setup a scenario where:
-                  # a user have a draft and a published proposal
-                  # a user vote on proposals not authored by the user
-                  # a user vote on its own proposal
-
-                  create(:proposal, published_at: nil, component: proposal_component, users: [user])
-                  authored_proposal = create(:proposal, component: proposal_component, users: [user])
-                  # roposals with different status
-                  create(:proposal, :accepted, component: proposal_component)
-                  create(:proposal, :rejected, component: proposal_component)
-                  normal_proposal = create(:proposal, component: proposal_component)
-                  liked_proposal = create(:proposal, component: proposal_component)
-                  loved_proposal = create(:proposal, component: proposal_component)
-                  create_list(:proposal, 5, component: proposal_component)
-                  abstention_proposal = create(:proposal, component: proposal_component)
-                  create(:proposal_vote, proposal: normal_proposal, author: user).update(weight: 1)
-                  create(:proposal_vote, proposal: liked_proposal, author: user).update(weight: 1)
-                  create(:proposal_vote, proposal: loved_proposal, author: user).update(weight: 2)
-                  create(:proposal_vote, proposal: abstention_proposal, author: user).update(weight: 0)
-                  create(:proposal_vote, proposal: authored_proposal, author: user).update(weight: 2)
-                end
-
                 context "when filter voted_weight_eq 1, filter only the vote_weight=1" do
                   let(:"filter[voted_weight_eq]") { 1.to_s }
+
+                  before do
+                    create(:proposal_vote, proposal: create(:proposal, component: proposal_component), author: user).update(weight: 1)
+                    create(:proposal_vote, proposal: create(:proposal, component: proposal_component), author: user).update(weight: 2)
+                  end
 
                   run_test!(example_name: :voted) do |example|
                     data = JSON.parse(example.body)["data"]
@@ -151,6 +133,10 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
 
                 context "when filter voted_weight_eq 0, filter only the abstention" do
                   let(:"filter[voted_weight_eq]") { 0.to_s }
+
+                  before do
+                    create(:proposal_vote, proposal: create(:proposal, component: proposal_component), author: user).update(weight: 0)
+                  end
 
                   run_test!(example_name: :abstentions) do |example|
                     data = JSON.parse(example.body)["data"]
@@ -173,6 +159,12 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 context "when filter voted_weight_blank, filter only the non-voted proposals" do
                   let(:"filter[voted_weight_blank]") { "true" }
 
+                  before do
+                    create(:proposal, component: proposal_component)
+                    voted = create(:proposal, component: proposal_component)
+                    create(:proposal_vote, proposal: voted, author: user).update(weight: 1)
+                  end
+
                   run_test!(example_name: :unvoted) do |example|
                     data = JSON.parse(example.body)["data"]
                     data.each do |d|
@@ -186,11 +178,16 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                   let(:per_page) { 1 }
                   let(:order) { "rand" }
 
+                  before do
+                    create(:proposal, component: proposal_component)
+                    voted = create(:proposal, component: proposal_component)
+                    create(:proposal_vote, proposal: voted, author: user).update(weight: 1)
+                  end
+
                   run_test!(example_name: :unvoted_unordered_list) do |example|
                     data = JSON.parse(example.body)["data"]
-                    data.each do |d|
-                      expect(d["meta"]["voted"]).to be_blank
-                    end
+                    expect(data.size).to eq(1)
+                    expect(data.first["meta"]["voted"]).to be_blank
                   end
                 end
               end
