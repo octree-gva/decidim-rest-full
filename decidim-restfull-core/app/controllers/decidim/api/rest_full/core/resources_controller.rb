@@ -73,7 +73,8 @@ module Decidim
           def order_string
             @order_string ||= if order.is_a?(Hash)
                                 key = order.keys.first
-                                "#{model_class.table_name}.#{key} #{order[key]}"
+                                dir = order[key]
+                                "#{model_class.table_name}.#{key} #{dir}, #{model_class.table_name}.id asc"
                               else
                                 order
                               end
