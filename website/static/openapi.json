@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
-    "version": "v0.3",
+    "version": "0.3.2",
     "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.  \n_current version: 0.3.1_\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant **Organizations**\nOne deployment hosts many **Organizations** (tenants by **`host`**).\n- The **`system` scope** endpoints apply in the context of the resolved organization\n- The request **`host`** selects which **Organization** you target.\n  For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations' OAuth applications.\n\n### Integrators\nStart with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).\n\nTypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).\n\nOutbound **webhook** events are listed under the **Webhooks** tag (subscribe in System admin).\n"
   },
   "servers": [
@@ -1628,16 +1628,14 @@
       "organization_extended_data": {
         "type": "object",
         "title": "Organization extended data",
-        "properties": {
-        },
+        "properties": {},
         "additionalProperties": true,
         "description": "Hash of values attached to an organization. These values won't be\ndisplayed to admins or users, consider this as an internal\ndata payload.\n"
       },
       "user_extended_data": {
         "type": "object",
         "title": "User extended data",
-        "properties": {
-        },
+        "properties": {},
         "additionalProperties": true,
         "description": "Hash of values attached to a user. These values won't be\ndisplayed to admins or users, consider this as an internal\ndata payload.\n"
       },
@@ -1744,8 +1742,7 @@
                 "type": "object",
                 "title": "User Extended Data",
                 "description": "Additional data. Private",
-                "properties": {
-                },
+                "properties": {},
                 "additionalProperties": true
               },
               "created_at": {
@@ -6131,9 +6128,7 @@
         ],
         "operationId": "getJob",
         "description": "Poll job status with the UUID from HTTP 202 responses. No Bearer header: capability is solely the opaque UUID scoped by request host / organization.",
-        "security": [
-
-        ],
+        "security": [],
         "parameters": [
           {
             "name": "id",
@@ -6257,8 +6252,7 @@
               "application/json": {
                 "examples": {
                   "deleted": {
-                    "value": {
-                    }
+                    "value": {}
                   }
                 }
               }
@@ -6616,16 +6610,13 @@
                               "en": "<script>alert(\"component_name\");</script> Sunt accusamus velit. 3007",
                               "fr": "<script>alert(\"component_name\");</script> Maiores sint veniam. 3008"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:35:03Z",
                             "updated_at": "2026-06-13T20:35:03Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -6669,16 +6660,13 @@
                               "en": "<script>alert(\"component_name\");</script> Aut est est. 3016",
                               "fr": "<script>alert(\"component_name\");</script> Doloremque aut officiis. 3017"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:35:03Z",
                             "updated_at": "2026-06-13T20:35:03Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -6728,16 +6716,13 @@
                               "en": "<script>alert(\"component_name\");</script> Numquam et eaque. 2515",
                               "fr": "<script>alert(\"component_name\");</script> Dicta dolor provident. 2516"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:35:00Z",
                             "updated_at": "2026-06-13T20:35:00Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -6787,16 +6772,13 @@
                               "en": "<script>alert(\"component_name\");</script> Et quod dignissimos. 2371",
                               "fr": "<script>alert(\"component_name\");</script> Ipsa expedita a. 2372"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:34:59Z",
                             "updated_at": "2026-06-13T20:34:59Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -6908,9 +6890,7 @@
                             "fr": ""
                           },
                           "errors": {
-                            "title": [
-
-                            ],
+                            "title": [],
                             "body": [
                               "Body cannot be blank"
                             ]
@@ -7006,10 +6986,8 @@
                         "attributes": {
                           "created_at": "2026-06-13T20:35:11Z",
                           "updated_at": "2026-06-13T20:35:11Z",
-                          "title": {
-                          },
-                          "body": {
-                          },
+                          "title": {},
+                          "body": {},
                           "errors": {
                             "title": [
                               "Title cannot be blank"
@@ -7258,12 +7236,8 @@
                             "fr": "<p><script>alert(\"proposal_body\");</script> Et quis rem. 169046</p>"
                           },
                           "errors": {
-                            "title": [
-
-                            ],
-                            "body": [
-
-                            ]
+                            "title": [],
+                            "body": []
                           }
                         },
                         "relationships": {
@@ -8080,9 +8054,7 @@
         ],
         "operationId": "introspectToken",
         "description": "Check token validity and get optional user/resource (RFC 7662). Send the token to introspect in the request body; use a valid Bearer token in Authorization.",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "User details returned",
@@ -8122,8 +8094,7 @@
                           "personal_url": "http://dubuque-rice.test/warren",
                           "locale": "en"
                         },
-                        "relationships": {
-                        },
+                        "relationships": {},
                         "meta": {
                           "blocked": false,
                           "locked": false
@@ -8290,8 +8261,7 @@
                             "en": "<p><script>alert(\"organization_description\");</script> Voluptate eos omnis. 10468</p>",
                             "fr": "<p><script>alert(\"organization_description\");</script> Et non sit. 10469</p>"
                           },
-                          "extended_data": {
-                          },
+                          "extended_data": {},
                           "created_at": "2026-06-13T20:35:48Z",
                           "updated_at": "2026-06-13T20:35:49Z"
                         },
@@ -9317,9 +9287,7 @@
                   },
                   "ok_empty": {
                     "value": {
-                      "data": [
-
-                      ]
+                      "data": []
                     }
                   },
                   "impersonation_ok_draft": {
@@ -9974,9 +9942,7 @@
             }
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "401": {
             "description": "Unauthorized when Bearer missing",
@@ -10532,9 +10498,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -10856,9 +10820,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -10925,9 +10887,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -10994,9 +10954,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11063,9 +11021,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11132,9 +11088,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11201,9 +11155,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11270,9 +11222,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11345,9 +11295,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11414,9 +11362,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11631,9 +11577,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11700,9 +11644,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11775,9 +11717,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -11980,9 +11920,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12049,9 +11987,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12124,9 +12060,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12193,9 +12127,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12268,9 +12200,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12337,9 +12267,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12542,9 +12470,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12613,9 +12539,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12678,9 +12602,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12743,9 +12665,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12808,9 +12728,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12873,9 +12791,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -12938,9 +12854,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13013,9 +12927,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13171,9 +13083,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "401": {
             "description": "Unauthorized when no Bearer token",
@@ -13263,9 +13173,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13332,9 +13240,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13537,9 +13443,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13653,9 +13557,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "200": {
             "description": "Conferences list",
@@ -13674,8 +13576,7 @@
                             "title": {
                               "en": "My conference for testing"
                             },
-                            "subtitle": {
-                            },
+                            "subtitle": {},
                             "short_description": {
                               "en": "<p><script>alert(\"conference_short_description\");</script> Ut ut omnis. 61054</p>",
                               "fr": "<p><script>alert(\"conference_short_description\");</script> Illo aliquam rem. 61055</p>"
@@ -13690,9 +13591,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -13858,9 +13757,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "403": {
             "description": "Forbidden",
@@ -13926,10 +13823,8 @@
                             "title": {
                               "en": "My initiative for testing"
                             },
-                            "subtitle": {
-                            },
-                            "short_description": {
-                            },
+                            "subtitle": {},
+                            "short_description": {},
                             "description": {
                               "en": "<p><script>alert(\"initiative_description\");</script> Quam beatae nobis. 71791</p>",
                               "fr": "<p><script>alert(\"initiative_description\");</script> Id laboriosam esse. 71792</p>"
@@ -13940,9 +13835,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -14061,9 +13954,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "401": {
             "description": "Unauthorized when no Bearer token",
@@ -14132,9 +14023,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -14201,9 +14090,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -14270,9 +14157,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -14339,9 +14224,7 @@
                           },
                           "relationships": {
                             "components": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               },
@@ -15591,9 +15474,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "500": {
             "description": "Internal Server Error",
@@ -18032,8 +17913,7 @@
               "application/json": {
                 "examples": {
                   "ok": {
-                    "value": {
-                    }
+                    "value": {}
                   }
                 }
               }
@@ -18867,16 +18747,13 @@
                               "en": "<script>alert(\"component_name\");</script> Molestiae voluptas laboriosam. 96205",
                               "fr": "<script>alert(\"component_name\");</script> Beatae corrupti voluptatibus. 96206"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:06Z",
                             "updated_at": "2026-06-13T20:41:06Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -18907,8 +18784,7 @@
                           "meta": {
                             "published": true,
                             "scopes_enabled": false,
-                            "default_registration_terms": {
-                            },
+                            "default_registration_terms": {},
                             "comments_enabled": true,
                             "comments_max_length": 1000,
                             "registration_code_enabled": true,
@@ -18926,8 +18802,7 @@
                               "en": "<script>alert(\"component_name\");</script> Odio itaque natus. 96334",
                               "fr": "<script>alert(\"component_name\");</script> Natus non vitae. 96335"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:06Z",
                             "updated_at": "2026-06-13T20:41:06Z"
                           },
@@ -19012,16 +18887,13 @@
                             "name": {
                               "en": "<script>alert(\"proposals\");</script> Proposals"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:07Z",
                             "updated_at": "2026-06-13T20:41:07Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19091,8 +18963,7 @@
                             "name": {
                               "en": "<script>alert(\"accountability\");</script> Accountability"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:07Z",
                             "updated_at": "2026-06-13T20:41:07Z"
                           },
@@ -19157,16 +19028,13 @@
                               "en": "<script>alert(\"component_name\");</script> Asperiores dolorem non. 95917",
                               "fr": "<script>alert(\"component_name\");</script> Necessitatibus quis commodi. 95918"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:04Z",
                             "updated_at": "2026-06-13T20:41:04Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19197,8 +19065,7 @@
                           "meta": {
                             "published": true,
                             "scopes_enabled": false,
-                            "default_registration_terms": {
-                            },
+                            "default_registration_terms": {},
                             "comments_enabled": true,
                             "comments_max_length": 1000,
                             "registration_code_enabled": true,
@@ -19216,8 +19083,7 @@
                               "en": "<script>alert(\"component_name\");</script> Est doloribus omnis. 96046",
                               "fr": "<script>alert(\"component_name\");</script> Et ut sed. 96047"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:04Z",
                             "updated_at": "2026-06-13T20:41:04Z"
                           },
@@ -19302,16 +19168,13 @@
                             "name": {
                               "en": "<script>alert(\"proposals\");</script> Proposals"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:04Z",
                             "updated_at": "2026-06-13T20:41:04Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19381,8 +19244,7 @@
                             "name": {
                               "en": "<script>alert(\"accountability\");</script> Accountability"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:05Z",
                             "updated_at": "2026-06-13T20:41:05Z"
                           },
@@ -19447,16 +19309,13 @@
                               "en": "<script>alert(\"component_name\");</script> Debitis numquam aliquid. 96493",
                               "fr": "<script>alert(\"component_name\");</script> Voluptatem sapiente omnis. 96494"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:07Z",
                             "updated_at": "2026-06-13T20:41:08Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19487,8 +19346,7 @@
                           "meta": {
                             "published": true,
                             "scopes_enabled": false,
-                            "default_registration_terms": {
-                            },
+                            "default_registration_terms": {},
                             "comments_enabled": true,
                             "comments_max_length": 1000,
                             "registration_code_enabled": true,
@@ -19505,8 +19363,7 @@
                             "name": {
                               "en": "<script>alert(\"accountability\");</script> Accountability"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:08Z",
                             "updated_at": "2026-06-13T20:41:08Z"
                           },
@@ -19571,16 +19428,13 @@
                               "en": "<script>alert(\"component_name\");</script> Occaecati quae distinctio. 98230",
                               "fr": "<script>alert(\"component_name\");</script> Ipsum harum aut. 98231"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:13Z",
                             "updated_at": "2026-06-13T20:41:14Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19611,8 +19465,7 @@
                           "meta": {
                             "published": true,
                             "scopes_enabled": false,
-                            "default_registration_terms": {
-                            },
+                            "default_registration_terms": {},
                             "comments_enabled": true,
                             "comments_max_length": 1000,
                             "registration_code_enabled": true,
@@ -19636,16 +19489,13 @@
                               "en": "<script>alert(\"component_name\");</script> Qui reprehenderit sunt. 97744",
                               "fr": "<script>alert(\"component_name\");</script> Voluptatem labore vel. 97745"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:12Z",
                             "updated_at": "2026-06-13T20:41:12Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19689,16 +19539,13 @@
                               "en": "<script>alert(\"component_name\");</script> Rerum saepe incidunt. 97753",
                               "fr": "<script>alert(\"component_name\");</script> Nihil maxime dolorem. 97754"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:41:12Z",
                             "updated_at": "2026-06-13T20:41:12Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -19874,9 +19721,7 @@
                                 ]
                               }
                             },
-                            "required": [
-
-                            ]
+                            "required": []
                           },
                           "ui": {
                             "type": "VerticalLayout",
@@ -20108,14 +19953,10 @@
         "tags": [
           "OAuth"
         ],
-        "security": [
-
-        ],
+        "security": [],
         "operationId": "createToken",
         "description": "Create an OAuth token for the given scopes (password or client_credentials grant).",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Token returned",
@@ -20390,9 +20231,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "401": {
             "description": "Unauthorized when no Bearer token",
@@ -20437,9 +20276,7 @@
                 "examples": {
                   "filter_by_extended_data": {
                     "value": {
-                      "data": [
-
-                      ]
+                      "data": []
                     }
                   },
                   "paginated": {
@@ -20454,17 +20291,14 @@
                             "personal_url": "http://cronin-dietrich.test/harley.hills",
                             "email": "user1093@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Similique ut tenetur. 101668\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Dolorem sed omnis. 101669\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Doloribus numquam et. 101670\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:44Z",
                             "updated_at": "2026-06-13T20:41:44Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20481,17 +20315,14 @@
                             "personal_url": "http://fisher.example/candie",
                             "email": "user1094@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Occaecati placeat voluptates. 101671\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Libero distinctio ut. 101672\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Vitae dicta vel. 101673\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:44Z",
                             "updated_at": "2026-06-13T20:41:44Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20514,17 +20345,14 @@
                             "personal_url": "http://smith.test/weston",
                             "email": "user1102@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Quae a itaque. 101743\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Aut veritatis aut. 101744\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Aut fugiat aut. 101745\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20541,17 +20369,14 @@
                             "personal_url": "http://collins.example/alvaro_haag",
                             "email": "user1105@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Reiciendis dolorem quas. 101752\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Ipsa debitis quod. 101753\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Earum aliquid labore. 101754\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20568,17 +20393,14 @@
                             "personal_url": "http://wisozk.example/caryn.langosh",
                             "email": "user1103@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Asperiores magnam sapiente. 101746\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Ab nemo illo. 101747\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Temporibus modi voluptatem. 101748\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20595,17 +20417,14 @@
                             "personal_url": "http://renner.example/shalon_schiller",
                             "email": "user1104@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Numquam minus omnis. 101749\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Mollitia hic ipsam. 101750\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Dolorum dolore officiis. 101751\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20622,17 +20441,14 @@
                             "personal_url": "http://ritchie.test/neal",
                             "email": "user1106@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Dolor a ut. 101755\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Perspiciatis quis modi. 101756\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Exercitationem dolorem odit. 101757\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20649,17 +20465,14 @@
                             "personal_url": "http://gutmann.test/nida.rempel",
                             "email": "user1107@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Accusamus in quia. 101758\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Nulla in unde. 101759\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Quae deserunt dolorem. 101760\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:46Z",
                             "updated_at": "2026-06-13T20:41:46Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20682,17 +20495,14 @@
                             "personal_url": "http://nolan-schuppe.test/temika.okeefe",
                             "email": "user1108@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Quod dolor omnis. 101773\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Eos consequatur nostrum. 101774\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Porro inventore saepe. 101775\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20709,17 +20519,14 @@
                             "personal_url": "http://littel.test/kendrick_brekke",
                             "email": "user1109@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Et ut voluptatem. 101776\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Quia consequatur temporibus. 101777\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Exercitationem velit asperiores. 101778\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20736,17 +20543,14 @@
                             "personal_url": "http://marquardt-gislason.example/josette",
                             "email": "user1110@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Consequatur tempore non. 101779\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Ipsam aut et. 101780\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Voluptatum iste repellat. 101781\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20763,17 +20567,14 @@
                             "personal_url": "http://kuhic.example/val",
                             "email": "user1111@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Natus libero a. 101782\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Ea nam rerum. 101783\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> In dolores aut. 101784\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20790,17 +20591,14 @@
                             "personal_url": "http://schoen-gislason.example/ralph",
                             "email": "user1112@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Ipsa itaque suscipit. 101785\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Rerum alias corporis. 101786\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Saepe tenetur et. 101787\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20823,17 +20621,14 @@
                             "personal_url": "http://bartell-crooks.test/german_feest",
                             "email": "user1114@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Exercitationem voluptatum non. 101803\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Et nihil qui. 101804\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Assumenda minima enim. 101805\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:48Z",
                             "updated_at": "2026-06-13T20:41:48Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20850,17 +20645,14 @@
                             "personal_url": "http://huel-oconnell.test/augustus.kulas",
                             "email": "user1115@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Iste recusandae porro. 101806\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Id voluptas et. 101807\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Minus architecto id. 101808\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:48Z",
                             "updated_at": "2026-06-13T20:41:48Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20877,17 +20669,14 @@
                             "personal_url": "http://lindgren-veum.test/danilo_graham",
                             "email": "user1113@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Quis placeat architecto. 101800\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Vitae quos culpa. 101801\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Ad aspernatur ut. 101802\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:47Z",
                             "updated_at": "2026-06-13T20:41:47Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20910,17 +20699,14 @@
                             "personal_url": "http://gerlach.example/argentina_hoeger",
                             "email": "user1118@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Voluptates fugit eum. 101827\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Eum id aut. 101828\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Quis quia corporis. 101829\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "fr",
                             "created_at": "2026-06-13T20:41:48Z",
                             "updated_at": "2026-06-13T20:41:48Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -20943,17 +20729,14 @@
                             "personal_url": "http://beatty.test/quintin",
                             "email": "user1125@example.org",
                             "about": "{\"en\"=>\"<script>alert(\\\"user_about\\\");</script> Est qui asperiores. 101872\", \"fr\"=>\"<script>alert(\\\"user_about\\\");</script> Quia non dolores. 101873\", \"machine_translations\"=>{\"es\"=>\"<script>alert(\\\"user_about\\\");</script> Ex aut aut. 101874\"}}",
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "locale": "en",
                             "created_at": "2026-06-13T20:41:49Z",
                             "updated_at": "2026-06-13T20:41:49Z"
                           },
                           "relationships": {
                             "roles": {
-                              "data": [
-
-                              ]
+                              "data": []
                             }
                           },
                           "meta": {
@@ -21179,16 +20962,13 @@
                             "en": "<script>alert(\"component_name\");</script> Recusandae enim exercitationem. 103330",
                             "fr": "<script>alert(\"component_name\");</script> Qui dicta molestias. 103331"
                           },
-                          "global_announcement": {
-                          },
+                          "global_announcement": {},
                           "created_at": "2026-06-13T20:42:02Z",
                           "updated_at": "2026-06-13T20:42:02Z"
                         },
                         "relationships": {
                           "resources": {
-                            "data": [
-
-                            ],
+                            "data": [],
                             "meta": {
                               "count": 0
                             }
@@ -21263,8 +21043,7 @@
                             "en": "<script>alert(\"component_name\");</script> Quo quidem est. 102625",
                             "fr": "<script>alert(\"component_name\");</script> In repellat et. 102626"
                           },
-                          "global_announcement": {
-                          },
+                          "global_announcement": {},
                           "created_at": "2026-06-13T20:41:58Z",
                           "updated_at": "2026-06-13T20:41:59Z"
                         },
@@ -21505,16 +21284,13 @@
                             "en": "<script>alert(\"component_name\");</script> Exercitationem fugiat qui. 104869",
                             "fr": "<script>alert(\"component_name\");</script> Commodi dolorem voluptate. 104870"
                           },
-                          "global_announcement": {
-                          },
+                          "global_announcement": {},
                           "created_at": "2026-06-13T20:42:16Z",
                           "updated_at": "2026-06-13T20:42:16Z"
                         },
                         "relationships": {
                           "resources": {
-                            "data": [
-
-                            ],
+                            "data": [],
                             "meta": {
                               "count": 0
                             }
@@ -21946,8 +21722,7 @@
                           "title": {
                             "en": "My conference for testing"
                           },
-                          "subtitle": {
-                          },
+                          "subtitle": {},
                           "short_description": {
                             "en": "<p><script>alert(\"conference_short_description\");</script> Voluptatem eos voluptatibus. 124513</p>",
                             "fr": "<p><script>alert(\"conference_short_description\");</script> Rem officia vero. 124514</p>"
@@ -21962,9 +21737,7 @@
                         },
                         "relationships": {
                           "components": {
-                            "data": [
-
-                            ],
+                            "data": [],
                             "meta": {
                               "count": 0
                             },
@@ -22135,9 +21908,7 @@
                         },
                         "relationships": {
                           "components": {
-                            "data": [
-
-                            ],
+                            "data": [],
                             "meta": {
                               "count": 0
                             },
@@ -22358,10 +22129,8 @@
                           "title": {
                             "en": "My initiative for testing"
                           },
-                          "subtitle": {
-                          },
-                          "short_description": {
-                          },
+                          "subtitle": {},
+                          "short_description": {},
                           "description": {
                             "en": "<p><script>alert(\"initiative_description\");</script> Vel facilis est. 145720</p>",
                             "fr": "<p><script>alert(\"initiative_description\");</script> Cum et illum. 145721</p>"
@@ -22372,9 +22141,7 @@
                         },
                         "relationships": {
                           "components": {
-                            "data": [
-
-                            ],
+                            "data": [],
                             "meta": {
                               "count": 0
                             },
@@ -22588,9 +22355,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "200": {
             "description": "Role shown (space_private_member)",
@@ -22848,9 +22613,7 @@
                                 ]
                               }
                             },
-                            "required": [
-
-                            ]
+                            "required": []
                           },
                           "ui": {
                             "type": "VerticalLayout",
@@ -23030,9 +22793,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "403": {
             "description": "Forbidden",
@@ -23075,9 +22836,7 @@
                           "type": "organization",
                           "attributes": {
                             "host": "1491.lvh.me",
-                            "secondary_hosts": [
-
-                            ],
+                            "secondary_hosts": [],
                             "default_locale": "en",
                             "available_locales": [
                               "en"
@@ -23101,8 +22860,7 @@
                               "en": "<p><script>alert(\"organization_description\");</script> Eligendi facilis debitis. 158074</p>",
                               "fr": "<p><script>alert(\"organization_description\");</script> Deleniti numquam autem. 158075</p>"
                             },
-                            "extended_data": {
-                            },
+                            "extended_data": {},
                             "created_at": "2026-06-13T20:44:55Z",
                             "updated_at": "2026-06-13T20:44:55Z"
                           },
@@ -23466,8 +23224,7 @@
                               "en": "<script>alert(\"component_name\");</script> Inventore ut modi. 161671",
                               "fr": "<script>alert(\"component_name\");</script> Dolore et labore. 161672"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:20Z",
                             "updated_at": "2026-06-13T20:45:20Z"
                           },
@@ -23556,16 +23313,13 @@
                             "name": {
                               "en": "<script>alert(\"proposals\");</script> Proposals"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:20Z",
                             "updated_at": "2026-06-13T20:45:20Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -23665,8 +23419,7 @@
                               "en": "<script>alert(\"component_name\");</script> Assumenda voluptas accusantium. 161497",
                               "fr": "<script>alert(\"component_name\");</script> Quia autem quos. 161498"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:19Z",
                             "updated_at": "2026-06-13T20:45:19Z"
                           },
@@ -23755,16 +23508,13 @@
                             "name": {
                               "en": "<script>alert(\"proposals\");</script> Proposals"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:19Z",
                             "updated_at": "2026-06-13T20:45:19Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -23835,8 +23585,7 @@
                               "en": "<script>alert(\"component_name\");</script> Eius error enim. 161554",
                               "fr": "<script>alert(\"component_name\");</script> Omnis autem repellendus. 161555"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:19Z",
                             "updated_at": "2026-06-13T20:45:19Z"
                           },
@@ -23937,8 +23686,7 @@
                               "en": "<script>alert(\"component_name\");</script> Ullam est cumque. 160648",
                               "fr": "<script>alert(\"component_name\");</script> Harum dolorem aperiam. 160649"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:14Z",
                             "updated_at": "2026-06-13T20:45:14Z"
                           },
@@ -24027,16 +23775,13 @@
                             "name": {
                               "en": "<script>alert(\"proposals\");</script> Proposals"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:14Z",
                             "updated_at": "2026-06-13T20:45:14Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -24136,16 +23881,13 @@
                               "en": "<script>alert(\"component_name\");</script> Ea suscipit aliquid. 161218",
                               "fr": "<script>alert(\"component_name\");</script> Ipsam quis aut. 161219"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:17Z",
                             "updated_at": "2026-06-13T20:45:17Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -24216,16 +23958,13 @@
                               "en": "<script>alert(\"component_name\");</script> Porro soluta sed. 161227",
                               "fr": "<script>alert(\"component_name\");</script> Sit vel quia. 161228"
                             },
-                            "global_announcement": {
-                            },
+                            "global_announcement": {},
                             "created_at": "2026-06-13T20:45:17Z",
                             "updated_at": "2026-06-13T20:45:17Z"
                           },
                           "relationships": {
                             "resources": {
-                              "data": [
-
-                              ],
+                              "data": [],
                               "meta": {
                                 "count": 0
                               }
@@ -24773,12 +24512,9 @@
                           "title": {
                             "fr": "<script>alert(\"proposal_title\");</script> Molestias est similique. 162710"
                           },
-                          "body": {
-                          },
+                          "body": {},
                           "errors": {
-                            "title": [
-
-                            ],
+                            "title": [],
                             "body": [
                               "Body cannot be blank"
                             ]
@@ -26075,9 +25811,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "500": {
             "description": "Internal Server Error",
@@ -26125,12 +25859,10 @@
               "application/json": {
                 "examples": {
                   "ok_redirect": {
-                    "value": {
-                    }
+                    "value": {}
                   },
                   "ok": {
-                    "value": {
-                    }
+                    "value": {}
                   }
                 }
               }
@@ -26589,9 +26321,7 @@
             "description": "Bearer access token (see security schemes)"
           }
         ],
-        "security": [
-
-        ],
+        "security": [],
         "responses": {
           "401": {
             "description": "Unauthorized when no Bearer token",
@@ -26860,10 +26590,8 @@
                         "attributes": {
                           "created_at": "2026-06-13T20:46:52Z",
                           "updated_at": "2026-06-13T20:46:52Z",
-                          "title": {
-                          },
-                          "body": {
-                          },
+                          "title": {},
+                          "body": {},
                           "errors": {
                             "title": [
                               "Title cannot be blank"
@@ -27521,9 +27249,7 @@
                         "type": "organization",
                         "attributes": {
                           "host": "1742.lvh.me",
-                          "secondary_hosts": [
-
-                          ],
+                          "secondary_hosts": [],
                           "default_locale": "en",
                           "available_locales": [
                             "en"
@@ -27547,8 +27273,7 @@
                             "en": "<p><script>alert(\"organization_description\");</script> Maxime quis nostrum. 173230</p>",
                             "fr": "<p><script>alert(\"organization_description\");</script> Eum eaque sint. 173231</p>"
                           },
-                          "extended_data": {
-                          },
+                          "extended_data": {},
                           "created_at": "2026-06-13T20:47:48Z",
                           "updated_at": "2026-06-13T20:47:49Z"
                         },
