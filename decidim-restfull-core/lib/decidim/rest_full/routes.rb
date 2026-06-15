@@ -25,6 +25,10 @@ module Decidim
           Core::RouteRegistry.draw_api_routes(&)
         end
 
+        def append_pending!(routes = Decidim::Core::Engine.routes)
+          Core::RouteRegistry.append_pending!(routes)
+        end
+
         private
 
         def ensure_core_routes_block_loaded!

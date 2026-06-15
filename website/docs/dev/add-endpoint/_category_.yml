@@ -4,5 +4,5 @@ link:
   slug: /dev/add-endpoint
   title: Add an endpoint
   description: |
-    Fourteen reference pages. Same layout on every page: Overview, When to use, Procedure, Rules, Related specs, See also.
-    No narrative. Follow the steps in order when adding a route.
+    RestFull extension guide for Decidim gem authors. Start with Recipe, then open topic pages only when you need them.
+    Integrators: use Operating the API instead.

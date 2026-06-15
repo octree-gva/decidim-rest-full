@@ -1,6 +1,6 @@
 ---
 title: Scopes and permissions
-sidebar_position: 10
+sidebar_position: 12
 ---
 
 ## Overview
@@ -16,11 +16,13 @@ sidebar_position: 10
 
 ### 1. Register OAuth scopes in the engine
 
+Register in an engine initializer **`before: "rest_full.scopes"`** (see [Boot and extension](./boot-and-extension.md)).
+
 `decidim-restfull-widgets/lib/decidim/rest_full/widgets/engine.rb`
 
 ```ruby
 Decidim::RestFull::Extension.register(:widgets) do |ext|
-  ext.oauth_scopes :widgets
+  ext.oauth_scopes :widgets   # skip if already in core (:meetings, :debates, …)
 end
 ```
 
@@ -78,6 +80,7 @@ describe_api_endpoint(
 | Forms gem | Engine `:forms`; OAuth scope **`:surveys`**. |
 | API clients | [API Clients](../../user_documentation/client-api-admin.md). |
 | Core registry | `decidim-restfull-core/lib/decidim/rest_full/core/engine.rb` (`rest_full.permissions`). |
+| Boot anchor | Engine initializer `before: "rest_full.scopes"`. |
 
 ## Related specs
 
@@ -88,5 +91,6 @@ describe_api_endpoint(
 
 ## See also
 
+- [Boot and extension](./boot-and-extension.md)
 - [Controllers](./controllers.md)
 - [RSwag](./rswag.md)

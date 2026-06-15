@@ -1,11 +1,13 @@
 ---
 title: Routing
-sidebar_position: 2
+sidebar_position: 4
 ---
 
 ## Overview
 
-Feature routes append to the API mount via **`ext.routes`** inside `Extension.register`. Core routes are in `decidim-restfull-core/config/routes.rb`.
+Feature routes append via **`ext.routes`** inside `Extension.register`. Use **`Decidim::RestFull::Routing`** in monorepo gems (required for new work). Core routes stay in `decidim-restfull-core/config/routes.rb`.
+
+Start with [Recipe](./recipe.md) and [Boot and extension](./boot-and-extension.md) if routes do not appear.
 
 ## When to use
 
@@ -14,64 +16,69 @@ Feature routes append to the API mount via **`ext.routes`** inside `Extension.re
 
 ## Example
 
-### 1. Declare routes inside `ext.routes`
+### 1. Read-only routes
 
-`decidim-restfull-widgets/lib/decidim/rest_full/widgets/engine.rb`
+`decidim-restfull-blogs/lib/decidim/rest_full/blogs/engine.rb`
 
 ```ruby
 ext.routes do
-  constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_widgets_api }) do
-    resources :widgets,
-              only: [:index, :show],
-              controller: "/decidim/api/rest_full/widgets/widgets"
+  constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_blogs_api }) do
+    Decidim::RestFull::Routing.read_resources(
+      self,
+      :blog_components,
+      controller: "components/blog_components",
+      only: [:index, :show]
+    )
   end
 end
 ```
 
-### 2. Use an absolute controller path
+Pass **`self`** (the router inside the block) as the first argument.
 
-`controller: "/decidim/api/rest_full/<feature>/<controller>"` — never a relative controller name.
-
-### 3. Wire default mutation actions to async controllers
-
-`create`, `update`, `destroy` map to controller actions that call `enqueue_rest_full_api_job!` (see [Async](./async.md)).
-
-### 4. Add `/sync` routes for inline responses
-
-`decidim-restfull-proposals/lib/decidim/rest_full/proposals/engine.rb` (draft proposals):
+### 2. Async CRUD + sync aliases
 
 ```ruby
-resources :draft_proposals,
-          only: [:create, :update, :destroy],
-          controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
-  collection do
-    post "/sync", action: :create_sync
-  end
-  member do
-    put "/sync", action: :update_sync
-    delete "/sync", action: :destroy_sync
-    post "/publish", action: :publish
-    post "/publish/sync", action: :publish_sync
-  end
-end
+Decidim::RestFull::Routing.async_resources(
+  self,
+  :blogs,
+  controller: "blogs/blogs",
+  only: [:index, :show, :create, :update, :destroy]
+)
 ```
 
-Forms authoring (`decidim-restfull-forms/lib/decidim/rest_full/forms/engine.rb`):
+`async_resources` adds collection `POST …/sync` and member `PUT/DELETE …/sync` for create/update/destroy in `only:`.
+
+Extra member routes (draft proposal publish):
 
 ```ruby
-resources :questions, only: [:create, :update, :destroy],
-                      controller: "/decidim/api/rest_full/forms/questions" do
-  collection { post "sync", action: :create_sync }
+Decidim::RestFull::Routing.async_resources(
+  self,
+  :draft_proposals,
+  controller: "draft_proposals/draft_proposals",
+  only: [:index, :show, :create, :update, :destroy],
+  member: { post: { publish: :publish, "publish/sync": :publish_sync } }
+)
+```
+
+### 3. Escape hatch — raw `resources`
+
+Use when the Routing DSL cannot express a route (forms `questionnaire_responses` member `update_forbidden`):
+
+```ruby
+resources :questionnaire_responses, only: [:show, :destroy],
+                                    controller: "/decidim/api/rest_full/forms/questionnaire_responses" do
   member do
-    put "sync", action: :update_sync
+    put "/", action: :update_forbidden
     delete "sync", action: :destroy_sync
   end
 end
 ```
 
-### 5. Register the same `command_key` on engine and controller
+Always use an absolute controller path: `/decidim/api/rest_full/<feature>/<controller>`.
 
-`decidim-restfull-proposals/lib/decidim/rest_full/proposals/engine.rb`
+### 4. Register `api_job` and wire the controller
+
+Engine:
 
 ```ruby
 ext.api_job "draft_proposals#create", ->(ctx, p) {
@@ -79,11 +86,9 @@ ext.api_job "draft_proposals#create", ->(ctx, p) {
 }
 ```
 
-Controller: `enqueue_rest_full_api_job!("draft_proposals#create")` with the **identical** string.
+Controller: `enqueue_rest_full_api_job!("draft_proposals#create")` with the **identical** string. See [Async](./async.md).
 
-### 6. Register RSwag spec globs
-
-`decidim-restfull-widgets/lib/decidim/rest_full/widgets/engine.rb`
+### 5. Register RSwag spec globs
 
 ```ruby
 ext.rswag_specs(
@@ -95,18 +100,21 @@ ext.rswag_specs(
 
 | Rule | Detail |
 |------|--------|
-| No duplicate paths | Last drawn route wins; use `rails routes --all` to check before adding your own. |
-| Constraints | Wrap in `constraints(-> { Configuration.enable_*_api })` when gated. |
-| Forms pattern | See `decidim-restfull-forms/lib/decidim/rest_full/forms/engine.rb` for async + sync member routes. |
+| Routing DSL | Required for new monorepo gems; raw `resources` only for escape hatches. |
+| No duplicate blocks | Same route block registered twice raises `DuplicateRouteBlockError`. |
+| Constraints | Wrap `ext.routes` in `constraints(-> { Configuration.enable_*_api })` when gated. |
+| Controller path | `Routing` builds `/decidim/api/rest_full/…` from the `controller:` segment. |
 
 ## Related specs
 
 | Case | Path |
 |------|------|
+| Routing DSL | `decidim-restfull-core/spec/lib/decidim/rest_full/routing_spec.rb` |
 | Sync routes | `decidim-restfull-proposals/spec/requests/.../draft_proposals_controller_create_spec.rb` |
 | Route boot | `decidim-restfull-core/spec/requests/.../routes_boot_spec.rb` |
 
 ## See also
 
+- [Boot and extension](./boot-and-extension.md)
 - [Async](./async.md)
 - [Controllers](./controllers.md)

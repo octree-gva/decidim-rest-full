@@ -57,7 +57,7 @@ Decidim::RestFull::Extension.register(:proposals) do |ext|
 end
 ```
 
-Contributor procedures: [Add an endpoint](./add-endpoint/) (category on the sidebar).
+Contributor procedures: [Recipe](website/docs/dev/add-endpoint/recipe.md) (start here), then [Add an endpoint](website/docs/dev/add-endpoint/) topic pages.
 
 ## Serializer lookup
 
@@ -73,7 +73,11 @@ Scope labels (`scope_<manifest>` under `decidim.rest_full.models.api_client.fiel
 
 ## Routes
 
-Boot order: load gems → each `Extension.register` runs → core initializer calls **`Decidim::RestFull::Routes.draw!`** once on `Decidim::Core::Engine.routes`. You do not call `draw!` from host apps.
+Boot order: load gems → each `Extension.register` runs (engine initializer **`before: "rest_full.draw_routes"`**) → core calls **`Decidim::RestFull::Routes.draw!`** on `Decidim::Core::Engine.routes` at `after_initialize`. Late registration appends via **`Routes.append_pending!`**. See [Boot and extension](./add-endpoint/boot-and-extension.md).
+
+Monorepo route-bearing gems use **`Decidim::RestFull::Routing`** (`read_resources`, `async_resources`). HTTP paths are unchanged — only declaration moves.
+
+Host apps register in `after_initialize`; `Extension.register` appends routes when the app is already initialized. See [Host app extensions](./host-app-extension.md).
 
 ## CI
 
@@ -81,7 +85,7 @@ GitLab runs RSpec per gem, then the full metagem suite. Local parity: `./bin/che
 
 ## Deferred hardening
 
-Doorkeeper scope merge, extension registration order, and async job polling may still have cross-tenant edge cases. Treat org configuration as the isolation boundary until a dedicated hardening pass.
+Async job polling may still have cross-tenant edge cases. Treat org configuration as the isolation boundary until a dedicated hardening pass.
 
 ## Related
 

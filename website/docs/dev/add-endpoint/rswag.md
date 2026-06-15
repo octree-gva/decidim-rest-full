@@ -1,6 +1,6 @@
 ---
 title: RSwag (request specs)
-sidebar_position: 9
+sidebar_position: 11
 ---
 
 ## Overview

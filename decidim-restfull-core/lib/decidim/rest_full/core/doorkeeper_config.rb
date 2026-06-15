@@ -7,7 +7,19 @@ module Decidim
       # Used by the rest_full.scopes initializer: introspection response and ROPC
       # (resource owner password credentials) resolution.
       module DoorkeeperConfig
+        CORE_OPTIONAL_SCOPES = [
+          :spaces, :system, :meetings, :debates, :pages, :oauth, :roles, :attachments
+        ].freeze
+
         class << self
+          def merge_optional_scopes!
+            scopes = (CORE_OPTIONAL_SCOPES + Decidim::RestFull::Extension.doorkeeper_optional_scopes).uniq
+            current = Array(::Doorkeeper.configuration.optional_scopes).map(&:to_sym)
+            return if scopes.sort == current.sort
+
+            ::Doorkeeper.configuration.optional_scopes = scopes
+          end
+
           # Build the hash returned by the token introspection endpoint (RFC 7662).
           # Includes sub, aud, active, and optional user resource when token has a resource_owner.
           def introspection_response(token)

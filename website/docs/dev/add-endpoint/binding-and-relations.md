@@ -1,6 +1,6 @@
 ---
 title: Binding and relations
-sidebar_position: 7
+sidebar_position: 9
 ---
 
 ## Overview

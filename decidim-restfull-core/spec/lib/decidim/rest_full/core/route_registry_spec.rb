@@ -50,6 +50,31 @@ module Decidim
             expect(path_specs).to include("/oauth/token(.:format)")
             expect(path_specs).to include(a_string_matching(%r{/api/rest_full/v[\d.]+(\(\.:format\)|/)}))
           end
+
+          it "appends routes registered after the first apply!" do
+            isolated = ActionDispatch::Routing::RouteSet.new
+            described_class.apply!(isolated) { get "/", to: "/decidim/rest_full/pages#show" }
+
+            described_class.draw_api_routes do
+              get "/_spec_late", to: "/decidim/rest_full/pages#show"
+            end
+
+            described_class.append_pending!(isolated)
+
+            path_specs = isolated.routes.map { |r| r.path.spec.to_s }
+            expect(path_specs).to include(include("_spec_late"))
+          end
+
+          it "raises DuplicateRouteBlockError when the same block is registered twice" do
+            block = proc { get "/_spec_dup", to: "/decidim/rest_full/pages#show" }
+            described_class.draw_api_routes(&block)
+            described_class.draw_api_routes(&block)
+
+            isolated = ActionDispatch::Routing::RouteSet.new
+            expect do
+              described_class.apply!(isolated) { get "/", to: "/decidim/rest_full/pages#show" }
+            end.to raise_error(Decidim::RestFull::Core::DuplicateRouteBlockError, /already applied/)
+          end
         end
 
         describe ".reset!" do

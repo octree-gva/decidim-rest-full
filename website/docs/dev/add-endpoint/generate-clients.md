@@ -1,6 +1,6 @@
 ---
 title: Generate clients and OpenAPI
-sidebar_position: 14
+sidebar_position: 16
 ---
 
 ## Overview
