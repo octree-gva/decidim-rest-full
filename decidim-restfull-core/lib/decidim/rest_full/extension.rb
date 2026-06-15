@@ -136,6 +136,7 @@ module Decidim
 
         self.class.doorkeeper_optional_scopes.concat(@oauth_scopes)
         self.class.doorkeeper_optional_scopes.uniq!
+        Core::DoorkeeperConfig.merge_optional_scopes! if Rails.application.initialized?
       end
 
       def register_permissions!
@@ -150,6 +151,7 @@ module Decidim
         return unless @routes_block
 
         Routes.draw_api_routes(&@routes_block)
+        Routes.append_pending! if Routes.applied?
       end
 
       def register_rswag_specs!

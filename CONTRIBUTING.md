@@ -177,7 +177,9 @@ Procedures live on the doc site under **Add an endpoint** (`website/docs/dev/add
 
 ## Adding a new API endpoint (checklist)
 
-1. Core routes: `decidim-restfull-core/config/routes.rb`. Feature routes: `Extension.register` → `ext.routes` — [Routing](website/docs/dev/add-endpoint/routing.md).
+Start with [Recipe](website/docs/dev/add-endpoint/recipe.md) on the doc site, then:
+
+1. Core routes: `decidim-restfull-core/config/routes.rb`. Feature routes: `Extension.register` → `ext.routes` with `Decidim::RestFull::Routing` — [Routing](website/docs/dev/add-endpoint/routing.md), [Boot and extension](website/docs/dev/add-endpoint/boot-and-extension.md).
 2. Controller + operations — [Controllers](website/docs/dev/add-endpoint/controllers.md), [Async](website/docs/dev/add-endpoint/async.md).
 3. Request spec + `ext.rswag_specs` — [RSwag](website/docs/dev/add-endpoint/rswag.md).
 4. `DefinitionRegistry` schemas in the owning gem — [Test definitions](website/docs/dev/add-endpoint/test-definitions.md).

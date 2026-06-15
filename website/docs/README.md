@@ -7,9 +7,17 @@ Published at `/` (see `website/docusaurus.config.ts`). Same rules for every sect
 | Overview | New deployers | `docs/my-home-doc.md`, `docs/install.md`, `docs/production-mode.md` |
 | Operating the API | Integrators, client authors | `docs/user_documentation/` |
 | Developer documentation | Module maintainers | `docs/dev/` |
-| Add an endpoint | Contributors adding routes | `docs/dev/add-endpoint/` (14 pages; same layout each) |
+| Add an endpoint | **Gem maintainers** adding RestFull HTTP routes | `docs/dev/add-endpoint/` — see layer stack below |
 | Command-line tools | OpenAPI, client gen, `api-client` CLI | `docs/dev/command-line-tools.md` |
 | OpenAPI / ReDoc | Integrators | `/api/` (from `static/openapi.json`) |
+
+### Add an endpoint — doc layers (C4-shaped)
+
+| Layer | Pages | Reader gets |
+|-------|-------|-------------|
+| **Overview** | `recipe.md` | Shape decision → ordered checklist → verify commands |
+| **Infrastructure** | `boot-and-extension.md` (+ pointer in `architecture.md`) | Boot order, initializer anchors, append API, scopes merge |
+| **Detail** | Remaining topic pages (routing, async, controllers, …) | Single concern per page; same layout on each |
 
 **Conventions**
 

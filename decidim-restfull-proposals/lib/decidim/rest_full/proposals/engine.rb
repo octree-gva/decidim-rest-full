@@ -46,37 +46,36 @@ module Decidim
               constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_proposals_api }) do
                 resources :components, only: [] do
                   collection do
-                    resources :proposal_components,
-                              only: [:index, :show],
-                              controller: "/decidim/api/rest_full/components/proposal_components"
+                    Decidim::RestFull::Routing.read_resources(
+                      self,
+                      :proposal_components,
+                      controller: "components/proposal_components",
+                      only: [:index, :show]
+                    )
                   end
                 end
 
-                resources :proposals,
-                          only: [:index, :show],
-                          controller: "/decidim/api/rest_full/proposals/proposals"
+                Decidim::RestFull::Routing.read_resources(
+                  self,
+                  :proposals,
+                  controller: "proposals/proposals",
+                  only: [:index, :show]
+                )
 
-                resources :draft_proposals,
-                          only: [:index, :show, :update, :create, :destroy],
-                          controller: "/decidim/api/rest_full/draft_proposals/draft_proposals" do
-                  collection do
-                    post "/sync", action: :create_sync
-                  end
-                  member do
-                    post "/publish", action: :publish
-                    post "/publish/sync", action: :publish_sync
-                    put "/sync", action: :update_sync
-                    delete "/sync", action: :destroy_sync
-                  end
-                end
+                Decidim::RestFull::Routing.async_resources(
+                  self,
+                  :draft_proposals,
+                  controller: "draft_proposals/draft_proposals",
+                  only: [:index, :show, :update, :create, :destroy],
+                  member: { post: { publish: :publish, "publish/sync": :publish_sync } }
+                )
 
-                resources :vote_proposals,
-                          only: [:index, :show, :create, :destroy],
-                          controller: "/decidim/api/rest_full/vote_proposals/vote_proposals" do
-                  collection do
-                    post "/sync", action: :create_sync
-                  end
-                end
+                Decidim::RestFull::Routing.async_resources(
+                  self,
+                  :vote_proposals,
+                  controller: "vote_proposals/vote_proposals",
+                  only: [:index, :show, :create, :destroy]
+                )
               end
             end
           end

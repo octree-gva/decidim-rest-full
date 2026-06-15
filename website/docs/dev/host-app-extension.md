@@ -39,8 +39,6 @@ Rails.application.config.after_initialize do
       get "my_resource/:id", to: "/decidim/my_app/my_resources#show"
     end
   end
-
-  Decidim::RestFull::Routes.draw! unless Decidim::RestFull::Routes.routes_drawn?
 end
 ```
 
@@ -119,7 +117,7 @@ Include `Decidim::RestFull::OrganizationClientIdsOverride` on `Decidim::Organiza
 | Rule | Detail |
 |------|--------|
 | Boot order | `after_initialize` + `require "decidim/rest_full"` before `Extension.register`. |
-| Draw routes once | `Decidim::RestFull::Routes.draw!` after all extensions register. |
+| Routes and scopes | `Extension.register` appends routes and re-merges OAuth scopes when the app is initialized — no manual `Routes.draw!`. |
 | Controller path | Absolute `/decidim/...` in `ext.routes`; avoid `Decidim::Api::RestFull::*` in host app. |
 | OpenAPI merge | Base spec from monorepo + host RSwag only; do not re-run all gem specs in the host. |
 | Legacy URLs | Keep old paths in `config/routes.rb` until consumers migrate; document both in OpenAPI if needed. |

@@ -1,6 +1,6 @@
 ---
 title: Test definitions (OpenAPI schemas)
-sidebar_position: 8
+sidebar_position: 10
 ---
 
 ## Overview

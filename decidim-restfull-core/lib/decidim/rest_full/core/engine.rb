@@ -44,12 +44,11 @@ module Decidim
         end
 
         initializer "rest_full.scopes", after: "rest_full.draw_routes" do
-          Doorkeeper.configure do
+          ::Doorkeeper.configure do
             handle_auth_errors :raise
             default_scopes :public
-            core_optional_scopes = [:spaces, :system, :meetings, :debates, :pages, :oauth, :roles, :attachments]
             extension_scopes = Decidim::RestFull::Extension.doorkeeper_optional_scopes
-            optional_scopes(*(core_optional_scopes + extension_scopes).uniq)
+            optional_scopes(*(Decidim::RestFull::Core::DoorkeeperConfig::CORE_OPTIONAL_SCOPES + extension_scopes).uniq)
             grant_flows %w(password client_credentials)
 
             custom_introspection_response do |token, _context|

@@ -32,23 +32,21 @@ module Decidim
               constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_blogs_api }) do
                 resources :components, only: [] do
                   collection do
-                    resources :blog_components,
-                              only: [:index, :show],
-                              controller: "/decidim/api/rest_full/components/blog_components"
+                    Decidim::RestFull::Routing.read_resources(
+                      self,
+                      :blog_components,
+                      controller: "components/blog_components",
+                      only: [:index, :show]
+                    )
                   end
                 end
 
-                resources :blogs,
-                          only: [:index, :show, :create, :update, :destroy],
-                          controller: "/decidim/api/rest_full/blogs/blogs" do
-                  collection do
-                    post "sync", action: :create_sync
-                  end
-                  member do
-                    put "sync", action: :update_sync
-                    delete "sync", action: :destroy_sync
-                  end
-                end
+                Decidim::RestFull::Routing.async_resources(
+                  self,
+                  :blogs,
+                  controller: "blogs/blogs",
+                  only: [:index, :show, :create, :update, :destroy]
+                )
               end
             end
           end
