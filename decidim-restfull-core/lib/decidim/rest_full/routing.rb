@@ -44,7 +44,6 @@ module Decidim
           "/decidim/api/rest_full/#{controller}"
         end
 
-        # ponytail: member actions are explicit Hashes; upgrade path is a dedicated helper only if 4+ engines repeat the same shape
         def apply_member_actions(router, actions)
           actions.each do |method, paths|
             paths.each do |path, action|
