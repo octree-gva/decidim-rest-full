@@ -1,28 +1,28 @@
 PATH
   remote: decidim-restfull-accountabilities
   specs:
-    decidim-restfull-accountabilities (0.3.2)
+    decidim-restfull-accountabilities (0.3.3)
       decidim-accountability (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-blogs
   specs:
-    decidim-restfull-blogs (0.3.2)
+    decidim-restfull-blogs (0.3.3)
       decidim-blogs (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-budgets
   specs:
-    decidim-restfull-budgets (0.3.2)
+    decidim-restfull-budgets (0.3.3)
       decidim-budgets (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-core
   specs:
-    decidim-restfull-core (0.3.2)
+    decidim-restfull-core (0.3.3)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (~> 0.29)
@@ -35,68 +35,68 @@ PATH
 PATH
   remote: decidim-restfull-debates
   specs:
-    decidim-restfull-debates (0.3.2)
+    decidim-restfull-debates (0.3.3)
       decidim-debates (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-dev
   specs:
-    decidim-restfull-dev (0.3.2)
-      decidim-restfull-core (= 0.3.2)
+    decidim-restfull-dev (0.3.3)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-forms
   specs:
-    decidim-restfull-forms (0.3.2)
+    decidim-restfull-forms (0.3.3)
       decidim-forms (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
       decidim-surveys (~> 0.29)
 
 PATH
   remote: decidim-restfull-meetings
   specs:
-    decidim-restfull-meetings (0.3.2)
+    decidim-restfull-meetings (0.3.3)
       decidim-meetings (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-proposals
   specs:
-    decidim-restfull-proposals (0.3.2)
+    decidim-restfull-proposals (0.3.3)
       decidim-decidim_awesome (= 0.12.6)
       decidim-proposals (~> 0.29)
-      decidim-restfull-core (= 0.3.2)
+      decidim-restfull-core (= 0.3.3)
 
 PATH
   remote: decidim-restfull-sortition
   specs:
-    decidim-restfull-sortition (0.3.2)
-      decidim-restfull-core (= 0.3.2)
+    decidim-restfull-sortition (0.3.3)
+      decidim-restfull-core (= 0.3.3)
       decidim-sortitions (~> 0.29)
 
 PATH
   remote: decidim-restfull-surveys
   specs:
-    decidim-restfull-surveys (0.3.2)
-      decidim-restfull-core (= 0.3.2)
-      decidim-restfull-forms (= 0.3.2)
+    decidim-restfull-surveys (0.3.3)
+      decidim-restfull-core (= 0.3.3)
+      decidim-restfull-forms (= 0.3.3)
       decidim-surveys (~> 0.29)
 
 PATH
   remote: decidim-restfull
   specs:
-    decidim-restfull (0.3.2)
-      decidim-restfull-accountabilities (= 0.3.2)
-      decidim-restfull-blogs (= 0.3.2)
-      decidim-restfull-budgets (= 0.3.2)
-      decidim-restfull-core (= 0.3.2)
-      decidim-restfull-debates (= 0.3.2)
-      decidim-restfull-forms (= 0.3.2)
-      decidim-restfull-meetings (= 0.3.2)
-      decidim-restfull-proposals (= 0.3.2)
-      decidim-restfull-sortition (= 0.3.2)
-      decidim-restfull-surveys (= 0.3.2)
+    decidim-restfull (0.3.3)
+      decidim-restfull-accountabilities (= 0.3.3)
+      decidim-restfull-blogs (= 0.3.3)
+      decidim-restfull-budgets (= 0.3.3)
+      decidim-restfull-core (= 0.3.3)
+      decidim-restfull-debates (= 0.3.3)
+      decidim-restfull-forms (= 0.3.3)
+      decidim-restfull-meetings (= 0.3.3)
+      decidim-restfull-proposals (= 0.3.3)
+      decidim-restfull-sortition (= 0.3.3)
+      decidim-restfull-surveys (= 0.3.3)
 
 GEM
   remote: https://rubygems.org/
