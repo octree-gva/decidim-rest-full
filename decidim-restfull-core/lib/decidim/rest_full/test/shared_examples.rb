@@ -3,7 +3,6 @@
 # Use for endpoints that require Bearer auth. Documents 401 in OpenAPI without running inside describe_api_endpoint.
 RSpec.shared_examples "unauthorized when no Bearer token" do
   response "401", "Unauthorized when no Bearer token" do
-    security []
     produces "application/json"
     schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
     let(:Authorization) { nil }
