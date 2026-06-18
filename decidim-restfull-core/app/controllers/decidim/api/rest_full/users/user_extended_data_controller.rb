@@ -39,14 +39,7 @@ module Decidim
           private
 
           def extended_data_at_path
-            return extended_data if object_path == "."
-
-            object_path.split(".").reduce(extended_data) do |current, key|
-              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-              raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
-
-              current[key]
-            end
+            Decidim::RestFull::Core::ExtendedDataAtPath.fetch(extended_data, object_path)
           end
 
           def merge_extended_data(obj)

@@ -218,14 +218,7 @@ module Decidim
         end
 
         def extended_data_at_path_org
-          return extended_data_org if object_path == "."
-
-          object_path.split(".").reduce(extended_data_org) do |current, key|
-            raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-            raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
-
-            current[key]
-          end
+          ExtendedDataAtPath.fetch(extended_data_org, object_path)
         end
 
         def merge_extended_data_org(obj)
@@ -284,15 +277,7 @@ module Decidim
         end
 
         def extended_data_at_path_user(user)
-          data = user.extended_data
-          return data if object_path == "."
-
-          object_path.split(".").reduce(data) do |current, key|
-            raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-            raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.has_key?(key)
-
-            current[key]
-          end
+          ExtendedDataAtPath.fetch(user.extended_data, object_path)
         end
       end
     end

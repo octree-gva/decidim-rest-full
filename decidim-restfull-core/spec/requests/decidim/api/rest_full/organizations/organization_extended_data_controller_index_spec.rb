@@ -67,20 +67,19 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
               expect(data).to include({ "personal" => { "birthday" => "1989-01-28" } })
             end
           end
-        end
 
-        response "404", "Not Found" do
-          produces "application/json"
-          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
-
-          context "with a object_path=unknown" do
+          context "with a object_path=unknown returns empty data" do
             before do
               organization.extended_data.update(data: { "personal" => { "birthday" => "1989-01-28" } })
             end
 
             let!(:object_path) { "unknown" }
 
-            run_test!(example_name: :not_found)
+            run_test!(example_name: :empty) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(response).to have_http_status(:ok)
+              expect(data).to eq({})
+            end
           end
         end
       end

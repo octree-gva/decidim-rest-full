@@ -104,13 +104,13 @@ doc.fetch("paths", {}).each_value do |methods|
 
     seen = {}
     operation["parameters"] = params.reject do |param|
-      name = param["name"]
-      next false unless name
+      key = [param["name"], param["in"]]
+      next false unless key[0]
 
-      if seen[name]
+      if seen[key]
         true
       else
-        seen[name] = true
+        seen[key] = true
         false
       end
     end
