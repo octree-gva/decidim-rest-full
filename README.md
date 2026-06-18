@@ -18,6 +18,8 @@ Rails engines that expose a JSON:API-style REST surface for [Decidim](https://gi
 
 Layout and extension DSL: [Architecture](website/docs/dev/architecture.md) on the doc site.
 
+**E2e:** `extended_data` clear-at-path returns `{}` (not 404) via `Decidim::RestFull::Core::ExtendedDataAtPath`. Consumed by [NCA e2e](../../nca/contrib/e2e/README.md) and [chat-platform e2e](../../chat-platform/e2e/README.md).
+
 ## Local checks (Docker)
 
 ```bash

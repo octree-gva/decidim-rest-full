@@ -157,6 +157,19 @@ RSpec.describe Decidim::Api::RestFull::Users::UserExtendedDataController do
             end
           end
 
+          context "when clearing the last key under a path" do
+            let(:user) { create(:user, locale: "fr", organization:, extended_data: { "learn" => { "cursor" => "abc" } }) }
+            let(:body) { { data: { "cursor" => nil }, object_path: "learn" } }
+
+            run_test! do |example|
+              data = JSON.parse(example.body)["data"]
+              user.reload
+              expect(response).to have_http_status(:ok)
+              expect(data).to eq({})
+              expect(user.extended_data).not_to have_key("learn")
+            end
+          end
+
           context "with a path=unknown, upsert" do
             let(:user) { create(:user, locale: "fr", organization:, extended_data: { "personal" => { "birthday" => "1989-01-28" } }) }
             let(:body) { { data: { "whatever" => { "is" => { "stil" => "ok" } } }, object_path: "unknown" } }
