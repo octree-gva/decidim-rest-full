@@ -17,7 +17,7 @@ If you already know Decidim: this module does **not** replace the web UI. It let
 | Decidim Administrator | This page, then [Installation](/install). |
 | System admin | [API clients](/user_documentation/client-api-admin), then [Authentication](#authentication) below. |
 | Integrator | [Integrator guide](/integrator/quickstart) first, then [OpenAPI reference](/api), [Machine-to-machine](/user_documentation/auth/client-credential-flow) and [User tokens](/user_documentation/auth/user-credential-flow) as needed. |
-| Contributors and maintainers | [Developer documentation](/dev/architecture) (sidebar), and the repository [CONTRIBUTING](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/CONTRIBUTING.md) guide. |
+| Contributors and maintainers | [Developer documentation](/dev/architecture) (sidebar), and the repository [CONTRIBUTING](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) guide. |
 
 ## Overview
 
@@ -37,4 +37,4 @@ Diagrams for the two main flows live on the dedicated pages (keep screenshots an
 ## Contract and source of truth
 
 - **HTTP contract**: the published [OpenAPI](/api) document generated from request specs.
-- **Implementation and contributor workflow**: the [GitLab repository](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full).
+- **Implementation and contributor workflow**: the [GitLab repository](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full).

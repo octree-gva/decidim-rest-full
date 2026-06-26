@@ -21,4 +21,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OpenAPI `info.description` links to integrator quickstart.
 - Contributor docs: PATCH references updated to PUT for sync routes.
 
-[0.3.0]: https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/compare/v0.2.0...v0.3.0
+[0.3.0]: https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/compare/v0.2.0...v0.3.0

@@ -76,7 +76,7 @@ For **async** writes (`202` + job polling), see [Async and jobs](./async-and-job
 
 ## Executable scripts
 
-Copy-paste examples live in [`examples/integrator/`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/tree/main/examples/integrator) at the repository root.
+Copy-paste examples live in [`examples/integrator/`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/tree/main/examples/integrator) at the repository root.
 
 ## Next steps
 

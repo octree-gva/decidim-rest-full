@@ -52,7 +52,7 @@ end
 
 ## Extension.register
 
-Public DSL: [`decidim-restfull-core/lib/decidim/rest_full/extension.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/extension.rb).
+Public DSL: [`decidim-restfull-core/lib/decidim/rest_full/extension.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/extension.rb).
 
 | Method | Registers |
 |--------|-----------|
@@ -70,7 +70,7 @@ Registering the **same route block twice** raises `Decidim::RestFull::Core::Dupl
 
 ## OAuth scopes
 
-Core optional scopes live on [`DoorkeeperConfig::CORE_OPTIONAL_SCOPES`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/doorkeeper_config.rb).
+Core optional scopes live on [`DoorkeeperConfig::CORE_OPTIONAL_SCOPES`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/doorkeeper_config.rb).
 
 Gems add **new** scopes only:
 
@@ -105,7 +105,7 @@ Host controllers must **not** live under `Decidim::Api::RestFull::*` (Zeitwerk c
 
 ## RouteRegistry
 
-[`RouteRegistry`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/route_registry.rb) collects route blocks from feature gems and draws them under `/api/rest_full/v<major.minor>/` on `Decidim::Core::Engine.routes`.
+[`RouteRegistry`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/route_registry.rb) collects route blocks from feature gems and draws them under `/api/rest_full/v<major.minor>/` on `Decidim::Core::Engine.routes`.
 
 Public entry: `Decidim::RestFull::Routes.draw!` (called from core engine; do not call from `spec_helper`).
 

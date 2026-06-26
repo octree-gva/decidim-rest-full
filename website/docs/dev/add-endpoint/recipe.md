@@ -16,7 +16,7 @@ Follow this page in order. Open [topic pages](./routing.md) only when you need a
 
 | Shape | When | Template |
 |-------|------|----------|
-| **Serializer-only** | Component appears in search/show JSON; no new HTTP routes | [`decidim-restfull-surveys`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-surveys/lib/decidim/rest_full/surveys/engine.rb) |
+| **Serializer-only** | Component appears in search/show JSON; no new HTTP routes | [`decidim-restfull-surveys`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-surveys/lib/decidim/rest_full/surveys/engine.rb) |
 | **Read-only HTTP** | `GET` index/show only | `Decidim::RestFull::Routing.read_resources` — see [Routing](./routing.md) |
 | **Async CRUD** | Mutations return 202 + job poll | `Decidim::RestFull::Routing.async_resources` + `ext.api_job` — see [Async](./async.md) |
 | **Host-app one-off** | Tenant-specific API in the host Decidim app | [Host app extensions](../host-app-extension.md) + [Boot and extension](./boot-and-extension.md) |
@@ -45,8 +45,8 @@ Follow this page in order. Open [topic pages](./routing.md) only when you need a
 When adding a gem inside the `decidim-restfull/` monorepo, also:
 
 - Register the gem in `decidim-restfull/decidim-restfull.gemspec`
-- Add the gem to [`gem_spec_paths.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/gem_spec_paths.rb) `GEMS`
-- Add `Configuration.enable_<feature>_api` and `available_permissions` in [`configuration.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb)
+- Add the gem to [`gem_spec_paths.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/gem_spec_paths.rb) `GEMS`
+- Add `Configuration.enable_<feature>_api` and `available_permissions` in [`configuration.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb)
 - Run `./bin/check` in Docker
 
 ## When something breaks
@@ -61,4 +61,4 @@ When adding a gem inside the `decidim-restfull/` monorepo, also:
 
 - [Boot and extension](./boot-and-extension.md) — boot order, `Extension.register`, append API
 - [RestFull engines](./restfull-engines.md) — gem layout
-- [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/CONTRIBUTING.md) — covenant and `./bin/check`
+- [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) — covenant and `./bin/check`

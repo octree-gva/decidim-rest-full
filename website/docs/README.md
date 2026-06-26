@@ -27,4 +27,4 @@ Published at `/` (see `website/docusaurus.config.ts`). Same rules for every sect
 - Every procedure page lists **related specs** under `decidim-restfull-*/spec/`
 - Regenerate OpenAPI after request spec changes: `yarn gen:openapi-spec`
 
-Repo contributor covenant and Docker workflow: [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/CONTRIBUTING.md)
+Repo contributor covenant and Docker workflow: [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md)

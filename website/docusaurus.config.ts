@@ -161,7 +161,7 @@ const config: Config = {
           label: 'API',
         },
         {
-          href: 'https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full',
+          href: 'https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full',
           label: 'GitLab',
           position: 'right',
         },

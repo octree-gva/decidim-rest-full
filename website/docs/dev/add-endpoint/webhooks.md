@@ -11,7 +11,7 @@ Outbound HTTP callbacks — not REST routes.
 ## Overview
 
 - Register listeners with `Extension#webhooks` in your engine.
-- Delivery: [`WebhookJob`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/app/jobs/decidim/rest_full/core/webhook_job.rb) → [`WebhookRegistration#send_webhook`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/decidim-restfull-core/app/models/decidim/rest_full/core/webhook_registration.rb) (HMAC headers).
+- Delivery: [`WebhookJob`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/app/jobs/decidim/rest_full/core/webhook_job.rb) → [`WebhookRegistration#send_webhook`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/app/models/decidim/rest_full/core/webhook_registration.rb) (HMAC headers).
 
 ## Checklist — new event
 

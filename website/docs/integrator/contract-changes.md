@@ -15,7 +15,7 @@ Release notes are generated with [Conventional Commits](https://www.conventional
 - **Breaking Changes** section — incompatible HTTP/OpenAPI changes (`BREAKING CHANGE:` footer or `feat!` / `fix!` commits).
 - **Features** / **Fixes** — additive or corrective behavior.
 
-Read the root [`CHANGELOG.md`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-rest_full/-/blob/main/CHANGELOG.md) on GitLab.
+Read the root [`CHANGELOG.md`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CHANGELOG.md) on GitLab.
 
 ## OpenAPI
 
