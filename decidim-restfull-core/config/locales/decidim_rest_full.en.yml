@@ -25,6 +25,7 @@ en:
             scope_oauth: 'Oauth: Manage user'
             scope_pages: 'Page: manage pages'
             scope_public: 'Public: navigate components and spaces'
+            scope_roles: 'Roles: manage Decidim roles'
             scope_system: 'System: manage Organizations and Rails'
           permission:
             oauth:
@@ -40,6 +41,9 @@ en:
                 read: 'read: list and details of a component'
               space:
                 read: 'read: list and details of a space'
+            roles:
+              read: 'read: List and detail of roles'
+              write: 'write: Create and destroy roles'
             system:
               organizations:
                 destroy: 'destroy: Remove an organization permanently'
@@ -67,52 +71,37 @@ en:
             new_api_client: New API Client
             title: Actions
           create:
+            error: Could not create API Client
             success: API Client created
           edit:
             go_back: Back to the list
             info: Info
+            permissions: Permissions
             save: Save
             title: Edit API Client Credentials
             webhook: Webhook
           edit_info_tab:
-            proposals: Proposals
+            accountability: Accountability
+            auth_type: Auth Type
             blogs: Blogs
+            budgets: Budgets
             client_id: Client Id
             client_secret: Client Secret
-            keys_label: Credentials
-            accountability: Accountability
-            budgets: Budgets
+            component: Components
             debates: Debates
+            keys_label: Credentials
             meetings: Meetings
-            sortitions: Sortitions
-            surveys: Surveys
+            oauth: User Management
+            organization_perm: Organization
             permissions_scopes: Allowed scopes
             permissions_title: Permissions
-            update_permissions: Update permissions
-          form:
-            scopes_label: Allowed scopes
-            select_organization: Select an organization
-          index:
-            confirm_delete: This will block all queries using these credentials. Are you sure?
-            title: API Clients
-          new:
-            save: Create
-            title: New API Client Credentials
-          public_permissions:
-            component: Components
-            space: Space
-          show:
-            go_back: Back to the list
-          system_permissions:
-            auth_type: Auth Type
-            organization_perm: Organization
+            proposals: Proposals
             rails_perm: Ruby on Rails
+            sortitions: Sortitions
+            space: Space
+            surveys: Surveys
+            update_permissions: Update permissions
             user_perm: User
-          user_permissions:
-            oauth: User Management
-          webhook_events: Webhook events
-          webhook_events_description: Events the API client is allowed to subscribe to.
-        update_organization:
           edit_webhook_tab:
             actions: Actions
             add_webhook: Add Webhook
@@ -126,6 +115,23 @@ en:
             url: URL
             webhook_registrations: Webhook Registrations
             webhook_url: Webhook URL
+          form:
+            scopes_label: Allowed scopes
+            select_organization: Select an organization
+          index:
+            confirm_delete: This will block all queries using these credentials. Are you sure?
+            title: API Clients
+          new:
+            save: Create
+            title: New API Client Credentials
+          show:
+            go_back: Back to the list
+          webhook_events: Webhook events
+          webhook_events_description: Events the API client is allowed to subscribe to.
+        update_organization:
           unconfirmed_host_explaination_html: "<div class=\"callout info\">\n  <p>\n    Before updating the host, please make sure to configure these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"
           unconfirmed_host_label: Host
           unconfirmed_host_pending_warning_html: "<div class=\"callout warning\">\n  <p class=\"h4\">\n    An operation is pending\n  </p>\n  <p>\n    While we are changing the host to <strong>%{unconfirmed_host}</strong>,\n    the current host is still <strong>%{host}</strong>.\n  </p>\n  <p>\n    Once we validated your DNS configuration, the host will be updated. <br />\n    Please make sure to have these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"
+        webhook_registrations:
+          create:
+            success: Webhook registration created successfully

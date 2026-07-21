@@ -4,13 +4,15 @@ en:
       forms:
         oauth_scopes:
           surveys: Surveys & questionnaires
-        permissions:
-          surveys:
-            questionnaires:
-              read: Read questionnaires (JSON Forms projection)
-            questions:
-              manage: Manage questionnaire questions
-            answers:
-              read: Read answers and submissions
-              submit: Submit questionnaire answers
-              destroy: Delete submissions
+      models:
+        api_client:
+          permission:
+            surveys:
+              answers:
+                destroy: Delete submissions
+                read: Read answers and submissions
+                submit: Submit questionnaire answers
+              questionnaires:
+                read: Read questionnaires (JSON Forms projection)
+              questions:
+                manage: Manage questionnaire questions

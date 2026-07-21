@@ -21,7 +21,3 @@ en:
               draft: 'draft: create, update, publish and see a draft proposal'
               read: 'read: list and details of a proposal'
               vote: 'vote: vote on proposals'
-      system:
-        api_clients:
-          proposal_permissions:
-            proposals: Proposals

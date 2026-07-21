@@ -48,6 +48,14 @@ module Decidim
                     default: "www.example.org"
                   }
                 }
+              },
+              {
+                url: "http://localhost:{port}/api/rest_full/v#{Decidim::RestFull.major_minor_version}",
+                variables: {
+                  port: {
+                    default: "3000"
+                  }
+                }
               }
             ],
             tags: [

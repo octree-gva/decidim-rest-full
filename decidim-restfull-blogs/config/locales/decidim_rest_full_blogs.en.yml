@@ -8,8 +8,6 @@ en:
             scope_blogs: 'Blogs: manage posts (Blogs::Post)'
           permission:
             blogs:
+              destroy: 'destroy: delete a post'
               read: 'read: list and details of a post'
-      system:
-        api_clients:
-          blog_permissions:
-            blogs: Blogs
+              write: 'write: create and update posts'
