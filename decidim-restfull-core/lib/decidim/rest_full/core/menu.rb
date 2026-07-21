@@ -6,6 +6,7 @@ module Decidim
       class Menu
         def self.register_system_menu!
           Decidim.menu :system_menu do |menu|
+            Decidim::RestFull::Routes.ensure_routes!
             menu.add_item :api_clients,
                           I18n.t("menu.api_clients", scope: "decidim.rest_full.admin"),
                           Decidim::Core::Engine.routes.url_helpers.system_api_clients_path,

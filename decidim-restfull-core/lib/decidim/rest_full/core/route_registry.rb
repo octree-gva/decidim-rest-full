@@ -80,6 +80,8 @@ module Decidim
               end
             end
             routes.disable_clear_and_finalize = false
+            # Journey named helpers need finalize. Devise may no-op if this RouteSet
+            # already finalized; Engine after_initialize reconfigures Warden globally.
             routes.finalize!
           end
 

@@ -31,16 +31,16 @@ module Decidim
 
           Decidim::RestFull::Core::Ransackers.register_ransackers!
 
-          Decidim::RestFull::Routes.draw! unless Decidim::RestFull::Routes.routes_drawn?
+          Decidim::RestFull::Routes.ensure_routes!
 
           Decidim::RestFull::Core::SerializerAdditionsRegistry.apply!
         end
 
-        initializer "rest_full.draw_routes", after: "rest_full.blogs.extension" do
-          # Application after_initialize runs after every engine railtie (and Devise) is ready.
-          Rails.application.config.after_initialize do
-            Decidim::RestFull::Routes.draw!
-          end
+        initializer "rest_full.draw_routes", after: :set_routes_reloader_hook do
+          # Finisher :set_routes_reloader_hook runs after after_initialize and clears
+          # every engine RouteSet before reloading routes.rb paths — so dynamic draws
+          # in after_initialize/to_prepare-at-boot are wiped. Draw once after that.
+          Decidim::RestFull::Routes.ensure_routes!
         end
 
         initializer "rest_full.scopes", after: "rest_full.draw_routes" do

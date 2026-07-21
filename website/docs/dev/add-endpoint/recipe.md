@@ -8,7 +8,7 @@ description: RestFull extension guide for Decidim gem authors — start here whe
 
 **For:** maintainers of a `decidim-restfull-*` gem (or an external RestFull extension gem) adding HTTP endpoints.
 
-**Not for:** calling the API from a client app — use [Operating the API](/docs/user_documentation/) and [ReDoc](/api/) instead.
+**Not for:** calling the API from a client app — use [Operating the API](/user_documentation/client-api-admin) and [ReDoc](/api/) instead.
 
 Follow this page in order. Open [topic pages](./routing.md) only when you need a single concern (async, RSwag, serializers, …).
 

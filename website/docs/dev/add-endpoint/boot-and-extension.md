@@ -16,13 +16,15 @@ sequenceDiagram
   participant Ext as Extension
   participant Registry as RouteRegistry
   participant Core as CoreEngine
+  participant Finisher as RailsFinisher
   participant DK as Doorkeeper
 
   Gem->>Ext: Extension.register (initializer before draw_routes)
   Ext->>Registry: draw_api_routes (route blocks)
   Ext->>Ext: oauth_scopes → doorkeeper_optional_scopes
-  Core->>Registry: to_prepare → Routes.draw! (first draw)
-  Core->>Registry: after_initialize → draw! + append_pending!
+  Core->>Registry: to_prepare → Routes.ensure_routes! (reload recovery)
+  Finisher->>Registry: set_routes_reloader_hook clears engine RouteSets
+  Core->>Registry: rest_full.draw_routes after hook → Routes.ensure_routes!
   Core->>DK: DoorkeeperConfig.merge_optional_scopes! on late Extension.register
   Note over Gem,DK: Late Extension.register → append_pending! + merge! if app initialized
 ```
@@ -107,7 +109,14 @@ Host controllers must **not** live under `Decidim::Api::RestFull::*` (Zeitwerk c
 
 [`RouteRegistry`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/route_registry.rb) collects route blocks from feature gems and draws them under `/api/rest_full/v<major.minor>/` on `Decidim::Core::Engine.routes`.
 
-Public entry: `Decidim::RestFull::Routes.draw!` (called from core engine; do not call from `spec_helper`).
+Public entry: `Decidim::RestFull::Routes.ensure_routes!` (called from core engine and system menu; do not call from `spec_helper`).
+
+Core draws routes in the `rest_full.draw_routes` initializer, ordered **after**
+Rails Finisher's `:set_routes_reloader_hook`. That hook runs after
+`after_initialize`, clears engine `RouteSet`s, and reloads only `routes.rb`
+paths; drawing earlier would therefore be lost. `ensure_routes!` is idempotent:
+it draws API/system routes and repairs Devise's global Warden `:admin`
+strategies. `to_prepare` and the system menu call the same helper after reload.
 
 ## Related specs
 
