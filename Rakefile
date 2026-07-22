@@ -8,8 +8,10 @@ def install_module(path)
     system("bundle check || bundle install")
     system("bundle exec rails decidim_rest_full:install:migrations")
     system("bundle exec rails decidim_decidim_awesome:install:migrations")
+    system("bundle exec rails decidim_rest_full:webpacker:install decidim_decidim_awesome:webpacker:install")
     system("bundle exec rails decidim:update")
     system("bundle exec rails db:create db:migrate")
+    system("bundle exec rails assets:precompile")
   end
 end
 

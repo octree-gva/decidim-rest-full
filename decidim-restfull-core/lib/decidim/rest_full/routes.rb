@@ -40,12 +40,12 @@ module Decidim
         def ensure_warden_admin_strategies!
           return unless defined?(::Devise)
           return unless ::Devise.mappings[:admin]
-          return if ::Devise.warden_config&.default_strategies(scope: :admin)&.include?(:database_authenticatable)
 
-          # rubocop:disable Style/ClassVars -- Devise has no public API to re-run configure_warden!
-          ::Devise.class_variable_set(:@@warden_configured, nil)
-          # rubocop:enable Style/ClassVars
-          ::Devise.configure_warden!
+          warden = ::Devise.warden_config
+          strategies = warden&.default_strategies(scope: :admin) || []
+          return if strategies.include?(:database_authenticatable)
+
+          warden.default_strategies(*strategies, :database_authenticatable, scope: :admin)
         end
 
         def draw_api_routes(&)

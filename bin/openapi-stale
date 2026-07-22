@@ -87,10 +87,17 @@ QUIET_FLAG=()
 REL_OUT="$(realpath --relative-to="$ROOT" "$OUTPUT" 2>/dev/null || echo "$OUTPUT")"
 
 if [[ -f "$ROOT/docker-compose.yml" ]] && command -v docker >/dev/null 2>&1; then
-  exec docker compose -f "$ROOT/docker-compose.yml" run -u root -w /home/module \
-    -e DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test \
-    -e RAILS_ENV=test --rm rest_full \
-    bin/swaggerize --out "$REL_OUT" "${QUIET_FLAG[@]}"
+  # Prefer exec when rest_full is already up (avoids a second container / OOM during postcommit).
+  compose=(docker compose -f "$ROOT/docker-compose.yml")
+  swaggerize=(bin/swaggerize --out "$REL_OUT" "${QUIET_FLAG[@]}")
+  env_args=(
+    -e DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test
+    -e RAILS_ENV=test
+  )
+  if "${compose[@]}" ps --status running -q rest_full | grep -q .; then
+    exec "${compose[@]}" exec -u root -w /home/module "${env_args[@]}" rest_full "${swaggerize[@]}"
+  fi
+  exec "${compose[@]}" run -u root -w /home/module "${env_args[@]}" --rm rest_full "${swaggerize[@]}"
 fi
 
 exec "$ROOT/bin/swaggerize" --out "$OUTPUT" "${QUIET_FLAG[@]}"

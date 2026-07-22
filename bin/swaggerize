@@ -95,8 +95,9 @@ fi
 mv -f spec/decidim_dummy_app/swagger/v1/swagger.json "$OUTPUT_FILE"
 
 bundle exec ruby - "$OUTPUT_FILE" <<'RUBY'
+require "json"
 path = ARGV.fetch(0)
-doc = JSON.parse(File.read(path))
+doc = JSON.parse(File.read(path, encoding: "UTF-8"))
 doc.fetch("paths", {}).each_value do |methods|
   methods.each_value do |operation|
     params = operation["parameters"]

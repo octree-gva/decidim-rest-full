@@ -12,6 +12,8 @@ git config --global --add safe.directory /home/module/tmp || true
 export CI=1
 export NODE_ENV=development
 export RAILS_ENV=test
+export npm_config_maxsockets="${npm_config_maxsockets:-2}"
+export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}"
 
 echo "Installing dependencies"
 apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev
@@ -33,21 +35,35 @@ gem install bundler -v 2.4.6
 bundle config set path 'vendor'
 bundle install -j $(nproc)
 
-# Bind mounts / Bootsnap can leave dirs not fully removable with plain rm -rf
+dummy_ready() {
+  [[ -f spec/decidim_dummy_app/config/shakapacker.yml ]] &&
+    [[ -f spec/decidim_dummy_app/config/database.yml ]] &&
+    [[ -f spec/decidim_dummy_app/Gemfile ]]
+}
+
+if dummy_ready && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
+  echo "Dummy app already present; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
+  cd spec/decidim_dummy_app
+  bundle check || bundle install -j $(nproc)
+  # Do not db:drop here: RestFull install:migrations timestamps can sort before
+  # Doorkeeper; a full replay on an empty DB fails with missing oauth_applications.
+  RAILS_ENV=test bundle exec rake db:migrate
+  cd ../..
+  echo "Test app is ready"
+  exit 0
+fi
+
 if [ -d spec/decidim_dummy_app ]; then
   chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
-  rm -rf spec/decidim_dummy_app || {
-    sleep 1
-    chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
-    rm -rf spec/decidim_dummy_app
-  }
+  rm -rf spec/decidim_dummy_app
 fi
+
 echo "Generating Decidim dummy app"
 bundle exec rake test_app
 cd spec/decidim_dummy_app
 bundle install -j $(nproc)
 # Drop and recreate so repeated runs don't hit DuplicateTable (drop no-op if DB missing)
-RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
 
 RAILS_ENV=test bundle exec rake db:create db:migrate
 cd ../..

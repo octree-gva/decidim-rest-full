@@ -36,14 +36,7 @@ module Decidim
           Decidim::RestFull::Core::SerializerAdditionsRegistry.apply!
         end
 
-        initializer "rest_full.draw_routes", after: :set_routes_reloader_hook do
-          # Finisher :set_routes_reloader_hook runs after after_initialize and clears
-          # every engine RouteSet before reloading routes.rb paths — so dynamic draws
-          # in after_initialize/to_prepare-at-boot are wiped. Draw once after that.
-          Decidim::RestFull::Routes.ensure_routes!
-        end
-
-        initializer "rest_full.scopes", after: "rest_full.draw_routes" do
+        initializer "rest_full.scopes" do
           ::Doorkeeper.configure do
             handle_auth_errors :raise
             default_scopes :public
@@ -99,6 +92,24 @@ module Decidim
 
           registry.register(:roles, "roles.read", group: :roles)
           registry.register(:roles, "roles.write", group: :roles)
+        end
+
+        # Draw after RoutesReloader wipes engine RouteSets. Do not use
+        # `after: :set_routes_reloader_hook` (pulls railties past middleware freeze /
+        # FrozenError with decidim-dev MapServer). Wrap the reloader instead.
+        initializer "rest_full.draw_routes", before: :set_routes_reloader_hook do |app|
+          reloader = app.routes_reloader
+          reloader.singleton_class.prepend(
+            Module.new do
+              def execute(...)
+                super.tap { Decidim::RestFull::Routes.ensure_routes! }
+              end
+
+              def execute_unless_initialized(...)
+                super.tap { Decidim::RestFull::Routes.ensure_routes! }
+              end
+            end
+          )
         end
       end
     end
