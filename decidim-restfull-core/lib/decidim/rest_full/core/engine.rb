@@ -10,11 +10,9 @@ module Decidim
 
         config.root = Decidim::RestFull::ENGINE_ROOT
 
-        # Cookie session overflows on magic-link sign_in in the dummy app test suite.
-        initializer "rest_full.test_session_store", before: :setup_default_session_store do |app|
-          next unless Rails.env.test?
-
-          app.config.session_store :cache_store, cache: ActiveSupport::Cache::MemoryStore.new
+        # Cookie sessions overflow on magic-link / confirmation (4KB limit).
+        initializer "rest_full.session_store", before: :setup_default_session_store do |app|
+          app.config.session_store :active_record_store
         end
 
         config.to_prepare do
