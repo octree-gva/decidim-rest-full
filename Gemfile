@@ -67,3 +67,4 @@ group :development do
 end
 
 gem "rswag-api", "~> 2.17"
+gem "activerecord-session_store", "~> 2.0"

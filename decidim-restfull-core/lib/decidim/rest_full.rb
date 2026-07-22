@@ -10,6 +10,7 @@ require "cancan"
 require "rswag/api"
 require "jsonapi/serializer"
 require "api-pagination"
+require "active_record/session_store"
 require "decidim/core"
 
 require "decidim/rest_full/rest_full"

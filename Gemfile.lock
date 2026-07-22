@@ -23,6 +23,7 @@ PATH
   remote: decidim-restfull-core
   specs:
     decidim-restfull-core (0.3.4)
+      activerecord-session_store (~> 2.0)
       api-pagination (~> 6.0)
       cancancan
       decidim-admin (~> 0.29)
@@ -160,6 +161,12 @@ GEM
     activerecord (7.0.10)
       activemodel (= 7.0.10)
       activesupport (= 7.0.10)
+    activerecord-session_store (2.2.0)
+      actionpack (>= 7.0)
+      activerecord (>= 7.0)
+      cgi (>= 0.3.6)
+      rack (>= 2.0.8, < 4)
+      railties (>= 7.0)
     activestorage (7.0.10)
       actionpack (= 7.0.10)
       activejob (= 7.0.10)
@@ -227,6 +234,7 @@ GEM
     cells-rails (0.1.6)
       actionpack (>= 5.0)
       cells (>= 4.1.6, < 5.0.0)
+    cgi (0.5.2)
     charlock_holmes (0.7.9)
     childprocess (5.1.0)
       logger (~> 1.5)
@@ -949,6 +957,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-session_store (~> 2.0)
   bootsnap (~> 1.4)
   byebug (~> 11.0)
   capybara (~> 3.40)
