@@ -29,8 +29,6 @@ module Decidim
 
           Decidim::RestFull::Core::Ransackers.register_ransackers!
 
-          Decidim::RestFull::Routes.ensure_routes!
-
           Decidim::RestFull::Core::SerializerAdditionsRegistry.apply!
         end
 
@@ -92,22 +90,11 @@ module Decidim
           registry.register(:roles, "roles.write", group: :roles)
         end
 
-        # Draw after RoutesReloader wipes engine RouteSets. Do not use
-        # `after: :set_routes_reloader_hook` (pulls railties past middleware freeze /
-        # FrozenError with decidim-dev MapServer). Wrap the reloader instead.
-        initializer "rest_full.draw_routes", before: :set_routes_reloader_hook do |app|
-          reloader = app.routes_reloader
-          reloader.singleton_class.prepend(
-            Module.new do
-              def execute(...)
-                super.tap { Decidim::RestFull::Routes.ensure_routes! }
-              end
-
-              def execute_unless_initialized(...)
-                super.tap { Decidim::RestFull::Routes.ensure_routes! }
-              end
-            end
-          )
+        # Same pattern as decidim_admin.mount_routes / decidim_system.mount_routes:
+        # queue on Core::Engine.routes via append; RoutesReloader finalize! draws once.
+        # Keep name +rest_full.draw_routes+ so feature gems can use before: safely.
+        initializer "rest_full.draw_routes" do
+          Decidim::RestFull::Routes.mount!
         end
       end
     end

@@ -73,7 +73,7 @@ Scope labels (`scope_<manifest>` under `decidim.rest_full.models.api_client.fiel
 
 ## Routes
 
-Boot order: load gems → each `Extension.register` runs (engine initializer **`before: "rest_full.draw_routes"`**) → Rails Finisher runs `:set_routes_reloader_hook` (which clears engine `RouteSet`s and reloads `routes.rb` paths) → core calls **`Decidim::RestFull::Routes.ensure_routes!`** on `Decidim::Core::Engine.routes` in `rest_full.draw_routes`, ordered **`after: :set_routes_reloader_hook`**. That call draws routes and repairs Warden `:admin` strategies. `to_prepare` and the system menu call the same helper when routes may be missing after reload. Late registration appends via **`Routes.append_pending!`**. See [Boot and extension](./add-endpoint/boot-and-extension.md).
+Boot order: load gems → each `Extension.register` runs (engine initializer **`before: "rest_full.draw_routes"`**) → core **`Routes.mount!`** queues routes on `Decidim::Core::Engine.routes` via `RouteSet#append` (same as Admin/System) → Rails RoutesReloader `finalize!` draws append blocks once and Devise configures Warden. Late registration appends via **`Routes.append_pending!`**. See [Boot and extension](./add-endpoint/boot-and-extension.md).
 
 Monorepo route-bearing gems use **`Decidim::RestFull::Routing`** (`read_resources`, `async_resources`). HTTP paths are unchanged — only declaration moves.
 
