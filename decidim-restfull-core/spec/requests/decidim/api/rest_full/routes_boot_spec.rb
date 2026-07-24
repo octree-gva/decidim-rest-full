@@ -24,9 +24,10 @@ RSpec.describe "Decidim RestFull routes boot (metagem)" do
 
   before { host!(organization.host) }
 
-  it "draws routes via Decidim::RestFull::Routes.ensure_routes! and accepts async draft_proposals#create" do
-    Decidim::RestFull::Routes.ensure_routes!
+  it "mounts routes via RouteSet#append (no Devise patch) and accepts async draft_proposals#create" do
     expect(Decidim::RestFull::Routes.applied?).to be(true)
+    # Reloader's single finalize! must leave Devise strategies intact (no Warden patch).
+    expect(Devise.warden_config.default_strategies(scope: :user)).to include(:database_authenticatable)
     expect(Devise.warden_config.default_strategies(scope: :admin)).to include(:database_authenticatable)
     expect(Decidim::Core::Engine.routes.url_helpers.system_api_clients_path).to eq("/system/api_clients")
 
