@@ -4,6 +4,25 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass, -- cross-cutting optional-gem integration
 RSpec.describe "optional decidim-restfull feature gems" do
+  describe Decidim::RestFull::Core::DoorkeeperConfig do
+    it "advertises only core scopes without registered feature scopes" do
+      allow(Decidim::RestFull::Extension).to receive(:doorkeeper_optional_scopes).and_return([])
+
+      expect(described_class.advertised_scopes).not_to include(:blogs, :proposals)
+      expect(described_class::CORE_OPTIONAL_SCOPES).not_to include(:meetings, :debates)
+    end
+  end
+
+  describe Decidim::RestFull::Core::Configuration do
+    it "omits unloaded feature permissions and events" do
+      allow(Gem).to receive(:loaded_specs).and_return({})
+
+      expect(described_class.default_events_for_proposals).to eq([])
+      expect(described_class.default_events_for_meetings).to eq([])
+      expect(described_class.default_available_permissions).not_to include("blogs", "proposals")
+    end
+  end
+
   describe Decidim::RestFull::Core::Ransackers do
     it "registers core ransackers without decidim-proposals loaded" do
       expect { described_class.register_ransackers! }.not_to raise_error

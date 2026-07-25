@@ -86,7 +86,10 @@ module Decidim
 
     def self.events
       c = Core::Configuration.config
-      c.events_for_proposals + c.events_for_oauth + c.events_for_system + c.events_for_meetings
+      Core::Configuration.default_events_for_proposals +
+        c.events_for_oauth +
+        c.events_for_system +
+        Core::Configuration.default_events_for_meetings
     end
   end
 end

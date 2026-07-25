@@ -16,6 +16,7 @@ module Decidim
           next unless Decidim::RestFull::Core::Configuration.enable_meetings_api
 
           Decidim::RestFull::Extension.register(:meetings) do |ext|
+            ext.oauth_scopes :meetings
             ext.permissions(:meetings, "meetings.read", group: :meetings)
             ext.open_api_definitions(
               File.join(Meetings::ENGINE_ROOT, "lib/decidim/rest_full/meetings/test_definitions.rb")

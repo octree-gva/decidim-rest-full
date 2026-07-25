@@ -6,7 +6,7 @@
                     { multiple: false, disabled: } %>
     <div>
         <h3 class="h5"><%= t(".scopes_label") %></h3>
-        <% [:system, :proposals, :meetings, :debates, :budgets, :surveys, :accountability, :sortitions, :pages, :blogs, :oauth].each do |scope| %>
+        <% Decidim::RestFull::Core::DoorkeeperConfig.advertised_scopes.each do |scope| %>
             <label class="block py-2  <%= "hidden" if disabled && form.object.scopes.to_a.exclude?(scope.to_s) %></label>">
                 <%= form.check_box :scopes, { multiple: true, label: "", disabled:, checked: form.object.scopes.to_a.include?(scope.to_s) }, scope, nil %>
                 <span class="font-normal"><%= t("scope_#{scope}", scope: "decidim.rest_full.models.api_client.fields") %></span>
