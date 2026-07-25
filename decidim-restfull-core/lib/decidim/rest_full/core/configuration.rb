@@ -104,48 +104,6 @@ module Decidim
           ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")
         end
 
-        # When false, Proposals engine does not mount proposal API routes or apply proposal overrides.
-        config_accessor :enable_proposals_api do
-          true
-        end
-
-        # When false, Blogs engine does not mount blog API routes.
-        config_accessor :enable_blogs_api do
-          true
-        end
-
-        config_accessor :enable_debates_api do
-          true
-        end
-
-        config_accessor :enable_surveys_api do
-          true
-        end
-
-        config_accessor :enable_forms_api do
-          true
-        end
-
-        config_accessor :enable_meetings_api do
-          true
-        end
-
-        config_accessor :enable_attachments_api do
-          true
-        end
-
-        config_accessor :enable_budgets_api do
-          true
-        end
-
-        config_accessor :enable_accountabilities_api do
-          true
-        end
-
-        config_accessor :enable_sortition_api do
-          true
-        end
-
         config_accessor :available_permissions do
           Decidim::RestFull::Core::Configuration.default_available_permissions
         end

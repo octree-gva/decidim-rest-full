@@ -7,7 +7,6 @@ module Decidim
         config.root = Budgets::ENGINE_ROOT
 
         initializer "rest_full.budgets.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_budgets_api
 
           Decidim::RestFull::Extension.register(:budgets) do |ext|
             ext.oauth_scopes :budgets

@@ -13,7 +13,6 @@ module Decidim
         config.root = Meetings::ENGINE_ROOT
 
         initializer "rest_full.meetings.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_meetings_api
 
           Decidim::RestFull::Extension.register(:meetings) do |ext|
             ext.oauth_scopes :meetings

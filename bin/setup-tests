@@ -47,6 +47,7 @@ if dummy_ready && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
   bundle check || bundle install -j $(nproc)
   # Do not db:drop here: RestFull install:migrations timestamps can sort before
   # Doorkeeper; a full replay on an empty DB fails with missing oauth_applications.
+  RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
   RAILS_ENV=test bundle exec rake db:migrate
   cd ../..
   echo "Test app is ready"
@@ -65,7 +66,9 @@ bundle install -j $(nproc)
 # Drop and recreate so repeated runs don't hit DuplicateTable (drop no-op if DB missing)
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
 
-RAILS_ENV=test bundle exec rake db:create db:migrate
+RAILS_ENV=test bundle exec rake db:create
+RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
+RAILS_ENV=test bundle exec rake db:migrate
 cd ../..
 
 echo "Test app is ready"

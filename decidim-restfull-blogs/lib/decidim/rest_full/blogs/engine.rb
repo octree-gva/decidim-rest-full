@@ -7,8 +7,6 @@ module Decidim
         config.root = Blogs::ENGINE_ROOT
 
         initializer "rest_full.blogs.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_blogs_api
-
           Decidim::RestFull::Extension.register(:blogs) do |ext|
             ext.oauth_scopes :blogs
             ext.permissions(:blogs, "blogs.read", group: :blogs)
@@ -29,25 +27,23 @@ module Decidim
             )
 
             ext.routes do
-              constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_blogs_api }) do
-                resources :components, only: [] do
-                  collection do
-                    Decidim::RestFull::Routing.read_resources(
-                      self,
-                      :blog_components,
-                      controller: "components/blog_components",
-                      only: [:index, :show]
-                    )
-                  end
+              resources :components, only: [] do
+                collection do
+                  Decidim::RestFull::Routing.read_resources(
+                    self,
+                    :blog_components,
+                    controller: "components/blog_components",
+                    only: [:index, :show]
+                  )
                 end
-
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :blogs,
-                  controller: "blogs/blogs",
-                  only: [:index, :show, :create, :update, :destroy]
-                )
               end
+
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :blogs,
+                controller: "blogs/blogs",
+                only: [:index, :show, :create, :update, :destroy]
+              )
             end
           end
         end

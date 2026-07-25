@@ -6,7 +6,7 @@ description: Core attachments routes and create modes.
 
 # Attachments API (core)
 
-Routes live in `decidim-restfull-core` (`enable_attachments_api`).
+Routes live in `decidim-restfull-core` (gated at runtime by organization Toggle `attachments_enabled`).
 
 | Route | Notes |
 |-------|--------|

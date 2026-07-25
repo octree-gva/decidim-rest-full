@@ -93,11 +93,11 @@ Host apps may depend on a **subset** of feature gems (e.g. core + meetings only)
 | Engine | Routes | Initializers (typical) | `to_prepare` / notes |
 |--------|--------|------------------------|----------------------|
 | **Core** | Core routes in `config/routes.rb`; drawn by `Routes.draw!` in `rest_full.draw_routes` | `rest_full.draw_routes`, `rest_full.scopes`, `rest_full.menu`, `rest_full.permissions` | Org/user/system/mailer/Doorkeeper overrides; `Ransackers` |
-| **Proposals** | Proposal components + proposals + drafts + votes (`enable_proposals_api`) | `rest_full.proposals.extension` (+ `to_prepare`) | Overrides, webhooks bundle, `ProposalApplicationId`, jobs |
-| **Blogs** | Blog components + posts (`enable_blogs_api`) | `rest_full.blogs.extension` | Canonical **small** DSL reference |
+| **Proposals** | Proposal components + proposals + drafts + votes (Toggle `proposals_enabled`) | `rest_full.proposals.extension` (+ `to_prepare`) | Overrides, webhooks bundle, `ProposalApplicationId`, jobs |
+| **Blogs** | Blog components + posts (Toggle `blogs_enabled`) | `rest_full.blogs.extension` | Canonical **small** DSL reference |
 | **Meetings** | Serializers + `meetings.read` permission + webhook handler for upcoming reminders | `rest_full.meetings.extension` | Use as **Webhook + DSL** reference |
 | **Debates / Surveys / Budgets / Accountabilities / Sortition** | Serializers + `*.read` + optional Doorkeeper scopes; OpenAPI slice | `rest_full.<feature>.extension` | Canonical **minimal** participatory slice without extra CRUD routes |
-| **Forms** | Flat questionnaires, questions, answers, submissions (`enable_forms_api`, `surveys` scope) | `rest_full.forms.extension` | JSON Forms projection; `spec/` co-located in gem; OpenAPI under `lib/decidim/rest_full/forms/test/definitions/` |
+| **Forms** | Flat questionnaires, questions, answers, submissions (Toggle `forms_enabled`, `surveys` scope) | `rest_full.forms.extension` | JSON Forms projection; `spec/` co-located in gem; OpenAPI under `lib/decidim/rest_full/forms/test/definitions/` |
 
 Shared lib: `Decidim::RestFull::Core::RouteRegistry`, `Configuration`, `PermissionRegistry`, `DefinitionRegistry`, `OpenApiDefinitionPaths`, serializers under each gem’s `app/serializers/decidim/api/rest_full/`. Core ships base test definitions under `decidim-restfull-core/lib/decidim/rest_full/test/definitions/`; each feature adapter adds schemas under its own `lib/decidim/rest_full/test/definitions/` and registers a barrel `lib/decidim/rest_full/<engine>/test_definitions.rb` via `Extension#open_api_definitions` in its engine (same registration model as `ext.rswag_specs`).
 

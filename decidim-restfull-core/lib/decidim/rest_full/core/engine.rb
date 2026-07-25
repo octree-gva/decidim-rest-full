@@ -22,6 +22,7 @@ module Decidim
           Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
           Decidim::User.include(Decidim::RestFull::UserMagicTokenOverride)
           ::Doorkeeper::TokensController.include(Decidim::RestFull::Core::ApiException::Handler)
+          ::Doorkeeper::TokensController.include(Decidim::RestFull::Core::TokensAvailability)
 
           ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
           ::Decidim::System::UpdateOrganizationForm.include(Decidim::RestFull::UpdateOrganizationFormOverride)
@@ -54,6 +55,11 @@ module Decidim
 
         initializer "rest_full.menu" do
           Decidim::RestFull::Core::Menu.register_system_menu!
+        end
+
+        initializer "rest_full.organization_settings_tab",
+                    after: "decidim_toggle.organization_settings_tabs" do
+          Decidim::RestFull::Core::SettingsTab.register!
         end
 
         initializer "rest_full.core.swagger_spec_paths" do

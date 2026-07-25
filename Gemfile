@@ -41,6 +41,10 @@ gem "puma", ">= 5.5.1"
 gem "uglifier", "~> 4.1"
 gem "uri", ">= 1.1.1"
 
+gem "decidim-toggle",
+  git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle",
+  branch: "main"
+
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
   gem "decidim-dev", Decidim::RestFull.decidim_version

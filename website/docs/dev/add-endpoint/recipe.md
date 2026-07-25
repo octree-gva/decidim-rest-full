@@ -46,7 +46,8 @@ When adding a gem inside the `decidim-restfull/` monorepo, also:
 
 - Register the gem in `decidim-restfull/decidim-restfull.gemspec`
 - Add the gem to [`gem_spec_paths.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/gem_spec_paths.rb) `GEMS`
-- Add `Configuration.enable_<feature>_api` and `available_permissions` in [`configuration.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb)
+- Gate the feature via the **Restfull** organization Toggle tab (`ModuleAvailability`) — do not add process-wide `Configuration.enable_*_api`
+- Add `available_permissions` in [`configuration.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb) when the feature owns a permission group
 - Run `./bin/check` in Docker
 
 ## When something breaks

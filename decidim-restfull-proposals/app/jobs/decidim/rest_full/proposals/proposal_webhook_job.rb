@@ -5,8 +5,10 @@ module Decidim
     module Proposals
       class ProposalWebhookJob < ::Decidim::RestFull::ApplicationJob
         def perform(event_name, proposal_id, organization_id)
-          proposal = load_proposal(proposal_id)
           organization = load_organization(organization_id)
+          return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :proposals)
+
+          proposal = load_proposal(proposal_id)
           data = serialize_proposal(proposal, organization)
           permissions_for(event_name, organization).each do |permission|
             dispatch_for_permission(permission, event_name, data, organization)

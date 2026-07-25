@@ -12,6 +12,8 @@ module Decidim
 
           proposal = data[:resource]
           organization = proposal.organization
+          return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :proposals)
+
           is_draft = proposal.draft?
           published_event_name = if event_name == "decidim.proposals.create_proposal:after" && is_draft
                                    # Created a draft (1st step)

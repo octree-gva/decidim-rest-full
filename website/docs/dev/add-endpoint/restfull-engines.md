@@ -56,8 +56,6 @@ module Decidim
         config.root = Widgets::ENGINE_ROOT
 
         initializer "rest_full.widgets.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_widgets_api
-
           Decidim::RestFull::Extension.register(:widgets) do |ext|
             ext.oauth_scopes :widgets
             ext.permissions(:widgets, "widgets.read", group: :widgets)
@@ -70,11 +68,9 @@ module Decidim
             )
 
             ext.routes do
-              constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_widgets_api }) do
-                resources :widgets,
-                          only: [:index, :show],
-                          controller: "/decidim/api/rest_full/widgets/widgets"
-              end
+              resources :widgets,
+                        only: [:index, :show],
+                        controller: "/decidim/api/rest_full/widgets/widgets"
             end
           end
         end
@@ -104,7 +100,7 @@ Do **not** add requires to `decidim-restfull-core/lib/decidim/rest_full/test/def
 
 - `decidim-restfull/decidim-restfull.gemspec` — add the sibling gem.
 - `decidim-restfull-core/lib/decidim/rest_full/core/gem_spec_paths.rb` — add to `GEMS`.
-- `decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb` — add `enable_widgets_api`.
+- Add a Restfull Toggle checkbox + `ModuleAvailability` mapping for the feature (not a process-wide `Configuration.enable_*`).
 - Run `./bin/check`.
 
 ## Rules
@@ -115,14 +111,15 @@ Do **not** add requires to `decidim-restfull-core/lib/decidim/rest_full/test/def
 | Locales | `config/locales/` in the gem (not metagem) |
 | Specs | `<gem>/spec/` only |
 | Serializer-only adapter | OAuth + permission + OpenAPI schema; no `ext.routes` |
-| Feature flag | `Decidim::RestFull::Core::Configuration.enable_<feature>_api` |
+| Feature gate | Organization Toggle + `ModuleAvailability` (HTTP 501) |
 
 ## Related specs
 
 | Case | Path |
 |------|------|
 | Engine boot | `decidim-restfull-surveys/spec/lib/decidim/rest_full/surveys/engine_spec.rb` |
-| Disabled routes | `decidim-restfull-core/spec/decidim/rest_full/core/configuration_engine_disabled_routes_spec.rb` |
+| Disabled modules | `decidim-restfull-core/spec/decidim/rest_full/core/configuration_engine_disabled_routes_spec.rb` |
+| ModuleAvailability | `decidim-restfull-core/spec/lib/decidim/rest_full/core/module_availability_spec.rb` |
 
 ## See also
 

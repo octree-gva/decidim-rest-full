@@ -20,6 +20,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+      - ../decidim-toggle:/home/decidim-toggle
     environment:
       POSTGRES_DB: decidim
       DATABASE_HOST: postgres
@@ -31,6 +32,7 @@ services:
       CI: "1"
       RAILS_ENV: test
       DISABLE_SPRING: "1"
+      TOGGLE_PATH: /home/decidim-toggle
     depends_on:
       postgres:
         condition: service_healthy

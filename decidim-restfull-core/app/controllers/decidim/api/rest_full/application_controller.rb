@@ -11,6 +11,8 @@ module Decidim
         include Decidim::Api::RestFull::ConditionalGetRendering
         delegate :can?, :cannot?, :authorize!, to: :ability
 
+        before_action :ensure_rest_full_available!
+
         # Supported participatory space manifests and their model class names.
         # A space is only used when its constant is defined (gem loaded).
         SPACE_MANIFEST_MODELS = {
@@ -146,6 +148,11 @@ module Decidim
         end
 
         private
+
+        def ensure_rest_full_available!
+          feature = Decidim::RestFull::Core::ModuleAvailability.feature_for_controller(self)
+          Decidim::RestFull::Core::ModuleAvailability.ensure_available!(current_organization, feature:)
+        end
 
         def authorization_token
           @authorization_token ||= begin

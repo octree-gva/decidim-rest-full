@@ -5,7 +5,6 @@ module Decidim
     module RestFull
       module Attachments
         class AttachmentsController < ApplicationController
-          before_action :ensure_attachments_api_enabled!
           before_action { doorkeeper_authorize! :attachments }
           before_action :authorize_read!, only: [:index, :show]
           before_action :authorize_create!, only: [:create, :direct_upload]
@@ -65,12 +64,6 @@ module Decidim
 
           def authorize_destroy!
             authorize! :destroy, Decidim::Attachment
-          end
-
-          def ensure_attachments_api_enabled!
-            return if Decidim::RestFull::Core::Configuration.enable_attachments_api
-
-            raise Decidim::RestFull::Core::ApiException::NotFound, "Attachments API is disabled"
           end
 
           def operations
