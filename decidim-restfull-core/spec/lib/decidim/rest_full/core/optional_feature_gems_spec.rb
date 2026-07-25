@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-# rubocop:disable RSpec/DescribeClass, -- cross-cutting optional-gem integration
+# rubocop:disable RSpec/DescribeClass -- cross-cutting optional-gem integration
 RSpec.describe "optional decidim-restfull feature gems" do
   describe Decidim::RestFull::Core::DoorkeeperConfig do
     it "advertises only core scopes without registered feature scopes" do
@@ -10,6 +10,16 @@ RSpec.describe "optional decidim-restfull feature gems" do
 
       expect(described_class.advertised_scopes).not_to include(:blogs, :proposals)
       expect(described_class::CORE_OPTIONAL_SCOPES).not_to include(:meetings, :debates)
+    end
+
+    it "filters advertised_scopes_for when feature gem scopes are absent" do
+      organization = create(:organization)
+      allow(Decidim::RestFull::Extension).to receive(:doorkeeper_optional_scopes).and_return([])
+      allow(Decidim::RestFull::Core::ModuleAvailability).to receive(:raw_config)
+        .with(organization).and_return({ enabled: true }.with_indifferent_access)
+
+      expect(described_class.advertised_scopes_for(organization)).not_to include(:proposals, :blogs)
+      expect(described_class.advertised_scopes_for(organization)).to include(:public, :oauth)
     end
   end
 
@@ -20,6 +30,71 @@ RSpec.describe "optional decidim-restfull feature gems" do
       expect(described_class.default_events_for_proposals).to eq([])
       expect(described_class.default_events_for_meetings).to eq([])
       expect(described_class.default_available_permissions).not_to include("blogs", "proposals")
+    end
+  end
+
+  describe Decidim::RestFull::Core::PermissionRegistry do
+    it "exposes no proposals permission group when nothing was registered for that scope" do
+      # Missing feature gem ⇒ Extension.register never ran ⇒ empty scope.
+      expect(described_class.by_scope(:proposals_missing_gem_probe)).to eq([])
+    end
+  end
+
+  describe Decidim::RestFull::Core::WebhookEventCatalog do
+    it "registers no proposal events when proposal event config is empty (unloaded gem)" do
+      described_class.clear!
+      prev_proposals = Decidim::RestFull::Core::Configuration.events_for_proposals
+      prev_meetings = Decidim::RestFull::Core::Configuration.events_for_meetings
+      Decidim::RestFull::Core::Configuration.events_for_proposals = []
+      Decidim::RestFull::Core::Configuration.events_for_meetings = []
+      described_class.sync_from_configuration!
+
+      expect(described_class.all.map(&:scope)).not_to include("proposals", "meetings")
+    ensure
+      Decidim::RestFull::Core::Configuration.events_for_proposals = prev_proposals
+      Decidim::RestFull::Core::Configuration.events_for_meetings = prev_meetings
+      described_class.clear!
+      described_class.sync_from_configuration!
+    end
+  end
+
+  describe Decidim::RestFull::Core::WebhookDispatcher do
+    it "no-ops proposal events when the proposals webhook job is not available" do
+      dispatcher = described_class.instance
+      allow(dispatcher).to receive(:proposals_webhook_job_defined?).and_return(false)
+
+      expect(Decidim::RestFull::Proposals::ProposalWebhookJob).not_to receive(:perform_later) if defined?(Decidim::RestFull::Proposals::ProposalWebhookJob)
+
+      expect do
+        dispatcher.handle_proposals("decidim.proposals.create_proposal:after", resource: nil)
+      end.not_to raise_error
+    end
+  end
+
+  describe Decidim::RestFull::Core::Admin::ConfigForm do
+    let(:organization) { create(:organization) }
+    let(:form) { described_class.from_model(organization).with_context(current_organization: organization) }
+
+    it "disables proposals_enabled when the proposals gem is absent" do
+      form.enabled = true
+      allow(Decidim::RestFull::Core::ModuleAvailability).to receive(:feature_gem_present?)
+        .and_return(true)
+      allow(Decidim::RestFull::Core::ModuleAvailability).to receive(:feature_gem_present?)
+        .with(:proposals).and_return(false)
+
+      expect(form.attribute_disabled?(:proposals_enabled)).to be(true)
+      expect(form.attribute_disabled?(:attachments_enabled)).to be(false)
+    end
+
+    it "omits disabled missing-gem attributes from to_h" do
+      form.enabled = true
+      form.proposals_enabled = true
+      allow(Decidim::RestFull::Core::ModuleAvailability).to receive(:feature_gem_present?)
+        .and_return(true)
+      allow(Decidim::RestFull::Core::ModuleAvailability).to receive(:feature_gem_present?)
+        .with(:proposals).and_return(false)
+
+      expect(form.to_h).not_to have_key(:proposals_enabled)
     end
   end
 

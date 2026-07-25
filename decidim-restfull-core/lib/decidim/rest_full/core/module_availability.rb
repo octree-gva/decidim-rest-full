@@ -12,6 +12,20 @@ module Decidim
           proposals blogs debates surveys forms meetings attachments budgets accountabilities sortition
         ].freeze
 
+        # Feature Toggle key → RubyGems name. +nil+ means shipped in core (always present).
+        FEATURE_GEMS = {
+          proposals: "decidim-restfull-proposals",
+          blogs: "decidim-restfull-blogs",
+          debates: "decidim-restfull-debates",
+          surveys: "decidim-restfull-surveys",
+          forms: "decidim-restfull-forms",
+          meetings: "decidim-restfull-meetings",
+          attachments: nil,
+          budgets: "decidim-restfull-budgets",
+          accountabilities: "decidim-restfull-accountabilities",
+          sortition: "decidim-restfull-sortition"
+        }.freeze
+
         # OAuth scope → feature key(s). Array means any-of.
         SCOPE_FEATURES = {
           blogs: :blogs,
@@ -55,8 +69,23 @@ module Decidim
             cast_bool(raw_config(organization)[:enabled], default: true)
           end
 
+          def feature_gem_present?(feature)
+            feature = feature.to_sym
+            return false unless FEATURE_GEMS.key?(feature)
+
+            gem_name = FEATURE_GEMS[feature]
+            return true if gem_name.nil?
+
+            Decidim::Toggle.gem_present?(gem_name)
+          end
+
+          def available_feature_modules
+            FEATURE_MODULES.select { |feature| feature_gem_present?(feature) }
+          end
+
           def module_enabled?(organization, feature)
             return false unless enabled?(organization)
+            return false unless feature_gem_present?(feature)
 
             key = :"#{feature}_enabled"
             cast_bool(raw_config(organization)[key], default: true)

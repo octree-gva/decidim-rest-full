@@ -38,6 +38,33 @@ RSpec.describe Decidim::RestFull::Core::ModuleAvailability do
       stub_config(enabled: true, blogs_enabled: false)
       expect(subject.module_enabled?(organization, :blogs)).to be(false)
     end
+
+    it "is false when the feature gem is not installed" do
+      stub_config(enabled: true, proposals_enabled: true)
+      allow(Decidim::Toggle).to receive(:gem_present?).with("decidim-restfull-proposals").and_return(false)
+      expect(subject.module_enabled?(organization, :proposals)).to be(false)
+    end
+  end
+
+  describe ".feature_gem_present?" do
+    it "treats attachments as always present (core)" do
+      expect(subject.feature_gem_present?(:attachments)).to be(true)
+    end
+
+    it "delegates to Decidim::Toggle.gem_present? for feature gems" do
+      allow(Decidim::Toggle).to receive(:gem_present?).with("decidim-restfull-blogs").and_return(false)
+      expect(subject.feature_gem_present?(:blogs)).to be(false)
+    end
+  end
+
+  describe ".available_feature_modules" do
+    it "omits features whose gem is absent" do
+      allow(subject).to receive(:feature_gem_present?).and_return(true)
+      allow(subject).to receive(:feature_gem_present?).with(:proposals).and_return(false)
+
+      expect(subject.available_feature_modules).not_to include(:proposals)
+      expect(subject.available_feature_modules).to include(:attachments)
+    end
   end
 
   describe ".scope_enabled?" do

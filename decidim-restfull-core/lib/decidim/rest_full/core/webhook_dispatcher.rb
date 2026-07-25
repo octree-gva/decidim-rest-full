@@ -8,7 +8,7 @@ module Decidim
 
         def handle_proposals(event_name, data)
           return unless proposal_event?(event_name)
-          return unless defined?(::Decidim::RestFull::Proposals::ProposalWebhookJob)
+          return unless proposals_webhook_job_defined?
 
           proposal = data[:resource]
           organization = proposal.organization
@@ -30,6 +30,10 @@ module Decidim
         end
 
         private
+
+        def proposals_webhook_job_defined?
+          defined?(::Decidim::RestFull::Proposals::ProposalWebhookJob)
+        end
 
         def proposal_events
           @proposal_events ||= [

@@ -19,9 +19,15 @@ module Decidim
           end
 
           def attribute_disabled?(attribute)
-            return false if attribute.to_sym == :enabled
+            attribute = attribute.to_sym
+            return false if attribute == :enabled
 
-            !enabled
+            return true unless enabled
+
+            feature = attribute.to_s.delete_suffix("_enabled").to_sym
+            return false unless Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.key?(feature)
+
+            !Decidim::RestFull::Core::ModuleAvailability.feature_gem_present?(feature)
           end
 
           # Disabled inputs are not submitted; omit them so merge keeps prior values.

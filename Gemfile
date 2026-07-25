@@ -17,6 +17,13 @@ DECIDIM_VERSION = Decidim::RestFull.decidim_version
 
 gem "decidim", DECIDIM_VERSION
 gem "decidim-restfull", path: "#{base_path}decidim-restfull"
+if ENV["TOGGLE_PATH"]
+  gem "decidim-toggle", path: ENV["TOGGLE_PATH"]
+else
+  gem "decidim-toggle",
+      git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle",
+      branch: "main"
+end
 gem "decidim-restfull-accountabilities", path: "#{base_path}decidim-restfull-accountabilities"
 gem "decidim-restfull-blogs", path: "#{base_path}decidim-restfull-blogs"
 gem "decidim-restfull-budgets", path: "#{base_path}decidim-restfull-budgets"
@@ -40,10 +47,6 @@ gem "pg"
 gem "puma", ">= 5.5.1"
 gem "uglifier", "~> 4.1"
 gem "uri", ">= 1.1.1"
-
-gem "decidim-toggle",
-  git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle",
-  branch: "main"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
