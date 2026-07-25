@@ -5,9 +5,8 @@ module Decidim
     module Core
       DuplicateRouteBlockError = Class.new(StandardError)
 
-      # Registry for API route blocks. {apply!} draws the +api/rest_full/vX+ scope
-      # on the given routes; the optional core block draws core API routes, then
-      # each block registered via {draw_api_routes} is run with the same scope.
+      # Collects API route blocks and draws them under /api/rest_full/vX.
+      # Boot path: Routes.mount! → RouteSet#append (like Decidim Admin). Do not finalize!
       class RouteRegistry
         class << self
           def draw_api_routes(&block)
@@ -20,6 +19,35 @@ module Decidim
             @core_routes_block
           end
 
+          # Draw into a Mapper (from RouteSet#append or routes.draw).
+          def draw_routes_on(mapper, core_block = @core_routes_block)
+            # Reloader clear! drops paths; applied ids can linger.
+            @applied_block_ids = ::Set.new if applied_block_ids.any?
+
+            blocks = route_blocks
+            return if core_block.nil? && blocks.empty?
+
+            registry = self
+            mapper.instance_eval do
+              authenticate(:admin) do
+                namespace "system" do
+                  resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
+                  resources :api_permissions, only: [:create], controller: "/decidim/rest_full/system/permissions"
+                  resources :webhook_registrations, only: [:create, :destroy], controller: "/decidim/rest_full/system/webhook_registrations"
+                end
+              end
+
+              namespace :api do
+                namespace :rest_full do
+                  scope "v#{Decidim::RestFull.major_minor_version}" do
+                    registry.evaluate_block!(self, core_block) if core_block
+                    blocks.each { |block| registry.evaluate_block!(self, block) }
+                  end
+                end
+              end
+            end
+          end
+
           def apply!(routes, &core_block)
             core_block ||= @core_routes_block
             if rest_full_routes_drawn?(routes)
@@ -27,19 +55,41 @@ module Decidim
               return
             end
 
-            # Decidim route reload can clear paths while applied_block_ids persists (see spec/spec_helper.rb).
-            @applied_block_ids = ::Set.new if applied_block_ids.any?
-
             return if core_block.nil? && route_blocks.empty?
 
-            draw_full!(routes, core_block, route_blocks)
+            # No finalize! — Devise locks Warden on the first one.
+            routes.disable_clear_and_finalize = true
+            routes.draw { Decidim::RestFull::Core::RouteRegistry.draw_routes_on(self, core_block) }
+            routes.disable_clear_and_finalize = false
           end
 
           def append_pending!(routes)
             pending = pending_blocks
             return if pending.empty?
 
-            draw_append!(routes, pending)
+            registry = self
+            routes.disable_clear_and_finalize = true
+            routes.draw do
+              namespace :api do
+                namespace :rest_full do
+                  scope "v#{Decidim::RestFull.major_minor_version}" do
+                    pending.each { |block| registry.evaluate_block!(self, block) }
+                  end
+                end
+              end
+            end
+            routes.disable_clear_and_finalize = false
+          end
+
+          def evaluate_block!(mapper, block)
+            if applied_block_ids.include?(block.object_id)
+              raise DuplicateRouteBlockError,
+                    "Route block already applied (object_id=#{block.object_id}). " \
+                    "Check for double Extension.register or to_prepare re-entry."
+            end
+
+            mapper.instance_eval(&block)
+            applied_block_ids << block.object_id
           end
 
           def route_blocks
@@ -55,76 +105,11 @@ module Decidim
           private
 
           def pending_blocks
-            route_blocks.reject { |block| applied_block_ids.include?(block_id(block)) }
-          end
-
-          def draw_full!(routes, core_block, blocks)
-            evaluate = method(:evaluate_block!)
-            routes.disable_clear_and_finalize = true
-            routes.draw do
-              authenticate(:admin) do
-                namespace "system" do
-                  resources :api_clients, controller: "/decidim/rest_full/system/api_clients"
-                  resources :api_permissions, only: [:create], controller: "/decidim/rest_full/system/permissions"
-                  resources :webhook_registrations, only: [:create, :destroy], controller: "/decidim/rest_full/system/webhook_registrations"
-                end
-              end
-
-              namespace :api do
-                namespace :rest_full do
-                  scope "v#{Decidim::RestFull.major_minor_version}" do
-                    evaluate.call(self, core_block) if core_block
-                    blocks.each { |block| evaluate.call(self, block) }
-                  end
-                end
-              end
-            end
-            routes.disable_clear_and_finalize = false
-            # Journey named helpers need finalize. Devise may no-op if this RouteSet
-            # already finalized; Engine after_initialize reconfigures Warden globally.
-            routes.finalize!
-          end
-
-          def draw_append!(routes, blocks)
-            evaluate = method(:evaluate_block!)
-            routes.disable_clear_and_finalize = true
-            routes.draw do
-              namespace :api do
-                namespace :rest_full do
-                  scope "v#{Decidim::RestFull.major_minor_version}" do
-                    blocks.each { |block| evaluate.call(self, block) }
-                  end
-                end
-              end
-            end
-            routes.disable_clear_and_finalize = false
-            routes.finalize!
-          end
-
-          def evaluate_block!(mapper, block)
-            assert_not_applied!(block)
-            mapper.instance_eval(&block)
-            mark_applied!(block)
-          end
-
-          def assert_not_applied!(block)
-            return unless applied_block_ids.include?(block_id(block))
-
-            raise DuplicateRouteBlockError,
-                  "Route block already applied (object_id=#{block_id(block)}). " \
-                  "Check for double Extension.register or to_prepare re-entry."
-          end
-
-          def mark_applied!(block)
-            applied_block_ids << block_id(block)
+            route_blocks.reject { |block| applied_block_ids.include?(block.object_id) }
           end
 
           def applied_block_ids
             @applied_block_ids ||= ::Set.new
-          end
-
-          def block_id(block)
-            block.object_id
           end
 
           def rest_full_routes_drawn?(routes)

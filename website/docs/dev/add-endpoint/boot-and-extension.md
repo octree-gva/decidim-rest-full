@@ -16,22 +16,22 @@ sequenceDiagram
   participant Ext as Extension
   participant Registry as RouteRegistry
   participant Core as CoreEngine
-  participant Finisher as RailsFinisher
+  participant Reloader as RoutesReloader
   participant DK as Doorkeeper
 
   Gem->>Ext: Extension.register (initializer before draw_routes)
   Ext->>Registry: draw_api_routes (route blocks)
   Ext->>Ext: oauth_scopes → doorkeeper_optional_scopes
-  Core->>Registry: to_prepare → Routes.ensure_routes! (reload recovery)
-  Finisher->>Registry: set_routes_reloader_hook clears engine RouteSets
-  Core->>Registry: rest_full.draw_routes after hook → Routes.ensure_routes!
+  Core->>Core: rest_full.draw_routes → Routes.mount! (RouteSet#append)
+  Reloader->>Reloader: clear! + load routes.rb + finalize!
+  Note over Reloader,Registry: append blocks run inside finalize! (Devise configures Warden once)
   Core->>DK: DoorkeeperConfig.merge_optional_scopes! on late Extension.register
   Note over Gem,DK: Late Extension.register → append_pending! + merge! if app initialized
 ```
 
 ## Initializer anchors
 
-Register your engine initializer **before** core draws routes and merges scopes:
+Register your engine initializer **before** core mounts routes and merges scopes:
 
 ```ruby
 initializer "rest_full.widgets.extension", before: "rest_full.draw_routes" do
@@ -49,7 +49,7 @@ end
 
 | Anchor | Purpose |
 |--------|---------|
-| `before: "rest_full.draw_routes"` | Route blocks collected before first `Routes.draw!` |
+| `before: "rest_full.draw_routes"` | Route blocks collected before `Routes.mount!` queues the append |
 | `before: "rest_full.scopes"` | Belt-and-suspenders for OAuth scope collection |
 
 ## Extension.register
@@ -109,14 +109,9 @@ Host controllers must **not** live under `Decidim::Api::RestFull::*` (Zeitwerk c
 
 [`RouteRegistry`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/route_registry.rb) collects route blocks from feature gems and draws them under `/api/rest_full/v<major.minor>/` on `Decidim::Core::Engine.routes`.
 
-Public entry: `Decidim::RestFull::Routes.ensure_routes!` (called from core engine and system menu; do not call from `spec_helper`).
+Boot entry: `Decidim::RestFull::Routes.mount!` from initializer `rest_full.draw_routes` — same pattern as Decidim Admin/System (`RouteSet#append`). Rails' RoutesReloader runs a single `finalize!`; Devise configures Warden there. We never call `finalize!` or patch Warden.
 
-Core draws routes in the `rest_full.draw_routes` initializer, ordered **after**
-Rails Finisher's `:set_routes_reloader_hook`. That hook runs after
-`after_initialize`, clears engine `RouteSet`s, and reloads only `routes.rb`
-paths; drawing earlier would therefore be lost. `ensure_routes!` is idempotent:
-it draws API/system routes and repairs Devise's global Warden `:admin`
-strategies. `to_prepare` and the system menu call the same helper after reload.
+Late `Extension.register` uses `Routes.append_pending!` (draw without finalize). Isolated specs may call `RouteRegistry.apply!` on a throwaway RouteSet.
 
 ## Related specs
 

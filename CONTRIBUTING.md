@@ -56,7 +56,7 @@ We follow the same terms as [Decidim core](https://github.com/decidim/decidim).
    Plain `Rails::Engine` mounting `Extension.register`: **proposals/blogs** = full routed surface + permissions; **meetings** = serializers + webhook; **minimal slices** mirror `decidim-restfull-surveys` (`oauth_scopes` only when absent from core’s Doorkeeper merge, `permissions`, OpenAPI barrel).
 
 4. **`decidim-restfull-core/config/routes.rb`**  
-   Registers the **core** route block (`RouteRegistry.core_routes_block=`). Feature gems append via `Decidim::RestFull::Extension.register` → `Routes.draw_api_routes`. The core engine initializer **`rest_full.draw_routes`** (after proposals/blogs extensions) calls **`Decidim::RestFull::Routes.draw!`** once on `Decidim::Core::Engine.routes`. Do not call `draw!` from `spec_helper`; the dummy app uses the same boot path as production.
+   Registers the **core** route block (`RouteRegistry.core_routes_block=`). Feature gems append via `Decidim::RestFull::Extension.register` → `Routes.draw_api_routes`. The core engine initializer **`rest_full.draw_routes`** calls **`Decidim::RestFull::Routes.mount!`** (queues on `Decidim::Core::Engine.routes` via `append`, like Admin/System). Do not call `finalize!` or patch Warden; the RoutesReloader owns finalize.
 
 ## Where the “magic” is
 
