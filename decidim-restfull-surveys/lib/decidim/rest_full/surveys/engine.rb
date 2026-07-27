@@ -7,7 +7,6 @@ module Decidim
         config.root = Surveys::ENGINE_ROOT
 
         initializer "rest_full.surveys.extension" do
-
           Decidim::RestFull::Extension.register(:surveys) do |ext|
             ext.oauth_scopes :surveys
             ext.permissions(:surveys, "surveys.read", group: :surveys)

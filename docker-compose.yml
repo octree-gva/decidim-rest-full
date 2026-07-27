@@ -5,7 +5,6 @@ services:
     entrypoint: ""
     volumes:
       - .:/home/module
-      - ../decidim-toggle:/home/decidim-toggle
       - bundle:/home/decidim/vendor
       - node_modules:/home/decidim/node_modules
     environment:
@@ -17,7 +16,6 @@ services:
       - DEV_MODULE=decidim-rest_full
       - RAILS_ENV=development
       - DISABLED_DOCKER_COMPOSE=true # To run tests in docker
-      - TOGGLE_PATH=/home/decidim-toggle
     depends_on:
       - rest-full-pg
     ports:

@@ -48,10 +48,16 @@ if dummy_ready && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
   # Do not db:drop here: RestFull install:migrations timestamps can sort before
   # Doorkeeper; a full replay on an empty DB fails with missing oauth_applications.
   RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
+RAILS_ENV=test bundle exec rake db:migrate
+# RestFull forces ActiveRecord session store (magic-link / confirmation); ensure sessions table exists.
+if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?(:sessions) ? 0 : 1)"; then
+  RAILS_ENV=test bundle exec rails generate active_record:session_migration --force
   RAILS_ENV=test bundle exec rake db:migrate
-  cd ../..
-  echo "Test app is ready"
-  exit 0
+fi
+cd ../..
+
+echo "Test app is ready"
+exit 0
 fi
 
 if [ -d spec/decidim_dummy_app ]; then
@@ -69,6 +75,10 @@ DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/
 RAILS_ENV=test bundle exec rake db:create
 RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
 RAILS_ENV=test bundle exec rake db:migrate
+if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?(:sessions) ? 0 : 1)"; then
+  RAILS_ENV=test bundle exec rails generate active_record:session_migration --force
+  RAILS_ENV=test bundle exec rake db:migrate
+fi
 cd ../..
 
 echo "Test app is ready"

@@ -2,7 +2,8 @@
 
 require "spec_helper"
 
-RSpec.describe "RestFull ModuleAvailability API gates", type: :request do
+# rubocop:disable RSpec/DescribeClass -- request integration for ModuleAvailability gates
+RSpec.describe "RestFull ModuleAvailability API gates" do
   let(:organization) { create(:organization, host: "test.example.org") }
   let(:api_client) { create(:api_client, organization:, scopes: %w(public blogs)) }
   let(:user) { create(:user, :confirmed, organization:) }
@@ -23,22 +24,23 @@ RSpec.describe "RestFull ModuleAvailability API gates", type: :request do
 
   it "returns 501 on core endpoints when master is off" do
     stub_toggle(enabled: false)
-    get "/api/rest_full/v#{version}/organizations", headers: headers
+    get("/api/rest_full/v#{version}/organizations", headers:)
     expect(response).to have_http_status(:not_implemented)
     expect(response.parsed_body["error"]).to include("501")
   end
 
   it "returns 501 on blogs endpoints when blogs is off" do
     stub_toggle(enabled: true, blogs_enabled: false)
-    get "/api/rest_full/v#{version}/blogs", headers: headers
+    get("/api/rest_full/v#{version}/blogs", headers:)
     expect(response).to have_http_status(:not_implemented)
     expect(response.parsed_body["error"]).to include("501")
   end
 
   it "allows core endpoints when only blogs is off" do
     stub_toggle(enabled: true, blogs_enabled: false)
-    get "/api/rest_full/v#{version}/spaces/search", headers: headers
+    get("/api/rest_full/v#{version}/spaces/search", headers:)
     # may be 200 or 403 depending on permissions; must not be 501
-    expect(response.status).not_to eq(501)
+    expect(response).not_to have_http_status(:not_implemented)
   end
 end
+# rubocop:enable RSpec/DescribeClass

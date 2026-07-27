@@ -25,7 +25,7 @@ module Decidim
             return true unless enabled
 
             feature = attribute.to_s.delete_suffix("_enabled").to_sym
-            return false unless Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.key?(feature)
+            return false unless Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.has_key?(feature)
 
             !Decidim::RestFull::Core::ModuleAvailability.feature_gem_present?(feature)
           end
@@ -38,7 +38,7 @@ module Decidim
           private
 
           def persist_excluded_keys
-            self.class.attribute_names.map(&:to_sym).reject { |name| name == :id || name == :enabled }.select do |name|
+            self.class.attribute_names.map(&:to_sym).reject { |name| [:id, :enabled].include?(name) }.select do |name|
               attribute_disabled?(name)
             end
           end

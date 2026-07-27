@@ -7,7 +7,6 @@ module Decidim
         config.root = Debates::ENGINE_ROOT
 
         initializer "rest_full.debates.extension" do
-
           Decidim::RestFull::Extension.register(:debates) do |ext|
             ext.oauth_scopes :debates
             ext.permissions(:debates, "debates.read", group: :debates)

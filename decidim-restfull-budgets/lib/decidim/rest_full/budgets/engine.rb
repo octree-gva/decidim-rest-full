@@ -7,7 +7,6 @@ module Decidim
         config.root = Budgets::ENGINE_ROOT
 
         initializer "rest_full.budgets.extension" do
-
           Decidim::RestFull::Extension.register(:budgets) do |ext|
             ext.oauth_scopes :budgets
             ext.permissions(:budgets, "budgets.read", group: :budgets)

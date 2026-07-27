@@ -1,5 +1,7 @@
-PATH
-  remote: /home/decidim-toggle
+GIT
+  remote: https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle
+  revision: 246e6ddcc8c4dda80c47d2286f28927182fad657
+  branch: main
   specs:
     decidim-toggle (0.1.3)
       decidim-core (>= 0.29, < 0.33)

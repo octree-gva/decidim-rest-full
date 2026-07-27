@@ -59,8 +59,12 @@ RSpec.describe Decidim::RestFull::Core::ModuleAvailability do
 
   describe ".available_feature_modules" do
     it "omits features whose gem is absent" do
-      allow(subject).to receive(:feature_gem_present?).and_return(true)
-      allow(subject).to receive(:feature_gem_present?).with(:proposals).and_return(false)
+      Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.each_value do |gem_name|
+        next if gem_name.nil?
+
+        allow(Decidim::Toggle).to receive(:gem_present?).with(gem_name).and_return(true)
+      end
+      allow(Decidim::Toggle).to receive(:gem_present?).with("decidim-restfull-proposals").and_return(false)
 
       expect(subject.available_feature_modules).not_to include(:proposals)
       expect(subject.available_feature_modules).to include(:attachments)

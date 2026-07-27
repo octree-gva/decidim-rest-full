@@ -8,8 +8,8 @@ module Decidim
       class ModuleAvailability
         MODULE_NAME = "decidim_restfull"
 
-        FEATURE_MODULES = %i[
-          proposals blogs debates surveys forms meetings attachments budgets accountabilities sortition
+        FEATURE_MODULES = [
+          :proposals, :blogs, :debates, :surveys, :forms, :meetings, :attachments, :budgets, :accountabilities, :sortition
         ].freeze
 
         # Feature Toggle key → RubyGems name. +nil+ means shipped in core (always present).
@@ -71,7 +71,7 @@ module Decidim
 
           def feature_gem_present?(feature)
             feature = feature.to_sym
-            return false unless FEATURE_GEMS.key?(feature)
+            return false unless FEATURE_GEMS.has_key?(feature)
 
             gem_name = FEATURE_GEMS[feature]
             return true if gem_name.nil?
@@ -109,9 +109,7 @@ module Decidim
           end
 
           def ensure_available!(organization, feature: nil)
-            unless enabled?(organization)
-              raise Decidim::RestFull::Core::ApiException::NotImplemented, "Rest API is disabled"
-            end
+            raise Decidim::RestFull::Core::ApiException::NotImplemented, "Rest API is disabled" unless enabled?(organization)
             return if feature.blank?
             return if module_enabled?(organization, feature)
 
