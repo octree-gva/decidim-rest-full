@@ -1,4 +1,4 @@
-# Reproduces GitLab CI ruby::rspec job: ruby:3.2.2 + postgres:15 + redis
+# Reproduces GitLab CI ruby::rspec job: ruby:3.4.7 + postgres:15 + redis
 services:
   postgres:
     image: postgres:15
@@ -16,7 +16,7 @@ services:
     image: redis:latest
 
   rspec:
-    image: ruby:3.2.2
+    image: ruby:3.4.7
     working_dir: /app
     volumes:
       - .:/app

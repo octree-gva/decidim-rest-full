@@ -6,6 +6,7 @@ module Decidim
       module Roles
         class RolesController < ApplicationController
           include Decidim::Api::RestFull::AsyncApiJobEnqueuing
+
           before_action :doorkeeper_authorize_roles!
           before_action :authorize_read!, only: [:index, :show]
           before_action :authorize_create!, only: [:create, :create_sync]
@@ -36,7 +37,7 @@ module Decidim
             end
             render json:, status: :created
           rescue ArgumentError => e
-            render json: { errors: [{ title: e.message }] }, status: :unprocessable_entity
+            render json: { errors: [{ title: e.message }] }, status: :unprocessable_content
           end
 
           def destroy

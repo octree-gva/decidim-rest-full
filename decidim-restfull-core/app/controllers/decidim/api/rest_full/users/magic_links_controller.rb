@@ -9,6 +9,7 @@ module Decidim
         # db/migrate/20250131155931_add_users_magic_token.rb.
         class MagicLinksController < Decidim::Api::RestFull::Core::ResourcesController
           include ::Devise::Controllers::Helpers
+
           before_action only: [:create] do
             doorkeeper_authorize! :oauth
             ability.authorize! :magic_link, ::Decidim::User
@@ -39,7 +40,7 @@ module Decidim
               organization: current_organization
             )
             unless form.valid?
-              render json: magic_link_redirect_validation_errors(form), status: :unprocessable_entity
+              render json: magic_link_redirect_validation_errors(form), status: :unprocessable_content
               return
             end
 

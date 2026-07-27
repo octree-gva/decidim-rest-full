@@ -12,7 +12,7 @@ module Decidim
 
         def find!(id)
           questionnaire = Decidim::Forms::Questionnaire.includes(
-            questions: [:answer_options, :matrix_rows, :display_conditions]
+            questions: [:response_options, :matrix_rows, :display_conditions]
           ).find_by(id:)
           raise Decidim::RestFull::Core::ApiException::NotFound, "Questionnaire not found" unless questionnaire
           raise Decidim::RestFull::Core::ApiException::NotFound, "Questionnaire not found" unless in_organization?(questionnaire)

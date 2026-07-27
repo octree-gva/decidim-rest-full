@@ -124,7 +124,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
           let!(:user) { create(:user, organization:) }
           let!(:space) { create(:participatory_process, :with_steps, organization:) }
           let!(:process_role) do
-            create(:participatory_process_user_role, user:, participatory_process: space, role: "valuator")
+            create(:participatory_process_user_role, user:, participatory_process: space, role: "evaluator")
           end
           let(:id) do
             Decidim::RestFull::Core::Roles::RoleIdCodec.encode(

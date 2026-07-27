@@ -31,7 +31,7 @@ module Decidim
 
             opts.on("-h", "--help", "Show this help message") do
               puts opts # rubocop:disable Rails/Output
-              exit 0 # rubocop:disable Rails/Exit
+              exit 0
             end
           end
         end
@@ -39,7 +39,7 @@ module Decidim
         def run(args)
           if ENV.fetch("DISABLE_REST_FULL_BIN", "false") == "true"
             Rails.logger.debug "client-api is disabled. See DISABLE_REST_FULL_BIN environment variable"
-            exit 0 # rubocop:disable Rails/Exit
+            exit 0
           end
           command = args.first
 
@@ -59,7 +59,7 @@ module Decidim
           else
             puts @main_parser # rubocop:disable Rails/Output
             puts "Unknown command: #{command}" # rubocop:disable Rails/Output
-            exit 1 # rubocop:disable Rails/Exit
+            exit 1
           end
         end
       end

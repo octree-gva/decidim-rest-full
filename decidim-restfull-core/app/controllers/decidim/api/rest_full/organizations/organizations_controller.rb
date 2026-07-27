@@ -9,6 +9,7 @@ module Decidim
         # system/admin commands while returning JSON API responses.
         class OrganizationsController < ApplicationController
           include Decidim::Api::RestFull::AsyncApiJobEnqueuing
+
           before_action do
             doorkeeper_authorize! :system
           end
@@ -47,17 +48,36 @@ module Decidim
           end
 
           def build_update_forms
-            system_form = system_update_form
-            admin_form = admin_update_form
-            appearance_form = appearance_update_form
-            [system_form, admin_form, appearance_form]
+            [system_update_form, admin_update_form]
           end
 
           def system_update_form
-            form = Decidim::System::UpdateOrganizationForm.from_params(organization_payload)
+            form = Decidim::System::UpdateOrganizationForm.from_model(organization)
+            apply_system_form_updates!(form)
             form.with_unconfirmed_host(organization)
             validate_form(form)
             form
+          end
+
+          def apply_system_form_updates!(form)
+            payload = organization_payload
+            %w(host default_locale users_registration_mode force_users_to_authenticate_before_access_organization).each do |attr|
+              form.public_send("#{attr}=", payload[attr]) if payload.has_key?(attr)
+            end
+            form.secondary_hosts = payload["secondary_hosts"] if payload.has_key?("secondary_hosts")
+            apply_translated_form_updates!(form, payload, :name, :short_name)
+            form.unconfirmed_host = payload["unconfirmed_host"] if payload.has_key?("unconfirmed_host")
+          end
+
+          def apply_translated_form_updates!(form, payload, *fields)
+            fields.each do |field|
+              locales = organization.available_locales
+              values = locales.index_with do |locale|
+                key = "#{field}_#{locale}"
+                payload.has_key?(key) ? payload[key] : form.public_send(field).try(:[], locale)
+              end
+              form.public_send("#{field}=", values) if values.values.any?
+            end
           end
 
           def admin_update_form
@@ -66,17 +86,11 @@ module Decidim
               .with_context(current_organization: organization).tap { |f| validate_form(f) }
           end
 
-          def appearance_update_form
-            Decidim::Admin::OrganizationAppearanceForm
-              .from_params(organization_payload).tap { |f| validate_form(f) }
-          end
-
           def apply_updates(forms)
-            system_form, admin_form, appearance_form = forms
+            system_form, admin_form = forms
             system_ok = Decidim::System::UpdateOrganization.call(organization.id, system_form)[:ok]
             admin_ok = Decidim::Admin::UpdateOrganization.call(admin_form, organization)[:ok]
-            appearance_ok = Decidim::Admin::UpdateOrganizationAppearance.call(appearance_form, organization)[:ok]
-            raise Decidim::RestFull::Core::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok && appearance_ok
+            raise Decidim::RestFull::Core::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok
           end
 
           def validate_form(form)
@@ -112,11 +126,34 @@ module Decidim
           end
 
           def organization_payload
-            @organization_payload ||= transform_translated_params(
-              organization.attributes.deep_merge(
+            @organization_payload ||= begin
+              merged = organization_baseline_attributes.deep_merge(
                 transform_host_params(allowed_params)
               )
-            )
+              coerce_secondary_hosts!(merged)
+              transform_translated_params(merged)
+            end
+          end
+
+          # Only writable API fields — full AR attributes break System/Admin forms
+          # (smtp/omniauth/file_upload blobs, secondary_hosts array vs string, etc.).
+          def organization_baseline_attributes
+            hash = available_params.each_with_object({}) do |key, acc|
+              next unless organization.respond_to?(key)
+
+              acc[key.to_s] = organization.public_send(key)
+            end
+            hash["id"] = organization.id
+            hash["users_registration_mode"] = organization.users_registration_mode.to_s
+            hash["secondary_hosts"] = Array(organization.secondary_hosts).join("\n")
+            hash["machine_translation_display_priority"] = organization.machine_translation_display_priority
+            hash
+          end
+
+          def coerce_secondary_hosts!(payload)
+            return unless payload["secondary_hosts"].is_a?(Array)
+
+            payload["secondary_hosts"] = payload["secondary_hosts"].join("\n")
           end
 
           def allowed_params
@@ -144,12 +181,13 @@ module Decidim
           end
 
           def translated_fields
-            [:name, :description, :admin_terms_of_service_body]
+            [:name, :short_name, :description, :admin_terms_of_service_body]
           end
 
           def available_params
             @available_params ||= [
               :name,
+              :short_name,
               :description,
               :admin_terms_of_service_body,
               :reference_prefix,
@@ -161,8 +199,7 @@ module Decidim
               :users_registration_mode,
               :force_users_to_authenticate_before_access_organization,
               :badges_enabled,
-              :user_groups_enabled,
-              :enable_participatory_space_filters,
+              # user_groups_enabled / enable_participatory_space_filters removed in Decidim 0.32
               :enable_machine_translations,
               :time_zone,
               :comments_max_length,

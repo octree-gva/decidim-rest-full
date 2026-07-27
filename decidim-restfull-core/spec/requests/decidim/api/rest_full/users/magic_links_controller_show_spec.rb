@@ -31,8 +31,8 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
         response "302", "Signed in" do
           produces "html/text"
           context "when token is valid" do
-            run_test!(example_name: :ok) do |example|
-              expect(example.body).to include("You are being ")
+            run_test!(example_name: :ok) do
+              expect(response).to redirect_to("/")
             end
           end
 

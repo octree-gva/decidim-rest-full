@@ -10,6 +10,14 @@ module Decidim
 
         config.root = Decidim::RestFull::ENGINE_ROOT
 
+        # Deface 1.9 only calls autoloader.ignore when config.autoloader == :zeitwerk,
+        # which Rails 8 no longer exposes — without this, Zeitwerk expects a constant
+        # for every app/overrides/*.rb file.
+        initializer "rest_full.ignore_deface_overrides", before: :set_autoload_paths do
+          overrides = root.join("app/overrides")
+          Rails.autoloaders.main.ignore(overrides) if overrides.exist?
+        end
+
         # Cookie sessions overflow on magic-link / confirmation (4KB limit).
         initializer "rest_full.session_store", before: :setup_default_session_store do |app|
           app.config.session_store :active_record_store

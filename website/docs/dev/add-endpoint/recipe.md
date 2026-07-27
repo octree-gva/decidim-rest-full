@@ -62,4 +62,4 @@ When adding a gem inside the `decidim-restfull/` monorepo, also:
 
 - [Boot and extension](./boot-and-extension.md) — boot order, `Extension.register`, append API
 - [RestFull engines](./restfull-engines.md) — gem layout
-- [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) — covenant and `./bin/check`
+- [First contribution](/contribute/first-contribution) — Merge Request workflow and `./bin/check`

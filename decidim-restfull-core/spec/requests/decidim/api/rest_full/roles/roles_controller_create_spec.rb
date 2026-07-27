@@ -57,19 +57,19 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
         end
 
         [:participatory_processes, :assemblies, :conferences].each do |space_manifest|
-          manifest = Decidim.participatory_space_registry.manifests.find { |m| m.name == space_manifest }
-          next unless manifest
-
-          factory_name = space_manifest.to_s.singularize.to_sym
-          model_class_name = manifest.model_class_name.to_s
-
           context "when space is #{space_manifest}" do
-            before do
-              skip "#{space_manifest} factory not available" unless FactoryBot.factories.registered?(factory_name)
+            let(:space_manifest_name) { space_manifest }
+            let(:factory_name) { space_manifest_name.to_s.singularize.to_sym }
+            let(:model_class_name) do
+              Decidim.participatory_space_registry.manifests.find { |m| m.name == space_manifest_name }.model_class_name.to_s
             end
-
             let(:space_factory_traits) { space_manifest == :participatory_processes ? [:with_steps] : [] }
             let!(:space) { create(factory_name, *space_factory_traits, organization:) }
+
+            before do
+              skip "#{space_manifest} not registered" unless Decidim.participatory_space_registry.manifests.any? { |m| m.name == space_manifest }
+              skip "#{space_manifest} factory not available" unless FactoryBot.factories.registered?(factory_name)
+            end
 
             response "201", "Role created (space_administrator) - #{space_manifest}" do
               let(:body) do
@@ -151,7 +151,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
                 space.reload
                 new_role = space.user_roles.find_by(decidim_user_id: user.id)
                 expect(new_role).to be_present
-                expect(new_role.role).to eq("valuator")
+                expect(new_role.role).to eq("evaluator")
               end
             end
 
@@ -177,9 +177,15 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
                 expect(data["attributes"]["resource_id"]).to eq(space.id)
                 expect(data["attributes"]["user_id"]).to eq(user.id)
                 space.reload
-                new_role = space_manifest == :assemblies ? Decidim::AssemblyMember.find_by(decidim_assembly_id: space.id, decidim_user_id: user.id) : space.user_roles.find_by(decidim_user_id: user.id)
+                new_role = if space_manifest == :assemblies
+                             Decidim::ParticipatorySpace::Member.find_by(participatory_space: space, decidim_user_id: user.id) if defined?(Decidim::ParticipatorySpace::Member)
+                           else
+                             space.user_roles.find_by(decidim_user_id: user.id)
+                           end
                 expect(new_role).to be_present
-                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role)
+                # Assembly private members use ParticipatorySpace::Member (translated role jsonb),
+                # not the collaborator token on AssemblyUserRole / ProcessUserRole.
+                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role) && !new_role.is_a?(Decidim::ParticipatorySpace::Member)
               end
             end
           end

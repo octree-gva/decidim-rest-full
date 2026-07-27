@@ -69,7 +69,7 @@ module Decidim
           register_response_for(:component)
         end
 
-        # rubocop:disable Naming/PredicateName
+        # rubocop:disable Naming/PredicatePrefix -- OpenAPI DSL mirrors JSON:API has_many naming
         def has_many_relation(resource_type_schema, title: nil, description: nil, item_schema_key: nil)
           items_schema = if item_schema_key
                            { "$ref" => reference(item_schema_key) }
@@ -109,17 +109,17 @@ module Decidim
         # @param title [String] The title of the relationship
         # @param description [String] The description of the relationship
         # @return [Hash] The Open Api Schema for the relationship
-        def has_many(*resource_types, title: nil, description: nil, &block)
+        def has_many(*resource_types, title: nil, description: nil, &)
           unless resource_types.all? { |type| type.is_a?(String) || type.is_a?(Symbol) }
             raise ArgumentError, "Resource types must be strings or symbols, got: #{resource_types.inspect}"
           end
 
           item_schema = { type: :string }
           item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-          has_many_relation(item_schema, title:, description:, &block)
+          has_many_relation(item_schema, title:, description:, &)
         end
+        # rubocop:enable Naming/PredicatePrefix
 
-        # rubocop:enable Naming/PredicateName
         def belongs_to_relation(resource_type_schema, title: nil, description: nil)
           belongs_to_schema = {
             title: "Belongs To Relation",
@@ -151,7 +151,7 @@ module Decidim
         # @param title [String] The title of the relationship
         # @param description [String] The description of the relationship
         # @return [Hash] The Open Api Schema for the relationship
-        def belongs_to(*resource_types, title: nil, description: nil, &block)
+        def belongs_to(*resource_types, title: nil, description: nil, &)
           # Validate resource_types
           unless resource_types.all? { |type| type.is_a?(String) || type.is_a?(Symbol) }
             raise ArgumentError, "Resource types must be strings or symbols, got: #{resource_types.inspect}"
@@ -159,7 +159,7 @@ module Decidim
 
           item_schema = { type: :string }
           item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-          belongs_to_relation(item_schema, title:, description:, &block)
+          belongs_to_relation(item_schema, title:, description:, &)
         end
 
         ##
@@ -288,7 +288,7 @@ module Decidim
         ##
         # Get the reference to a registered schema
         # @param name [Symbol] The name of the schema
-        # @return [String|nil] The reference to the schema or nil if the schema is not registered
+        # @return [String, nil] The reference to the schema or nil if the schema is not registered
         def reference(name)
           unless @schema.has_key?(name)
             suggestions = DidYouMean::SpellChecker.new(dictionary: @schema.keys).correct(name)

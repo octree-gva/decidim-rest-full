@@ -11,11 +11,13 @@ module Decidim
     end
 
     def self.decidim_version
-      "~> 0.29"
+      "~> 0.32.0"
     end
 
+    # Prefer published gem once 0.15 ships. Until then Gemfile pins git upgrade-32
+    # (or AWESOME_PATH). Gemspec constraint must match the git gem VERSION.
     def self.decidim_awesome_version
-      "0.12.6"
+      ">= 0.15.0"
     end
   end
 end

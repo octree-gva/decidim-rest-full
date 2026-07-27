@@ -16,8 +16,7 @@ module Decidim
             "debates" => "Decidim::Api::RestFull::Debates",
             "surveys" => "Decidim::Api::RestFull::Surveys",
             "budgets" => "Decidim::Api::RestFull::Budgets",
-            "accountability" => "Decidim::Api::RestFull::Accountabilities",
-            "sortitions" => "Decidim::Api::RestFull::Sortitions"
+            "accountability" => "Decidim::Api::RestFull::Accountabilities"
           }.freeze
 
           def component_serializer_class_for(manifest_name)

@@ -98,10 +98,11 @@ module Decidim
           end
 
           def proposal_pagination_match
-            model_class
-              .select(proposal_pagination_select)
-              .from(proposal_pagination_subquery)
-              .find_by("decidim_proposals_proposals.id = ? ", resource_id)
+            # SoftDeletable/paranoia must not wrap the window subquery alias.
+            Decidim::Proposals::Proposal.unscoped
+                                        .select(proposal_pagination_select)
+                                        .from(proposal_pagination_subquery)
+                                        .find_by("decidim_proposals_proposals.id = ? ", resource_id)
           end
 
           def proposal_pagination_select

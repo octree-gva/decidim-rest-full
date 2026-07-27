@@ -32,13 +32,21 @@ gem "decidim-restfull-debates", path: "#{base_path}decidim-restfull-debates"
 gem "decidim-restfull-forms", path: "#{base_path}decidim-restfull-forms"
 gem "decidim-restfull-meetings", path: "#{base_path}decidim-restfull-meetings"
 gem "decidim-restfull-proposals", path: "#{base_path}decidim-restfull-proposals"
-gem "decidim-restfull-sortition", path: "#{base_path}decidim-restfull-sortition"
 gem "decidim-restfull-surveys", path: "#{base_path}decidim-restfull-surveys"
 
 gem "bootsnap", "~> 1.4"
 gem "concurrent-ruby", "1.3.4"
 gem "decidim-conferences", Decidim::RestFull.decidim_version
-gem "decidim-decidim_awesome", Decidim::RestFull.decidim_awesome_version
+# Prefer published gem so CI/coworkers need no clone. Override with
+# AWESOME_PATH=/path/to/decidim-module-decidim_awesome for local gem work.
+# Temporary git pin until 0.15 (Decidim 0.32) ships on RubyGems.
+if ENV["AWESOME_PATH"]
+  gem "decidim-decidim_awesome", path: ENV["AWESOME_PATH"]
+else
+  gem "decidim-decidim_awesome",
+      git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
+      branch: "upgrade-32"
+end
 gem "decidim-initiatives", Decidim::RestFull.decidim_version
 gem "decidim-meetings", Decidim::RestFull.decidim_version
 

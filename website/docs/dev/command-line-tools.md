@@ -22,7 +22,7 @@ Host Decidim apps can register extensions from an initializer (no feature gem). 
 Repo-local pointer: [exe/README.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/exe/README.md).
 
 :::info
-Run Ruby and OpenAPI tasks **inside Docker** when developing this module (`docker compose exec rest_full bash -lc 'cd /home/module && …'`). See [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md).
+Run Ruby and OpenAPI tasks **inside Docker** when developing this module (`docker compose exec rest_full bash -lc 'cd /home/module && …'`). See [First contribution](/contribute/first-contribution).
 :::
 
 ---

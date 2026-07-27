@@ -11,9 +11,11 @@ Install the gem on your **host application** so Decidim keeps owning domain logi
 
 | Decidim | Supported |
 |---------|-----------|
-| 0.28    | yes       |
-| 0.29    | yes       |
-| 0.27 and older | no |
+| 0.32    | yes (first-class) |
+| 0.31    | no |
+| 0.30    | no |
+| 0.29    | no |
+| 0.28 and older | no |
 
 ## Install
 

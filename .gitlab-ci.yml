@@ -1,6 +1,6 @@
 ##
 # decidim-restfull monorepo CI: lint, per-gem RSpec, then metagem aggregate.
-# Ruby commands mirror docker compose service `rest_full` (see CONTRIBUTING.md).
+# Ruby commands mirror docker compose service `rest_full` (see website/docs/contribute/first-contribution.md).
 ##
 stages:
   - lint
@@ -27,6 +27,7 @@ services:
   CI: 1
   RAILS_ENV: test
   DISABLE_SPRING: 1
+  DECIDIM_FORCE_SSL: "false"
 
 .development_rules:
   rules:
@@ -56,7 +57,7 @@ services:
 
 .rspec_template:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: test
   variables:
     <<: *rspec_variables
@@ -65,14 +66,14 @@ services:
 
 ruby::spec_harness:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
   script:
     - ./bin/lint-spec-harness
 
 ruby::rubocop:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
   script:
     - bundle
@@ -80,7 +81,7 @@ ruby::rubocop:
 
 ruby::erb:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
   script:
     - bundle
@@ -146,7 +147,7 @@ rspec:decidim-restfull-adapters:
   extends: .rspec_template
   script:
     - bundle exec rspec decidim-restfull-meetings/spec decidim-restfull-surveys/spec decidim-restfull-budgets/spec
-      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec decidim-restfull-sortition/spec
+      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec
       decidim-restfull-dev/spec --format progress
 
 rspec:decidim-restfull:
@@ -170,7 +171,7 @@ rspec:decidim-restfull:
     - bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec.xml
 
 ruby::rubygem:
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: publish
   script:
     - echo "---" > .credentials
@@ -185,7 +186,6 @@ ruby::rubygem:
     - gem build decidim-restfull-debates/decidim-restfull-debates.gemspec
     - gem build decidim-restfull-meetings/decidim-restfull-meetings.gemspec
     - gem build decidim-restfull-proposals/decidim-restfull-proposals.gemspec
-    - gem build decidim-restfull-sortition/decidim-restfull-sortition.gemspec
     - gem build decidim-restfull-surveys/decidim-restfull-surveys.gemspec
     - gem build decidim-restfull-forms/decidim-restfull-forms.gemspec
     - gem push decidim-restfull-*.gem -k ci_rubygems_api_key --config-file .credentials

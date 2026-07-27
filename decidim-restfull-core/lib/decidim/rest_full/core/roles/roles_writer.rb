@@ -11,7 +11,8 @@ module Decidim
           API_TO_DECIDIM_ROLE = {
             "space_administrator" => "admin",
             "space_moderator" => "moderator",
-            "space_valuator" => "valuator",
+            # Decidim 0.32 renamed valuator → evaluator; keep API type space_valuator.
+            "space_valuator" => "evaluator",
             "space_private_member" => "collaborator"
           }.freeze
 
@@ -102,9 +103,12 @@ module Decidim
           def create_assembly_role(attrs)
             assembly = Decidim::Assembly.find_by!(id: attrs[:resource_id], decidim_organization_id: organization.id)
             if attrs[:type] == "space_private_member"
-              record = Decidim::AssemblyMember.create!(
-                assembly:,
-                decidim_user_id: attrs[:user_id]
+              raise ArgumentError, "Assembly private members require Decidim::ParticipatorySpace::Member" unless defined?(Decidim::ParticipatorySpace::Member)
+
+              user = Decidim::User.find_by!(id: attrs[:user_id], organization:)
+              record = Decidim::ParticipatorySpace::Member.create!(
+                participatory_space: assembly,
+                user:
               )
               build_role_view_for_assembly_member(record)
             else
@@ -170,12 +174,12 @@ module Decidim
                   .joins(:assembly)
                   .where(decidim_assemblies: { decidim_organization_id: organization.id })
                   .find_by(decidim_assembly_id: decoded[:resource_id], decidim_user_id: decoded[:user_id], role: "collaborator")
-              else
-                Decidim::AssemblyMember
-                  .joins(:assembly)
-                  .where(decidim_assemblies: { decidim_organization_id: organization.id })
-                  .not_ceased
-                  .find_by(decidim_assembly_id: decoded[:resource_id], decidim_user_id: decoded[:user_id])
+              elsif defined?(Decidim::ParticipatorySpace::Member)
+                Decidim::ParticipatorySpace::Member.find_by(
+                  participatory_space_type: "Decidim::Assembly",
+                  participatory_space_id: decoded[:resource_id],
+                  decidim_user_id: decoded[:user_id]
+                )
               end
             else
               role = API_TO_DECIDIM_ROLE[decoded[:type]]
@@ -238,9 +242,10 @@ module Decidim
           end
 
           def build_role_view_for_assembly_member(record)
+            resource_id = record.try(:decidim_assembly_id) || record.participatory_space_id
             aggregator.build_role_view(
               type: "space_private_member",
-              resource_id: record.decidim_assembly_id,
+              resource_id:,
               resource_type: "Decidim::Assembly",
               user_id: record.decidim_user_id,
               invited_at: nil,

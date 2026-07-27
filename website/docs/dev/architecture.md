@@ -16,7 +16,7 @@ Technical layout of the Rubygems in this repository. For a non-developer summary
 | **decidim-restfull-proposals** | Proposals API; `Extension.register(:proposals)` (scopes, routes, jobs, webhooks). |
 | **decidim-restfull-blogs** | Blogs API; `Extension.register(:blogs)`. |
 | **decidim-restfull-meetings** | Meetings serializers + upcoming-meeting webhook; **`decidim_rest_full_meetings.en.yml`** (scopes, permissions, webhook label); `Extension.register(:meetings)`. |
-| **decidim-restfull-debates**, **surveys**, **budgets**, **accountabilities**, **sortition** | Embedded serializers + `*.read` permission + **`decidim_rest_full_*.en.yml`**; OpenAPI manifest schema via `test_definitions.rb`. Sortition ships as **decidim-restfull-sortition** (`Decidim::RestFull::Sortition::Engine`). |
+| **Debates / Surveys / Budgets / Accountabilities** | Serializers + `*.read` permission + **`decidim_rest_full_*.en.yml`**; OpenAPI manifest schema via `test_definitions.rb`. |
 | **decidim-restfull-dev** | Development only: swagger CLI, test helpers. |
 
 Feature gems depend on **decidim-restfull-core** and the matching **decidim-\*** component gem (for example `decidim-surveys`).
@@ -36,7 +36,6 @@ gem "decidim-restfull-surveys"
 gem "decidim-restfull-forms"
 gem "decidim-restfull-budgets"
 gem "decidim-restfull-accountabilities"
-gem "decidim-restfull-sortition"
 ```
 
 ## Extension DSL
@@ -81,7 +80,7 @@ Host apps register in `after_initialize`; `Extension.register` appends routes wh
 
 ## CI
 
-GitLab runs RSpec per gem, then the full metagem suite. Local parity: `./bin/check` inside the `rest_full` Compose service (see repo `CONTRIBUTING.md`).
+GitLab runs RSpec per gem, then the full metagem suite. Local parity: `./bin/check` inside the `rest_full` Compose service (see [First contribution](/contribute/first-contribution)).
 
 ## Deferred hardening
 

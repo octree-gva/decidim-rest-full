@@ -12,6 +12,8 @@ git config --global --add safe.directory /home/module/tmp || true
 export CI=1
 export NODE_ENV=development
 export RAILS_ENV=test
+export DISABLE_SPRING=1
+export DECIDIM_FORCE_SSL=false
 export npm_config_maxsockets="${npm_config_maxsockets:-2}"
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}"
 

@@ -3,6 +3,10 @@
 ENV["RAILS_ENV"] = "test"
 ENV["NODE_ENV"] ||= "test"
 ENV["DISABLE_SPRING"] = "1"
+# Decidim 0.32 image sets DECIDIM_FORCE_SSL=auto; Env.present? treats "auto" as
+# enabled outside the auto-branch, which inserts ActionDispatch::SSL and 301s
+# HTTP request specs to https://.
+ENV["DECIDIM_FORCE_SSL"] = "false"
 ENV["ENGINE_ROOT"] = File.dirname(__dir__)
 
 require "decidim/dev"
@@ -20,6 +24,9 @@ require "decidim/core/test/factories"
 # Do not load gem specs vendored under the dummy app (bundle path leakage).
 RSpec.configure do |config|
   config.exclude_pattern = "spec/decidim_dummy_app/vendor/**/*_spec.rb"
+  config.before(:each, type: :request) do
+    https!
+  end
 end
 
 # Dummy app: draw after environment boot if Decidim route reload cleared API routes (same as to_prepare).

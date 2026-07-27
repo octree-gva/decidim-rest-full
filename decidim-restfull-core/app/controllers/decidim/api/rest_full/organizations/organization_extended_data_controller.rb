@@ -8,6 +8,7 @@ module Decidim
         # using a dot-path API. Backed by Decidim::RestFull::Core::OrganizationExtendedData.
         class OrganizationExtendedDataController < ApplicationController
           include Decidim::Api::RestFull::AsyncApiJobEnqueuing
+
           before_action -> { doorkeeper_authorize! :system }
           before_action :ensure_organization_extended_data
 

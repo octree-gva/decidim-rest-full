@@ -7,6 +7,7 @@ module Decidim
     module Core
       class Ability
         include ::CanCan::Ability
+
         attr_reader :api_client, :permissions
 
         def initialize(api_client, scopes = nil)
@@ -34,7 +35,6 @@ module Decidim
             ["budgets", :perms_for_budgets],
             ["surveys", :perms_for_surveys],
             ["accountability", :perms_for_accountability],
-            ["sortitions", :perms_for_sortitions],
             ["roles", :perms_for_roles],
             ["attachments", :perms_for_attachments]
           ].each do |scope_token, meth|
@@ -160,12 +160,6 @@ module Decidim
           return unless defined?(::Decidim::Accountability::Result)
 
           can :read, ::Decidim::Accountability::Result if permissions.include? "accountability.read"
-        end
-
-        def perms_for_sortitions
-          return unless defined?(::Decidim::Sortitions::Sortition)
-
-          can :read, ::Decidim::Sortitions::Sortition if permissions.include? "sortitions.read"
         end
       end
     end
