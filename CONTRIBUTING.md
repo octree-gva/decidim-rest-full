@@ -12,10 +12,12 @@ Per the project playbook, **do not treat host `bundle` / `rspec` / `rubocop` as 
 
 ```bash
 docker compose up -d
-docker compose exec rest_full bash -lc 'cd /home/module && bundle install && ./bin/check'
+docker compose exec rest_full bash -lc 'cd /home/module && bundle install && bin/setup-tests && unset DATABASE_URL && ./bin/check'
 ```
 
-GitLab runs **per-gem RSpec** (see `.gitlab-ci.yml`) then **`rspec:decidim-restfull`** (full suite).
+`spec/decidim_dummy_app` is gitignored — never commit it. For a fresh dummy (PR review, broken generate, Decidim upgrade), rebuild with `FORCE_SETUP_TESTS=1` (see [Running tests](#running-tests)). `decidim-toggle` comes from RubyGems (`~> 0.1.3`); set `TOGGLE_PATH` only when developing toggle locally.
+
+GitLab runs **lint** (`ruby::rubocop`, `ruby::erb`, `node::prettier`, `ruby::spec_harness`) then **per-gem RSpec** and **`rspec:decidim-restfull`** (see `.gitlab-ci.yml`).
 
 OpenAPI rebuild: `yarn gen:openapi-spec` (docker) or `bundle exec decidim_restfull_swaggerize` from `decidim-restfull-dev`. CLI reference: [Command-line tools](website/docs/dev/command-line-tools.md), [Generate clients and OpenAPI](website/docs/dev/add-endpoint/generate-clients.md).
 
@@ -141,13 +143,20 @@ From the gem root inside Docker (`docker compose exec rest_full bash -lc 'cd /ho
 
 ## Running tests
 
-**Preferred (matches GitLab `ruby::rspec` default paths):**
+**Preferred (matches GitLab RSpec jobs / `bin/setup-tests` before_script):**
 
 ```bash
+docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && bin/setup-tests && unset DATABASE_URL && RAILS_ENV=test ./bin/check'
 ```
 
-`bin/setup-tests` regenerates `spec/decidim_dummy_app`, runs `decidim_rest_full:install:migrations` (copies migrations from **decidim-restfull-core**), then `db:migrate`. After upgrading the gem, re-run `setup-tests` if new migrations were added (schema changes under `decidim_rest_full_api_jobs`, etc.).
+`spec/decidim_dummy_app` is **gitignored**. After a clean clone (or PR checkout), `bin/setup-tests` generates it via `rake test_app`, installs migrations (`decidim_rest_full:install:migrations` from **decidim-restfull-core**), then `db:migrate`. If the dummy app already exists, `setup-tests` only migrates. Force a full rebuild (Decidim upgrades, broken partial generate, or PR review needing a clean dummy):
+
+```bash
+docker compose exec rest_full bash -lc 'cd /home/module && FORCE_SETUP_TESTS=1 bin/setup-tests'
+```
+
+(`FORCE_SETUP_TESTS` default: unset/off.) Re-run after new gem migrations (e.g. `decidim_rest_full_api_jobs`).
 
 Or only RSpec with the same directories as `.gitlab-ci.yml`:
 
