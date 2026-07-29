@@ -22,6 +22,7 @@ en:
             client_id: Client ID
             created_at: Created At
             name: Human name
+            scope_attachments: 'Attachments: manage attachments'
             scope_oauth: 'Oauth: Manage user'
             scope_pages: 'Page: manage pages'
             scope_public: 'Public: navigate components and spaces'
