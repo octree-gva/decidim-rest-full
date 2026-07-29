@@ -5,8 +5,10 @@ module Decidim
     module Meetings
       class MeetingWebhookJob < ::Decidim::RestFull::ApplicationJob
         def perform(event_name, meeting_id, organization_id)
-          meeting = Decidim::Meetings::Meeting.find(meeting_id)
           organization = Decidim::Organization.find(organization_id)
+          return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :meetings)
+
+          meeting = Decidim::Meetings::Meeting.find(meeting_id)
           data = serialize_meeting(meeting, organization)
 
           permissions_for(event_name, organization).each do |permission|

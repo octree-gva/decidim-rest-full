@@ -1,0 +1,34 @@
+<%= decidim_toggle_settings_tab_form(organization, tab) do |tf| %>
+  <div data-restfull-toggle-tab>
+    <%= tf.fields_for_names(:enabled) %>
+    <% available = Decidim::RestFull::Core::ModuleAvailability.available_feature_modules %>
+    <% if available.any? %>
+      <fieldset class="mt-4" data-restfull-toggle-modules>
+        <legend class="form-legend"><%= t("decidim_toggle.system.decidim_restfull.modules_legend") %></legend>
+        <%= tf.fields_for_names(*available.map { |feature| :"#{feature}_enabled" }) %>
+      </fieldset>
+    <% end %>
+  </div>
+<% end %>
+
+<script nonce="<%= content_security_policy_nonce %>">
+  (function () {
+    var root = document.querySelector("[data-restfull-toggle-tab]");
+    if (!root) return;
+    var master = root.querySelector('input[type="checkbox"][name$="[enabled]"]');
+    var modules = root.querySelector("[data-restfull-toggle-modules]");
+    if (!master || !modules) return;
+
+    function sync() {
+      var on = master.checked;
+      modules.querySelectorAll('input[type="checkbox"]').forEach(function (input) {
+        input.disabled = !on;
+        var field = input.closest(".field");
+        if (field) field.classList.toggle("is-disabled", !on);
+      });
+    }
+
+    master.addEventListener("change", sync);
+    sync();
+  })();
+</script>

@@ -17,6 +17,13 @@ DECIDIM_VERSION = Decidim::RestFull.decidim_version
 
 gem "decidim", DECIDIM_VERSION
 gem "decidim-restfull", path: "#{base_path}decidim-restfull"
+# Prefer published gem so CI/coworkers need no git.octree.ch clone for toggle.
+# Override with TOGGLE_PATH=/path/to/decidim-toggle for local gem work.
+if ENV["TOGGLE_PATH"]
+  gem "decidim-toggle", path: ENV["TOGGLE_PATH"]
+else
+  gem "decidim-toggle", "~> 0.1.3"
+end
 gem "decidim-restfull-accountabilities", path: "#{base_path}decidim-restfull-accountabilities"
 gem "decidim-restfull-blogs", path: "#{base_path}decidim-restfull-blogs"
 gem "decidim-restfull-budgets", path: "#{base_path}decidim-restfull-budgets"

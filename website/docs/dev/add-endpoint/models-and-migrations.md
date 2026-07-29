@@ -43,11 +43,12 @@ end
 
 ```ruby
 config.to_prepare do
-  next unless Decidim::RestFull::Core::Configuration.enable_meetings_api
+  next unless defined?(Decidim::Meetings)
   Decidim::Meetings::Meeting.include(Decidim::RestFull::Meetings::MeetingExtendedData)
 end
 ```
 
+Runtime availability for the org is enforced by `ModuleAvailability` (Toggle), not a process-wide enable flag.
 ### 4. Add a migration on the Decidim table (feature gem)
 
 `decidim-restfull-meetings/db/migrate/20260517120000_add_extended_data_to_decidim_meetings_meetings.rb`

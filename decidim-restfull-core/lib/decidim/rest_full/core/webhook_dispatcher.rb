@@ -8,10 +8,12 @@ module Decidim
 
         def handle_proposals(event_name, data)
           return unless proposal_event?(event_name)
-          return unless defined?(::Decidim::RestFull::Proposals::ProposalWebhookJob)
+          return unless proposals_webhook_job_defined?
 
           proposal = data[:resource]
           organization = proposal.organization
+          return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :proposals)
+
           is_draft = proposal.draft?
           published_event_name = if event_name == "decidim.proposals.create_proposal:after" && is_draft
                                    # Created a draft (1st step)
@@ -28,6 +30,10 @@ module Decidim
         end
 
         private
+
+        def proposals_webhook_job_defined?
+          defined?(::Decidim::RestFull::Proposals::ProposalWebhookJob)
+        end
 
         def proposal_events
           @proposal_events ||= [

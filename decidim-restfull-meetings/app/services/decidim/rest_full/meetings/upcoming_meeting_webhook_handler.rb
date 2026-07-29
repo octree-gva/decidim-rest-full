@@ -13,6 +13,10 @@ module Decidim
           payload = normalize_payload(data)
           meeting = payload[:resource]
           return unless meeting.is_a?(::Decidim::Meetings::Meeting)
+          return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(
+            meeting.component.organization,
+            :meetings
+          )
 
           webhook_event = Decidim::RestFull.config.events_for_meetings&.first
 

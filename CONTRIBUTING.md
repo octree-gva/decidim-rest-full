@@ -12,10 +12,12 @@ Per the project playbook, **do not treat host `bundle` / `rspec` / `rubocop` as 
 
 ```bash
 docker compose up -d
-docker compose exec rest_full bash -lc 'cd /home/module && bundle install && ./bin/check'
+docker compose exec rest_full bash -lc 'cd /home/module && bundle install && bin/setup-tests && unset DATABASE_URL && ./bin/check'
 ```
 
-GitLab runs **per-gem RSpec** (see `.gitlab-ci.yml`) then **`rspec:decidim-restfull`** (full suite).
+`spec/decidim_dummy_app` is gitignored — never commit it. For a fresh dummy (PR review, broken generate, Decidim upgrade), rebuild with `FORCE_SETUP_TESTS=1` (see [Running tests](#running-tests)). `decidim-toggle` comes from RubyGems (`~> 0.1.3`); set `TOGGLE_PATH` only when developing toggle locally.
+
+GitLab runs **lint** (`ruby::rubocop`, `ruby::erb`, `node::prettier`, `ruby::spec_harness`) then **per-gem RSpec** and **`rspec:decidim-restfull`** (see `.gitlab-ci.yml`).
 
 OpenAPI rebuild: `yarn gen:openapi-spec` (docker) or `bundle exec decidim_restfull_swaggerize` from `decidim-restfull-dev`. CLI reference: [Command-line tools](website/docs/dev/command-line-tools.md), [Generate clients and OpenAPI](website/docs/dev/add-endpoint/generate-clients.md).
 
@@ -92,12 +94,12 @@ Host apps may depend on a **subset** of feature gems (e.g. core + meetings only)
 
 | Engine | Routes | Initializers (typical) | `to_prepare` / notes |
 |--------|--------|------------------------|----------------------|
-| **Core** | Core routes in `config/routes.rb`; mounted by `Routes.mount!` in `rest_full.draw_routes` | `rest_full.draw_routes`, `rest_full.scopes`, `rest_full.menu`, `rest_full.permissions` | Org/user/system/mailer/Doorkeeper overrides; `Ransackers` |
-| **Proposals** | Proposal components + proposals + drafts + votes (`enable_proposals_api`) | `rest_full.proposals.extension` (+ `to_prepare`) | Overrides, webhooks bundle, `ProposalApplicationId`, jobs |
-| **Blogs** | Blog components + posts (`enable_blogs_api`) | `rest_full.blogs.extension` | Canonical **small** DSL reference |
+| **Core** | Core routes in `config/routes.rb`; drawn by `Routes.draw!` in `rest_full.draw_routes` | `rest_full.draw_routes`, `rest_full.scopes`, `rest_full.menu`, `rest_full.permissions` | Org/user/system/mailer/Doorkeeper overrides; `Ransackers` |
+| **Proposals** | Proposal components + proposals + drafts + votes (Toggle `proposals_enabled`) | `rest_full.proposals.extension` (+ `to_prepare`) | Overrides, webhooks bundle, `ProposalApplicationId`, jobs |
+| **Blogs** | Blog components + posts (Toggle `blogs_enabled`) | `rest_full.blogs.extension` | Canonical **small** DSL reference |
 | **Meetings** | Serializers + `meetings.read` permission + webhook handler for upcoming reminders | `rest_full.meetings.extension` | Use as **Webhook + DSL** reference |
 | **Debates / Surveys / Budgets / Accountabilities / Sortition** | Serializers + `*.read` + optional Doorkeeper scopes; OpenAPI slice | `rest_full.<feature>.extension` | Canonical **minimal** participatory slice without extra CRUD routes |
-| **Forms** | Flat questionnaires, questions, answers, submissions (`enable_forms_api`, `surveys` scope) | `rest_full.forms.extension` | JSON Forms projection; `spec/` co-located in gem; OpenAPI under `lib/decidim/rest_full/forms/test/definitions/` |
+| **Forms** | Flat questionnaires, questions, answers, submissions (Toggle `forms_enabled`, `surveys` scope) | `rest_full.forms.extension` | JSON Forms projection; `spec/` co-located in gem; OpenAPI under `lib/decidim/rest_full/forms/test/definitions/` |
 
 Shared lib: `Decidim::RestFull::Core::RouteRegistry`, `Configuration`, `PermissionRegistry`, `DefinitionRegistry`, `OpenApiDefinitionPaths`, serializers under each gem’s `app/serializers/decidim/api/rest_full/`. Core ships base test definitions under `decidim-restfull-core/lib/decidim/rest_full/test/definitions/`; each feature adapter adds schemas under its own `lib/decidim/rest_full/test/definitions/` and registers a barrel `lib/decidim/rest_full/<engine>/test_definitions.rb` via `Extension#open_api_definitions` in its engine (same registration model as `ext.rswag_specs`).
 
@@ -141,13 +143,20 @@ From the gem root inside Docker (`docker compose exec rest_full bash -lc 'cd /ho
 
 ## Running tests
 
-**Preferred (matches GitLab `ruby::rspec` default paths):**
+**Preferred (matches GitLab RSpec jobs / `bin/setup-tests` before_script):**
 
 ```bash
+docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && bin/setup-tests && unset DATABASE_URL && RAILS_ENV=test ./bin/check'
 ```
 
-`bin/setup-tests` regenerates `spec/decidim_dummy_app`, runs `decidim_rest_full:install:migrations` (copies migrations from **decidim-restfull-core**), then `db:migrate`. After upgrading the gem, re-run `setup-tests` if new migrations were added (schema changes under `decidim_rest_full_api_jobs`, etc.).
+`spec/decidim_dummy_app` is **gitignored**. After a clean clone (or PR checkout), `bin/setup-tests` generates it via `rake test_app`, installs migrations (`decidim_rest_full:install:migrations` from **decidim-restfull-core**), then `db:migrate`. If the dummy app already exists, `setup-tests` only migrates. Force a full rebuild (Decidim upgrades, broken partial generate, or PR review needing a clean dummy):
+
+```bash
+docker compose exec rest_full bash -lc 'cd /home/module && FORCE_SETUP_TESTS=1 bin/setup-tests'
+```
+
+(`FORCE_SETUP_TESTS` default: unset/off.) Re-run after new gem migrations (e.g. `decidim_rest_full_api_jobs`).
 
 Or only RSpec with the same directories as `.gitlab-ci.yml`:
 

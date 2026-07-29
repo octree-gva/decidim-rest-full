@@ -20,7 +20,9 @@
 
 <%= form_for(@perm_form, method: :post, url: system_api_permissions_path ) do |form| %>
   <%= form.hidden_field :api_client_id, value: @api_client.id %>
-  <% if @api_client.scopes.to_a.include?("system") %>
+  <% org = @api_client.organization %>
+  <% avail = Decidim::RestFull::Core::ModuleAvailability %>
+  <% if avail.scope_enabled?(org, :system) && @api_client.scopes.to_a.include?("system") %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -36,7 +38,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("public") %>
+  <% if avail.scope_enabled?(org, :public) && @api_client.scopes.to_a.include?("public") %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -50,7 +52,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("blogs") %>
+  <% if avail.scope_enabled?(org, :blogs) && @api_client.scopes.to_a.include?("blogs") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:blogs).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -63,7 +65,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("debates") %>
+  <% if avail.scope_enabled?(org, :debates) && @api_client.scopes.to_a.include?("debates") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:debates).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -76,7 +78,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("budgets") %>
+  <% if avail.scope_enabled?(org, :budgets) && @api_client.scopes.to_a.include?("budgets") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:budgets).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -89,7 +91,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("surveys") %>
+  <% if avail.scope_enabled?(org, :surveys) && @api_client.scopes.to_a.include?("surveys") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:surveys).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -102,7 +104,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("accountability") %>
+  <% if avail.scope_enabled?(org, :accountability) && @api_client.scopes.to_a.include?("accountability") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:accountability).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -115,7 +117,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("sortitions") %>
+  <% if avail.scope_enabled?(org, :sortitions) && @api_client.scopes.to_a.include?("sortitions") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:sortitions).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -128,7 +130,7 @@
                  ]
                } %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("proposals") %>
+  <% if avail.scope_enabled?(org, :proposals) && @api_client.scopes.to_a.include?("proposals") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:proposals).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -140,13 +142,15 @@
                    { group: :proposals, label: t(".proposals") }
                  ]
                } %>
-    <div class="mt-4">
+    <% proposal_events = Decidim::RestFull::Core::Configuration.default_events_for_proposals %>
+    <% if proposal_events.any? %>
+      <div class="mt-4">
       <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
       <p class="text-sm">
         <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
       </p>
       <ul>
-        <% ::Decidim::RestFull.config.events_for_proposals.each do |permission| %>
+        <% proposal_events.each do |permission| %>
           <li class="my-2">
             <label>
               <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
@@ -157,9 +161,10 @@
           </li>
         <% end %>
       </ul>
-    </div>
+      </div>
+    <% end %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("meetings") %>
+  <% if avail.scope_enabled?(org, :meetings) && @api_client.scopes.to_a.include?("meetings") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:meetings).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,
@@ -171,13 +176,15 @@
                    { group: :meetings, label: t(".meetings") }
                  ]
                } %>
-    <div class="mt-4">
+    <% meeting_events = Decidim::RestFull::Core::Configuration.default_events_for_meetings %>
+    <% if meeting_events.any? %>
+      <div class="mt-4">
       <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
       <p class="text-sm">
         <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
       </p>
       <ul>
-        <% Decidim::RestFull.config.events_for_meetings.each do |permission| %>
+        <% meeting_events.each do |permission| %>
           <li class="my-2">
             <label>
               <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
@@ -188,9 +195,10 @@
           </li>
         <% end %>
       </ul>
-    </div>
+      </div>
+    <% end %>
   <% end %>
-  <% if @api_client.scopes.to_a.include?("oauth") %>
+  <% if avail.scope_enabled?(org, :oauth) && @api_client.scopes.to_a.include?("oauth") %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
                  form:,

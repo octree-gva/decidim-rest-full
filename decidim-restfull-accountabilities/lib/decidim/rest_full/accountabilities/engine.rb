@@ -7,8 +7,6 @@ module Decidim
         config.root = Accountabilities::ENGINE_ROOT
 
         initializer "rest_full.accountabilities.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_accountabilities_api
-
           Decidim::RestFull::Extension.register(:accountability) do |ext|
             ext.oauth_scopes :accountability
             ext.permissions(:accountability, "accountability.read", group: :accountability)

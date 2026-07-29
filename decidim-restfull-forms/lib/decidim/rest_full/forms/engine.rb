@@ -7,8 +7,6 @@ module Decidim
         config.root = Forms::ENGINE_ROOT
 
         initializer "rest_full.forms.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_forms_api
-
           Decidim::RestFull::Extension.register(:forms) do |ext|
             ext.oauth_scopes :surveys
             ext.permissions(:surveys, "surveys.questionnaires.read", group: :surveys)
@@ -38,50 +36,48 @@ module Decidim
             )
 
             ext.routes do
-              constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_forms_api }) do
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :questionnaires,
-                  controller: "forms/questionnaires",
-                  only: [:index, :show, :update]
-                )
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :questionnaires,
+                controller: "forms/questionnaires",
+                only: [:index, :show, :update]
+              )
 
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :questions,
-                  controller: "forms/questions",
-                  only: [:index, :show, :create, :update, :destroy]
-                )
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :questions,
+                controller: "forms/questions",
+                only: [:index, :show, :create, :update, :destroy]
+              )
 
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :answer_options,
-                  controller: "forms/answer_options",
-                  only: [:index, :create, :update, :destroy]
-                )
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :answer_options,
+                controller: "forms/answer_options",
+                only: [:index, :create, :update, :destroy]
+              )
 
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :answers,
-                  controller: "forms/answers",
-                  only: [:index, :create]
-                )
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :answers,
+                controller: "forms/answers",
+                only: [:index, :create]
+              )
 
-                resources :questionnaire_responses, only: [:show, :destroy],
-                                                    controller: "/decidim/api/rest_full/forms/questionnaire_responses" do
-                  member do
-                    put "/", action: :update_forbidden
-                    delete "sync", action: :destroy_sync
-                  end
+              resources :questionnaire_responses, only: [:show, :destroy],
+                                                  controller: "/decidim/api/rest_full/forms/questionnaire_responses" do
+                member do
+                  put "/", action: :update_forbidden
+                  delete "sync", action: :destroy_sync
                 end
-
-                Decidim::RestFull::Routing.read_resources(
-                  self,
-                  :submission_requests,
-                  controller: "forms/submission_requests",
-                  only: [:show]
-                )
               end
+
+              Decidim::RestFull::Routing.read_resources(
+                self,
+                :submission_requests,
+                controller: "forms/submission_requests",
+                only: [:show]
+              )
             end
           end
         end

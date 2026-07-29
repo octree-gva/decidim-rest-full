@@ -16,7 +16,11 @@ require "decidim/core"
 require "decidim/rest_full/rest_full"
 require "decidim/rest_full/version"
 
+require "decidim/toggle"
 require "decidim/rest_full/core/configuration"
+require "decidim/rest_full/core/module_availability"
+require "decidim/rest_full/core/settings_tab"
+require "decidim/rest_full/core/tokens_availability"
 require "decidim/rest_full/core/webhook_event_catalog"
 require "decidim/rest_full/core/attachments_operations"
 require "decidim/rest_full/core/webhook_dispatcher"
@@ -86,7 +90,10 @@ module Decidim
 
     def self.events
       c = Core::Configuration.config
-      c.events_for_proposals + c.events_for_oauth + c.events_for_system + c.events_for_meetings
+      Core::Configuration.default_events_for_proposals +
+        c.events_for_oauth +
+        c.events_for_system +
+        Core::Configuration.default_events_for_meetings
     end
   end
 end

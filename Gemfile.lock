@@ -28,6 +28,7 @@ PATH
       cancancan
       decidim-admin (~> 0.29)
       decidim-core (~> 0.29)
+      decidim-toggle (~> 0.1.3)
       deface (~> 1.9)
       doorkeeper
       jsonapi-serializer
@@ -438,6 +439,10 @@ GEM
       devise (~> 4.7)
       devise-i18n (~> 1.2)
       devise_invitable (~> 2.0, >= 2.0.9)
+    decidim-toggle (0.1.3)
+      decidim-core (>= 0.29, < 0.33)
+      decidim-system (>= 0.29, < 0.33)
+      deface (~> 1.9.0)
     decidim-verifications (0.29.7)
       decidim-core (= 0.29.7)
     declarative-builder (0.2.0)
@@ -980,6 +985,7 @@ DEPENDENCIES
   decidim-restfull-proposals!
   decidim-restfull-sortition!
   decidim-restfull-surveys!
+  decidim-toggle (~> 0.1.3)
   deface (>= 1.9.0)
   erb_lint
   faker (~> 3.2)

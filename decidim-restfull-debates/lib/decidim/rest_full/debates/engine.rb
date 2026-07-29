@@ -7,9 +7,8 @@ module Decidim
         config.root = Debates::ENGINE_ROOT
 
         initializer "rest_full.debates.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_debates_api
-
           Decidim::RestFull::Extension.register(:debates) do |ext|
+            ext.oauth_scopes :debates
             ext.permissions(:debates, "debates.read", group: :debates)
             ext.open_api_definitions(
               File.join(Debates::ENGINE_ROOT, "lib/decidim/rest_full/debates/test_definitions.rb")

@@ -60,13 +60,11 @@ Decidim::RestFull::Core::RouteRegistry.core_routes_block = proc do
             only: [:index],
             controller: "/decidim/api/rest_full/users/users"
 
-  constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_attachments_api }) do
-    resources :attachments,
-              only: CRUD_ACTIONS,
-              controller: "/decidim/api/rest_full/attachments/attachments" do
-      collection do
-        post :direct_upload
-      end
+  resources :attachments,
+            only: CRUD_ACTIONS,
+            controller: "/decidim/api/rest_full/attachments/attachments" do
+    collection do
+      post :direct_upload
     end
   end
 
