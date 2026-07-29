@@ -16,6 +16,7 @@ Responses use JSON with `error` / `error_description` or JSON:API-style `errors`
 | **403** | Valid token, forbidden | Grant scope/permission; use user token if required |
 | **400** | Bad request / validation | Fix body, filters, or required user |
 | **404** | Unknown route or record | Check path, id, host/tenant |
+| **501** | Feature/module disabled for this org | Enable on System → organization → Restfull Toggle tab |
 | **422** | Semantic validation | See message (e.g. form errors) |
 
 ## Common messages
@@ -27,7 +28,7 @@ Responses use JSON with `error` / `error_description` or JSON:API-style `errors`
 | User blocked / locked | Pick another user |
 | Already voted | Idempotent vote handling on your side |
 | Unknown order / filter | Match OpenAPI allowed values |
-| Attachments API disabled | `enable_attachments_api` on host |
+| Attachments API disabled | Restfull Toggle `attachments_enabled` for the organization |
 
 ## Permissions debugging
 

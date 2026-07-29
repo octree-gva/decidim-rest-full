@@ -22,18 +22,16 @@ Start with [Recipe](./recipe.md) and [Boot and extension](./boot-and-extension.m
 
 ```ruby
 ext.routes do
-  constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_blogs_api }) do
-    Decidim::RestFull::Routing.read_resources(
-      self,
-      :blog_components,
-      controller: "components/blog_components",
-      only: [:index, :show]
-    )
-  end
+  Decidim::RestFull::Routing.read_resources(
+    self,
+    :blog_components,
+    controller: "components/blog_components",
+    only: [:index, :show]
+  )
 end
 ```
 
-Pass **`self`** (the router inside the block) as the first argument.
+Pass **`self`** (the router inside the block) as the first argument. Runtime gates use organization Toggle via `ModuleAvailability` (HTTP 501), not route constraints.
 
 ### 2. Async CRUD + sync aliases
 
@@ -102,7 +100,7 @@ ext.rswag_specs(
 |------|--------|
 | Routing DSL | Required for new monorepo gems; raw `resources` only for escape hatches. |
 | No duplicate blocks | Same route block registered twice raises `DuplicateRouteBlockError`. |
-| Constraints | Wrap `ext.routes` in `constraints(-> { Configuration.enable_*_api })` when gated. |
+| Runtime gate | Organization Toggle + `ModuleAvailability` (501 when off). Do not use boot `Configuration.enable_*_api`. |
 | Controller path | `Routing` builds `/decidim/api/rest_full/…` from the `controller:` segment. |
 
 ## Related specs

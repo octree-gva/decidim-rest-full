@@ -7,8 +7,6 @@ module Decidim
         config.root = Sortition::ENGINE_ROOT
 
         initializer "rest_full.sortition.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_sortition_api
-
           Decidim::RestFull::Extension.register(:sortitions) do |ext|
             ext.oauth_scopes :sortitions
             ext.permissions(:sortitions, "sortitions.read", group: :sortitions)

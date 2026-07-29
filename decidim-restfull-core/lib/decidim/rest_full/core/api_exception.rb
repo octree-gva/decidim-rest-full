@@ -36,7 +36,8 @@ module Decidim
           "Decidim::RestFull::Core::ApiException::BadRequest" => { status: 400, message: "Bad request" },
           "Decidim::RestFull::Core::ApiException::Unauthorized" => { status: 401, message: "Unauthorized access" },
           "Decidim::RestFull::Core::ApiException::Forbidden" => { status: 403, message: "Forbidden" },
-          "Decidim::RestFull::Core::ApiException::NotFound" => { status: 404, message: "Resource not found" }
+          "Decidim::RestFull::Core::ApiException::NotFound" => { status: 404, message: "Resource not found" },
+          "Decidim::RestFull::Core::ApiException::NotImplemented" => { status: 501, message: "Not implemented" }
         }.freeze
 
         class BaseError < StandardError; end

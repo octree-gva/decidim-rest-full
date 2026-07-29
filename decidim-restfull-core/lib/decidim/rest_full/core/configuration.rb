@@ -6,6 +6,79 @@ module Decidim
       class Configuration
         include ActiveSupport::Configurable
 
+        FEATURE_PERMISSION_SETS = {
+          "decidim-restfull-blogs" => { "blogs" => %w(blogs.read blogs.write blogs.destroy) },
+          "decidim-restfull-proposals" => { "proposals" => %w(proposals.read proposals.draft proposals.vote) },
+          "decidim-restfull-debates" => { "debates" => %w(debates.read) },
+          "decidim-restfull-budgets" => { "budgets" => %w(budgets.read) },
+          "decidim-restfull-surveys" => {
+            "surveys" => %w(
+              surveys.read surveys.questionnaires.read surveys.questions.manage
+              surveys.answers.read surveys.answers.submit surveys.answers.destroy
+            )
+          },
+          "decidim-restfull-accountabilities" => { "accountability" => %w(accountability.read) },
+          "decidim-restfull-sortition" => { "sortitions" => %w(sortitions.read) },
+          "decidim-restfull-meetings" => { "meetings" => %w(meetings.read) }
+        }.freeze
+
+        class << self
+          def default_available_permissions
+            always_available_permissions.merge(feature_permissions).tap do |permissions|
+              add_feature_events(permissions, "proposals", default_events_for_proposals)
+              add_feature_events(permissions, "meetings", default_events_for_meetings)
+            end
+          end
+
+          def default_events_for_proposals
+            return [] unless Gem.loaded_specs.has_key?("decidim-restfull-proposals")
+
+            %w(
+              draft_proposal_creation.succeeded draft_proposal_update.succeeded
+              proposal_creation.succeeded proposal_update.succeeded proposal_state_change.succeeded
+            )
+          end
+
+          def default_events_for_meetings
+            return [] unless Gem.loaded_specs.has_key?("decidim-restfull-meetings")
+
+            %w(meetings.upcoming_reminder.succeeded)
+          end
+
+          private
+
+          def always_available_permissions
+            {
+              "system" => system_permissions,
+              "public" => %w(public.component.read public.space.read),
+              "oauth" => %w(
+                oauth.magic_link oauth.extended_data.read oauth.extended_data.update
+                user.created user.updated
+              ),
+              "attachments" => %w(attachments.read attachments.write attachments.destroy)
+            }
+          end
+
+          def system_permissions
+            %w(
+              oauth.impersonate oauth.login
+              system.organizations.read system.organizations.update system.organizations.destroy
+              system.organizations.extended_data.read system.organizations.extended_data.update
+              system.organizations.created system.organizations.updated system.organizations.deleted
+            )
+          end
+
+          def feature_permissions
+            FEATURE_PERMISSION_SETS.each_with_object({}) do |(gem, permissions), available|
+              available.merge!(permissions) if Gem.loaded_specs.has_key?(gem)
+            end
+          end
+
+          def add_feature_events(permissions, scope, events)
+            permissions[scope]&.concat(events)
+          end
+        end
+
         config_accessor :loadbalancer_ips do
           ips = ENV.fetch("DECIDIM_REST_LOADBALANCER_IPS", "127.0.0.1, ::1").split(",").map(&:strip)
           ips.map { |ip| IPAddr.new(ip) }.map(&:to_s)
@@ -31,119 +104,12 @@ module Decidim
           ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")
         end
 
-        # When false, Proposals engine does not mount proposal API routes or apply proposal overrides.
-        config_accessor :enable_proposals_api do
-          true
-        end
-
-        # When false, Blogs engine does not mount blog API routes.
-        config_accessor :enable_blogs_api do
-          true
-        end
-
-        config_accessor :enable_debates_api do
-          true
-        end
-
-        config_accessor :enable_surveys_api do
-          true
-        end
-
-        config_accessor :enable_forms_api do
-          true
-        end
-
-        config_accessor :enable_meetings_api do
-          true
-        end
-
-        config_accessor :enable_attachments_api do
-          true
-        end
-
-        config_accessor :enable_budgets_api do
-          true
-        end
-
-        config_accessor :enable_accountabilities_api do
-          true
-        end
-
-        config_accessor :enable_sortition_api do
-          true
-        end
-
         config_accessor :available_permissions do
-          {
-            "blogs" => [
-              "blogs.read",
-              "blogs.write",
-              "blogs.destroy"
-            ],
-            "system" => [
-              "oauth.impersonate",
-              "oauth.login",
-              "system.organizations.read",
-              "system.organizations.update",
-              "system.organizations.destroy",
-              "system.organizations.extended_data.read",
-              "system.organizations.extended_data.update",
-              *config.events_for_system
-            ],
-            "public" => [
-              "public.component.read",
-              "public.space.read"
-            ],
-            "proposals" => [
-              "proposals.read", "proposals.draft", "proposals.vote",
-              *config.events_for_proposals
-            ],
-            "debates" => [
-              "debates.read"
-            ],
-            "budgets" => [
-              "budgets.read"
-            ],
-            "surveys" => [
-              "surveys.read",
-              "surveys.questionnaires.read",
-              "surveys.questions.manage",
-              "surveys.answers.read",
-              "surveys.answers.submit",
-              "surveys.answers.destroy"
-            ],
-            "accountability" => [
-              "accountability.read"
-            ],
-            "sortitions" => [
-              "sortitions.read"
-            ],
-            "meetings" => [
-              "meetings.read",
-              *config.events_for_meetings
-            ],
-            "oauth" => [
-              "oauth.magic_link",
-              "oauth.extended_data.read",
-              "oauth.extended_data.update",
-              *config.events_for_oauth
-            ],
-            "attachments" => [
-              "attachments.read",
-              "attachments.write",
-              "attachments.destroy"
-            ]
-          }
+          Decidim::RestFull::Core::Configuration.default_available_permissions
         end
 
         config_accessor :events_for_proposals do
-          [
-            "draft_proposal_creation.succeeded",
-            "draft_proposal_update.succeeded",
-            "proposal_creation.succeeded",
-            "proposal_update.succeeded",
-            "proposal_state_change.succeeded"
-          ]
+          Decidim::RestFull::Core::Configuration.default_events_for_proposals
         end
 
         config_accessor :events_for_oauth do
@@ -162,9 +128,7 @@ module Decidim
         end
 
         config_accessor :events_for_meetings do
-          [
-            "meetings.upcoming_reminder.succeeded"
-          ]
+          Decidim::RestFull::Core::Configuration.default_events_for_meetings
         end
 
         # When true, +rest_enhancement+ with +http_cache_profile+ and relationship/meta but no +cache_time+ raises at boot.

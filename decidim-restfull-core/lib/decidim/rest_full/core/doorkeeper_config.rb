@@ -8,10 +8,20 @@ module Decidim
       # (resource owner password credentials) resolution.
       module DoorkeeperConfig
         CORE_OPTIONAL_SCOPES = [
-          :spaces, :system, :meetings, :debates, :pages, :oauth, :roles, :attachments
+          :spaces, :system, :pages, :oauth, :roles, :attachments
         ].freeze
 
         class << self
+          def advertised_scopes
+            ([:public] + CORE_OPTIONAL_SCOPES + Extension.doorkeeper_optional_scopes).uniq
+          end
+
+          def advertised_scopes_for(organization)
+            advertised_scopes.select do |scope|
+              Decidim::RestFull::Core::ModuleAvailability.scope_enabled?(organization, scope)
+            end
+          end
+
           def merge_optional_scopes!
             scopes = (CORE_OPTIONAL_SCOPES + Decidim::RestFull::Extension.doorkeeper_optional_scopes).uniq
             current = Array(::Doorkeeper.configuration.optional_scopes).map(&:to_sym)

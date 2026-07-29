@@ -7,7 +7,6 @@ module Decidim
         config.root = Proposals::ENGINE_ROOT
 
         config.to_prepare do
-          next unless Decidim::RestFull::Core::Configuration.enable_proposals_api
           next unless defined?(Decidim::Proposals)
 
           Decidim::Proposals::Proposal.include(Decidim::RestFull::Proposals::ProposalClientIdOverride)
@@ -16,8 +15,6 @@ module Decidim
         end
 
         initializer "rest_full.proposals.extension" do
-          next unless Decidim::RestFull::Core::Configuration.enable_proposals_api
-
           Decidim::RestFull::Extension.register(:proposals) do |ext|
             ext.oauth_scopes :proposals
             ext.permissions(:proposals, "proposals.read", group: :proposals)
@@ -43,40 +40,38 @@ module Decidim
             )
 
             ext.routes do
-              constraints(->(_req) { Decidim::RestFull::Core::Configuration.enable_proposals_api }) do
-                resources :components, only: [] do
-                  collection do
-                    Decidim::RestFull::Routing.read_resources(
-                      self,
-                      :proposal_components,
-                      controller: "components/proposal_components",
-                      only: [:index, :show]
-                    )
-                  end
+              resources :components, only: [] do
+                collection do
+                  Decidim::RestFull::Routing.read_resources(
+                    self,
+                    :proposal_components,
+                    controller: "components/proposal_components",
+                    only: [:index, :show]
+                  )
                 end
-
-                Decidim::RestFull::Routing.read_resources(
-                  self,
-                  :proposals,
-                  controller: "proposals/proposals",
-                  only: [:index, :show]
-                )
-
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :draft_proposals,
-                  controller: "draft_proposals/draft_proposals",
-                  only: [:index, :show, :update, :create, :destroy],
-                  member: { post: { publish: :publish, "publish/sync": :publish_sync } }
-                )
-
-                Decidim::RestFull::Routing.async_resources(
-                  self,
-                  :vote_proposals,
-                  controller: "vote_proposals/vote_proposals",
-                  only: [:index, :show, :create, :destroy]
-                )
               end
+
+              Decidim::RestFull::Routing.read_resources(
+                self,
+                :proposals,
+                controller: "proposals/proposals",
+                only: [:index, :show]
+              )
+
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :draft_proposals,
+                controller: "draft_proposals/draft_proposals",
+                only: [:index, :show, :update, :create, :destroy],
+                member: { post: { publish: :publish, "publish/sync": :publish_sync } }
+              )
+
+              Decidim::RestFull::Routing.async_resources(
+                self,
+                :vote_proposals,
+                controller: "vote_proposals/vote_proposals",
+                only: [:index, :show, :create, :destroy]
+              )
             end
           end
         end
