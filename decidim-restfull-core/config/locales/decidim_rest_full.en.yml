@@ -27,6 +27,7 @@ en:
             scope_public: 'Public: navigate components and spaces'
             scope_roles: 'Roles: manage Decidim roles'
             scope_system: 'System: manage Organizations and Rails'
+            scope_spaces: 'Spaces: manage spaces'
           permission:
             oauth:
               extended_data:
