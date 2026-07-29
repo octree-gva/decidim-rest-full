@@ -9,7 +9,7 @@ module Decidim
         MODULE_NAME = "decidim_restfull"
 
         FEATURE_MODULES = [
-          :proposals, :blogs, :debates, :surveys, :forms, :meetings, :attachments, :budgets, :accountabilities
+          :proposals, :blogs, :debates, :surveys, :forms, :meetings, :attachments, :budgets, :accountabilities, :sortition
         ].freeze
 
         # Feature Toggle key → RubyGems name. +nil+ means shipped in core (always present).
@@ -22,7 +22,8 @@ module Decidim
           meetings: "decidim-restfull-meetings",
           attachments: nil,
           budgets: "decidim-restfull-budgets",
-          accountabilities: "decidim-restfull-accountabilities"
+          accountabilities: "decidim-restfull-accountabilities",
+          sortition: "decidim-restfull-sortition"
         }.freeze
 
         # OAuth scope → feature key(s). Array means any-of.
@@ -34,7 +35,8 @@ module Decidim
           meetings: :meetings,
           attachments: :attachments,
           budgets: :budgets,
-          accountability: :accountabilities
+          accountability: :accountabilities,
+          sortitions: :sortition
         }.freeze
 
         CONTROLLER_PATH_FEATURES = {
@@ -57,7 +59,9 @@ module Decidim
           "attachments" => :attachments,
           "budgets" => :budgets,
           "accountability" => :accountabilities,
-          "accountabilities" => :accountabilities
+          "accountabilities" => :accountabilities,
+          "sortitions" => :sortition,
+          "sortition" => :sortition
         }.freeze
 
         class << self

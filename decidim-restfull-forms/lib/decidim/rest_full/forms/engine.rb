@@ -6,12 +6,7 @@ module Decidim
       class Engine < ::Rails::Engine
         config.root = Forms::ENGINE_ROOT
 
-        config.to_prepare do
-          Decidim::RestFull::Forms::Decidim032Compat.apply!
-        end
-
         initializer "rest_full.forms.extension" do
-          Decidim::RestFull::Forms::Decidim032Compat.apply!
           Decidim::RestFull::Extension.register(:forms) do |ext|
             ext.oauth_scopes :surveys
             ext.permissions(:surveys, "surveys.questionnaires.read", group: :surveys)

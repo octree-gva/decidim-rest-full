@@ -117,6 +117,19 @@
                  ]
                } %>
   <% end %>
+  <% if avail.scope_enabled?(org, :sortitions) && @api_client.scopes.to_a.include?("sortitions") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:sortitions).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :sortitions,
+                 dom_id: "sortitions_permissions",
+                 title: t("scope_sortitions", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :sortitions, label: t(".sortitions") }
+                 ]
+               } %>
+  <% end %>
   <% if avail.scope_enabled?(org, :proposals) && @api_client.scopes.to_a.include?("proposals") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:proposals).any? %>
     <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
                locals: {
