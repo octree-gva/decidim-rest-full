@@ -47,7 +47,7 @@ module Decidim
             current_user = ::Decidim::Api::RestFull::Proposals::ProposalsController::CurrentUser.user
             raise "current_user is nil" if current_user.nil?
 
-            awesome_support = Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+            awesome_support = Decidim::Toggle.gem_present?("decidim-decidim_awesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
             unless awesome_support
               return Arel.sql(<<~SQL.squish
                 (

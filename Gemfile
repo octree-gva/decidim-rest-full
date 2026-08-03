@@ -16,14 +16,12 @@ require File.join(module_root, "decidim-restfull-core/lib/decidim/rest_full/vers
 DECIDIM_VERSION = Decidim::RestFull.decidim_version
 
 gem "decidim", DECIDIM_VERSION
+
+gem "decidim-toggle", 
+  git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle", 
+  branch: "main"
+
 gem "decidim-restfull", path: "#{base_path}decidim-restfull"
-# Prefer published gem so CI/coworkers need no git.octree.ch clone for toggle.
-# Override with TOGGLE_PATH=/path/to/decidim-toggle for local gem work.
-if ENV["TOGGLE_PATH"]
-  gem "decidim-toggle", path: ENV["TOGGLE_PATH"]
-else
-  gem "decidim-toggle", "~> 0.1.3"
-end
 gem "decidim-restfull-accountabilities", path: "#{base_path}decidim-restfull-accountabilities"
 gem "decidim-restfull-blogs", path: "#{base_path}decidim-restfull-blogs"
 gem "decidim-restfull-budgets", path: "#{base_path}decidim-restfull-budgets"
@@ -37,16 +35,9 @@ gem "decidim-restfull-surveys", path: "#{base_path}decidim-restfull-surveys"
 gem "bootsnap", "~> 1.4"
 gem "concurrent-ruby", "1.3.4"
 gem "decidim-conferences", Decidim::RestFull.decidim_version
-# Prefer published gem so CI/coworkers need no clone. Override with
-# AWESOME_PATH=/path/to/decidim-module-decidim_awesome for local gem work.
-# Temporary git pin until 0.15 (Decidim 0.32) ships on RubyGems.
-if ENV["AWESOME_PATH"]
-  gem "decidim-decidim_awesome", path: ENV["AWESOME_PATH"]
-else
-  gem "decidim-decidim_awesome",
-      git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
-      branch: "upgrade-32"
-end
+gem "decidim-decidim_awesome",
+    git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
+    branch: "upgrade-32"
 gem "decidim-initiatives", Decidim::RestFull.decidim_version
 gem "decidim-meetings", Decidim::RestFull.decidim_version
 

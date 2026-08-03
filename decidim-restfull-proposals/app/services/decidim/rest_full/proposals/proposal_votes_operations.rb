@@ -102,7 +102,7 @@ module Decidim
         end
 
         def awesome?
-          Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+          Decidim::Toggle.gem_present?("decidim-decidim_awesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
         end
 
         def voted?
