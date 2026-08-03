@@ -18,7 +18,6 @@ module Decidim
             )
           },
           "decidim-restfull-accountabilities" => { "accountability" => %w(accountability.read) },
-          "decidim-restfull-sortition" => { "sortitions" => %w(sortitions.read) },
           "decidim-restfull-meetings" => { "meetings" => %w(meetings.read) }
         }.freeze
 

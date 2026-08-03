@@ -83,7 +83,6 @@ Declare **Decidim domain** deps on the matching `decidim-*` gem and **RestFull a
 | `decidim-restfull-debates` | `decidim-restfull-core`, `decidim-debates` |
 | `decidim-restfull-budgets` | `decidim-restfull-core`, `decidim-budgets` |
 | `decidim-restfull-accountabilities` | `decidim-restfull-core`, `decidim-accountability` |
-| `decidim-restfull-sortition` | `decidim-restfull-core`, `decidim-sortitions` |
 | `decidim-restfull-forms` | `decidim-restfull-core`, `decidim-forms`, `decidim-surveys` (questionnaire specs) |
 | `decidim-restfull-surveys` | `decidim-restfull-core`, `decidim-restfull-forms`, `decidim-surveys` |
 | `decidim-restfull` (metagem) | all official `decidim-restfull-*` gems above |

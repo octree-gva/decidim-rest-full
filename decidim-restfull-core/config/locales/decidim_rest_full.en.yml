@@ -99,7 +99,6 @@ en:
             permissions_title: Permissions
             proposals: Proposals
             rails_perm: Ruby on Rails
-            sortitions: Sortitions
             space: Space
             surveys: Surveys
             update_permissions: Update permissions
@@ -152,7 +151,6 @@ en:
         attachments_enabled: Rest API for attachments enabled
         budgets_enabled: Rest API for budgets enabled
         accountabilities_enabled: Rest API for accountabilities enabled
-        sortition_enabled: Rest API for sortition enabled
         helptext:
           enabled: When off, the whole RestFull API for this organization returns HTTP 501.
           proposals_enabled: Expose proposals scopes, endpoints, and webhooks.
@@ -164,4 +162,3 @@ en:
           attachments_enabled: Expose attachments scopes and endpoints.
           budgets_enabled: Expose budgets scopes and endpoints.
           accountabilities_enabled: Expose accountability scopes and endpoints.
-          sortition_enabled: Expose sortition scopes and endpoints.
