@@ -13,13 +13,12 @@ module_root = case File.basename(__dir__)
               end
 require File.join(module_root, "decidim-restfull-core/lib/decidim/rest_full/version.rb")
 
-DECIDIM_VERSION = Decidim::RestFull.decidim_version
+# Default pin is 0.32. Appraisals override in gemfiles/decidim_0.{29,32}.gemfile.
+gem "decidim", "~> 0.32.0"
 
-gem "decidim", DECIDIM_VERSION
-
-gem "decidim-toggle", 
-  git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle", 
-  branch: "main"
+gem "decidim-toggle",
+    git: "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-toggle",
+    branch: "main"
 
 gem "decidim-restfull", path: "#{base_path}decidim-restfull"
 gem "decidim-restfull-accountabilities", path: "#{base_path}decidim-restfull-accountabilities"
@@ -34,12 +33,19 @@ gem "decidim-restfull-surveys", path: "#{base_path}decidim-restfull-surveys"
 
 gem "bootsnap", "~> 1.4"
 gem "concurrent-ruby", "1.3.4"
-gem "decidim-conferences", Decidim::RestFull.decidim_version
-gem "decidim-decidim_awesome",
-    git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
-    branch: "upgrade-32"
-gem "decidim-initiatives", Decidim::RestFull.decidim_version
-gem "decidim-meetings", Decidim::RestFull.decidim_version
+gem "decidim-conferences", "~> 0.32.0"
+gem "decidim-initiatives", "~> 0.32.0"
+gem "decidim-meetings", "~> 0.32.0"
+
+# Prefer published gem once 0.15 ships. Until then pin git upgrade-32 (or AWESOME_PATH).
+# Appraisal decidim-0.29 replaces this with ~> 0.12.6 in gemfiles/decidim_0.29.gemfile.
+if ENV["AWESOME_PATH"].to_s != ""
+  gem "decidim-decidim_awesome", path: ENV.fetch("AWESOME_PATH")
+else
+  gem "decidim-decidim_awesome",
+      git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
+      branch: "upgrade-32"
+end
 
 gem "deface", ">= 1.9.0"
 gem "pg"
@@ -48,9 +54,11 @@ gem "uglifier", "~> 4.1"
 gem "uri", ">= 1.1.1"
 
 group :development, :test do
+  gem "appraisal", "~> 2.5", require: false
   gem "byebug", "~> 11.0", platform: :mri
-  gem "decidim-dev", Decidim::RestFull.decidim_version
+  gem "decidim-dev", "~> 0.32.0"
   gem "decidim-restfull-dev", path: "#{base_path}decidim-restfull-dev"
+  gem "decidim-restfull-dummy", path: "#{base_path}decidim-restfull-dummy"
   gem "erb_lint"
   gem "rswag-specs"
   gem "rubocop-rspec"

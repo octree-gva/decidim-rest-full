@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email = ["hadrien@octree.ch"]
   s.license = "AGPL-3.0"
   s.homepage = "https://git.octree.ch/decidim/decidim-chatbot/decidim-module-rest_full"
-  s.required_ruby_version = ">= 3.4"
+  s.required_ruby_version = ">= 3.2"
   s.summary = "Decidim RestFull API — core (OAuth, registries, system routes)"
   s.description = s.summary
 
@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency "activerecord-session_store", "~> 2.0"
   s.add_dependency "api-pagination", "~> 6.0"
   s.add_dependency "cancancan"
-  s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
-  s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-admin", *Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-core", *Decidim::RestFull.decidim_version
   s.add_dependency "decidim-toggle", "~> 0.1.3"
   s.add_dependency "deface", "~> 1.9"
   s.add_dependency "doorkeeper"

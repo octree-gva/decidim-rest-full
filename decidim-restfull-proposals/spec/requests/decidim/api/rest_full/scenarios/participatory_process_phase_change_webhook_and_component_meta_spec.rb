@@ -3,11 +3,7 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass -- behaviour scenario (multi-step HTTP)
-#
-# Process-lifecycle webhook catalog entry is still absent (SpaceSerializer has no phase;
-# WebhookDispatcher only maps proposal events). This scenario covers phase-driven
-# proposal-component meta (votes_enabled / can_vote) plus existing proposal webhook plumbing smoke.
-RSpec.describe "Participatory process phase change drives proposal component meta (+ webhook smoke)" do
+RSpec.describe "Participatory process phase change drives proposal component meta (+ webhooks)" do
   include ActiveJob::TestHelper
 
   let!(:organization) { create(:organization, available_locales: %w(en)) }
@@ -35,7 +31,11 @@ RSpec.describe "Participatory process phase change drives proposal component met
     c.permissions = [
       Decidim::RestFull::Core::Permission.new(permission: "public.component.read"),
       Decidim::RestFull::Core::Permission.new(permission: "oauth.impersonate"),
-      Decidim::RestFull::Core::Permission.new(permission: "proposal_creation.succeeded")
+      Decidim::RestFull::Core::Permission.new(permission: "proposal_creation.succeeded", is_event: true),
+      Decidim::RestFull::Core::Permission.new(
+        permission: "participatory_process.step_activated.succeeded",
+        is_event: true
+      )
     ]
     c.save!
     c
@@ -45,8 +45,16 @@ RSpec.describe "Participatory process phase change drives proposal component met
     create(:oauth_access_token, scopes: "public", resource_owner_id: nil, application: api_client)
   end
 
-  let!(:webhook) do
+  let!(:proposal_webhook) do
     create(:webhook_registration, api_client:, subscriptions: ["proposal_creation.succeeded"])
+  end
+
+  let!(:phase_webhook) do
+    create(
+      :webhook_registration,
+      api_client:,
+      subscriptions: ["participatory_process.step_activated.succeeded"]
+    )
   end
 
   let(:api_prefix) { "/api/rest_full/v#{Decidim::RestFull.major_minor_version}" }
@@ -63,7 +71,7 @@ RSpec.describe "Participatory process phase change drives proposal component met
     response.parsed_body.dig("data", "meta")
   end
 
-  it "flips votes meta when active step becomes VOTE, and enqueues proposal webhook job" do
+  it "flips votes meta on phase change and enqueues phase + proposal webhooks" do
     meta_propose = proposal_component_meta(public_token.token)
     expect(meta_propose["votes_enabled"]).to be(false)
     expect(meta_propose["can_vote"]).to be(false)
@@ -92,7 +100,18 @@ RSpec.describe "Participatory process phase change drives proposal component met
     expect(meta_vote["votes_enabled"]).to be(true)
     expect(meta_vote["can_vote"]).to be(true)
 
-    # Decidim command/event hooks use Notifications.publish (name, payload hash).
+    expect do
+      ActiveSupport::Notifications.publish(
+        Decidim::RestFull::Core::ParticipatoryProcessStepActivatedWebhookHandler::HANDLED_EVENT,
+        { resource: vote_phase }
+      )
+    end.to have_enqueued_job(Decidim::RestFull::Core::SpaceWebhookJob).with(
+      "participatory_process.step_activated.succeeded",
+      participatory_process.id,
+      organization.id,
+      vote_phase.id
+    )
+
     expect do
       ActiveSupport::Notifications.publish(
         "decidim.events.proposals.proposal_published",
@@ -104,8 +123,8 @@ RSpec.describe "Participatory process phase change drives proposal component met
       organization.id
     )
 
-    # Keep webhook registration in the graph so the smoke path stays realistic.
-    expect(webhook.subscriptions).to include("proposal_creation.succeeded")
+    expect(proposal_webhook.subscriptions).to include("proposal_creation.succeeded")
+    expect(phase_webhook.subscriptions).to include("participatory_process.step_activated.succeeded")
   end
 end
 # rubocop:enable RSpec/DescribeClass

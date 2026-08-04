@@ -8,6 +8,8 @@ module Decidim
 
         initializer "rest_full.surveys.extension" do
           Decidim::RestFull::Extension.register(:surveys) do |ext|
+            ext.toggle_feature gem: "decidim-restfull-surveys"
+            ext.controller_paths "surveys"
             ext.oauth_scopes :surveys
             ext.permissions(:surveys, "surveys.read", group: :surveys)
             ext.open_api_definitions(

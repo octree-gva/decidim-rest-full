@@ -214,7 +214,7 @@ Full option reference: [API client CLI](./api-client-cli.md).
 | `yarn docs:build` | ReDoc HTML + Docusaurus site |
 | `yarn postcommit` | setup-tests, format, openapi, node client, ReDoc (prefers `docker compose exec` when `rest_full` is already up; falls back to `run`) |
 
-`bin/setup-tests` skips regenerating `spec/decidim_dummy_app` when it looks healthy (`config/shakapacker.yml` + `database.yml` + `Gemfile`) and only runs `db:migrate` (it does **not** `db:drop` — a full replay can fail when RestFull migration timestamps sort before Doorkeeper). Set `FORCE_SETUP_TESTS=1` (default: unset/off) to wipe and rebuild the dummy app. Optional: `npm_config_maxsockets` (default `2`) and `NODE_OPTIONS` (default `--max-old-space-size=4096`) limit npm memory during `rake test_app`.
+`bin/setup-tests` skips regenerating `spec/decidim_dummy_app` when it looks healthy and the appraisal marker (`.decidim_appraisal`: `decidim-0.29` / `decidim-0.32`) matches the current `BUNDLE_GEMFILE` — then it only runs `db:migrate` (no `db:drop`). **Switching Decidim appraisals always regenerates `test_app` and drops the DB** (migrations differ between 0.29 and 0.32). Set `FORCE_SETUP_TESTS=1` to wipe and rebuild within the same appraisal. Optional: `npm_config_maxsockets` (default `2`) and `NODE_OPTIONS` (default `--max-old-space-size=4096`) limit npm memory during `rake test_app`.
 | `bin/openapi-stale` / `exe/decidim-rest_full-openapi` | Check staleness; prompt before full swaggerize |
 | `yarn gen:openapi-spec:check` | Exit 1 if `openapi.json` is stale (CI) |
 

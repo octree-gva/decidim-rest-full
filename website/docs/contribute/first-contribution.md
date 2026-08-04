@@ -57,6 +57,26 @@ docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
 ```
 
+### Appraisals (Decidim 0.32 + 0.29)
+
+CI runs RSpec against both Decidim minors via [Appraisal](https://github.com/thoughtbot/appraisal) (`Appraisals` → `gemfiles/decidim_0.{29,32}.gemfile`). Default Compose image / OpenAPI generation stay on **0.32**.
+
+**Migrations differ between minors.** `bin/setup-tests` stores `spec/decidim_dummy_app/.decidim_appraisal` (`decidim-0.29` / `decidim-0.32`) and **regenerates `test_app` + drops the test DB** when that key changes. Same-appraisal re-runs only migrate.
+
+```bash
+# Install both lockfiles (inside rest_full for 0.32; use ruby:3.2 for 0.29)
+bundle exec appraisal install
+
+BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bin/setup-tests
+BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bundle exec rspec
+
+# Switching minor rebuilds the dummy automatically (no FORCE_SETUP_TESTS needed)
+BUNDLE_GEMFILE=gemfiles/decidim_0.29.gemfile bin/setup-tests
+BUNDLE_GEMFILE=gemfiles/decidim_0.29.gemfile bundle exec rspec
+```
+
+`yarn gen:openapi-spec` / `bin/swaggerize` always pin `gemfiles/decidim_0.32.gemfile` and refuse 0.29.
+
 ## Commits
 
 Use [Conventional Commits](https://www.conventionalcommits.org/). Prefer `yarn commit` (Commitizen) so the message format stays consistent for changelog and releases.

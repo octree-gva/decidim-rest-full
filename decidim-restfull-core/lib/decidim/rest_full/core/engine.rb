@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Eager require: initializer runs early; app/services is not always autoload-ready when +Extension.register+ runs.
+require File.join(
+  Decidim::RestFull::ENGINE_ROOT,
+  "app/services/decidim/rest_full/core/participatory_process_step_activated_webhook_handler.rb"
+)
+
 module Decidim
   module RestFull
     module Core
@@ -102,6 +108,32 @@ module Decidim
 
           registry.register(:roles, "roles.read", group: :roles)
           registry.register(:roles, "roles.write", group: :roles)
+
+          registry.register(:webhooks, "webhooks.read", group: :webhooks)
+          registry.register(:webhooks, "webhooks.write", group: :webhooks)
+          registry.register(:webhooks, "webhooks.destroy", group: :webhooks)
+        end
+
+        initializer "rest_full.spaces.webhooks" do
+          Decidim::RestFull::Extension.register(:spaces) do |ext|
+            ext.webhook_event(
+              Decidim::RestFull::Core::ParticipatoryProcessStepActivatedWebhookHandler::WEBHOOK_EVENT,
+              scope: :public,
+              payload_schema_ref: :space,
+              schema_key: :wh_pp_step,
+              trigger: "Participatory process step (phase) activated",
+              example: lambda { |organization|
+                ::Decidim::Api::RestFull::Core::SpaceWebhookSerializer.example_envelope(
+                  organization,
+                  event_name: Decidim::RestFull::Core::ParticipatoryProcessStepActivatedWebhookHandler::WEBHOOK_EVENT
+                )
+              }
+            )
+            ext.webhooks(
+              Decidim::RestFull::Core::ParticipatoryProcessStepActivatedWebhookHandler::HANDLED_EVENT,
+              handler: Decidim::RestFull::Core::ParticipatoryProcessStepActivatedWebhookHandler.method(:call)
+            )
+          end
         end
 
         # Same pattern as decidim_admin.mount_routes / decidim_system.mount_routes:

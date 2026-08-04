@@ -36,7 +36,8 @@ module Decidim
             ["surveys", :perms_for_surveys],
             ["accountability", :perms_for_accountability],
             ["roles", :perms_for_roles],
-            ["attachments", :perms_for_attachments]
+            ["attachments", :perms_for_attachments],
+            ["webhooks", :perms_for_webhooks]
           ].each do |scope_token, meth|
             send(meth) if scopes.include?(scope_token)
           end
@@ -106,6 +107,15 @@ module Decidim
             can :update, ::Decidim::Attachment
           end
           can :destroy, ::Decidim::Attachment if permissions.include? "attachments.destroy"
+        end
+
+        def perms_for_webhooks
+          can :read, ::Decidim::RestFull::Core::WebhookRegistration if permissions.include? "webhooks.read"
+          if permissions.include?("webhooks.write")
+            can :create, ::Decidim::RestFull::Core::WebhookRegistration
+            can :update, ::Decidim::RestFull::Core::WebhookRegistration
+          end
+          can :destroy, ::Decidim::RestFull::Core::WebhookRegistration if permissions.include? "webhooks.destroy"
         end
 
         def perms_for_proposals

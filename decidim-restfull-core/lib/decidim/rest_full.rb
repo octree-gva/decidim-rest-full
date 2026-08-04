@@ -71,8 +71,6 @@ require "decidim/rest_full/cli"
 
 module Decidim
   module RestFull
-    include ActiveSupport::Configurable
-
     def self.decidim_rest_full
       @decidim_rest_full ||= Decidim::RestFull::Core::Engine.routes.url_helpers
     end
@@ -89,11 +87,7 @@ module Decidim
     end
 
     def self.events
-      c = Core::Configuration.config
-      Core::Configuration.default_events_for_proposals +
-        c.events_for_oauth +
-        c.events_for_system +
-        Core::Configuration.default_events_for_meetings
+      Core::WebhookEventCatalog.all.map(&:event_name)
     end
   end
 end

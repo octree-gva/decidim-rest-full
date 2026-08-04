@@ -18,6 +18,7 @@ Technical layout of the Rubygems in this repository. For a non-developer summary
 | **decidim-restfull-meetings** | Meetings serializers + upcoming-meeting webhook; **`decidim_rest_full_meetings.en.yml`** (scopes, permissions, webhook label); `Extension.register(:meetings)`. |
 | **Debates / Surveys / Budgets / Accountabilities** | Serializers + `*.read` permission + **`decidim_rest_full_*.en.yml`**; OpenAPI manifest schema via `test_definitions.rb`. |
 | **decidim-restfull-dev** | Development only: swagger CLI, test helpers. |
+| **decidim-restfull-dummy** | Dev/test only: example Extension + Toggle feature; endpoints return 501. |
 
 Feature gems depend on **decidim-restfull-core** and the matching **decidim-\*** component gem (for example `decidim-surveys`).
 
@@ -80,7 +81,7 @@ Host apps register in `after_initialize`; `Extension.register` appends routes wh
 
 ## CI
 
-GitLab runs RSpec per gem, then the full metagem suite. Local parity: `./bin/check` inside the `rest_full` Compose service (see [First contribution](/contribute/first-contribution)).
+GitLab runs RSpec per gem **twice** (Appraisals `decidim-0.32` on Ruby 3.4 and `decidim-0.29` on Ruby 3.2), then the full metagem suite for each minor. OpenAPI / ReDoc / node client stay **0.32-only** (`bin/swaggerize` pins `gemfiles/decidim_0.32.gemfile`). Local parity: `./bin/check` inside the `rest_full` Compose service (0.32); see [First contribution](/contribute/first-contribution) for `BUNDLE_GEMFILE` usage.
 
 ## Deferred hardening
 

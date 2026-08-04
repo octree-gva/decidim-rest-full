@@ -1,0 +1,16 @@
+en:
+  decidim_toggle:
+    system:
+      decidim_restfull:
+        dummy_enabled: Rest API dummy stub enabled
+        helptexts:
+          dummy_enabled: Example Extension module (dev/test). Controllers always return HTTP 501.
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_dummy: Dummy
+      permissions:
+        dummy:
+          dummy.read: Read dummy stub

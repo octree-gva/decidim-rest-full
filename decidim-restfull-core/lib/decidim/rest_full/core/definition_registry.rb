@@ -41,6 +41,52 @@ module Decidim
 
         # Builds +:other_component+, the polymorphic JSON:API +:component+ OpenAPI schema (+oneOf+), and response
         # wrappers. Run after all +register_component_manifest_schema+ calls (see +definitions.rb+ load order).
+        # Rebuild WebhookDeliveryEnvelope as a discriminated oneOf after feature schemas load.
+        def finalize_webhook_delivery_schemas!
+          raise ArgumentError, "Webhook delivery schemas already finalized" if @webhook_delivery_schemas_finalized
+
+          @webhook_delivery_schemas_finalized = true
+          @schema.delete(:webhook_delivery_envelope)
+
+          mapping = {}
+          one_of = Decidim::RestFull::Core::WebhookEventCatalog.all.map do |entry|
+            schema_key = entry.schema_key.to_sym
+            data_schema = if entry.payload_schema_ref && @schema.has_key?(entry.payload_schema_ref)
+                            { "$ref" => reference(entry.payload_schema_ref) }
+                          else
+                            { type: :object, description: "JSON:API resource for #{entry.event_name}" }
+                          end
+
+            register_object(schema_key) do
+              {
+                title: "Webhook #{entry.event_name}",
+                type: :object,
+                properties: {
+                  type: { type: :string, enum: [entry.event_name] },
+                  data: data_schema
+                },
+                required: [:type, :data],
+                additionalProperties: false
+              }
+            end
+
+            mapping[entry.event_name] = reference(schema_key)
+            { "$ref" => reference(schema_key) }
+          end
+
+          register_object(:webhook_delivery_envelope) do
+            {
+              title: "Webhook delivery envelope",
+              description: "JSON body POSTed to integrator URLs when a subscribed event fires.",
+              oneOf: one_of,
+              discriminator: {
+                propertyName: "type",
+                mapping:
+              }
+            }
+          end
+        end
+
         def finalize_openapi_component_resource_schema!
           raise ArgumentError, "OpenAPI component resource schema already finalized" if @openapi_component_resource_schema_finalized
 
@@ -442,7 +488,8 @@ module Decidim
           delegate :references, to: :instance
           delegate :schema_for, to: :instance
           delegate :as_json, to: :instance
-          delegate :register_component_manifest_schema, :finalize_openapi_component_resource_schema!, :component_manifest_names_with_openapi_schema,
+          delegate :register_component_manifest_schema, :finalize_openapi_component_resource_schema!, :finalize_webhook_delivery_schemas!,
+                   :component_manifest_names_with_openapi_schema,
                    to: :instance
 
           def register_swagger_spec_path(*globs)

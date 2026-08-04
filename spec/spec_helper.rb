@@ -9,6 +9,19 @@ ENV["DISABLE_SPRING"] = "1"
 ENV["DECIDIM_FORCE_SSL"] = "false"
 ENV["ENGINE_ROOT"] = File.dirname(__dir__)
 
+if ENV["SIMPLECOV"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  SimpleCov.start do
+    enable_coverage :branch
+    add_filter "/spec/"
+    add_filter "/vendor/"
+    add_filter "/decidim_dummy_app/"
+  end
+end
+
 require "decidim/dev"
 
 dummy_app_path = File.expand_path(File.join(__dir__, "decidim_dummy_app"))
@@ -49,14 +62,6 @@ require "decidim/rest_full/test/on_api_endpoint_methods"
 
 Decidim::RestFull.configure do |config|
   config.strict_rest_enhancement_http_cache = true if ENV["CI"] == "1"
-end
-
-if ENV["SIMPLECOV"]
-  require "simplecov"
-  require "simplecov-cobertura"
-
-  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
-  SimpleCov.start
 end
 
 Bullet.add_safelist type: :counter_cache, class_name: "Decidim::Proposals::Proposal", association: :coauthorships if defined?(Bullet)

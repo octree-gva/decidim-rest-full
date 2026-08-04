@@ -13,14 +13,12 @@ module Decidim
         before_validation :generate_private_key
 
         def send_webhook(event, timestamp)
+          # Serializer hash is JSON:API-shaped ({ "data" => resource }); unwrap for the envelope.
           json_payload = {
-            event: event["type"],
-            # The event data is the result of the serializer,
-            # that contains a data key as well.
-            data: event["data"]["data"],
-            alg: "HS256"
+            type: event["type"],
+            data: event["data"]["data"]
           }.to_json
-          signature = sign_payload(json_payload, timestamp)
+          signature = "v1=#{sign_payload(json_payload, timestamp)}"
 
           headers = {
             "Content-Type" => "application/json",

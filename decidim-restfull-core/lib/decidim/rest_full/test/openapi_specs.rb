@@ -37,7 +37,9 @@ module Decidim
 
                 TypeScript client: [#{Decidim::RestFull.config.docs_url}/integrator/typescript-sdk](#{Decidim::RestFull.config.docs_url}/integrator/typescript-sdk) (`@octree/decidim-sdk`).
 
-                Outbound **webhook** events are listed under the **Webhooks** tag (subscribe in System admin).
+                Outbound **webhook** events are listed under the **Webhooks** tag.
+                Manage registrations via `/webhook_registrations` (or System admin) and fetch example
+                payloads from `GET /webhook_events/{event_type}`.
               README
             },
             servers: [

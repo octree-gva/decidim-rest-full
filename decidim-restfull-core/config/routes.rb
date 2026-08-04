@@ -68,6 +68,15 @@ Decidim::RestFull::Core::RouteRegistry.core_routes_block = proc do
     end
   end
 
+  resources :webhook_registrations,
+            only: CRUD_ACTIONS,
+            controller: "/decidim/api/rest_full/webhooks/webhook_registrations"
+
+  get "/webhook_events/:event_type",
+      to: "/decidim/api/rest_full/webhooks/webhook_events#show",
+      as: :webhook_event,
+      constraints: { event_type: %r{[^/]+} }
+
   resources :me, only: [] do
     collection do
       resources :magic_links, only: [:create], controller: "/decidim/api/rest_full/users/magic_links" do

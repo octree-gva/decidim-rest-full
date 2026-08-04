@@ -41,20 +41,15 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::RestFull::Core::WebhookEventCatalog do
-    it "registers no proposal events when proposal event config is empty (unloaded gem)" do
+    it "sync_from_configuration registers only core oauth/system events" do
+      snapshot = described_class.entries.dup
       described_class.clear!
-      prev_proposals = Decidim::RestFull::Core::Configuration.events_for_proposals
-      prev_meetings = Decidim::RestFull::Core::Configuration.events_for_meetings
-      Decidim::RestFull::Core::Configuration.events_for_proposals = []
-      Decidim::RestFull::Core::Configuration.events_for_meetings = []
       described_class.sync_from_configuration!
 
-      expect(described_class.all.map(&:scope)).not_to include("proposals", "meetings")
+      expect(described_class.all.map(&:scope).uniq).to match_array(%w(oauth system))
+      expect(described_class.all.map(&:schema_key)).to all(start_with("wh_"))
     ensure
-      Decidim::RestFull::Core::Configuration.events_for_proposals = prev_proposals
-      Decidim::RestFull::Core::Configuration.events_for_meetings = prev_meetings
-      described_class.clear!
-      described_class.sync_from_configuration!
+      described_class.instance_variable_set(:@entries, snapshot)
     end
   end
 

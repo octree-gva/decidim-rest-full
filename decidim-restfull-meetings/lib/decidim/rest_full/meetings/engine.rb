@@ -14,12 +14,27 @@ module Decidim
 
         initializer "rest_full.meetings.extension" do
           Decidim::RestFull::Extension.register(:meetings) do |ext|
+            ext.toggle_feature gem: "decidim-restfull-meetings"
+            ext.controller_paths "meetings"
             ext.oauth_scopes :meetings
             ext.permissions(:meetings, "meetings.read", group: :meetings)
             ext.open_api_definitions(
               File.join(Meetings::ENGINE_ROOT, "lib/decidim/rest_full/meetings/test_definitions.rb")
             )
             ext.rswag_specs(File.join(Meetings::ENGINE_ROOT, "spec/requests/**/*_spec.rb"))
+            ext.webhook_event(
+              "meetings.upcoming_reminder.succeeded",
+              scope: :meetings,
+              payload_schema_ref: nil,
+              schema_key: :wh_meeting_upcoming,
+              trigger: "Upcoming meeting reminder",
+              example: lambda { |organization|
+                ::Decidim::Api::RestFull::Meetings::MeetingWebhookSerializer.example_envelope(
+                  organization,
+                  event_name: "meetings.upcoming_reminder.succeeded"
+                )
+              }
+            )
             ext.webhooks(
               Decidim::RestFull::Meetings::UpcomingMeetingWebhookHandler::HANDLED_EVENT,
               handler: Decidim::RestFull::Meetings::UpcomingMeetingWebhookHandler.method(:call)

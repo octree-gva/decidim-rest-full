@@ -8,7 +8,7 @@ module Decidim
       # (resource owner password credentials) resolution.
       module DoorkeeperConfig
         CORE_OPTIONAL_SCOPES = [
-          :spaces, :system, :pages, :oauth, :roles, :attachments
+          :spaces, :system, :pages, :oauth, :roles, :attachments, :webhooks
         ].freeze
 
         class << self

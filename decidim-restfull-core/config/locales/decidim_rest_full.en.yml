@@ -43,6 +43,9 @@ en:
                 read: 'read: list and details of a component'
               space:
                 read: 'read: list and details of a space'
+            participatory_process:
+              step_activated:
+                succeeded: 'Process phase activated: send space details with active step'
             roles:
               read: 'read: List and detail of roles'
               write: 'write: Create and destroy roles'

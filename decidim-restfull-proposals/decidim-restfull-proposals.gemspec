@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email = ["hadrien@octree.ch"]
   s.license = "AGPL-3.0"
   s.homepage = "https://git.octree.ch/decidim/decidim-chatbot/decidim-module-rest_full"
-  s.required_ruby_version = ">= 3.4"
+  s.required_ruby_version = ">= 3.2"
   s.summary = "Decidim RestFull API — proposals, drafts, votes"
   s.description = s.summary
 
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "decidim-decidim_awesome", Decidim::RestFull.decidim_awesome_version
-  s.add_dependency "decidim-proposals", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-proposals", *Decidim::RestFull.decidim_version
   s.add_dependency "decidim-restfull-core", Decidim::RestFull.version
 
   s.metadata["rubygems_mfa_required"] = "true"

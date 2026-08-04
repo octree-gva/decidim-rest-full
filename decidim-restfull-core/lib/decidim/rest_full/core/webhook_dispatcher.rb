@@ -49,8 +49,6 @@ module Decidim
         def proposal_event?(event_name)
           proposal_events.include?(event_name)
         end
-
-        def trigger_webhook(event_name, data); end
       end
     end
   end

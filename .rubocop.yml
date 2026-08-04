@@ -2,9 +2,15 @@ inherit_gem:
   decidim-dev: rubocop-decidim.yml
 inherit_from:
   - .rubocop_rswag.yml
-require:
+plugins:
   - rubocop-rspec
+require:
   - ./decidim-restfull-dev/lib/rubocop/cop/decidim/rest_full/async_api_mutation.rb
+
+# RuboCop 1.86+ only reads CacheRootDirectory from the toplevel file (not inherit_gem).
+AllCops:
+  CacheRootDirectory: /tmp
+
 Gemspec/RequiredRubyVersion:
   Exclude:
     - decidim-restfull.gemspec  # Deprecated stub; loads decidim-restfull/decidim-restfull.gemspec

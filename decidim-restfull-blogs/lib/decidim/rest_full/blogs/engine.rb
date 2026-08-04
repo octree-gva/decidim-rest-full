@@ -8,6 +8,8 @@ module Decidim
 
         initializer "rest_full.blogs.extension" do
           Decidim::RestFull::Extension.register(:blogs) do |ext|
+            ext.toggle_feature gem: "decidim-restfull-blogs"
+            ext.controller_paths "blogs", "blog_components"
             ext.oauth_scopes :blogs
             ext.permissions(:blogs, "blogs.read", group: :blogs)
             ext.permissions(:blogs, "blogs.write", group: :blogs)

@@ -8,6 +8,8 @@ module Decidim
 
         initializer "rest_full.accountabilities.extension" do
           Decidim::RestFull::Extension.register(:accountability) do |ext|
+            ext.toggle_feature :accountabilities, gem: "decidim-restfull-accountabilities"
+            ext.controller_paths "accountability", "accountabilities"
             ext.oauth_scopes :accountability
             ext.permissions(:accountability, "accountability.read", group: :accountability)
             ext.open_api_definitions(

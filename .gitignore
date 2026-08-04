@@ -8,11 +8,14 @@
 /spec/reports/
 /tmp/
 /vendor
+/gemfiles/vendor
 /spec/dummy
 /bin/rails
 .DS_Store
 .migrations
 .bash_history
+# Appraisal lockfiles are generated per CI/local Ruby; commit gemfiles/*.gemfile only.
+/gemfiles/*.lock
 # rspec failure tracking
 .rspec-failures
 

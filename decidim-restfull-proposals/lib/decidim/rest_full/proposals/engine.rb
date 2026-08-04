@@ -16,6 +16,8 @@ module Decidim
 
         initializer "rest_full.proposals.extension" do
           Decidim::RestFull::Extension.register(:proposals) do |ext|
+            ext.toggle_feature gem: "decidim-restfull-proposals"
+            ext.controller_paths "proposals", "proposal_components", "draft_proposals", "vote_proposals"
             ext.oauth_scopes :proposals
             ext.permissions(:proposals, "proposals.read", group: :proposals)
             ext.permissions(:proposals, "proposals.draft", group: :proposals)
@@ -26,7 +28,35 @@ module Decidim
             ext.api_job "draft_proposals#destroy", ->(ctx, p) { Proposals::DraftProposalsOperations.new(ctx, p).destroy! }
             ext.api_job "draft_proposals#publish", ->(ctx, p) { Proposals::DraftProposalsOperations.new(ctx, p).publish! }
             ext.api_job "vote_proposals#create", ->(ctx, p) { Proposals::VoteProposalsOperations.new(ctx, p).create! }
-            ext.webhooks(/decidim\.events\./, /decidim\.proposals\./)
+
+            {
+              "draft_proposal_creation.succeeded" => :draft_proposal,
+              "draft_proposal_update.succeeded" => :draft_proposal,
+              "proposal_creation.succeeded" => :proposal,
+              "proposal_update.succeeded" => :proposal,
+              "proposal_state_change.succeeded" => :proposal
+            }.each do |event_name, schema_ref|
+              name = event_name
+              ext.webhook_event(
+                name,
+                scope: :proposals,
+                payload_schema_ref: schema_ref,
+                schema_key: "wh_#{name.delete_suffix(".succeeded").tr(".", "_")}",
+                trigger: "Proposal lifecycle notification",
+                example: lambda { |organization|
+                  ::Decidim::Api::RestFull::Proposals::ProposalWebhookSerializer.example_envelope(
+                    organization,
+                    event_name: name
+                  )
+                }
+              )
+            end
+
+            ext.webhooks(
+              /decidim\.events\./,
+              /decidim\.proposals\./,
+              handler: Decidim::RestFull::Core::WebhookDispatcher.instance.method(:handle_proposals)
+            )
 
             ext.open_api_definitions(
               File.join(Proposals::ENGINE_ROOT, "lib/decidim/rest_full/proposals/test_definitions.rb")

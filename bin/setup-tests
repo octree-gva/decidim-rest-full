@@ -17,6 +17,22 @@ export DECIDIM_FORCE_SSL=false
 export npm_config_maxsockets="${npm_config_maxsockets:-2}"
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}"
 
+# Appraisals set BUNDLE_GEMFILE=gemfiles/...; keep it absolute so `cd` into the
+# dummy app does not resolve the path under spec/decidim_dummy_app/.
+if [[ -n "${BUNDLE_GEMFILE:-}" && "${BUNDLE_GEMFILE}" != /* ]]; then
+  export BUNDLE_GEMFILE="$(pwd)/${BUNDLE_GEMFILE}"
+fi
+
+# Stable key for Decidim minor (migrations differ across appraisals — never reuse
+# a dummy built for another minor; see Appraisals).
+appraisal_key() {
+  case "${BUNDLE_GEMFILE:-Gemfile}" in
+    *decidim_0.29*|*decidim_0_29*) echo "decidim-0.29" ;;
+    *decidim_0.32*|*decidim_0_32*) echo "decidim-0.32" ;;
+    *) echo "decidim-default" ;;
+  esac
+}
+
 echo "Installing dependencies"
 apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev
 gem install pg
@@ -34,17 +50,30 @@ fi
 
 echo "Installing Decidim"
 gem install bundler -v 2.4.6
-bundle config set path 'vendor'
+# Path must be absolute: with BUNDLE_GEMFILE=gemfiles/*.gemfile, relative
+# "vendor" would resolve under gemfiles/.
+bundle config set path "$(pwd)/vendor"
+# Appraisals: BUNDLE_GEMFILE=gemfiles/decidim_0.{29,32}.gemfile (default Gemfile = 0.32)
+APPRAISAL_ID="$(appraisal_key)"
+echo "BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-Gemfile} (appraisal=$APPRAISAL_ID)"
 bundle install -j $(nproc)
 
+APPRAISAL_MARKER="spec/decidim_dummy_app/.decidim_appraisal"
+
 dummy_ready() {
-  [[ -f spec/decidim_dummy_app/config/shakapacker.yml ]] &&
+  # 0.32+ uses Shakapacker; 0.29 still ships Webpacker.
+  { [[ -f spec/decidim_dummy_app/config/shakapacker.yml ]] ||
+    [[ -f spec/decidim_dummy_app/config/webpacker.yml ]]; } &&
     [[ -f spec/decidim_dummy_app/config/database.yml ]] &&
     [[ -f spec/decidim_dummy_app/Gemfile ]]
 }
 
-if dummy_ready && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
-  echo "Dummy app already present; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
+appraisal_matches() {
+  [[ -f "$APPRAISAL_MARKER" ]] && [[ "$(cat "$APPRAISAL_MARKER")" == "$APPRAISAL_ID" ]]
+}
+
+if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
+  echo "Dummy app already present for $APPRAISAL_ID; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
   cd spec/decidim_dummy_app
   bundle check || bundle install -j $(nproc)
   # Do not db:drop here: RestFull install:migrations timestamps can sort before
@@ -63,11 +92,24 @@ exit 0
 fi
 
 if [ -d spec/decidim_dummy_app ]; then
+  if appraisal_matches; then
+    echo "Rebuilding dummy app (FORCE_SETUP_TESTS=1)"
+  else
+    echo "Rebuilding dummy app (appraisal changed: was '$(cat "$APPRAISAL_MARKER" 2>/dev/null || echo none)', want '$APPRAISAL_ID')"
+    echo "Decidim migrations differ between 0.29 and 0.32 — test_app must be regenerated."
+  fi
   chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
+  # Drop DB before wiping the app tree so we use the old app's rake if present.
+  if [[ -f spec/decidim_dummy_app/Gemfile ]]; then
+    (
+      cd spec/decidim_dummy_app
+      DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
+    ) || true
+  fi
   rm -rf spec/decidim_dummy_app
 fi
 
-echo "Generating Decidim dummy app"
+echo "Generating Decidim dummy app for $APPRAISAL_ID"
 bundle exec rake test_app
 cd spec/decidim_dummy_app
 bundle install -j $(nproc)
@@ -82,5 +124,6 @@ if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection
   RAILS_ENV=test bundle exec rake db:migrate
 fi
 cd ../..
+echo "$APPRAISAL_ID" > "$APPRAISAL_MARKER"
 
-echo "Test app is ready"
+echo "Test app is ready ($APPRAISAL_ID)"

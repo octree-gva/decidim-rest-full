@@ -9,36 +9,24 @@ module Decidim
           return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :meetings)
 
           meeting = Decidim::Meetings::Meeting.find(meeting_id)
-          data = serialize_meeting(meeting, organization)
-
           permissions_for(event_name, organization).each do |permission|
-            dispatch_for_permission(permission, event_name, data, organization)
+            dispatch_for_permission(permission, event_name, meeting, organization)
           end
         end
 
         private
 
-        def serialize_meeting(meeting, organization)
-          params = serializer_params(organization)
-          Decidim::Api::RestFull::Meetings::MeetingSerializer.new(meeting, params:).serializable_hash
-        end
-
-        def serializer_params(organization)
-          {
-            only: [],
-            locales: organization.available_locales || Decidim.available_locales,
-            host: organization.host,
-            publishable: true,
-            act_as: nil
-          }
-        end
-
         def permissions_for(event_name, organization)
           Decidim::RestFull::Core::Permission.where(permission: event_name, api_client: organization.api_clients)
         end
 
-        def dispatch_for_permission(permission, event_name, data, organization)
-          payload = build_payload(permission.api_client, event_name, data, organization)
+        def dispatch_for_permission(permission, event_name, meeting, organization)
+          serializer = Decidim::Api::RestFull::Meetings::MeetingWebhookSerializer.new(
+            meeting,
+            event_name:,
+            organization:
+          )
+          payload = build_payload(permission.api_client, serializer, organization)
           return log_invalid_event(event_name, payload) unless payload.valid?
 
           webhook_registrations_for(permission.api_client, event_name).each do |registration|
@@ -46,11 +34,9 @@ module Decidim
           end
         end
 
-        def build_payload(api_client, event_name, data, organization)
+        def build_payload(api_client, serializer, organization)
           Decidim::RestFull::Core::WebhookEventForm.new(
-            type: event_name,
-            data:,
-            timestamp: current_timestamp
+            **serializer.event_attributes
           ).with_context(organization:, api_client:)
         end
 
@@ -65,11 +51,7 @@ module Decidim
         end
 
         def enqueue_webhook(webhook_registration, payload)
-          Decidim::RestFull::Core::WebhookJob.perform_later(webhook_registration, payload.as_json, current_timestamp)
-        end
-
-        def current_timestamp
-          Time.current.to_i.to_s
+          Decidim::RestFull::Core::WebhookJob.perform_later(webhook_registration, payload.as_json, payload.timestamp.to_s)
         end
       end
     end

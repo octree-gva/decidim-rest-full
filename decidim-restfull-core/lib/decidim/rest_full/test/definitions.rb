@@ -12,3 +12,4 @@ require_relative "../core/open_api_definition_paths"
 Decidim::RestFull::Core::OpenApiDefinitionPaths.load_all!
 
 Decidim::RestFull::Core::DefinitionRegistry.finalize_openapi_component_resource_schema!
+Decidim::RestFull::Core::DefinitionRegistry.finalize_webhook_delivery_schemas!
