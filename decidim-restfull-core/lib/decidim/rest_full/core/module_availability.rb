@@ -75,17 +75,7 @@ module Decidim
             @feature_order
           end
 
-          def feature_gems
-            @feature_gems
-          end
-
-          def scope_features
-            @scope_features
-          end
-
-          def controller_path_features
-            @controller_path_features
-          end
+          attr_reader :feature_gems, :scope_features, :controller_path_features
 
           # +gem:+ RubyGems name for +Decidim::Toggle.gem_present?+ (+nil+ = always present).
           def register_feature!(feature, gem: nil)
@@ -172,7 +162,7 @@ module Decidim
 
             attr = :"#{feature}_enabled"
             form = Decidim::RestFull::Core::Admin::ConfigForm
-            return if form.attribute_types.key?(attr.to_s)
+            return if form.attribute_types.has_key?(attr.to_s)
 
             form.attribute attr, :boolean, default: true
           end

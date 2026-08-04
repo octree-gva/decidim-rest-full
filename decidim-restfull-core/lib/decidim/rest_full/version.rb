@@ -23,6 +23,5 @@ module Decidim
     def self.decidim_029?
       File.basename(ENV.fetch("BUNDLE_GEMFILE", "Gemfile")).match?(/decidim_0[._-]29/)
     end
-
   end
 end

@@ -6,8 +6,8 @@ set -euxo pipefail
 git config --global --add safe.directory /home/module || true
 git config --global --add safe.directory /home/module/tmp || true
 
-# Default Node major version if not provided by the environment
-: "${NODE_MAJOR:=18}"
+# Default Node major version if not provided by the environment (align with .nvmrc)
+: "${NODE_MAJOR:=22}"
 
 export CI=1
 export NODE_ENV=development
@@ -37,15 +37,24 @@ echo "Installing dependencies"
 apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev
 gem install pg
 
-# if node is not installed, install it
+# if node is not installed, install it (NodeSource; Debian nodejs often has no npm)
 if ! command -v node &> /dev/null; then
-  echo "Installing Node.js"
+  echo "Installing Node.js ${NODE_MAJOR}"
   mkdir -p /etc/apt/keyrings
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
   echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
   apt-get update -qq && apt-get install -y -qq nodejs
-  npm install -g yarn --force
+fi
+# Yarn via corepack (preferred) or npm; avoid failing when npm is missing.
+if command -v corepack &> /dev/null; then
   corepack enable
+  corepack prepare yarn@1.22.22 --activate || true
+fi
+if ! command -v yarn &> /dev/null; then
+  if ! command -v npm &> /dev/null; then
+    apt-get install -y -qq npm || true
+  fi
+  npm install -g yarn --force
 fi
 
 echo "Installing Decidim"

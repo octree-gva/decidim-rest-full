@@ -39,12 +39,12 @@ gem "decidim-meetings", "~> 0.32.0"
 
 # Prefer published gem once 0.15 ships. Until then pin git upgrade-32 (or AWESOME_PATH).
 # Appraisal decidim-0.29 replaces this with ~> 0.12.6 in gemfiles/decidim_0.29.gemfile.
-if ENV["AWESOME_PATH"].to_s != ""
-  gem "decidim-decidim_awesome", path: ENV.fetch("AWESOME_PATH")
-else
+if ENV["AWESOME_PATH"].to_s == ""
   gem "decidim-decidim_awesome",
       git: "https://github.com/decidim-ice/decidim-module-decidim_awesome.git",
       branch: "upgrade-32"
+else
+  gem "decidim-decidim_awesome", path: ENV.fetch("AWESOME_PATH")
 end
 
 gem "deface", ">= 1.9.0"

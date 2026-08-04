@@ -166,7 +166,7 @@ module Decidim
           Core::ModuleAvailability.register_controller_path!(segment, feature: @toggle_feature_name)
         end
         Array(@oauth_scopes).each do |scope|
-          next if Core::ModuleAvailability.scope_features.key?(scope.to_sym)
+          next if Core::ModuleAvailability.scope_features.has_key?(scope.to_sym)
 
           Core::ModuleAvailability.register_scope_feature!(scope, @toggle_feature_name)
         end

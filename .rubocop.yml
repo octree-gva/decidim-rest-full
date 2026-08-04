@@ -11,15 +11,17 @@ require:
 AllCops:
   CacheRootDirectory: /tmp
 
+# Gems support Decidim 0.29 (Ruby ~> 3.2) and 0.32 (Ruby ~> 3.4); TargetRubyVersion stays 3.4 for cops.
 Gemspec/RequiredRubyVersion:
   Exclude:
-    - decidim-restfull.gemspec  # Deprecated stub; loads decidim-restfull/decidim-restfull.gemspec
+    - "**/*.gemspec"
 
 Naming/FileName:
   Exclude:
     - lib/decidim-rest_full.rb  # Gem entry point; name must match gem (hyphen).
     - decidim-restfull-core/lib/decidim-restfull-core.rb
     - decidim-restfull-dev/lib/decidim-restfull-dev.rb
+    - decidim-restfull-dummy/lib/decidim-restfull-dummy.rb
     - decidim-restfull-proposals/lib/decidim-restfull-proposals.rb
     - decidim-restfull-blogs/lib/decidim-restfull-blogs.rb
     - decidim-restfull-accountabilities/lib/decidim-restfull-accountabilities.rb

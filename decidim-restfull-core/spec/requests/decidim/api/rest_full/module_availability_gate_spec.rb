@@ -45,7 +45,7 @@ RSpec.describe "RestFull ModuleAvailability API gates" do
 
   context "when an Extension-registered feature gem is present" do
     before do
-      skip "decidim-restfull-dummy not in bundle" unless Gem.loaded_specs.key?("decidim-restfull-dummy")
+      skip "decidim-restfull-dummy not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-dummy")
     end
 
     let(:api_client) { create(:api_client, organization:, scopes: %w(public dummy)) }

@@ -23,7 +23,7 @@ services:
   DATABASE_USERNAME: "decidim"
   DISABLED_DOCKER_COMPOSE: "true"
   TRAEFIK_REDIS_URL: "redis://localhost:6379/1"
-  NODE_MAJOR: 18
+  NODE_MAJOR: 22
   SIMPLECOV: 1
   CI: 1
   RAILS_ENV: test
@@ -107,7 +107,7 @@ ruby::erb:
 
 node::prettier:
   extends: .development_rules
-  image: node:20
+  image: node:22
   stage: lint
   script:
     - yarn install --frozen-lockfile
@@ -115,7 +115,7 @@ node::prettier:
 
 crowdin::lint:
   extends: .development_rules
-  image: node:20
+  image: node:22
   stage: lint
   script:
     - npm install -g @crowdin/cli
@@ -256,7 +256,7 @@ ruby::rubygem:
 
 crowdin::upload:
   stage: translate
-  image: node:20
+  image: node:22
   script:
     - npm install -g @crowdin/cli
     - crowdin upload -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
@@ -265,7 +265,7 @@ crowdin::upload:
 
 crowdin::merge_request:
   stage: translate
-  image: node:20
+  image: node:22
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $GITLAB_USER_ID != $TRANSLATIONBOT_ID'
       when: always
@@ -286,7 +286,7 @@ crowdin::merge_request:
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
 
 decidim-client::publish:
-  image: node:20
+  image: node:22
   variables:
     CI: 1
   before_script:

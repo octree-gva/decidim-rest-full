@@ -14,8 +14,8 @@ namespace :decidim_rest_full do
     end
 
     organization = Decidim::RestFull::Core::FireWebhook.resolve_organization!(
-      organization_id: ENV["ORGANIZATION_ID"],
-      host: ENV["HOST"]
+      organization_id: ENV.fetch("ORGANIZATION_ID", nil),
+      host: ENV.fetch("HOST", nil)
     )
     event = ENV.fetch("EVENT") { raise ArgumentError, "EVENT is required (or EVENT=list)" }
     url = ENV.fetch("URL") { raise ArgumentError, "URL is required" }
