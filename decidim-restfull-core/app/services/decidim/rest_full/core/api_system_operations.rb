@@ -24,28 +24,41 @@ module Decidim
 
         def organization_extended_data_update!
           assert_org_matches_ctx!
-          ensure_organization_extended_data
+          raw = @params.respond_to?(:to_unsafe_h) ? @params.to_unsafe_h : @params.to_h
+          @params = ActionController::Parameters.new(
+            raw.merge(
+              "resource_type" => "Decidim::Organization",
+              "resource_id" => current_org.id
+            )
+          )
+          resource_extended_data_update!
+        end
+
+        def resource_extended_data_update!
+          resource = find_extended_data_resource!
+          ensure_extended_data_row(resource)
           data = @params.require(:data)
           data.permit! if data.is_a?(ActionController::Parameters)
 
-          current_org.extended_data.update(
-            data: compact_blank_recursively(
-              merge_extended_data_org(data)
-            )
+          merged = compact_blank_recursively(
+            merge_extended_data_hash(resource.extended_data_hash, data)
           )
-          current_org.reload
-          { data: extended_data_at_path_org }
+          assert_extended_data_payload_size!(merged)
+
+          resource.extended_data.update(data: merged)
+          resource.reload
+          { data: ExtendedDataAtPath.fetch(resource.extended_data_hash, object_path) }
         end
 
         def user_extended_data_update!
           u = user_from_token!
           data = @params.require(:data)
           data.permit! if data.is_a?(ActionController::Parameters)
-          u.update!(
-            extended_data: compact_blank_recursively(
-              merge_user_extended_data(u, data)
-            )
+          merged = compact_blank_recursively(
+            merge_user_extended_data(u, data)
           )
+          assert_extended_data_payload_size!(merged)
+          u.update!(extended_data: merged)
           u.reload
           { data: extended_data_at_path_user(u) }
         end
@@ -242,18 +255,95 @@ module Decidim
           ]
         end
 
-        def ensure_organization_extended_data
-          return if current_org.extended_data
+        def ensure_extended_data_row(resource)
+          return if resource.extended_data
 
-          current_org.create_extended_data
+          resource.create_extended_data!
         end
 
-        def extended_data_at_path_org
-          ExtendedDataAtPath.fetch(extended_data_org, object_path)
+        def find_extended_data_resource!
+          type = @params.require(:resource_type).to_s
+          id = @params.require(:resource_id)
+
+          case type
+          when "Decidim::Organization"
+            raise Decidim::RestFull::Core::ApiException::Forbidden, "Organization mismatch" if id.to_i != organization.id
+
+            organization
+          when "Decidim::Component"
+            find_component_for_extended_data!(id)
+          when "Decidim::Proposals::Proposal"
+            find_proposal_for_extended_data!(id)
+          when "Decidim::Meetings::Meeting"
+            find_meeting_for_extended_data!(id)
+          else
+            find_space_for_extended_data!(type, id)
+          end
         end
 
-        def merge_extended_data_org(obj)
-          merged_extra = extended_data_org.deep_dup
+        def find_component_for_extended_data!(id)
+          component = Decidim::Component.find_by(id:)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Component not found" unless component
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Component not found" unless component_in_organization?(component)
+
+          component
+        end
+
+        def find_proposal_for_extended_data!(id)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Proposal not found" unless defined?(::Decidim::Proposals::Proposal)
+
+          proposal = ::Decidim::Proposals::Proposal.find_by(id:)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Proposal not found" unless proposal
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Proposal not found" unless component_in_organization?(proposal.component)
+
+          proposal
+        end
+
+        def find_meeting_for_extended_data!(id)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Meeting not found" unless defined?(::Decidim::Meetings::Meeting)
+
+          meeting = ::Decidim::Meetings::Meeting.find_by(id:)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Meeting not found" unless meeting
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Meeting not found" unless component_in_organization?(meeting.component)
+
+          meeting
+        end
+
+        def find_space_for_extended_data!(type, id)
+          klass = type.safe_constantize
+          raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown resource type" unless klass
+          raise Decidim::RestFull::Core::ApiException::BadRequest, "Unknown resource type" unless space_model?(klass)
+
+          space = klass.find_by(id:, organization:)
+          raise Decidim::RestFull::Core::ApiException::NotFound, "Space not found" unless space
+
+          space
+        end
+
+        def component_in_organization?(component)
+          return false unless component
+
+          space = component.participatory_space
+          return false unless space
+
+          org_id = if space.respond_to?(:decidim_organization_id)
+                     space.decidim_organization_id
+                   elsif space.respond_to?(:organization)
+                     space.organization&.id
+                   end
+          org_id == organization.id
+        end
+
+        def space_model?(klass)
+          Decidim.participatory_space_registry.manifests.any? do |manifest|
+            manifest.model_class_name == klass.name
+          end
+        end
+
+        def merge_extended_data_hash(base_hash, obj)
+          merged_extra = base_hash.deep_dup
+          obj = obj.to_unsafe_h if obj.respond_to?(:to_unsafe_h)
+          obj = obj.deep_stringify_keys if obj.respond_to?(:deep_stringify_keys)
           return merged_extra.merge(obj) if object_path == "."
 
           parts = object_path.split(".")
@@ -280,31 +370,23 @@ module Decidim
           end
         end
 
+        def assert_extended_data_payload_size!(data)
+          max = Decidim::RestFull.config.max_extended_data_payload_bytes
+          return if max.blank? || !max.positive?
+
+          size = data.to_json.bytesize
+          return if size <= max
+
+          raise Decidim::RestFull::Core::ApiException::BadRequest,
+                "extended_data exceeds maximum size of #{max} bytes"
+        end
+
         def object_path
           @object_path ||= @params.require(:object_path)
         end
 
-        def extended_data_org
-          current_org.extended_data.data
-        end
-
         def merge_user_extended_data(user, obj)
-          merged_extra = user.extended_data.deep_dup
-          return merged_extra.merge(obj) if object_path == "."
-
-          parts = object_path.split(".")
-          selected = parts[..-2].reduce(merged_extra) do |current, key|
-            raise Decidim::RestFull::Core::ApiException::NotFound, "key #{object_path} not found" unless current.is_a?(Hash)
-
-            current[key] = {} unless current.has_key?(key)
-            current[key]
-          end
-          if selected[parts.last].is_a?(Hash)
-            selected[parts.last].merge!(obj)
-          else
-            selected[parts.last] = obj
-          end
-          merged_extra
+          merge_extended_data_hash(user.extended_data.deep_dup, obj)
         end
 
         def extended_data_at_path_user(user)

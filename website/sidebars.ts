@@ -48,6 +48,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'integrator/quickstart',
         'integrator/permissions-and-scopes',
+        'integrator/extended-data',
         'integrator/async-and-jobs',
         'integrator/resolve-component-id',
         'integrator/errors',

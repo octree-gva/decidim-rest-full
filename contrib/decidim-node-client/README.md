@@ -1,6 +1,6 @@
 # @octree/decidim-sdk
 
-TypeScript **Axios** client for the [Decidim REST Full API](https://octree-gva.github.io/decidim-rest-full/), generated from `website/static/openapi.json`.
+TypeScript **Axios** client for the Decidim REST Full API, generated from `website/static/openapi.json`. Docs: [TypeScript SDK](../../website/docs/integrator/typescript-sdk.md).
 
 ## Install
 
@@ -43,8 +43,8 @@ yarn gen:node-client
 
 ## Documentation
 
-- [TypeScript SDK guide](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk)
-- [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart)
+- [TypeScript SDK guide](../../website/docs/integrator/typescript-sdk.md)
+- [Integrator quickstart](../../website/docs/integrator/quickstart.md)
 
 ## License
 

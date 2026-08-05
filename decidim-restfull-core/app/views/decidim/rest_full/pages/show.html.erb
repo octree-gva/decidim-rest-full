@@ -48,7 +48,7 @@
         <h1 class="h1"><%= t(".title", default: "Decidim Rest API") %></h1>
 
         <div>
-          <a class="button" href="https://octree-gva.github.io/decidim-rest-full/" target="_blank">
+          <a class="button" href="<%= Decidim::RestFull.config.docs_url %>/" target="_blank">
               <%= t(".documentation_website", default: "Documentation website") %>
           </a>
           <a class="button" href="/api/rest/docs/openapi.json" target="_blank">

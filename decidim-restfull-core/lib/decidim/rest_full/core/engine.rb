@@ -31,7 +31,6 @@ module Decidim
 
         config.to_prepare do
           Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
-          Decidim::Organization.include(Decidim::RestFull::OrganizationExtendedDataOverride)
 
           Decidim::User.include(Decidim::RestFull::UserExtendedDataRansack)
           Decidim::User.include(Decidim::RestFull::UserMagicTokenOverride)
@@ -42,7 +41,18 @@ module Decidim
           ::Decidim::System::UpdateOrganizationForm.include(Decidim::RestFull::UpdateOrganizationFormOverride)
           ::Decidim::System::UpdateOrganization.include(Decidim::RestFull::UpdateOrganizationCommandOverride)
 
+          # Ransack attribute lists first; HasExtendedData then wraps them with extended_data.
           Decidim::RestFull::Core::Ransackers.register_ransackers!
+
+          Decidim::Organization.include(Decidim::RestFull::Core::HasExtendedData)
+          Decidim::Component.include(Decidim::RestFull::Core::HasExtendedData)
+
+          Decidim.participatory_space_registry.manifests.each do |manifest|
+            model = manifest.model_class_name.safe_constantize
+            next unless model
+
+            model.include(Decidim::RestFull::Core::HasExtendedData)
+          end
 
           Decidim::RestFull::Core::SerializerAdditionsRegistry.apply!
         end
@@ -84,7 +94,11 @@ module Decidim
           registry = Decidim::RestFull::Core::PermissionRegistry
 
           registry.register(:public, "public.component.read", group: :component)
+          registry.register(:public, "public.component.extended_data.read", group: :component)
+          registry.register(:public, "public.component.extended_data.update", group: :component)
           registry.register(:public, "public.space.read", group: :space)
+          registry.register(:public, "public.space.extended_data.read", group: :space)
+          registry.register(:public, "public.space.extended_data.update", group: :space)
 
           registry.register(:oauth, "oauth.magic_link", group: :oauth)
           registry.register(:oauth, "oauth.extended_data.read", group: :oauth)

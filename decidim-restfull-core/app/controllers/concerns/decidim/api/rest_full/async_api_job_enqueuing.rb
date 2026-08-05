@@ -40,7 +40,7 @@ module Decidim
           path = request.path_parameters.stringify_keys.except("controller", "action", "format")
           extras = params.permit(
             :id, :proposal_id, :object_path, :space_manifest, :space_id, :component_id,
-            :manifest_name, :organization_id
+            :manifest_name, :organization_id, :resource_type, :resource_id
           ).to_h.stringify_keys
           data_params = if params.has_key?(:data)
                           params[:data].respond_to?(:permit!) ? params[:data].permit!.to_h : params[:data].to_unsafe_h

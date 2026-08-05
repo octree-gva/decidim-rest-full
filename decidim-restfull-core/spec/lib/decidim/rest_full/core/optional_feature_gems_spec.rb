@@ -24,14 +24,23 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::RestFull::Core::Configuration do
-    it "omits unloaded feature permissions and events" do
-      allow(Gem).to receive(:loaded_specs).and_return({})
+    it "defaults to core permissions only; feature gems merge via Extension.register" do
+      expect(described_class.default_available_permissions).not_to include("blogs", "proposals", "meetings")
+    end
 
-      expect(described_class.default_events_for_proposals).to eq([])
-      expect(described_class.default_events_for_meetings).to eq([])
-      expect(described_class.default_available_permissions).not_to include("blogs", "proposals")
+    it "receives events_for_proposals from the proposals gem when loaded" do
+      skip "decidim-restfull-proposals not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-proposals")
+
+      expect(described_class.events_for_proposals).to include("proposal_creation.succeeded")
+    end
+
+    it "receives events_for_meetings from the meetings gem when loaded" do
+      skip "decidim-restfull-meetings not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-meetings")
+
+      expect(described_class.events_for_meetings).to eq(%w(meetings.upcoming_reminder.succeeded))
     end
   end
+
 
   describe Decidim::RestFull::Core::PermissionRegistry do
     it "exposes no proposals permission group when nothing was registered for that scope" do

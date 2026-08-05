@@ -71,16 +71,21 @@ module Decidim
           end
         end
 
+        # Idempotent: multiple callers (space ransackers + HasExtendedData) may add extras.
         def self.extend_ransackable_attributes!(model, extra)
-          return if model.singleton_class.method_defined?(:rest_full_ransackable_patched)
-
-          original = model.method(:ransackable_attributes)
-          model.define_singleton_method(:ransackable_attributes) do |auth_object = nil|
-            (original.call(auth_object) + extra).uniq
+          unless model.singleton_class.method_defined?(:rest_full_ransackable_patched)
+            extras = []
+            model.define_singleton_method(:rest_full_ransackable_extras) { extras }
+            original = model.method(:ransackable_attributes)
+            model.define_singleton_method(:ransackable_attributes) do |auth_object = nil|
+              (original.call(auth_object) + rest_full_ransackable_extras).uniq
+            end
+            model.define_singleton_method(:rest_full_ransackable_patched) { true }
           end
-          model.define_singleton_method(:rest_full_ransackable_patched) { true }
+
+          model.rest_full_ransackable_extras.concat(Array(extra))
+          model.rest_full_ransackable_extras.uniq!
         end
-        private_class_method :extend_ransackable_attributes!
       end
     end
   end

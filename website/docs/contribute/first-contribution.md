@@ -13,7 +13,7 @@ Work is tracked as [issues on GitLab](https://git.octree.ch/decidim/vocacity/dec
 First time here? Pick a small or welcoming issue, leave a short comment that you are taking it, then open a Merge Request against that issue.
 :::
 
-Conduct and license: repository [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md). Published docs: [octree-gva.github.io/decidim-rest-full](https://octree-gva.github.io/decidim-rest-full/).
+Conduct and license: repository [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md). Docs site: [Overview](/).
 
 ## Two ways to open a Merge Request
 

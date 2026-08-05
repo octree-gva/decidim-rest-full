@@ -148,6 +148,17 @@ module Decidim
           end
         end
 
+        protected
+
+        def authorize_extended_data_filter!(subject)
+          return unless params[:filter]
+
+          keys = params[:filter].respond_to?(:keys) ? params[:filter].keys : []
+          return unless keys.any? { |param_k| param_k.to_s.start_with?("extended_data") }
+
+          authorize! :read_extended_data, subject
+        end
+
         private
 
         def ensure_rest_full_available!

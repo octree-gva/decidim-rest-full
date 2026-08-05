@@ -103,7 +103,7 @@ Set `DECIDIM_REST_QUEUE_NAME` in the host app. Workers must be running for jobs 
 |------|--------|
 | Default | `create` / `update` / `destroy` / `publish` / `vote` → async unless `*_sync`. |
 | `command_key` | Same string in `ext.api_job`, `enqueue_rest_full_api_job!`, and payload. |
-| Payload | Stored as JSONB on `decidim_rest_full_api_jobs`; job row id only in Sidekiq args. |
+| Payload | Stored on the API job row; Sidekiq args carry the job row id only. |
 | Size cap | `Decidim::RestFull.config.max_async_api_job_payload_bytes` |
 | Forms answers | Async `POST /answers`; poll `/submission_requests/:id` or `/jobs/:id`. |
 | Forms authoring | Async default; inline via `/sync` — table below. |

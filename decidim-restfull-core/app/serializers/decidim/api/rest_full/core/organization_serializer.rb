@@ -35,7 +35,7 @@ module Decidim
           end
 
           attribute :extended_data do |org, params|
-            params[:includes_extended] ? org.extended_data.data : {}
+            params[:includes_extended] ? org.extended_data_hash : {}
           end
 
           # Format timestamps to ISO 8601
@@ -49,7 +49,8 @@ module Decidim
 
           meta do |org, params|
             metas = { locales: params[:locales] }
-            metas[:unconfirmed_host] = org.extended_data.data["unconfirmed_host"] if org.extended_data.data["unconfirmed_host"]
+            unconfirmed = org.extended_data_hash["unconfirmed_host"]
+            metas[:unconfirmed_host] = unconfirmed if unconfirmed
             metas
           end
         end

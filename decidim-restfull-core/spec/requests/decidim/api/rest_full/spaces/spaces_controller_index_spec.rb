@@ -10,9 +10,14 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
         tags "Spaces"
         produces "application/json"
         operationId "list#{space_manifest.to_s.camelize}"
-        description "List participatory spaces of type #{space_manifest_title} for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type."
+        description "List participatory spaces of type #{space_manifest_title} for the current organization. Supports the same `filter` query parameters as `/spaces/search`, scoped to this space type. Extended data filter: `filter[extended_data_cont]` (requires `public.space.extended_data.read`)."
         it_behaves_like "localized params"
         it_behaves_like "paginated params"
+        parameter name: :"filter[extended_data_cont]",
+                  in: :query,
+                  schema: { type: :string },
+                  required: false,
+                  description: "Search on space extended_data. See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data)."
         describe_api_endpoint(
           controller: Decidim::Api::RestFull::Spaces::SpacesController,
           action: :index,
@@ -81,7 +86,77 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
               end
             end
 
+            if space_manifest.to_s == "participatory_processes"
+              context "with filter[extended_data_cont] and permission" do
+                let(:api_client) do
+                  client = create(:api_client, organization:, scopes: %w(public))
+                  client.permissions = [
+                    client.permissions.build(permission: "public.space.read"),
+                    client.permissions.build(permission: "public.space.extended_data.read")
+                  ]
+                  client.save!
+                  client
+                end
+                let(:manifest_name) { space_manifest.to_s }
+                let(:"filter[extended_data_cont]") { '"idx": "1"' }
+                let(:page) { 1 }
+                let(:per_page) { 50 }
+
+                before do
+                  participatory_process.extended_data.update!(data: { "idx" => "1" })
+                end
+
+                run_test!(example_name: :filter_by_extended_data) do |example|
+                  data = JSON.parse(example.body)["data"]
+                  expect(data.map { |d| d["id"] }).to include(participatory_process.id.to_s)
+                end
+              end
+
+              context "with filter[extended_data_cont] no hit" do
+                let(:api_client) do
+                  client = create(:api_client, organization:, scopes: %w(public))
+                  client.permissions = [
+                    client.permissions.build(permission: "public.space.read"),
+                    client.permissions.build(permission: "public.space.extended_data.read")
+                  ]
+                  client.save!
+                  client
+                end
+                let(:manifest_name) { space_manifest.to_s }
+                let(:"filter[extended_data_cont]") { '"idx": "missing"' }
+                let(:page) { 1 }
+                let(:per_page) { 50 }
+
+                before do
+                  participatory_process.extended_data.update!(data: { "idx" => "1" })
+                end
+
+                run_test!(example_name: :filter_by_extended_data_miss) do |example|
+                  data = JSON.parse(example.body)["data"]
+                  expect(data.map { |d| d["id"] }).not_to include(participatory_process.id.to_s)
+                end
+              end
+            end
+
             it_behaves_like "localized endpoint"
+          end
+
+          if space_manifest.to_s == "participatory_processes"
+            response "403", "Forbidden when filtering extended_data without permission" do
+              produces "application/json"
+              let(:manifest_name) { space_manifest.to_s }
+              let(:"filter[extended_data_cont]") { '"idx": "1"' }
+              let(:page) { 1 }
+              let(:per_page) { 10 }
+
+              before do
+                participatory_process.extended_data.update!(data: { "idx" => "1" })
+              end
+
+              run_test!(example_name: :filter_extended_data_forbidden) do |example|
+                expect(example.status).to eq(403)
+              end
+            end
           end
         end
 

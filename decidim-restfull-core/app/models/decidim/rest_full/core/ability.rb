@@ -69,6 +69,20 @@ module Decidim
         def perms_for_public
           can :read, ::Decidim::ParticipatorySpaceManifest if permissions.include? "public.space.read"
           can :read, ::Decidim::Component if permissions.include? "public.component.read"
+          can :read_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.read"
+          can :update_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.update"
+          if permissions.include?("public.space.extended_data.read")
+            Decidim.participatory_space_registry.manifests.each do |manifest|
+              model = manifest.model_class_name.safe_constantize
+              can :read_extended_data, model if model
+            end
+          end
+          if permissions.include?("public.space.extended_data.update")
+            Decidim.participatory_space_registry.manifests.each do |manifest|
+              model = manifest.model_class_name.safe_constantize
+              can :update_extended_data, model if model
+            end
+          end
         end
 
         def perms_for_system
@@ -77,8 +91,8 @@ module Decidim
           can :update, ::Decidim::Organization if permissions.include? "system.organizations.update"
           can :destroy, ::Decidim::Organization if permissions.include? "system.organizations.destroy"
 
-          can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.read"
-          can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.update"
+          can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.read"
+          can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.update"
         end
 
         def perms_for_blogs
@@ -127,12 +141,16 @@ module Decidim
             can :vote, ::Decidim::Proposals::Proposal
             can :unvote, ::Decidim::Proposals::Proposal
           end
+          can :read_extended_data, ::Decidim::Proposals::Proposal if permissions.include? "proposals.extended_data.read"
+          can :update_extended_data, ::Decidim::Proposals::Proposal if permissions.include? "proposals.extended_data.update"
         end
 
         def perms_for_meetings
           return unless defined?(::Decidim::Meetings::Meeting)
 
           can :read, ::Decidim::Meetings::Meeting if permissions.include? "meetings.read"
+          can :read_extended_data, ::Decidim::Meetings::Meeting if permissions.include? "meetings.extended_data.read"
+          can :update_extended_data, ::Decidim::Meetings::Meeting if permissions.include? "meetings.extended_data.update"
         end
 
         def perms_for_debates

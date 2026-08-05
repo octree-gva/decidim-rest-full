@@ -12,6 +12,7 @@ module Decidim
           end
           before_action { CurrentUser.user = current_user }
           def index
+            authorize_extended_data_filter!(::Decidim::Proposals::Proposal)
             query = collection.ransack(params[:filter])
 
             results = query.result
@@ -24,7 +25,8 @@ module Decidim
                 locales: available_locales,
                 host: current_organization.host,
                 client_id:,
-                act_as:
+                act_as:,
+                includes_extended: can?(:read_extended_data, ::Decidim::Proposals::Proposal)
               }
             ).serializable_hash
             fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(

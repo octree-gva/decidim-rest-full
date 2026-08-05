@@ -12,12 +12,20 @@ module Decidim
       class Engine < ::Rails::Engine
         config.root = Meetings::ENGINE_ROOT
 
+        config.to_prepare do
+          next unless defined?(Decidim::Meetings::Meeting)
+
+          Decidim::Meetings::Meeting.include(Decidim::RestFull::Core::HasExtendedData)
+        end
+
         initializer "rest_full.meetings.extension" do
           Decidim::RestFull::Extension.register(:meetings) do |ext|
             ext.toggle_feature gem: "decidim-restfull-meetings"
             ext.controller_paths "meetings"
             ext.oauth_scopes :meetings
             ext.permissions(:meetings, "meetings.read", group: :meetings)
+            ext.permissions(:meetings, "meetings.extended_data.read", group: :meetings)
+            ext.permissions(:meetings, "meetings.extended_data.update", group: :meetings)
             ext.open_api_definitions(
               File.join(Meetings::ENGINE_ROOT, "lib/decidim/rest_full/meetings/test_definitions.rb")
             )
@@ -39,9 +47,32 @@ module Decidim
               Decidim::RestFull::Meetings::UpcomingMeetingWebhookHandler::HANDLED_EVENT,
               handler: Decidim::RestFull::Meetings::UpcomingMeetingWebhookHandler.method(:call)
             )
+            ext.routes do
+              Decidim::RestFull::Routing.read_resources(
+                self,
+                :meetings,
+                controller: "meetings/meetings",
+                only: [:index, :show]
+              ) do
+                member do
+                  resources :extended_data, only: [], controller: "/decidim/api/rest_full/meetings/meeting_extended_data" do
+                    collection do
+                      get "/", action: :index
+                      put "/", action: :update
+                      put "/sync", action: :update_sync
+                    end
+                  end
+                end
+              end
+            end
           end
+
+          Decidim::RestFull::Core::Configuration.events_for_meetings = %w(
+            meetings.upcoming_reminder.succeeded
+          )
         end
       end
     end
   end
 end
+

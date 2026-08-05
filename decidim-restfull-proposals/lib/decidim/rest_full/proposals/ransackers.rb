@@ -16,14 +16,10 @@ module Decidim
         end
 
         def register_proposal_ransackables!
-          # Ransack 4 denies unknown attributes; Decidim's list omits RestFull filters.
-          return if Decidim::Proposals::Proposal.singleton_class.method_defined?(:rest_full_ransackable_patched)
-
-          original = Decidim::Proposals::Proposal.method(:ransackable_attributes)
-          Decidim::Proposals::Proposal.define_singleton_method(:ransackable_attributes) do |auth_object = nil|
-            (original.call(auth_object) + %w(state voted_weight)).uniq
-          end
-          Decidim::Proposals::Proposal.define_singleton_method(:rest_full_ransackable_patched) { true }
+          Decidim::RestFull::Core::Ransackers.extend_ransackable_attributes!(
+            Decidim::Proposals::Proposal,
+            %w(state voted_weight)
+          )
         end
 
         def register_state_ransacker!

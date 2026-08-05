@@ -59,7 +59,7 @@ module Decidim
               @ctx.organization.id,
               @ctx.record.class.name,
               @ctx.record.id,
-              last_modified.to_i,
+              last_modified.to_f,
               @ctx.client_id,
               @ctx.act_as&.id,
               @locales,

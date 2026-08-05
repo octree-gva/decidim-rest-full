@@ -12,6 +12,7 @@ module Decidim
           Decidim::Proposals::Proposal.include(Decidim::RestFull::Proposals::ProposalClientIdOverride)
           Decidim::Proposals::ProposalsController.include(Decidim::RestFull::Proposals::ProposalsControllerOverride)
           Decidim::RestFull::Proposals::Ransackers.register!
+          Decidim::Proposals::Proposal.include(Decidim::RestFull::Core::HasExtendedData)
         end
 
         initializer "rest_full.proposals.extension" do
@@ -22,6 +23,8 @@ module Decidim
             ext.permissions(:proposals, "proposals.read", group: :proposals)
             ext.permissions(:proposals, "proposals.draft", group: :proposals)
             ext.permissions(:proposals, "proposals.vote", group: :proposals)
+            ext.permissions(:proposals, "proposals.extended_data.read", group: :proposals)
+            ext.permissions(:proposals, "proposals.extended_data.update", group: :proposals)
 
             ext.api_job "draft_proposals#create", ->(ctx, p) { Proposals::DraftProposalsOperations.new(ctx, p).create! }
             ext.api_job "draft_proposals#update", ->(ctx, p) { Proposals::DraftProposalsOperations.new(ctx, p).update! }
@@ -86,7 +89,17 @@ module Decidim
                 :proposals,
                 controller: "proposals/proposals",
                 only: [:index, :show]
-              )
+              ) do
+                member do
+                  resources :extended_data, only: [], controller: "/decidim/api/rest_full/proposals/proposal_extended_data" do
+                    collection do
+                      get "/", action: :index
+                      put "/", action: :update
+                      put "/sync", action: :update_sync
+                    end
+                  end
+                end
+              end
 
               Decidim::RestFull::Routing.async_resources(
                 self,
@@ -104,8 +117,14 @@ module Decidim
               )
             end
           end
+
+          Decidim::RestFull::Core::Configuration.events_for_proposals = %w(
+            draft_proposal_creation.succeeded draft_proposal_update.succeeded
+            proposal_creation.succeeded proposal_update.succeeded proposal_state_change.succeeded
+          )
         end
       end
     end
   end
 end
+

@@ -45,7 +45,7 @@ Third-party and first-party feature gems register in an engine initializer (see 
 
 - Use **`ext.oauth_scopes`** when the OAuth scope is **not** already listed in `core_optional_scopes` inside `decidim-restfull-core/lib/decidim/rest_full/core/engine.rb` (`:meetings`, `:debates`, … are already there; add scopes for e.g. `:budgets`, `:surveys`).
 - Pair each scope with **`ext.permissions(scope, "...read", group:)`** so System Admin can grant abilities; extend **`Ability`** when the slice gates model access.
-- Add **`available_permissions`** keys in `Core::Configuration` for CLI validation (`Decidim::RestFull.config.available_permissions`; scope string must match the OAuth scope).
+- Register permissions with **`ext.permissions`** (and webhook events with **`ext.webhook_event`**); they merge into `Decidim::RestFull.config.available_permissions` for CLI validation (scope string must match the OAuth scope).
 
 ```ruby
 Decidim::RestFull::Extension.register(:proposals) do |ext|

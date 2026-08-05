@@ -13,7 +13,7 @@ services:
       - DATABASE_USERNAME=decidim
       - DATABASE_PASSWORD=pleaseChangeMe
       - DATABASE_URL=postgresql://decidim:pleaseChangeMe@rest-full-pg:5432/decidim_module_rest_full_test_app_test
-      - DEV_MODULE=decidim-rest_full
+      - DEV_MODULE=decidim-restfull
       - RAILS_ENV=development
       - DISABLED_DOCKER_COMPOSE=true # To run tests in docker
       - DECIDIM_FORCE_SSL=false
