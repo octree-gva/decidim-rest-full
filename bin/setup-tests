@@ -34,7 +34,8 @@ appraisal_key() {
 }
 
 echo "Installing dependencies"
-apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev
+# libvips-dev: Decidim 0.32 / Rails 8 boots ruby-vips; bare ruby:* CI images lack libvips.so.42
+apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev libvips-dev
 gem install pg
 
 # if node is not installed, install it (NodeSource; Debian nodejs often has no npm)

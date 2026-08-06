@@ -14,15 +14,15 @@ class CreateResourceExtendedData < ActiveRecord::Migration[7.0]
               unique: true,
               name: "index_resource_extended_data_on_resource"
 
-    if table_exists?(:organization_extended_data)
-      execute <<-SQL.squish
-        INSERT INTO resource_extended_data (resource_type, resource_id, data, created_at, updated_at)
-        SELECT 'Decidim::Organization', organization_id, data, created_at, updated_at
-        FROM organization_extended_data
-      SQL
+    return unless table_exists?(:organization_extended_data)
 
-      drop_table :organization_extended_data
-    end
+    execute <<~SQL.squish
+      INSERT INTO resource_extended_data (resource_type, resource_id, data, created_at, updated_at)
+      SELECT 'Decidim::Organization', organization_id, data, created_at, updated_at
+      FROM organization_extended_data
+    SQL
+
+    drop_table :organization_extended_data
   end
 
   def down
@@ -32,7 +32,7 @@ class CreateResourceExtendedData < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    execute <<-SQL.squish
+    execute <<~SQL.squish
       INSERT INTO organization_extended_data (organization_id, data, created_at, updated_at)
       SELECT resource_id, data, created_at, updated_at
       FROM resource_extended_data

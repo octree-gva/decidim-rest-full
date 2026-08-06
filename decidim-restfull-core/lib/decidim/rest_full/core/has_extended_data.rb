@@ -38,9 +38,18 @@ module Decidim
           def register_extended_data_ransacker!
             return if singleton_class.method_defined?(:rest_full_extended_data_ransacker_defined)
 
-            conn = connection
-            quoted_type = conn.quote(name)
-            resource_id_sql = "#{conn.quote_table_name(table_name)}.#{conn.quote_column_name("id")}"
+            begin
+              conn = connection
+              quoted_type = conn.quote(name)
+              resource_id_sql = "#{conn.quote_table_name(table_name)}.#{conn.quote_column_name("id")}"
+            # ponytail: no-op when DB missing (db:create / early boot before migrate)
+            rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
+              return
+            rescue StandardError => e
+              raise unless defined?(PG::ConnectionBad) && e.is_a?(PG::ConnectionBad)
+
+              return
+            end
 
             ransacker :extended_data do |_parent|
               Arel.sql(<<~SQL.squish)

@@ -41,7 +41,6 @@ RSpec.describe "optional decidim-restfull feature gems" do
     end
   end
 
-
   describe Decidim::RestFull::Core::PermissionRegistry do
     it "exposes no proposals permission group when nothing was registered for that scope" do
       # Missing feature gem ⇒ Extension.register never ran ⇒ empty scope.

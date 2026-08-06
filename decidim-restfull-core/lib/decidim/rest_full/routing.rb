@@ -5,8 +5,8 @@ module Decidim
     # Route helpers for +ext.routes+ blocks. Pass the router (+self+ inside the block) as the first argument.
     module Routing
       class << self
-        def read_resources(router, name, **config, &block)
-          resources(router, name, **config, &block)
+        def read_resources(router, name, **config, &)
+          resources(router, name, **config, &)
         end
 
         def async_resources(router, name, **config)
@@ -28,16 +28,12 @@ module Decidim
 
         private
 
-        def resources(router, name, **config, &block)
+        def resources(router, name, **config, &)
           controller = config.fetch(:controller)
           only = config.fetch(:only, [:index, :show])
           options = config.except(:controller, :only, :member)
 
-          if block
-            router.resources name, only:, controller: absolutize(controller), **options, &block
-          else
-            router.resources name, only:, controller: absolutize(controller), **options
-          end
+          router.resources name, only:, controller: absolutize(controller), **options, &
         end
 
         def absolutize(controller)
