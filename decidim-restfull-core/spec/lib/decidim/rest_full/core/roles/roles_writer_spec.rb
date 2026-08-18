@@ -11,8 +11,9 @@ module Decidim
             it "maps API types to Decidim roles" do
               expect(described_class::API_TO_DECIDIM_ROLE["space_administrator"]).to eq("admin")
               expect(described_class::API_TO_DECIDIM_ROLE["space_moderator"]).to eq("moderator")
-              expect(described_class::API_TO_DECIDIM_ROLE["space_valuator"]).to eq("evaluator")
               expect(described_class::API_TO_DECIDIM_ROLE["space_private_member"]).to eq("collaborator")
+              expect(%w(valuator evaluator)).to include(described_class.valuator_role_name)
+              expect(described_class.decidim_role_for("space_valuator")).to eq(described_class.valuator_role_name)
             end
           end
 

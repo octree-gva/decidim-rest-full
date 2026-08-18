@@ -71,17 +71,17 @@ module Decidim
           can :read, ::Decidim::Component if permissions.include? "public.component.read"
           can :read_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.read"
           can :update_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.update"
-          if permissions.include?("public.space.extended_data.read")
-            Decidim.participatory_space_registry.manifests.each do |manifest|
-              model = manifest.model_class_name.safe_constantize
-              can :read_extended_data, model if model
-            end
-          end
-          if permissions.include?("public.space.extended_data.update")
-            Decidim.participatory_space_registry.manifests.each do |manifest|
-              model = manifest.model_class_name.safe_constantize
-              can :update_extended_data, model if model
-            end
+          # ponytail: extract shared space-manifest loop for RuboCop Metrics/AbcSize
+          grant_space_extended_data!(:read_extended_data, "public.space.extended_data.read")
+          grant_space_extended_data!(:update_extended_data, "public.space.extended_data.update")
+        end
+
+        def grant_space_extended_data!(action, permission_string)
+          return unless permissions.include?(permission_string)
+
+          Decidim.participatory_space_registry.manifests.each do |manifest|
+            model = manifest.model_class_name.safe_constantize
+            can action, model if model
           end
         end
 

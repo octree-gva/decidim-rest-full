@@ -16,9 +16,10 @@ module Decidim
           org = organization_from_params!
           forms = build_update_forms(org)
           apply_updates(forms, org)
+          org = org.reload
           ::Decidim::Api::RestFull::Core::OrganizationSerializer.new(
-            org.reload,
-            params: { locales: available_locales }
+            org,
+            params: { locales: org.available_locales.map(&:to_sym) }
           ).serializable_hash
         end
 
@@ -145,12 +146,23 @@ module Decidim
 
         def apply_translated_form_updates!(form, org, payload, *fields)
           fields.each do |field|
+            existing = org.public_send(field)
             values = org.available_locales.index_with do |locale|
               key = "#{field}_#{locale}"
-              payload.has_key?(key) ? payload[key] : form.public_send(field).try(:[], locale)
+              if payload.has_key?(key)
+                payload[key]
+              else
+                locale_value(existing, locale) || locale_value(form.public_send(field), locale)
+              end
             end
             form.public_send("#{field}=", values) if values.values.any?
           end
+        end
+
+        def locale_value(hash, locale)
+          return nil unless hash.is_a?(Hash)
+
+          hash[locale] || hash[locale.to_s] || hash[locale.to_sym]
         end
 
         def admin_update_form(org)
@@ -180,11 +192,39 @@ module Decidim
         end
 
         def organization_payload(org)
-          merged = organization_baseline_attributes(org).deep_merge(
-            transform_host_params(allowed_params)
-          )
+          updates = transform_host_params(allowed_params.deep_dup)
+          merged = stringify_top_keys(organization_baseline_attributes(org))
+          merge_translated_locale_updates!(merged, updates)
+          updates.each do |key, value|
+            next if translated_fields.include?(key.to_sym)
+
+            merged[key.to_s] = value
+          end
           coerce_secondary_hosts!(merged)
           transform_translated_params(merged)
+        end
+
+        # Deep-merge locale hashes with string keys so partial updates (e.g. only +en+)
+        # keep existing locales (e.g. +fr+) instead of wiping them via key-type mismatch.
+        def merge_translated_locale_updates!(baseline, updates)
+          translated_fields.each do |field|
+            update_key = updates.keys.find { |k| k.to_sym == field }
+            next unless update_key
+
+            update_val = updates.delete(update_key)
+            next unless update_val.is_a?(Hash)
+
+            base_val = stringify_locale_keys(baseline[field.to_s] || {})
+            baseline[field.to_s] = base_val.merge(stringify_locale_keys(update_val))
+          end
+        end
+
+        def stringify_top_keys(hash)
+          hash.each_with_object({}) { |(key, value), acc| acc[key.to_s] = value }
+        end
+
+        def stringify_locale_keys(hash)
+          hash.each_with_object({}) { |(locale, value), acc| acc[locale.to_s] = value }
         end
 
         def organization_baseline_attributes(org)
@@ -211,19 +251,21 @@ module Decidim
         end
 
         def transform_host_params(params)
-          new_host = params.delete(:host) if params.has_key?(:host)
+          return params unless params.has_key?(:host) || params.has_key?("host")
 
-          params.merge(unconfirmed_host: new_host)
+          new_host = params.delete(:host)
+          new_host = params.delete("host") if new_host.nil? && params.has_key?("host")
+          params.merge("unconfirmed_host" => new_host)
         end
 
         def transform_translated_params(params)
           params.each_with_object({}) do |(key, value), result|
             if translated_fields.include?(key.to_sym) && value.is_a?(Hash)
               value.each do |locale, translated_value|
-                result["#{key}_#{locale}".gsub("-", "__")] = translated_value
+                result["#{key}_#{locale}".to_s.gsub("-", "__")] = translated_value
               end
             else
-              result[key] = value
+              result[key.to_s] = value
             end
           end
         end

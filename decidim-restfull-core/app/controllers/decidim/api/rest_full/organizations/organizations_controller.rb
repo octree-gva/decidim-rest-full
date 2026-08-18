@@ -161,9 +161,11 @@ module Decidim
           end
 
           def transform_host_params(params)
-            new_host = params.delete(:host) if params.has_key?(:host)
+            return params unless params.has_key?(:host) || params.has_key?("host")
 
-            params.merge(unconfirmed_host: new_host)
+            new_host = params.delete(:host)
+            new_host = params.delete("host") if new_host.nil? && params.has_key?("host")
+            params.merge("unconfirmed_host" => new_host)
           end
 
           def transform_translated_params(params)
@@ -171,11 +173,11 @@ module Decidim
               if translated_fields.include?(key.to_sym) && value.is_a?(Hash)
                 # Handle translated fields
                 value.each do |locale, translated_value|
-                  result["#{key}_#{locale}".gsub("-", "__")] = translated_value
+                  result["#{key}_#{locale}".to_s.gsub("-", "__")] = translated_value
                 end
               else
                 # Keep non-translated values as is
-                result[key] = value
+                result[key.to_s] = value
               end
             end
           end

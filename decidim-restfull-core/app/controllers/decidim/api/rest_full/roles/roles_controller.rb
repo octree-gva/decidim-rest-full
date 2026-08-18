@@ -37,7 +37,7 @@ module Decidim
             end
             render json:, status: :created
           rescue ArgumentError => e
-            render json: { errors: [{ title: e.message }] }, status: :unprocessable_content
+            render json: { errors: [{ title: e.message }] }, status: unprocessable_status
           end
 
           def destroy

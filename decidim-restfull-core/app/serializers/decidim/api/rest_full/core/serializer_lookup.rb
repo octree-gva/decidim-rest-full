@@ -31,13 +31,23 @@ module Decidim
             core_qualified = "Decidim::Api::RestFull::Core::#{class_name}"
             return core_qualified.constantize if safe_constant_defined?(core_qualified)
 
-            Decidim::Api::RestFull::Core::ComponentSerializer
+            # Relationship +type+ uses serializer.record_type (class-level). A bare
+            # ComponentSerializer emits +"component"+ which fails OpenAPI other_component.
+            typed_fallback_serializer_for(name)
+          end
+
+          def typed_fallback_serializer_for(manifest_name)
+            type = "#{manifest_name.to_s.singularize}_component"
+            @typed_fallback_serializers ||= {}
+            @typed_fallback_serializers[type] ||= Class.new(Decidim::Api::RestFull::Core::ComponentSerializer) do
+              set_type type.to_sym
+            end
           end
 
           def safe_constant_defined?(name)
             Object.const_defined?(name, false)
           end
-          private_class_method :safe_constant_defined?
+          private_class_method :safe_constant_defined?, :typed_fallback_serializer_for
         end
       end
     end

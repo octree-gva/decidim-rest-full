@@ -23,7 +23,15 @@ module Decidim
           initiatives: "Decidim::Initiative"
         }.freeze
 
+        # Rails 7.0 (Decidim 0.29) only recognizes :unprocessable_entity; 7.1+/8 also alias
+        # :unprocessable_content. Keep the older symbol so 0.29 does not 500 on 422 renders.
+        UNPROCESSABLE_STATUS = :unprocessable_entity
+
         protected
+
+        def unprocessable_status
+          UNPROCESSABLE_STATUS
+        end
 
         # Ensures a user is present and not blocked or locked. Use for resource-owner-only actions.
         # @param user [Decidim::User, nil] when +nil+, uses +current_user+

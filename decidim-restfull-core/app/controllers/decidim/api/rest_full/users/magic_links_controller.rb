@@ -40,7 +40,7 @@ module Decidim
               organization: current_organization
             )
             unless form.valid?
-              render json: magic_link_redirect_validation_errors(form), status: :unprocessable_content
+              render json: magic_link_redirect_validation_errors(form), status: unprocessable_status
               return
             end
 

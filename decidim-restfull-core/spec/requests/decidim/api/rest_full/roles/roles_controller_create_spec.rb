@@ -151,7 +151,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
                 space.reload
                 new_role = space.user_roles.find_by(decidim_user_id: user.id)
                 expect(new_role).to be_present
-                expect(new_role.role).to eq("evaluator")
+                expect(new_role.role).to eq(Decidim::RestFull::Core::Roles::RolesWriter.decidim_role_for("space_valuator"))
               end
             end
 
@@ -177,15 +177,15 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
                 expect(data["attributes"]["resource_id"]).to eq(space.id)
                 expect(data["attributes"]["user_id"]).to eq(user.id)
                 space.reload
-                new_role = if space_manifest == :assemblies
-                             Decidim::ParticipatorySpace::Member.find_by(participatory_space: space, decidim_user_id: user.id) if defined?(Decidim::ParticipatorySpace::Member)
+                new_role = if space_manifest == :assemblies && defined?(Decidim::ParticipatorySpace::Member)
+                             Decidim::ParticipatorySpace::Member.find_by(participatory_space: space, decidim_user_id: user.id)
                            else
                              space.user_roles.find_by(decidim_user_id: user.id)
                            end
                 expect(new_role).to be_present
                 # Assembly private members use ParticipatorySpace::Member (translated role jsonb),
                 # not the collaborator token on AssemblyUserRole / ProcessUserRole.
-                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role) && !new_role.is_a?(Decidim::ParticipatorySpace::Member)
+                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role) && !(defined?(Decidim::ParticipatorySpace::Member) && new_role.is_a?(Decidim::ParticipatorySpace::Member))
               end
             end
           end

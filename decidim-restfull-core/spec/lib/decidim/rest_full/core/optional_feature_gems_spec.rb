@@ -108,11 +108,11 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::Api::RestFull::Core::SerializerLookup do
-    it "falls back to core ComponentSerializer when the adapter gem is absent" do
+    it "falls back to a typed ComponentSerializer subclass when the adapter gem is absent" do
       allow(described_class).to receive(:safe_constant_defined?).and_return(false)
-      expect(described_class.component_serializer_class_for("proposals")).to eq(
-        Decidim::Api::RestFull::Core::ComponentSerializer
-      )
+      klass = described_class.component_serializer_class_for("proposals")
+      expect(klass).to be < Decidim::Api::RestFull::Core::ComponentSerializer
+      expect(klass.record_type).to eq(:proposal_component)
     end
 
     it "resolves meetings serializer when decidim-restfull-meetings is loaded" do
