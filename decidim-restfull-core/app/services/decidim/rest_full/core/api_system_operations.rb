@@ -140,12 +140,17 @@ module Decidim
             form.public_send("#{attr}=", payload[attr]) if payload.has_key?(attr)
           end
           form.secondary_hosts = payload["secondary_hosts"] if payload.has_key?("secondary_hosts")
-          apply_translated_form_updates!(form, org, payload, :name, :short_name)
+          apply_translated_form_updates!(form, org, payload, *translated_fields_for(org))
           form.unconfirmed_host = payload["unconfirmed_host"] if payload.has_key?("unconfirmed_host")
         end
 
+        # Assign full locale hashes onto the form so Decidim UpdateOrganization does not
+        # wipe unsubmitted locales (Admin form accessors often follow Decidim.available_locales only).
         def apply_translated_form_updates!(form, org, payload, *fields)
           fields.each do |field|
+            next unless org.respond_to?(field)
+            next unless form.respond_to?("#{field}=")
+
             existing = org.public_send(field)
             values = org.available_locales.index_with do |locale|
               key = "#{field}_#{locale}"
@@ -166,16 +171,66 @@ module Decidim
         end
 
         def admin_update_form(org)
-          form(Decidim::Admin::OrganizationForm)
-            .from_params(organization_payload(org))
-            .with_context(current_organization: org).tap { |f| validate_form(f) }
+          payload = organization_payload(org)
+          form = form(Decidim::Admin::OrganizationForm).from_params(payload).with_context(current_organization: org)
+          # Force merged translations: from_params may ignore locales outside Decidim.available_locales.
+          apply_translated_form_updates!(form, org, payload, :name, :description, :admin_terms_of_service_body)
+          preserve_decidim_029_booleans!(form, org, payload)
+          validate_form(form)
+          form
+        end
+
+        # 0.29 Organization columns are NOT NULL; Admin forms default missing/unmapped booleans to nil.
+        def preserve_decidim_029_booleans!(form, org, payload)
+          %w(user_groups_enabled enable_participatory_space_filters).each do |attr|
+            next unless org.respond_to?(attr)
+            next unless form.respond_to?("#{attr}=")
+
+            value = if payload.has_key?(attr) || payload.has_key?(attr.to_sym)
+                      payload[attr] || payload[attr.to_sym]
+                    else
+                      org.public_send(attr)
+                    end
+            next if value.nil?
+
+            form.public_send("#{attr}=", value)
+          end
         end
 
         def apply_updates(forms, org)
+          snapshots = translation_snapshots(org)
           system_form, admin_form = forms
           system_ok = Decidim::System::UpdateOrganization.call(org.id, system_form)[:ok]
           admin_ok = Decidim::Admin::UpdateOrganization.call(admin_form, org)[:ok]
           raise Decidim::RestFull::Core::ApiException::BadRequest, "Failed to update organization" unless system_ok && admin_ok
+
+          org.reload
+          # ponytail: Admin TranslatableAttributes only define name_<locale> for Decidim.available_locales;
+          # org may have more locales — restore any wiped unsubmitted locale values.
+          restore_unsubmitted_translations!(org, snapshots)
+        end
+
+        def translation_snapshots(org)
+          translated_fields_for(org).index_with do |field|
+            stringify_locale_keys((org.public_send(field) || {}).except("machine_translations", :machine_translations))
+          end
+        end
+
+        def restore_unsubmitted_translations!(org, snapshots)
+          dirty = false
+          snapshots.each do |field, before|
+            next if before.blank?
+
+            submitted = allowed_params[field] || allowed_params[field.to_s]
+            submitted = submitted.is_a?(Hash) ? stringify_locale_keys(submitted) : {}
+            merged = before.merge(submitted)
+            current = stringify_locale_keys((org.public_send(field) || {}).except("machine_translations", :machine_translations))
+            next if current == merged
+
+            org.public_send("#{field}=", merged)
+            dirty = true
+          end
+          org.save! if dirty
         end
 
         def validate_form(form)
@@ -215,7 +270,9 @@ module Decidim
             next unless update_val.is_a?(Hash)
 
             base_val = stringify_locale_keys(baseline[field.to_s] || {})
-            baseline[field.to_s] = base_val.merge(stringify_locale_keys(update_val))
+            # Drop machine_translations from API merge surface; Decidim owns that key.
+            base_val = base_val.except("machine_translations")
+            baseline[field.to_s] = base_val.merge(stringify_locale_keys(update_val).except("machine_translations"))
           end
         end
 
@@ -262,12 +319,18 @@ module Decidim
           params.each_with_object({}) do |(key, value), result|
             if translated_fields.include?(key.to_sym) && value.is_a?(Hash)
               value.each do |locale, translated_value|
+                next if locale.to_s == "machine_translations"
+
                 result["#{key}_#{locale}".to_s.gsub("-", "__")] = translated_value
               end
             else
               result[key.to_s] = value
             end
           end
+        end
+
+        def translated_fields_for(org)
+          translated_fields.select { |field| org.respond_to?(field) }
         end
 
         def translated_fields
@@ -289,7 +352,9 @@ module Decidim
             :users_registration_mode,
             :force_users_to_authenticate_before_access_organization,
             :badges_enabled,
-            # user_groups_enabled / enable_participatory_space_filters removed in Decidim 0.32
+            # Present on Decidim 0.29 (NOT NULL); removed from 0.32 models — baseline skips via respond_to?.
+            :user_groups_enabled,
+            :enable_participatory_space_filters,
             :enable_machine_translations,
             :time_zone,
             :comments_max_length,

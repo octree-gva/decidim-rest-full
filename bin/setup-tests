@@ -35,7 +35,8 @@ appraisal_key() {
 
 echo "Installing dependencies"
 # libvips-dev: Decidim 0.32 / Rails 8 boots ruby-vips; bare ruby:* CI images lack libvips.so.42
-apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev libvips-dev
+# postgresql-client: hard-drop test DBs when switching appraisals (Rails db:drop can fail to boot)
+apt-get update -qq && apt-get install -y ca-certificates curl gnupg libpq-dev libvips-dev postgresql-client
 gem install pg
 
 # if node is not installed, install it (NodeSource; Debian nodejs often has no npm)
@@ -82,6 +83,23 @@ appraisal_matches() {
   [[ -f "$APPRAISAL_MARKER" ]] && [[ "$(cat "$APPRAISAL_MARKER")" == "$APPRAISAL_ID" ]]
 }
 
+# Rails db:drop loads the environment; after 0.29→0.32 that can fail (Rails 8 enums vs
+# prior-minor columns). Drop via psql so sequential ci-local can rebuild cleanly.
+drop_test_databases() {
+  local host="${DATABASE_HOST:-postgres}"
+  local user="${DATABASE_USERNAME:-decidim}"
+  local pass="${DATABASE_PASSWORD:-}"
+  echo "Dropping test databases on ${host} (appraisal switch / rebuild)"
+  PGPASSWORD="${pass}" psql -h "${host}" -U "${user}" -d postgres -v ON_ERROR_STOP=1 <<'SQL' || true
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname LIKE '%_test%'
+  AND pid <> pg_backend_pid();
+DROP DATABASE IF EXISTS decidim_module_rest_full_test_app_test;
+DROP DATABASE IF EXISTS decidim_test;
+SQL
+}
+
 if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
   echo "Dummy app already present for $APPRAISAL_ID; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
   cd spec/decidim_dummy_app
@@ -109,7 +127,9 @@ if [ -d spec/decidim_dummy_app ]; then
     echo "Decidim migrations differ between 0.29 and 0.32 — test_app must be regenerated."
   fi
   chmod -R u+rwX spec/decidim_dummy_app 2>/dev/null || true
-  # Drop DB before wiping the app tree so we use the old app's rake if present.
+  # Prefer psql drop: Rails env may not boot against a prior-minor schema.
+  drop_test_databases
+  # Best-effort Rails drop when the old app can still boot.
   if [[ -f spec/decidim_dummy_app/Gemfile ]]; then
     (
       cd spec/decidim_dummy_app
@@ -123,7 +143,8 @@ echo "Generating Decidim dummy app for $APPRAISAL_ID"
 bundle exec rake test_app
 cd spec/decidim_dummy_app
 bundle install -j $(nproc)
-# Drop and recreate so repeated runs don't hit DuplicateTable (drop no-op if DB missing)
+# Ensure no leftover test DB before create (psql; Rails drop may still fail to boot).
+drop_test_databases
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true
 
 RAILS_ENV=test bundle exec rake db:create

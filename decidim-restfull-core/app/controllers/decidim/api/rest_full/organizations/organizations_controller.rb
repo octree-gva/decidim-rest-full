@@ -201,7 +201,9 @@ module Decidim
               :users_registration_mode,
               :force_users_to_authenticate_before_access_organization,
               :badges_enabled,
-              # user_groups_enabled / enable_participatory_space_filters removed in Decidim 0.32
+              # Present on Decidim 0.29 (NOT NULL); removed from 0.32 models — baseline skips via respond_to?.
+              :user_groups_enabled,
+              :enable_participatory_space_filters,
               :enable_machine_translations,
               :time_zone,
               :comments_max_length,

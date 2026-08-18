@@ -185,7 +185,9 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
                 expect(new_role).to be_present
                 # Assembly private members use ParticipatorySpace::Member (translated role jsonb),
                 # not the collaborator token on AssemblyUserRole / ProcessUserRole.
-                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role) && !(defined?(Decidim::ParticipatorySpace::Member) && new_role.is_a?(Decidim::ParticipatorySpace::Member))
+                skip_role_token = defined?(Decidim::ParticipatorySpace::Member) &&
+                                  new_role.is_a?(Decidim::ParticipatorySpace::Member)
+                expect(new_role.role).to eq("collaborator") if new_role.respond_to?(:role) && !skip_role_token
               end
             end
           end

@@ -1,4 +1,8 @@
-# Reproduces GitLab CI ruby::rspec job: ruby:3.4.7 + postgres:15 + redis
+# Local parity with GitLab RSpec matrix:
+#   rspec_029 → ruby:3.2.8 + gemfiles/decidim_0.29.gemfile
+#   rspec_032 → ruby:3.4.7 + gemfiles/decidim_0.32.gemfile
+# Run both (0.29 then 0.32): bin/ci-local
+# Single appraisal: docker compose -f docker-compose.ci.yml run --rm rspec_029|rspec_032
 services:
   postgres:
     image: postgres:15
@@ -15,22 +19,24 @@ services:
   redis:
     image: redis:latest
 
-  rspec:
-    image: ruby:3.4.7
+  rspec_029:
+    image: ruby:3.2.8
     working_dir: /app
     volumes:
       - .:/app
-    environment:
+    environment: &rspec_env
       POSTGRES_DB: decidim
       DATABASE_HOST: postgres
       DATABASE_PASSWORD: "TEST-insecure_password"
       DATABASE_USERNAME: decidim
       DISABLED_DOCKER_COMPOSE: "true"
-      NODE_MAJOR: "18"
+      NODE_MAJOR: "22"
       SIMPLECOV: "1"
       CI: "1"
       RAILS_ENV: test
       DISABLE_SPRING: "1"
+      DECIDIM_FORCE_SSL: "false"
+      BUNDLE_GEMFILE: gemfiles/decidim_0.29.gemfile
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,4 +44,39 @@ services:
       - postgres
       - redis
     entrypoint: []
-    command: ["/bin/bash", "-c", "git config --global --add safe.directory /app || true; bin/setup-tests && bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec.xml"]
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -euo pipefail
+        git config --global --add safe.directory /app || true
+        bin/setup-tests
+        bundle exec rspec $${RSPEC_ARGS:-decidim-restfull-*/spec} --format progress --format RspecJunitFormatter --out rspec-0.29.xml
+
+  rspec_032:
+    image: ruby:3.4.7
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      <<: *rspec_env
+      BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    links:
+      - postgres
+      - redis
+    entrypoint: []
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -euo pipefail
+        git config --global --add safe.directory /app || true
+        bin/setup-tests
+        bundle exec rspec $${RSPEC_ARGS:-decidim-restfull-*/spec} --format progress --format RspecJunitFormatter --out rspec.xml
+
+  # Back-compat alias for scripts that still call service `rspec` (0.32).
+  rspec:
+    extends: rspec_032

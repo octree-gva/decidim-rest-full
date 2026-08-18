@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
-# Run the same test job as GitLab CI ruby::rspec (ruby:3.2.2 + postgres:15).
+# Local parity with GitLab RSpec matrix: Decidim 0.29 then 0.32 (full metagem suite).
 # Usage: bin/ci-local [rspec paths...]
-# Example: bin/ci-local spec/requests/decidim/api/rest_full/spaces/
-set -e
+# Example: bin/ci-local decidim-restfull-core/spec/requests/
+set -euo pipefail
 cd "$(dirname "$0")/.."
-RSPEC_ARGS="${*:-spec/commands/ spec/requests/ spec/models/ spec/jobs/ spec/forms/ spec/lib/ spec/decidim/}"
-docker compose -f docker-compose.ci.yml run --rm --no-deps -e RSPEC_ARGS="$RSPEC_ARGS" rspec /bin/bash -c 'git config --global --add safe.directory /app || true; bin/setup-tests && bundle exec rspec $RSPEC_ARGS --format progress --format RspecJunitFormatter --out rspec.xml'
+
+COMPOSE=(docker compose -f docker-compose.ci.yml)
+RSPEC_ARGS="${*:-decidim-restfull-*/spec}"
+
+echo "==> rspec_029 (ruby:3.2.8 + gemfiles/decidim_0.29.gemfile)"
+"${COMPOSE[@]}" run --rm -e "RSPEC_ARGS=${RSPEC_ARGS}" rspec_029
+
+echo "==> rspec_032 (ruby:3.4.7 + gemfiles/decidim_0.32.gemfile)"
+"${COMPOSE[@]}" run --rm -e "RSPEC_ARGS=${RSPEC_ARGS}" rspec_032
+
+echo "==> ci-local done (0.29 + 0.32)"

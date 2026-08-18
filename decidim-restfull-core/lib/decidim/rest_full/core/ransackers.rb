@@ -45,7 +45,10 @@ module Decidim
 
         def self.register_participatory_space_ransacker!
           existing_manifests = Decidim.participatory_space_registry.manifests.select do |manifest|
-            manifest.model_class_name.constantize.table_exists?
+            model = manifest.model_class_name.safe_constantize
+            next false unless model
+
+            model.table_exists?
           end
           existing_manifests.each do |manifest|
             model = manifest.model_class_name.constantize
@@ -61,8 +64,12 @@ module Decidim
             extras << "slug" if model.column_names.include?("slug")
             extend_ransackable_attributes!(model, extras)
           end
-        rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
-          # Skip when DB is not available (e.g. OpenAPI doc generation, CI without DB).
+        # ponytail: db:create / appraisal switch may boot against missing DB or a
+        # prior-minor schema (Rails 8 enum needs columns that are not migrated yet).
+        rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid, ActiveRecord::ConnectionNotEstablished
+          nil
+        rescue RuntimeError => e
+          raise unless e.message.include?("Undeclared attribute type for enum")
         end
 
         def self.register_component_id_ransacker!
