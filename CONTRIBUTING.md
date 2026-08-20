@@ -72,18 +72,17 @@ We follow the same terms as [Decidim core](https://github.com/decidim/decidim).
 
 ## Gem dependencies (Bundler)
 
-Declare **Decidim domain** deps on the matching `decidim-*` gem and **RestFull adapter** deps on `decidim-restfull-core`. Optional participatory spaces (`decidim-assemblies`, `decidim-conferences`, `decidim-initiatives`) are **not** required by core — code guards with `defined?` / `Object.const_defined?`.
+Declare **Decidim domain** deps on the matching `decidim-*` gem and **RestFull adapter** deps on `decidim-restfull-core`. Optional participatory spaces (`decidim-assemblies`, `decidim-conferences`, `decidim-initiatives`) are **not** required by core — code guards with `defined?` / `Object.const_defined?`. Optional `decidim-decidim_awesome` enables weighted-vote / awesome features in `decidim-restfull-proposals` — code guards with `Decidim::Toggle.gem_present?`.
 
 | Gem | Depends on |
 |-----|------------|
 | `decidim-restfull-core` | `decidim-core`, `decidim-admin` |
-| `decidim-restfull-proposals` | `decidim-restfull-core`, `decidim-proposals`, `decidim-decidim_awesome` |
+| `decidim-restfull-proposals` | `decidim-restfull-core`, `decidim-proposals` |
 | `decidim-restfull-blogs` | `decidim-restfull-core`, `decidim-blogs` |
 | `decidim-restfull-meetings` | `decidim-restfull-core`, `decidim-meetings` |
 | `decidim-restfull-debates` | `decidim-restfull-core`, `decidim-debates` |
 | `decidim-restfull-budgets` | `decidim-restfull-core`, `decidim-budgets` |
 | `decidim-restfull-accountabilities` | `decidim-restfull-core`, `decidim-accountability` |
-| `decidim-restfull-sortition` | `decidim-restfull-core`, `decidim-sortitions` |
 | `decidim-restfull-forms` | `decidim-restfull-core`, `decidim-forms`, `decidim-surveys` (questionnaire specs) |
 | `decidim-restfull-surveys` | `decidim-restfull-core`, `decidim-restfull-forms`, `decidim-surveys` |
 | `decidim-restfull` (metagem) | all official `decidim-restfull-*` gems above |
@@ -182,7 +181,7 @@ Request specs use RSwag: they both hit the API and generate OpenAPI snippets. Se
 
 ## Developer documentation (site)
 
-Procedures live on the doc site under **Add an endpoint** (`website/docs/dev/add-endpoint/`). Structure map: `website/docs/README.md`. Do not duplicate long how-to sections in this file.
+Procedures live on the doc site under **Add an endpoint** (`website/docs/dev/add-endpoint/`). Structure map and doc-voice rules: `website/docs/README.md`. Do not duplicate long how-to sections in this file.
 
 ## Adding a new API endpoint (checklist)
 

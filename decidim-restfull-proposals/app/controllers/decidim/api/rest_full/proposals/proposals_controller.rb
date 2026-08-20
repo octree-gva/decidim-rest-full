@@ -12,6 +12,7 @@ module Decidim
           end
           before_action { CurrentUser.user = current_user }
           def index
+            authorize_extended_data_filter!(::Decidim::Proposals::Proposal)
             query = collection.ransack(params[:filter])
 
             results = query.result
@@ -24,7 +25,8 @@ module Decidim
                 locales: available_locales,
                 host: current_organization.host,
                 client_id:,
-                act_as:
+                act_as:,
+                includes_extended: can?(:read_extended_data, ::Decidim::Proposals::Proposal)
               }
             ).serializable_hash
             fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(
@@ -98,10 +100,11 @@ module Decidim
           end
 
           def proposal_pagination_match
-            model_class
-              .select(proposal_pagination_select)
-              .from(proposal_pagination_subquery)
-              .find_by("decidim_proposals_proposals.id = ? ", resource_id)
+            # SoftDeletable/paranoia must not wrap the window subquery alias.
+            Decidim::Proposals::Proposal.unscoped
+                                        .select(proposal_pagination_select)
+                                        .from(proposal_pagination_subquery)
+                                        .find_by("decidim_proposals_proposals.id = ? ", resource_id)
           end
 
           def proposal_pagination_select

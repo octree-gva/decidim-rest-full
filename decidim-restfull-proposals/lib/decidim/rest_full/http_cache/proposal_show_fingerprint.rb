@@ -42,7 +42,7 @@ module Decidim
           input = [
             @organization.id,
             @proposal.id,
-            last_modified.to_i,
+            last_modified.to_f,
             @client_id,
             @act_as&.id,
             @locales,

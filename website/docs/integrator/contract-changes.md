@@ -23,4 +23,4 @@ After each release, [`website/static/openapi.json`](/api) is regenerated. Treat 
 
 ## Contributing
 
-Maintainers: see repository `CONTRIBUTING.md` for commit format and release steps.
+Maintainers: Conventional Commits and local checks are in [First contribution](/contribute/first-contribution); release notes come from `yarn release` (see above).

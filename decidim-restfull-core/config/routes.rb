@@ -30,18 +30,37 @@ Decidim::RestFull::Core::RouteRegistry.core_routes_block = proc do
     end
   end
 
-  resources :spaces, only: [] do
+  resources :components, only: [] do
     collection do
-      get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
-      Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
-        resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: }
+      get "/search", to: "/decidim/api/rest_full/components/components#search"
+    end
+    member do
+      resources :extended_data, only: [], controller: "/decidim/api/rest_full/components/component_extended_data" do
+        collection do
+          get "/", action: :index
+          put "/", action: :update
+          put "/sync", action: :update_sync
+        end
       end
     end
   end
 
-  resources :components, only: [] do
+  resources :spaces, only: [] do
     collection do
-      get "/search", to: "/decidim/api/rest_full/components/components#search"
+      get "/search", to: "/decidim/api/rest_full/spaces/spaces#search"
+      Decidim.participatory_space_registry.manifests.map(&:name).each do |manifest_name|
+        resources manifest_name.to_sym, only: [:index, :show], controller: "/decidim/api/rest_full/spaces/spaces", defaults: { manifest_name: } do
+          member do
+            resources :extended_data, only: [], controller: "/decidim/api/rest_full/spaces/space_extended_data", defaults: { manifest_name: } do
+              collection do
+                get "/", action: :index
+                put "/", action: :update
+                put "/sync", action: :update_sync
+              end
+            end
+          end
+        end
+      end
     end
   end
 
@@ -67,6 +86,15 @@ Decidim::RestFull::Core::RouteRegistry.core_routes_block = proc do
       post :direct_upload
     end
   end
+
+  resources :webhook_registrations,
+            only: CRUD_ACTIONS,
+            controller: "/decidim/api/rest_full/webhooks/webhook_registrations"
+
+  get "/webhook_events/:event_type",
+      to: "/decidim/api/rest_full/webhooks/webhook_events#show",
+      as: :webhook_event,
+      constraints: { event_type: %r{[^/]+} }
 
   resources :me, only: [] do
     collection do

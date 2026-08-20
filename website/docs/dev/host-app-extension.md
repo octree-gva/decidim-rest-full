@@ -44,6 +44,21 @@ end
 
 `require "decidim/rest_full"` is required: the gem is not fully loaded until Bundler resolves the host app.
 
+### Toggle + controller path registration
+
+Gate your feature behind **decidim-toggle** and map controller path segments so `ApplicationController` can return HTTP 501 when the feature is off:
+
+```ruby
+Decidim::RestFull::Extension.register(:my_feature) do |ext|
+  ext.toggle_feature gem: "my-host-app" # or gem: nil if always present
+  ext.controller_paths "my_resources"
+  ext.oauth_scopes :my_feature
+  # …
+end
+```
+
+Built-in gems (`blogs`, `proposals`, …) call the same DSL. See **`decidim-restfull-dummy`** (dev/test gem) for a stub that always raises `ApiException::NotImplemented` when hit.
+
 ### 2. Controller outside `Decidim::Api::RestFull`
 
 Host controllers use an app-specific namespace (e.g. `Decidim::MyApp::Api::MyResourcesController`) with a concern for OAuth, not `Decidim::Api::RestFull::ApplicationController` (Zeitwerk conflict with `decidim-api`).

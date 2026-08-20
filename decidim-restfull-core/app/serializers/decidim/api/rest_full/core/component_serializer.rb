@@ -34,6 +34,10 @@ module Decidim
             comp.participatory_space_id.to_s
           end
 
+          attribute :extended_data, if: proc { |_comp, params| params[:includes_extended] } do |comp, _params|
+            comp.respond_to?(:extended_data_hash) ? comp.extended_data_hash : {}
+          end
+
           attribute :name do |comp, params|
             translated_field(comp.name, params[:locales])
           end

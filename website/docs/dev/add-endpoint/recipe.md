@@ -47,7 +47,8 @@ When adding a gem inside the `decidim-restfull/` monorepo, also:
 - Register the gem in `decidim-restfull/decidim-restfull.gemspec`
 - Add the gem to [`gem_spec_paths.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/gem_spec_paths.rb) `GEMS`
 - Gate the feature via the **Restfull** organization Toggle tab (`ModuleAvailability`) — do not add process-wide `Configuration.enable_*_api`
-- Add `available_permissions` in [`configuration.rb`](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/decidim-restfull-core/lib/decidim/rest_full/core/configuration.rb) when the feature owns a permission group
+- Register permissions with `ext.permissions` / webhook events with `ext.webhook_event` inside `Extension.register` (they merge into `available_permissions`; do not edit core `configuration.rb`)
+
 - Run `./bin/check` in Docker
 
 ## When something breaks
@@ -62,4 +63,4 @@ When adding a gem inside the `decidim-restfull/` monorepo, also:
 
 - [Boot and extension](./boot-and-extension.md) — boot order, `Extension.register`, append API
 - [RestFull engines](./restfull-engines.md) — gem layout
-- [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) — covenant and `./bin/check`
+- [First contribution](/contribute/first-contribution) — Merge Request workflow and `./bin/check`

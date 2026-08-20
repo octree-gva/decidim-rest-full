@@ -17,7 +17,8 @@ If you already know Decidim: this module does **not** replace the web UI. It let
 | Decidim Administrator | This page, then [Installation](/install). |
 | System admin | [API clients](/user_documentation/client-api-admin), then [Authentication](#authentication) below. |
 | Integrator | [Integrator guide](/integrator/quickstart) first, then [OpenAPI reference](/api), [Machine-to-machine](/user_documentation/auth/client-credential-flow) and [User tokens](/user_documentation/auth/user-credential-flow) as needed. |
-| Contributors and maintainers | [Developer documentation](/dev/architecture) (sidebar), and the repository [CONTRIBUTING](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) guide. |
+| Contribute | [Ways to contribute](/contribute/ways-to-contribute). Conduct and license: repository [CONTRIBUTING](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md). |
+| Maintainers | [Architecture](/dev/architecture), then [Recipe](/dev/add-endpoint/recipe) when adding endpoints. |
 
 ## Overview
 

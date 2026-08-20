@@ -12,7 +12,8 @@ module Decidim
           SPACE_ROLE_MAP = {
             "admin" => "space_administrator",
             "moderator" => "space_moderator",
-            "valuator" => "space_valuator",
+            "valuator" => "space_valuator", # pre-0.32
+            "evaluator" => "space_valuator", # Decidim 0.32+
             "collaborator" => "space_private_member"
           }.freeze
 
@@ -139,18 +140,18 @@ module Decidim
           end
 
           def assembly_member_roles
-            return [] unless defined?(Decidim::AssemblyMember)
+            return [] unless defined?(Decidim::ParticipatorySpace::Member)
 
-            Decidim::AssemblyMember
-              .joins(:assembly)
+            Decidim::ParticipatorySpace::Member
+              .where(participatory_space_type: "Decidim::Assembly")
+              .joins("INNER JOIN decidim_assemblies ON decidim_assemblies.id = decidim_members.participatory_space_id")
               .where(decidim_assemblies: { decidim_organization_id: organization.id })
               .where.not(decidim_user_id: nil)
-              .not_ceased
-              .includes(:user, :assembly)
+              .includes(:user)
               .map do |record|
                 build_role_view(
                   type: "space_private_member",
-                  resource_id: record.decidim_assembly_id,
+                  resource_id: record.participatory_space_id,
                   resource_type: "Decidim::Assembly",
                   user_id: record.decidim_user_id,
                   invited_at: nil,

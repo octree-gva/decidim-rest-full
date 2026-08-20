@@ -1,6 +1,6 @@
 # Integrator examples
 
-Shell scripts for the [integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart).
+Shell scripts for the [integrator quickstart](../../website/docs/integrator/quickstart.md).
 
 ## Environment
 

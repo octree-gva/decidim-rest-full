@@ -40,7 +40,7 @@ module Decidim
             )
             render json:, status: :created, location: json.dig(:data, :links, :self, :href)
           rescue Decidim::RestFull::Forms::ValidationError => e
-            render json: e.payload, status: :unprocessable_entity
+            render json: e.payload, status: unprocessable_status
           end
 
           private

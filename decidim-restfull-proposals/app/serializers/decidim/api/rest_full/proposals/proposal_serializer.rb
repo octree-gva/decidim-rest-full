@@ -25,7 +25,7 @@ module Decidim
               vote = proposal.votes.where(decidim_author_id: params[:act_as].id).last
               vote_manifest = proposal.component.settings[:awesome_voting_manifest]
               if vote
-                metas[:voted] = if vote_manifest && Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+                metas[:voted] = if vote_manifest && Decidim::Toggle.gem_present?("decidim-decidim_awesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
                                   match = Decidim::DecidimAwesome::VoteWeight.find_by(proposal_vote_id: vote.id)
                                   weight_value = match&.weight || 1
                                   { weight: weight_value }

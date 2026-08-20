@@ -13,6 +13,7 @@ module Decidim
         # @param payload [Hash] JSON body for +render json:+
         # @param fingerprint [Object, nil] object responding to +etag+ and +last_modified+
         # @param status [Symbol] HTTP status when rendering body (default +:ok+)
+        # @param [Hash{Symbol => Object}] render_opts
         def render_json_with_conditional_get(payload, fingerprint: conditional_get_fingerprint, status: :ok, **render_opts)
           if fingerprint && !stale?(
             etag: fingerprint.etag,

@@ -88,9 +88,11 @@ module Decidim
         end
 
         def question_attributes
-          data_attributes.permit(
+          attrs = data_attributes.permit(
             :position, :mandatory, :question_type, :max_choices, :max_characters, body: {}, description: {}
           ).to_h
+          attrs["question_type"] = Decidim032Compat.decidim_question_type(attrs["question_type"]) if attrs["question_type"].present?
+          attrs
         end
 
         def questionnaire_id_from_relationship!

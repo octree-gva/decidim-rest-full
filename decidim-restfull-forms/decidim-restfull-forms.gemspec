@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib"]
 
-  s.add_dependency "decidim-forms", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-forms", *Decidim::RestFull.decidim_version
   s.add_dependency "decidim-restfull-core", Decidim::RestFull.version
-  s.add_dependency "decidim-surveys", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-surveys", *Decidim::RestFull.decidim_version
 
   s.metadata["rubygems_mfa_required"] = "true"
 end

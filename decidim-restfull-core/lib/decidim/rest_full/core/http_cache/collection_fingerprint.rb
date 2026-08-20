@@ -68,7 +68,7 @@ module Decidim
             input = [
               @ctx.organization.id,
               @ctx.profile,
-              last_modified.to_i,
+              last_modified.to_f,
               count,
               @ctx.client_id,
               @ctx.act_as&.id,

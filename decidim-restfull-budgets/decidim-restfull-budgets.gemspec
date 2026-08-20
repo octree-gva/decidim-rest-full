@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib"]
 
-  s.add_dependency "decidim-budgets", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-budgets", *Decidim::RestFull.decidim_version
   s.add_dependency "decidim-restfull-core", Decidim::RestFull.version
 
   s.metadata["rubygems_mfa_required"] = "true"

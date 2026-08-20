@@ -9,9 +9,8 @@ module Decidim
           return unless Decidim::RestFull::Core::ModuleAvailability.module_enabled?(organization, :proposals)
 
           proposal = load_proposal(proposal_id)
-          data = serialize_proposal(proposal, organization)
           permissions_for(event_name, organization).each do |permission|
-            dispatch_for_permission(permission, event_name, data, organization)
+            dispatch_for_permission(permission, event_name, proposal, organization)
           end
         end
 
@@ -25,53 +24,17 @@ module Decidim
           Decidim::Organization.find(organization_id)
         end
 
-        def serialize_proposal(proposal, organization)
-          params = serializer_params(proposal, organization)
-          return draft_serializer(proposal, params).serializable_hash if proposal.draft?
-
-          proposal_serializer(proposal, params).serializable_hash
-        end
-
-        def serializer_params(proposal, organization)
-          {
-            only: [],
-            locales: serializer_locales(organization),
-            host: organization.host,
-            publishable: publishable?(proposal, organization),
-            act_as: nil
-          }
-        end
-
-        def serializer_locales(organization)
-          organization.available_locales || Decidim.available_locales
-        end
-
-        def publishable?(proposal, organization)
-          return false unless proposal.draft?
-
-          proposal_form_for(proposal, organization).valid?
-        end
-
-        def proposal_form_for(proposal, organization)
-          Decidim::Proposals::ProposalForm
-            .from_model(proposal)
-            .with_context(current_organization: organization, current_component: proposal.component)
-        end
-
-        def draft_serializer(proposal, params)
-          ::Decidim::Api::RestFull::Proposals::DraftProposalSerializer.new(proposal, params:)
-        end
-
-        def proposal_serializer(proposal, params)
-          ::Decidim::Api::RestFull::Proposals::ProposalSerializer.new(proposal, params:)
-        end
-
         def permissions_for(event_name, organization)
           Decidim::RestFull::Core::Permission.where(permission: event_name, api_client: organization.api_clients)
         end
 
-        def dispatch_for_permission(permission, event_name, data, organization)
-          payload = build_payload(permission.api_client, event_name, data, organization)
+        def dispatch_for_permission(permission, event_name, proposal, organization)
+          serializer = ::Decidim::Api::RestFull::Proposals::ProposalWebhookSerializer.new(
+            proposal,
+            event_name:,
+            organization:
+          )
+          payload = build_payload(permission.api_client, serializer, organization)
           return log_invalid_event(event_name, payload) unless payload.valid?
 
           webhook_registrations_for(permission.api_client, event_name).each do |registration|
@@ -79,11 +42,9 @@ module Decidim
           end
         end
 
-        def build_payload(api_client, event_name, data, organization)
+        def build_payload(api_client, serializer, organization)
           Decidim::RestFull::Core::WebhookEventForm.new(
-            type: event_name,
-            data:,
-            timestamp: current_timestamp
+            **serializer.event_attributes
           ).with_context(organization:, api_client:)
         end
 
@@ -98,11 +59,7 @@ module Decidim
         end
 
         def enqueue_webhook(webhook_registration, payload)
-          ::Decidim::RestFull::Core::WebhookJob.perform_later(webhook_registration, payload.as_json, current_timestamp)
-        end
-
-        def current_timestamp
-          Time.current.to_i.to_s
+          ::Decidim::RestFull::Core::WebhookJob.perform_later(webhook_registration, payload.as_json, payload.timestamp.to_s)
         end
       end
     end

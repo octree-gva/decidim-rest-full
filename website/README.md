@@ -1,5 +1,7 @@
 # Website
 
+Published base URL for OpenAPI/doc links is `Decidim::RestFull.config.docs_url` (env `DOCS_URL`). This package is the Docusaurus source for that site.
+
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
 ### Installation
@@ -32,7 +34,7 @@ Using SSH:
 $ USE_SSH=true yarn deploy
 ```
 
-Not using SSH:
+Using HTTPS (recommended for first-time GitHub Pages setup):
 
 ```
 $ GIT_USER=<Your GitHub username> yarn deploy

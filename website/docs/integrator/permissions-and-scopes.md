@@ -28,6 +28,7 @@ Some operations require a **user** on the token (e.g. voting). Service tokens ma
 | Publish draft | `proposals` | `proposals.draft` (+ route-specific rules) |
 | Blogs CRUD | `blogs` | `blogs.read`, `blogs.write`, `blogs.destroy` |
 | Attachments | `attachments` | `attachments.read`, `attachments.write`, `attachments.destroy` |
+| Webhook registrations | `webhooks` | `webhooks.read`, `webhooks.write`, `webhooks.destroy` |
 | Webhook delivery | (subscription keys) | Event permission on client, e.g. `proposal_creation.succeeded` |
 
 Webhook **subscriptions** use the same permission strings as in the [Webhooks](./webhooks.md) catalog.

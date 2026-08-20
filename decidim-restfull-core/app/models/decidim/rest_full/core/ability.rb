@@ -7,6 +7,7 @@ module Decidim
     module Core
       class Ability
         include ::CanCan::Ability
+
         attr_reader :api_client, :permissions
 
         def initialize(api_client, scopes = nil)
@@ -34,9 +35,9 @@ module Decidim
             ["budgets", :perms_for_budgets],
             ["surveys", :perms_for_surveys],
             ["accountability", :perms_for_accountability],
-            ["sortitions", :perms_for_sortitions],
             ["roles", :perms_for_roles],
-            ["attachments", :perms_for_attachments]
+            ["attachments", :perms_for_attachments],
+            ["webhooks", :perms_for_webhooks]
           ].each do |scope_token, meth|
             send(meth) if scopes.include?(scope_token)
           end
@@ -68,6 +69,20 @@ module Decidim
         def perms_for_public
           can :read, ::Decidim::ParticipatorySpaceManifest if permissions.include? "public.space.read"
           can :read, ::Decidim::Component if permissions.include? "public.component.read"
+          can :read_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.read"
+          can :update_extended_data, ::Decidim::Component if permissions.include? "public.component.extended_data.update"
+          # ponytail: extract shared space-manifest loop for RuboCop Metrics/AbcSize
+          grant_space_extended_data!(:read_extended_data, "public.space.extended_data.read")
+          grant_space_extended_data!(:update_extended_data, "public.space.extended_data.update")
+        end
+
+        def grant_space_extended_data!(action, permission_string)
+          return unless permissions.include?(permission_string)
+
+          Decidim.participatory_space_registry.manifests.each do |manifest|
+            model = manifest.model_class_name.safe_constantize
+            can action, model if model
+          end
         end
 
         def perms_for_system
@@ -76,8 +91,8 @@ module Decidim
           can :update, ::Decidim::Organization if permissions.include? "system.organizations.update"
           can :destroy, ::Decidim::Organization if permissions.include? "system.organizations.destroy"
 
-          can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.read"
-          can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organization.extended_data.update"
+          can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.read"
+          can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.update"
         end
 
         def perms_for_blogs
@@ -108,6 +123,15 @@ module Decidim
           can :destroy, ::Decidim::Attachment if permissions.include? "attachments.destroy"
         end
 
+        def perms_for_webhooks
+          can :read, ::Decidim::RestFull::Core::WebhookRegistration if permissions.include? "webhooks.read"
+          if permissions.include?("webhooks.write")
+            can :create, ::Decidim::RestFull::Core::WebhookRegistration
+            can :update, ::Decidim::RestFull::Core::WebhookRegistration
+          end
+          can :destroy, ::Decidim::RestFull::Core::WebhookRegistration if permissions.include? "webhooks.destroy"
+        end
+
         def perms_for_proposals
           return unless defined?(::Decidim::Proposals::Proposal)
 
@@ -117,12 +141,16 @@ module Decidim
             can :vote, ::Decidim::Proposals::Proposal
             can :unvote, ::Decidim::Proposals::Proposal
           end
+          can :read_extended_data, ::Decidim::Proposals::Proposal if permissions.include? "proposals.extended_data.read"
+          can :update_extended_data, ::Decidim::Proposals::Proposal if permissions.include? "proposals.extended_data.update"
         end
 
         def perms_for_meetings
           return unless defined?(::Decidim::Meetings::Meeting)
 
           can :read, ::Decidim::Meetings::Meeting if permissions.include? "meetings.read"
+          can :read_extended_data, ::Decidim::Meetings::Meeting if permissions.include? "meetings.extended_data.read"
+          can :update_extended_data, ::Decidim::Meetings::Meeting if permissions.include? "meetings.extended_data.update"
         end
 
         def perms_for_debates
@@ -160,12 +188,6 @@ module Decidim
           return unless defined?(::Decidim::Accountability::Result)
 
           can :read, ::Decidim::Accountability::Result if permissions.include? "accountability.read"
-        end
-
-        def perms_for_sortitions
-          return unless defined?(::Decidim::Sortitions::Sortition)
-
-          can :read, ::Decidim::Sortitions::Sortition if permissions.include? "sortitions.read"
         end
       end
     end

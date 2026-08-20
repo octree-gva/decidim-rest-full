@@ -14,6 +14,11 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
       it_behaves_like "filtered params", filter: "id", item_schema: { type: :integer }, only: :integer
       it_behaves_like "filtered params", filter: "slug", item_schema: { type: :string }, only: :string
       it_behaves_like "filtered params", filter: "title", item_schema: { type: :string }, only: :string
+      parameter name: :"filter[extended_data_cont]",
+                in: :query,
+                schema: { type: :string },
+                required: false,
+                description: "Search on space extended_data. Requires `public.space.extended_data.read`. See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data)."
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Spaces::SpacesController,
         action: :search,
@@ -198,10 +203,73 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             end
           end
 
+          context "with filter[extended_data_cont] and permission" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(public))
+              client.permissions = [
+                client.permissions.build(permission: "public.space.read"),
+                client.permissions.build(permission: "public.space.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"region": "west"' }
+            let(:page) { 1 }
+            let(:per_page) { 50 }
+
+            before do
+              participatory_process.extended_data.update!(data: { "region" => "west" })
+            end
+
+            run_test!(example_name: :filter_by_extended_data) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| d["id"] }).to include(participatory_process.id.to_s)
+            end
+          end
+
+          context "with filter[extended_data_cont] no hit" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(public))
+              client.permissions = [
+                client.permissions.build(permission: "public.space.read"),
+                client.permissions.build(permission: "public.space.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"region": "missing"' }
+            let(:page) { 1 }
+            let(:per_page) { 50 }
+
+            before do
+              participatory_process.extended_data.update!(data: { "region" => "west" })
+            end
+
+            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| d["id"] }).not_to include(participatory_process.id.to_s)
+            end
+          end
+
           it_behaves_like "paginated endpoint" do
             let(:create_resource) { -> { create(:assembly, organization:) } }
             let(:each_resource) { ->(_resource, _index) {} }
             let(:resources) { Decidim::Assembly.all + Decidim::ParticipatoryProcess.all }
+          end
+        end
+
+        response "403", "Forbidden when filtering extended_data without permission" do
+          produces "application/json"
+          let(:"filter[extended_data_cont]") { '"region": "west"' }
+          let(:page) { 1 }
+          let(:per_page) { 10 }
+
+          before do
+            participatory_process.extended_data.update!(data: { "region" => "west" })
+          end
+
+          run_test!(example_name: :filter_extended_data_forbidden) do |example|
+            expect(example.status).to eq(403)
           end
         end
       end

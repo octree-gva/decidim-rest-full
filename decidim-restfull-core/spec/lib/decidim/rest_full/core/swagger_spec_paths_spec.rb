@@ -30,7 +30,7 @@ module Decidim
         end
 
         it "omits globs with no matching files" do
-          described_class.register("decidim-restfull-sortition/spec/requests/**/*_spec.rb")
+          described_class.register("decidim-restfull-accountabilities/spec/requests/**/*_spec.rb")
           expect(described_class.rspec_paths).to eq([])
         end
 

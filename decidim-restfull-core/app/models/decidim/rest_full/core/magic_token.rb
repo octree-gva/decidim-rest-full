@@ -23,7 +23,7 @@ module Decidim
 
         # Deletes expired tokens. Returns the number of deleted records.
         def self.clean_expired!
-          where("expires_at < ?", Time.current).delete_all
+          where(expires_at: ...Time.current).delete_all
         end
 
         private

@@ -6,8 +6,18 @@ module Decidim
       class Engine < ::Rails::Engine
         config.root = Forms::ENGINE_ROOT
 
+        # ponytail: const aliases until API vocabulary moves to Response*
+        config.to_prepare do
+          Decidim::RestFull::Forms::Decidim032Compat.apply!
+        end
+
         initializer "rest_full.forms.extension" do
           Decidim::RestFull::Extension.register(:forms) do |ext|
+            ext.toggle_feature gem: "decidim-restfull-forms"
+            ext.controller_paths(
+              "forms", "questionnaires", "questions", "answers",
+              "answer_options", "questionnaire_responses", "submission_requests"
+            )
             ext.oauth_scopes :surveys
             ext.permissions(:surveys, "surveys.questionnaires.read", group: :surveys)
             ext.permissions(:surveys, "surveys.questions.manage", group: :surveys)

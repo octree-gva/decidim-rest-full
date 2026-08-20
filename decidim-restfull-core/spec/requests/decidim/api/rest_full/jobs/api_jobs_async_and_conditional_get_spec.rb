@@ -170,6 +170,40 @@ RSpec.describe "Decidim RestFull async jobs and conditional GET" do
       get(path + qs, headers: headers.merge("If-None-Match" => etag))
       expect(response).to have_http_status(:not_modified)
     end
+
+    it "does not return 304 after extended_data update" do
+      path = "#{api_prefix}/proposals/#{proposal.id}"
+      qs = "?component_id=#{proposal_component.id}&space_id=#{participatory_process.id}&space_manifest=participatory_processes"
+      headers = { "Authorization" => "Bearer #{read_token.token}" }
+
+      get(path + qs, headers:)
+      expect(response).to have_http_status(:ok)
+      etag = response.headers["ETag"]
+      previous_updated_at = proposal.reload.updated_at
+
+      write_client = create(:api_client, organization:, scopes: ["proposals"])
+      write_client.permissions = [
+        Decidim::RestFull::Core::Permission.new(permission: "proposals.read"),
+        Decidim::RestFull::Core::Permission.new(permission: "proposals.extended_data.update")
+      ]
+      write_client.save!
+      write_token = create(:oauth_access_token, scopes: "proposals", resource_owner_id: user.id, application: write_client)
+
+      put(
+        "#{api_prefix}/proposals/#{proposal.id}/extended_data/sync?object_path=.",
+        params: { data: { "cache_probe" => "1" } }.to_json,
+        headers: {
+          "Authorization" => "Bearer #{write_token.token}",
+          "Content-Type" => "application/json"
+        }
+      )
+      expect(response).to have_http_status(:ok)
+      expect(proposal.reload.updated_at).to be > previous_updated_at
+
+      get(path + qs, headers: headers.merge("If-None-Match" => etag))
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["ETag"]).not_to eq(etag)
+    end
   end
 end
 # rubocop:enable RSpec/DescribeClass

@@ -120,10 +120,12 @@ module Decidim
                        .select(:id, "LAG(id) OVER (ORDER BY #{order_string}) AS previous_id", "LEAD(id) OVER (ORDER BY #{order_string}) AS next_id")
                        .to_sql
             aliased = "(#{subquery}) AS subquery"
-            model_class
-              .select("subquery.id, subquery.previous_id as previous_id, subquery.next_id as next_id")
-              .from(aliased)
-              .find_by("subquery.id = ? ", resource_id)
+            # SoftDeletable/paranoia would otherwise add deleted_at on the outer
+            # relation, but the subquery alias has no such column.
+            model_class.unscoped
+                       .select("subquery.id, subquery.previous_id as previous_id, subquery.next_id as next_id")
+                       .from(aliased)
+                       .find_by("subquery.id = ? ", resource_id)
           end
 
           def model_class

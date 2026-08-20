@@ -37,6 +37,20 @@ RSpec.describe Decidim::RestFull::Proposals::ProposalWebhookJob do
       described_class.perform_now(event_name, proposal_id, organization_id)
     end
 
+    it "logs when the event payload is invalid" do
+      form = instance_double(
+        Decidim::RestFull::Core::WebhookEventForm,
+        valid?: false,
+        errors: instance_double(ActiveModel::Errors, full_messages: ["bad"])
+      )
+      allow(Decidim::RestFull::Core::WebhookEventForm).to receive(:new).and_return(form)
+      allow(form).to receive(:with_context).and_return(form)
+
+      expect(Decidim::RestFull::Core::WebhookJob).not_to receive(:perform_later)
+      expect(Rails.logger).to receive(:warn).with(/Invalid event name/)
+      described_class.perform_now(event_name, proposal_id, organization_id)
+    end
+
     it "serialize proposal with DraftProposalSerializer if it is a draft" do
       proposal.update(published_at: nil)
 

@@ -72,8 +72,9 @@ expect(response).to have_http_status(:not_modified)
 | Rule | Detail |
 |------|--------|
 | Default | All JSON GETs in `decidim-restfull-*` use conditional GET. |
-| Show fingerprint | `ResourceShowFingerprint` — org id, record class, id, `updated_at`, client, locales. |
+| Show fingerprint | `ResourceShowFingerprint` — org id, record class, id, `updated_at` (ETag uses subsecond `to_f`), client, locales. |
 | Index fingerprint | `CollectionFingerprint` — max timestamp, count, page, filter, locales. |
+| `extended_data` | Satellite row uses `belongs_to … touch: true` so parent `updated_at` (and ETag) moves on write. |
 | `Rails.cache` | Optional server-side memoization; not a substitute for client validators. |
 | `rest_enhancement` | Register `cache_time` / `etag_segment` when extra tables affect the body. |
 | Exceptions | `GET /magic_links/:id` redirects (HTML). Error bodies skip cache. |
@@ -83,6 +84,7 @@ expect(response).to have_http_status(:not_modified)
 | Case | Path |
 |------|------|
 | Proposal show 304 | `decidim-restfull-core/spec/requests/.../jobs/api_jobs_async_and_conditional_get_spec.rb` |
+| Proposal show after extended_data | same file — must **not** 304 after `/extended_data/sync` |
 | Blog show 304 | `decidim-restfull-blogs/spec/requests/.../blogs_controller_show_spec.rb` |
 
 ## See also

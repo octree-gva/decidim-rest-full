@@ -27,6 +27,11 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
       it_behaves_like "filtered params", filter: "participatory_space_id", item_schema: { type: :string }, only: :integer
       it_behaves_like "filtered params", filter: "participatory_space_type", item_schema: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_type) }, only: :string
       it_behaves_like "filtered params", filter: "name", item_schema: { type: :string }, only: :string
+      parameter name: :"filter[extended_data_cont]",
+                in: :query,
+                schema: { type: :string },
+                required: false,
+                description: "Search on component extended_data. Format: `\"<key>\":<space>\"<value>\"`. Requires `public.component.extended_data.read`. See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data)."
 
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Components::ComponentsController,
@@ -120,6 +125,70 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
             let(:create_resource) { -> { create(:component, participatory_space: assembly, manifest_name: manifests.sample, published_at: Time.zone.now) } }
             let(:each_resource) { ->(_resource, _index) {} }
             let(:resources) { Decidim::Component.all }
+          end
+
+          context "with filter[extended_data_cont] and permission" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(public))
+              client.permissions = [
+                client.permissions.build(permission: "public.component.read"),
+                client.permissions.build(permission: "public.component.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"sync": "ok"' }
+            let(:"locales[]") { %w(en) }
+            let(:page) { 1 }
+            let(:per_page) { 50 }
+
+            before do
+              component.extended_data.update!(data: { "sync" => "ok" })
+            end
+
+            run_test!(example_name: :filter_by_extended_data) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| d["id"] }).to include(component.id.to_s)
+            end
+          end
+
+          context "with filter[extended_data_cont] no hit" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(public))
+              client.permissions = [
+                client.permissions.build(permission: "public.component.read"),
+                client.permissions.build(permission: "public.component.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"sync": "missing"' }
+            let(:"locales[]") { %w(en) }
+            let(:page) { 1 }
+            let(:per_page) { 50 }
+
+            before do
+              component.extended_data.update!(data: { "sync" => "ok" })
+            end
+
+            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| d["id"] }).not_to include(component.id.to_s)
+            end
+          end
+        end
+
+        response "403", "Forbidden when filtering extended_data without permission" do
+          produces "application/json"
+          let(:"filter[extended_data_cont]") { '"sync": "ok"' }
+          let(:"locales[]") { %w(en) }
+
+          before do
+            component.extended_data.update!(data: { "sync" => "ok" })
+          end
+
+          run_test!(example_name: :filter_extended_data_forbidden) do |example|
+            expect(example.status).to eq(403)
           end
         end
       end

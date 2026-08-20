@@ -72,10 +72,10 @@ RSpec.describe Decidim::RestFull::Core::WebhookRegistration do
     end
 
     describe ".body" do
-      it "takes event.type as event name" do
+      it "takes event.type as type" do
         expect(mock_http).to receive(:request) do |request|
           body = JSON.parse(request.body)
-          expect(body["event"]).to eq("test.event")
+          expect(body["type"]).to eq("test.event")
           mock_response
         end
 
@@ -103,14 +103,13 @@ RSpec.describe Decidim::RestFull::Core::WebhookRegistration do
         webhook_registration.send_webhook(event, timestamp)
       end
 
-      it "includes a webhook signature of <timestamp>.<request.body> signed with the private key" do
+      it "includes a v1= webhook signature of <timestamp>.<request.body> signed with the private key" do
         expect(mock_http).to receive(:request) do |request|
           expect(request["X-Webhook-Signature"]).to be_present
           local_timestamp = request["X-Webhook-Timestamp"]
           data = "#{local_timestamp}.#{request.body}"
-          # Sign the data
-          signature = OpenSSL::HMAC.hexdigest("SHA256", webhook_registration.private_key, data)
-          expect(request["X-Webhook-Signature"]).to eq(signature)
+          hex = OpenSSL::HMAC.hexdigest("SHA256", webhook_registration.private_key, data)
+          expect(request["X-Webhook-Signature"]).to eq("v1=#{hex}")
           mock_response
         end
 

@@ -34,8 +34,10 @@ To make this work, we needed two thing:
 
 
 ## Save additional data to an organization: `extended_data`
-We copy the logic from `Decidim::User` and applied it to `Decidim::Organization`, in order to save 
-extra metadata (we need only `unconfirmed_host` here). This additional resource is created in a jointed table, and is exposed in the Rest API under the `system` scope. 
+
+Organizations store extra API metadata through `HasExtendedData` (related row per organization). The host-update flow keeps `unconfirmed_host` in that bag under the `system` scope.
+
+Integrator overview: [Extended data](/integrator/extended-data).
 
 The Extended Data `unconfirmed_host` behaves like this: 
 1. If `nil`: we have nothing to update

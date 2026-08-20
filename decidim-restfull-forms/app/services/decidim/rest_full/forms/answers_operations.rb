@@ -78,7 +78,7 @@ module Decidim
         end
 
         def apply_answer!(answer_form, question, value)
-          case question.question_type
+          case Decidim032Compat.api_question_type(question.question_type)
           when "short_answer", "long_answer"
             answer_form.body = value.to_s
           when "single_option"

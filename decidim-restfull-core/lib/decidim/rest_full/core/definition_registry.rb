@@ -41,6 +41,52 @@ module Decidim
 
         # Builds +:other_component+, the polymorphic JSON:API +:component+ OpenAPI schema (+oneOf+), and response
         # wrappers. Run after all +register_component_manifest_schema+ calls (see +definitions.rb+ load order).
+        # Rebuild WebhookDeliveryEnvelope as a discriminated oneOf after feature schemas load.
+        def finalize_webhook_delivery_schemas!
+          raise ArgumentError, "Webhook delivery schemas already finalized" if @webhook_delivery_schemas_finalized
+
+          @webhook_delivery_schemas_finalized = true
+          @schema.delete(:webhook_delivery_envelope)
+
+          mapping = {}
+          one_of = Decidim::RestFull::Core::WebhookEventCatalog.all.map do |entry|
+            schema_key = entry.schema_key.to_sym
+            data_schema = if entry.payload_schema_ref && @schema.has_key?(entry.payload_schema_ref)
+                            { "$ref" => reference(entry.payload_schema_ref) }
+                          else
+                            { type: :object, description: "JSON:API resource for #{entry.event_name}" }
+                          end
+
+            register_object(schema_key) do
+              {
+                title: "Webhook #{entry.event_name}",
+                type: :object,
+                properties: {
+                  type: { type: :string, enum: [entry.event_name] },
+                  data: data_schema
+                },
+                required: [:type, :data],
+                additionalProperties: false
+              }
+            end
+
+            mapping[entry.event_name] = reference(schema_key)
+            { "$ref" => reference(schema_key) }
+          end
+
+          register_object(:webhook_delivery_envelope) do
+            {
+              title: "Webhook delivery envelope",
+              description: "JSON body POSTed to integrator URLs when a subscribed event fires.",
+              oneOf: one_of,
+              discriminator: {
+                propertyName: "type",
+                mapping:
+              }
+            }
+          end
+        end
+
         def finalize_openapi_component_resource_schema!
           raise ArgumentError, "OpenAPI component resource schema already finalized" if @openapi_component_resource_schema_finalized
 
@@ -69,7 +115,7 @@ module Decidim
           register_response_for(:component)
         end
 
-        # rubocop:disable Naming/PredicateName
+        # rubocop:disable Naming/PredicatePrefix -- OpenAPI DSL mirrors JSON:API has_many naming
         def has_many_relation(resource_type_schema, title: nil, description: nil, item_schema_key: nil)
           items_schema = if item_schema_key
                            { "$ref" => reference(item_schema_key) }
@@ -109,17 +155,17 @@ module Decidim
         # @param title [String] The title of the relationship
         # @param description [String] The description of the relationship
         # @return [Hash] The Open Api Schema for the relationship
-        def has_many(*resource_types, title: nil, description: nil, &block)
+        def has_many(*resource_types, title: nil, description: nil, &)
           unless resource_types.all? { |type| type.is_a?(String) || type.is_a?(Symbol) }
             raise ArgumentError, "Resource types must be strings or symbols, got: #{resource_types.inspect}"
           end
 
           item_schema = { type: :string }
           item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-          has_many_relation(item_schema, title:, description:, &block)
+          has_many_relation(item_schema, title:, description:, &)
         end
+        # rubocop:enable Naming/PredicatePrefix
 
-        # rubocop:enable Naming/PredicateName
         def belongs_to_relation(resource_type_schema, title: nil, description: nil)
           belongs_to_schema = {
             title: "Belongs To Relation",
@@ -151,7 +197,7 @@ module Decidim
         # @param title [String] The title of the relationship
         # @param description [String] The description of the relationship
         # @return [Hash] The Open Api Schema for the relationship
-        def belongs_to(*resource_types, title: nil, description: nil, &block)
+        def belongs_to(*resource_types, title: nil, description: nil, &)
           # Validate resource_types
           unless resource_types.all? { |type| type.is_a?(String) || type.is_a?(Symbol) }
             raise ArgumentError, "Resource types must be strings or symbols, got: #{resource_types.inspect}"
@@ -159,7 +205,7 @@ module Decidim
 
           item_schema = { type: :string }
           item_schema[:enum] = resource_types.map(&:to_s) unless resource_types.empty?
-          belongs_to_relation(item_schema, title:, description:, &block)
+          belongs_to_relation(item_schema, title:, description:, &)
         end
 
         ##
@@ -288,7 +334,7 @@ module Decidim
         ##
         # Get the reference to a registered schema
         # @param name [Symbol] The name of the schema
-        # @return [String|nil] The reference to the schema or nil if the schema is not registered
+        # @return [String, nil] The reference to the schema or nil if the schema is not registered
         def reference(name)
           unless @schema.has_key?(name)
             suggestions = DidYouMean::SpellChecker.new(dictionary: @schema.keys).correct(name)
@@ -442,7 +488,8 @@ module Decidim
           delegate :references, to: :instance
           delegate :schema_for, to: :instance
           delegate :as_json, to: :instance
-          delegate :register_component_manifest_schema, :finalize_openapi_component_resource_schema!, :component_manifest_names_with_openapi_schema,
+          delegate :register_component_manifest_schema, :finalize_openapi_component_resource_schema!, :finalize_webhook_delivery_schemas!,
+                   :component_manifest_names_with_openapi_schema,
                    to: :instance
 
           def register_swagger_spec_path(*globs)

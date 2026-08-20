@@ -17,7 +17,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
         action: :index,
         security_types: [:credentialFlow],
         scopes: ["system"],
-        permissions: ["system.organization.extended_data.read"]
+        permissions: ["system.organizations.extended_data.read"]
       ) do
         let!(:id) { organization.id }
         let!(:object_path) { "custom.data" }

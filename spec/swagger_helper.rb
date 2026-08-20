@@ -5,6 +5,8 @@ require "rswag/specs"
 
 require "decidim/rest_full/test/definitions"
 require "decidim/rest_full/test/shared_examples"
+require "decidim/rest_full/test/shared_examples/has_extended_data"
+
 require "decidim/rest_full/test/openapi_specs"
 
 RSpec.configure do |config|

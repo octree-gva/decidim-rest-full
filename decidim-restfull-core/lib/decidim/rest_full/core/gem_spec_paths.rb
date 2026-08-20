@@ -15,7 +15,6 @@ module Decidim
           decidim-restfull-budgets
           decidim-restfull-debates
           decidim-restfull-accountabilities
-          decidim-restfull-sortition
         ).freeze
 
         class << self

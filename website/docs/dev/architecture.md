@@ -16,8 +16,9 @@ Technical layout of the Rubygems in this repository. For a non-developer summary
 | **decidim-restfull-proposals** | Proposals API; `Extension.register(:proposals)` (scopes, routes, jobs, webhooks). |
 | **decidim-restfull-blogs** | Blogs API; `Extension.register(:blogs)`. |
 | **decidim-restfull-meetings** | Meetings serializers + upcoming-meeting webhook; **`decidim_rest_full_meetings.en.yml`** (scopes, permissions, webhook label); `Extension.register(:meetings)`. |
-| **decidim-restfull-debates**, **surveys**, **budgets**, **accountabilities**, **sortition** | Embedded serializers + `*.read` permission + **`decidim_rest_full_*.en.yml`**; OpenAPI manifest schema via `test_definitions.rb`. Sortition ships as **decidim-restfull-sortition** (`Decidim::RestFull::Sortition::Engine`). |
+| **Debates / Surveys / Budgets / Accountabilities** | Serializers + `*.read` permission + **`decidim_rest_full_*.en.yml`**; OpenAPI manifest schema via `test_definitions.rb`. |
 | **decidim-restfull-dev** | Development only: swagger CLI, test helpers. |
+| **decidim-restfull-dummy** | Dev/test only: example Extension + Toggle feature; endpoints return 501. |
 
 Feature gems depend on **decidim-restfull-core** and the matching **decidim-\*** component gem (for example `decidim-surveys`).
 
@@ -36,7 +37,6 @@ gem "decidim-restfull-surveys"
 gem "decidim-restfull-forms"
 gem "decidim-restfull-budgets"
 gem "decidim-restfull-accountabilities"
-gem "decidim-restfull-sortition"
 ```
 
 ## Extension DSL
@@ -45,7 +45,7 @@ Third-party and first-party feature gems register in an engine initializer (see 
 
 - Use **`ext.oauth_scopes`** when the OAuth scope is **not** already listed in `core_optional_scopes` inside `decidim-restfull-core/lib/decidim/rest_full/core/engine.rb` (`:meetings`, `:debates`, … are already there; add scopes for e.g. `:budgets`, `:surveys`).
 - Pair each scope with **`ext.permissions(scope, "...read", group:)`** so System Admin can grant abilities; extend **`Ability`** when the slice gates model access.
-- Add **`available_permissions`** keys in `Core::Configuration` for CLI validation (`Decidim::RestFull.config.available_permissions`; scope string must match the OAuth scope).
+- Register permissions with **`ext.permissions`** (and webhook events with **`ext.webhook_event`**); they merge into `Decidim::RestFull.config.available_permissions` for CLI validation (scope string must match the OAuth scope).
 
 ```ruby
 Decidim::RestFull::Extension.register(:proposals) do |ext|
@@ -81,7 +81,7 @@ Host apps register in `after_initialize`; `Extension.register` appends routes wh
 
 ## CI
 
-GitLab runs RSpec per gem, then the full metagem suite. Local parity: `./bin/check` inside the `rest_full` Compose service (see repo `CONTRIBUTING.md`).
+GitLab runs RSpec per gem **twice** (Appraisals `decidim-0.32` on Ruby 3.4 and `decidim-0.29` on Ruby 3.2), then the full metagem suite for each minor. OpenAPI / ReDoc / node client stay **0.32-only** (`bin/swaggerize` pins `gemfiles/decidim_0.32.gemfile`). Local parity: `./bin/check` inside the `rest_full` Compose service (0.32); see [First contribution](/contribute/first-contribution) for `BUNDLE_GEMFILE` usage.
 
 ## Deferred hardening
 

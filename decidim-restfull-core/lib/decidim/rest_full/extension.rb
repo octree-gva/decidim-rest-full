@@ -5,10 +5,16 @@ module Decidim
     # Public registration API for decidim-restfull-* feature gems and external extensions.
     #
     #   Decidim::RestFull::Extension.register(:my_module) do |ext|
+    #     ext.toggle_feature gem: "decidim-restfull-widgets"
+    #     ext.controller_paths "widgets"
     #     ext.oauth_scopes :widgets
     #     ext.permissions(:widgets, "widgets.read", group: :widgets)
     #     ext.routes { resources :widgets, ... }
     #     ext.api_job "widgets#create", ->(ctx, p) { ... }
+    #     ext.webhook_event "widgets.created.succeeded", scope: :widgets, payload_schema_ref: :widget,
+    #                       schema_key: :wh_widget_created,
+    #                       example: ->(org) { WidgetWebhookSerializer.example_envelope(org, event_name: "widgets.created.succeeded") }
+    #     ext.webhooks(/decidim\.widgets\./, handler: Widgets::WebhookHandler.method(:call))
     #     ext.rswag_specs "spec/requests/**/widgets/**/*_spec.rb"
     #     ext.open_api_definitions File.join(Widgets::ENGINE_ROOT, "lib/decidim/rest_full/widgets/test_definitions.rb")
     #     ext.rest_enhancement(serializer: "Decidim::Api::RestFull::Proposals::ProposalSerializer", http_cache_profile: :proposal_show) do |e|
@@ -40,6 +46,8 @@ module Decidim
       def initialize(name)
         @name = name.to_sym
         @rest_enhancement_registrations = []
+        @webhook_events = []
+        @controller_paths = []
       end
 
       # Registers optional OAuth token scopes advertised to Doorkeeper and checked via +doorkeeper_authorize!+
@@ -79,9 +87,45 @@ module Decidim
 
       alias test_definitions open_api_definitions
 
-      def webhooks(*patterns, handler: nil)
+      # Registers this extension as a decidim-toggle feature (+#{feature}_enabled+).
+      # +feature:+ defaults to the Extension.register name. +gem:+ is checked via
+      # +Decidim::Toggle.gem_present?+ (+nil+ = always present, e.g. core-shipped).
+      def toggle_feature(feature = nil, gem: nil)
+        @toggle_feature_name = (feature || @name).to_sym
+        @toggle_feature_gem = gem
+      end
+
+      # Maps +controller_path+ URL segments to this toggle feature (see
+      # +ModuleAvailability.feature_for_controller+). Prefer short last segments
+      # (e.g. +"widgets"+ for +…/widgets_controller+).
+      def controller_paths(*segments)
+        @controller_paths = segments.flatten.map(&:to_s)
+      end
+
+      # Subscribe to ActiveSupport::Notifications. +handler+ is required (name, data) → void.
+      def webhooks(*patterns, handler:)
+        raise ArgumentError, "ext.webhooks requires a handler:" if handler.nil?
+
         @webhook_patterns = patterns.flatten
         @webhook_handler = handler
+      end
+
+      # Register an outbound webhook event (catalog + OpenAPI + permission checkbox source).
+      # +example+ is a callable +(organization) -> Hash+ (delivery envelope). Pair with
+      # +webhooks(…, handler:)+ to wire Decidim notifications to a job.
+      def webhook_event(event_name, scope:, example:, payload_schema_ref: nil, schema_key: nil, trigger: nil, permission: nil, description: nil) # rubocop:disable Metrics/ParameterLists
+        raise ArgumentError, "ext.webhook_event requires example:" unless example.respond_to?(:call)
+
+        @webhook_events << {
+          event_name: event_name.to_s,
+          scope: scope.to_sym,
+          example:,
+          payload_schema_ref: payload_schema_ref&.to_sym,
+          schema_key: schema_key&.to_s,
+          trigger: trigger.to_s.presence,
+          permission: (permission || event_name).to_s,
+          description: description.to_s.presence
+        }
       end
 
       # Optional JSON:API serializer extensions + conditional GET hooks for a host serializer.
@@ -99,11 +143,13 @@ module Decidim
       end
 
       def apply!
+        register_toggle_feature!
         register_oauth_scopes!
         register_permissions!
         register_routes!
         register_rswag_specs!
         register_open_api_definitions!
+        register_webhook_events!
         register_webhooks!
         register_rest_enhancements!
       end
@@ -111,6 +157,20 @@ module Decidim
       private
 
       attr_reader :name
+
+      def register_toggle_feature!
+        return unless @toggle_feature_name
+
+        Core::ModuleAvailability.register_feature!(@toggle_feature_name, gem: @toggle_feature_gem)
+        Array(@controller_paths).each do |segment|
+          Core::ModuleAvailability.register_controller_path!(segment, feature: @toggle_feature_name)
+        end
+        Array(@oauth_scopes).each do |scope|
+          next if Core::ModuleAvailability.scope_features.has_key?(scope.to_sym)
+
+          Core::ModuleAvailability.register_scope_feature!(scope, @toggle_feature_name)
+        end
+      end
 
       def register_rest_enhancements!
         @rest_enhancement_registrations.each do |reg|
@@ -144,6 +204,7 @@ module Decidim
 
         @permissions.each do |entry|
           Core::PermissionRegistry.register(entry[:scope], entry[:permission], group: entry[:group])
+          merge_available_permission!(entry[:scope], entry[:permission])
         end
       end
 
@@ -170,17 +231,43 @@ module Decidim
         end
       end
 
+      def register_webhook_events!
+        return if @webhook_events.empty?
+
+        @webhook_events.each do |entry|
+          Core::WebhookEventCatalog.register(
+            entry[:event_name],
+            scope: entry[:scope],
+            permission_key: entry[:permission],
+            description: entry[:description],
+            payload_schema_ref: entry[:payload_schema_ref],
+            trigger: entry[:trigger],
+            schema_key: entry[:schema_key],
+            example: entry[:example]
+          )
+          Core::PermissionRegistry.register(
+            entry[:scope],
+            entry[:permission],
+            group: :webhooks,
+            event: true
+          )
+          merge_available_permission!(entry[:scope], entry[:permission])
+        end
+      end
+
+      def merge_available_permission!(scope, permission)
+        perms = Core::Configuration.available_permissions
+        scope_key = scope.to_s
+        perms[scope_key] ||= []
+        perms[scope_key] << permission unless perms[scope_key].include?(permission)
+      end
+
       def register_webhooks!
         return unless @webhook_patterns&.any?
 
-        dispatcher = Core::WebhookDispatcher.instance
         @webhook_patterns.each do |pattern|
           ActiveSupport::Notifications.subscribe(pattern) do |event_name, data|
-            if @webhook_handler
-              @webhook_handler.call(event_name, data)
-            else
-              dispatcher.handle_proposals(event_name, data)
-            end
+            @webhook_handler.call(event_name, data)
           end
         end
       end

@@ -4,12 +4,16 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:organization_extend
   {
     type: :object,
     title: "Organization extended data",
-    properties: {},
+    properties: {
+      data: {
+        description: "Value at object_path (object, array, string, number, boolean, or null)."
+      }
+    },
+    required: [:data],
     additionalProperties: true,
     description: <<~README
-      Hash of values attached to an organization. These values won't be
-      displayed to admins or users, consider this as an internal
-      data payload.
+      Client metadata hash on an organization (`HasExtendedData`).
+      See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data).
     README
   }.freeze
 end

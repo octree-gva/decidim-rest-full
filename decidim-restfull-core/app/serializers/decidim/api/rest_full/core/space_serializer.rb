@@ -43,6 +43,16 @@ module Decidim
             end
           end
 
+          attribute :extended_data, if: proc { |_space, params| params[:includes_extended] } do |space, _params|
+            if space.respond_to?(:extended_data_hash)
+              space.extended_data_hash
+            else
+              type = space.respond_to?(:class_name) ? space.class_name : space.class.name
+              id = space.id
+              Decidim::RestFull::Core::ResourceExtendedData.find_by(resource_type: type, resource_id: id)&.data || {}
+            end
+          end
+
           has_many :components, serializer: (proc do |component, _params|
             SerializerLookup.component_serializer_class_for(component.manifest_name)
           end), meta: (proc do |space, _params|

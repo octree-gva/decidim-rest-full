@@ -27,7 +27,12 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:generic_component) 
           },
           participatory_space_id: { type: :string, description: "Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)" },
           created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) },
+          extended_data: {
+            type: :object,
+            additionalProperties: true,
+            description: "Present when the client has public.component.extended_data.read"
+          }
         },
         required: [:created_at, :updated_at, :name, :manifest_name, :participatory_space_type, :participatory_space_id],
         additionalProperties: false

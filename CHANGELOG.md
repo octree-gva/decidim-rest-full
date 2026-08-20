@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Polymorphic `resource_extended_data` + `HasExtendedData` for organizations, components, spaces, proposals, and meetings (read/write + `filter[extended_data_cont]`).
+- `GET /meetings` index/show with extended_data filter.
+- Integrator docs: Extended data (`website/docs/integrator/extended-data.md`; linked from OpenAPI via `Decidim::RestFull.config.docs_url`).
+
+### Changed
+
+- Organization extended_data storage moves from `organization_extended_data` to polymorphic `resource_extended_data` (migration copies existing rows).
+- User `decidim_users.extended_data` / `/me/extended_data` unchanged.
+- Hardening: quoted `resource_type` in extended_data ransacker; components search scopes visibility before Ransack; optional sync `extended_data` payload cap (`DECIDIM_REST_MAX_EXTENDED_DATA_PAYLOAD_BYTES`, falls back to async job payload cap).
+
 ## [0.3.0] - 2026-05-16
 
 ### Added

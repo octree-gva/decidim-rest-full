@@ -7,11 +7,18 @@ module Decidim
         WEBHOOKS = {
           name: "Webhooks",
           description: <<~TXT.strip
-            **Outbound HTTP callbacks** (not REST paths). Subscribe in **System admin → API clients → Webhooks**.
+            **Outbound HTTP callbacks** plus REST management of registrations.
 
-            Verify deliveries with `X-Webhook-Signature` (HMAC-SHA256 over `timestamp + "." + raw body`) and `X-Webhook-Timestamp`.
+            ### Manage registrations
+            - `GET|POST /webhook_registrations` — list / create (signing secret returned **only on create**)
+            - `GET|PUT|DELETE /webhook_registrations/{id}` — show / update / destroy (scoped to the API client)
+            - `GET /webhook_events/{event_type}` — canned example payload for typed clients
 
-            Payload envelope: see schema **WebhookDeliveryEnvelope**.
+            Subscribe via this API or in **System admin → API clients → Webhooks**.
+
+            Verify deliveries with `X-Webhook-Signature` (`v1=` + HMAC-SHA256 hex of `timestamp + "." + raw body`) and `X-Webhook-Timestamp`.
+
+            Payload envelope: schema **WebhookDeliveryEnvelope** (discriminated on `type`).
 
             ### Event catalog
 

@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.3.4_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant **Organizations** One deployment hosts many **Organizations** (tenants by **`host`**). - The **`system` scope** endpoints apply in the context of the resolved organization - The request **`host`** selects which **Organization** you target.   For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations\' OAuth applications.  ### Integrators Start with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).  TypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).  Outbound **webhook** events are listed under the **Webhooks** tag (subscribe in System admin).
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.3.4_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant **Organizations** One deployment hosts many **Organizations** (tenants by **`host`**). - The **`system` scope** endpoints apply in the context of the resolved organization - The request **`host`** selects which **Organization** you target.   For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations\' OAuth applications.  ### Integrators Start with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).  TypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).  Outbound **webhook** events are listed under the **Webhooks** tag. Manage registrations via `/webhook_registrations` (or System admin) and fetch example payloads from `GET /webhook_events/{event_type}`.
  *
  * The version of the OpenAPI document: v0.3
  *
@@ -1238,12 +1238,11 @@ export const ClientCredentialScopeEnum = {
   Public: "public",
   Spaces: "spaces",
   System: "system",
-  Meetings: "meetings",
-  Debates: "debates",
   Pages: "pages",
   Oauth: "oauth",
   Roles: "roles",
   Attachments: "attachments",
+  Webhooks: "webhooks",
 } as const;
 
 export type ClientCredentialScopeEnum =
@@ -1261,7 +1260,6 @@ export type Component =
   | MeetingComponent
   | OtherComponent
   | ProposalComponent
-  | SortitionComponent
   | SurveyComponent;
 
 /**
@@ -1399,7 +1397,6 @@ export const ComponentManifest = {
   Surveys: "surveys",
   Accountability: "accountability",
   Debates: "debates",
-  Sortitions: "sortitions",
   Blogs: "blogs",
   AwesomeMap: "awesome_map",
   AwesomeIframe: "awesome_iframe",
@@ -1482,7 +1479,6 @@ export const ComponentType = {
   SurveyComponent: "survey_component",
   AccountabilityComponent: "accountability_component",
   DebateComponent: "debate_component",
-  SortitionComponent: "sortition_component",
   BlogComponent: "blog_component",
   AwesomeMapComponent: "awesome_map_component",
   AwesomeIframeComponent: "awesome_iframe_component",
@@ -3783,12 +3779,11 @@ export type PasswordGrantImpersonateAuthTypeEnum =
 export const PasswordGrantImpersonateScopeEnum = {
   Public: "public",
   Spaces: "spaces",
-  Meetings: "meetings",
-  Debates: "debates",
   Pages: "pages",
   Oauth: "oauth",
   Roles: "roles",
   Attachments: "attachments",
+  Webhooks: "webhooks",
 } as const;
 
 export type PasswordGrantImpersonateScopeEnum =
@@ -3859,12 +3854,11 @@ export type PasswordGrantLoginAuthTypeEnum =
 export const PasswordGrantLoginScopeEnum = {
   Public: "public",
   Spaces: "spaces",
-  Meetings: "meetings",
-  Debates: "debates",
   Pages: "pages",
   Oauth: "oauth",
   Roles: "roles",
   Attachments: "attachments",
+  Webhooks: "webhooks",
 } as const;
 
 export type PasswordGrantLoginScopeEnum =
@@ -5784,7 +5778,6 @@ export const ResourceManifest = {
   Survey: "survey",
   Accountability: "accountability",
   Debate: "debate",
-  Sortition: "sortition",
   Blog: "blog",
   AwesomeMap: "awesome_map",
   AwesomeIframe: "awesome_iframe",
@@ -6255,225 +6248,6 @@ export interface RoleItemResponse {
    * @memberof RoleItemResponse
    */
   data: Role;
-}
-/**
- *
- * @export
- * @interface SortitionComponent
- */
-export interface SortitionComponent {
-  /**
-   * Sortitions component Id
-   * @type {string}
-   * @memberof SortitionComponent
-   */
-  id?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof SortitionComponent
-   */
-  type?: SortitionComponentTypeEnum;
-  /**
-   *
-   * @type {SortitionsComponentAttributes}
-   * @memberof SortitionComponent
-   */
-  attributes?: SortitionsComponentAttributes;
-  /**
-   *
-   * @type {SortitionsComponentMetadata}
-   * @memberof SortitionComponent
-   */
-  meta?: SortitionsComponentMetadata;
-  /**
-   *
-   * @type {SortitionsComponentLinks}
-   * @memberof SortitionComponent
-   */
-  links?: SortitionsComponentLinks;
-  /**
-   *
-   * @type {SortitionsComponentRelationships}
-   * @memberof SortitionComponent
-   */
-  relationships?: SortitionsComponentRelationships;
-}
-
-export const SortitionComponentTypeEnum = {
-  SortitionComponent: "sortition_component",
-} as const;
-
-export type SortitionComponentTypeEnum =
-  (typeof SortitionComponentTypeEnum)[keyof typeof SortitionComponentTypeEnum];
-
-/**
- *
- * @export
- * @interface SortitionComponentIndexResponse
- */
-export interface SortitionComponentIndexResponse {
-  /**
-   *
-   * @type {Array<SortitionComponent>}
-   * @memberof SortitionComponentIndexResponse
-   */
-  data: Array<SortitionComponent>;
-}
-/**
- *
- * @export
- * @interface SortitionComponentItemResponse
- */
-export interface SortitionComponentItemResponse {
-  /**
-   *
-   * @type {SortitionComponent}
-   * @memberof SortitionComponentItemResponse
-   */
-  data: SortitionComponent;
-}
-/**
- *
- * @export
- * @interface SortitionsComponentAttributes
- */
-export interface SortitionsComponentAttributes {
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof SortitionsComponentAttributes
-   */
-  name: TranslatedProp;
-  /**
-   *
-   * @type {TranslatedProp}
-   * @memberof SortitionsComponentAttributes
-   */
-  global_announcement?: TranslatedProp;
-  /**
-   *
-   * @type {SpaceClasses}
-   * @memberof SortitionsComponentAttributes
-   */
-  participatory_space_type: SpaceClasses;
-  /**
-   * Associate space id. Part of the polymorphic association (participatory_space_type,participatory_space_id)
-   * @type {string}
-   * @memberof SortitionsComponentAttributes
-   */
-  participatory_space_id: string;
-  /**
-   * Creation date, in ISO8601 format.
-   * @type {string}
-   * @memberof SortitionsComponentAttributes
-   */
-  created_at: string;
-  /**
-   * Last update date, in ISO8601 format.
-   * @type {string}
-   * @memberof SortitionsComponentAttributes
-   */
-  updated_at: string;
-  /**
-   *
-   * @type {string}
-   * @memberof SortitionsComponentAttributes
-   */
-  manifest_name: SortitionsComponentAttributesManifestNameEnum;
-}
-
-export const SortitionsComponentAttributesManifestNameEnum = {
-  Sortitions: "sortitions",
-} as const;
-
-export type SortitionsComponentAttributesManifestNameEnum =
-  (typeof SortitionsComponentAttributesManifestNameEnum)[keyof typeof SortitionsComponentAttributesManifestNameEnum];
-
-/**
- *
- * @export
- * @interface SortitionsComponentLinkedResources
- */
-export interface SortitionsComponentLinkedResources {
-  /**
-   *
-   * @type {Array<ResourceRelationshipIdentifier>}
-   * @memberof SortitionsComponentLinkedResources
-   */
-  data: Array<ResourceRelationshipIdentifier>;
-  /**
-   *
-   * @type {SortitionsComponentLinkedResourcesMetadata}
-   * @memberof SortitionsComponentLinkedResources
-   */
-  meta: SortitionsComponentLinkedResourcesMetadata;
-}
-/**
- *
- * @export
- * @interface SortitionsComponentLinkedResourcesMetadata
- */
-export interface SortitionsComponentLinkedResourcesMetadata {
-  /**
-   * Total count of resources
-   * @type {number}
-   * @memberof SortitionsComponentLinkedResourcesMetadata
-   */
-  count: number;
-}
-/**
- *
- * @export
- * @interface SortitionsComponentLinks
- */
-export interface SortitionsComponentLinks {
-  /**
-   *
-   * @type {ResourceLink}
-   * @memberof SortitionsComponentLinks
-   */
-  self: ResourceLink;
-  /**
-   *
-   * @type {ResourceLink}
-   * @memberof SortitionsComponentLinks
-   */
-  related?: ResourceLink;
-}
-/**
- *
- * @export
- * @interface SortitionsComponentMetadata
- */
-export interface SortitionsComponentMetadata {
-  [key: string]: ComponentMetadataValue | any;
-
-  /**
-   * Published component?
-   * @type {boolean}
-   * @memberof SortitionsComponentMetadata
-   */
-  published: boolean;
-  /**
-   * Sortitions component handle scopes?
-   * @type {boolean}
-   * @memberof SortitionsComponentMetadata
-   */
-  scopes_enabled: boolean;
-}
-/**
- *
- * @export
- * @interface SortitionsComponentRelationships
- */
-export interface SortitionsComponentRelationships {
-  /**
-   *
-   * @type {SortitionsComponentLinkedResources}
-   * @memberof SortitionsComponentRelationships
-   */
-  resources?: SortitionsComponentLinkedResources;
 }
 /**
  *
@@ -7124,12 +6898,12 @@ export const TimeZone = {
   AfricaMonrovia: "Africa/Monrovia",
   AfricaNairobi: "Africa/Nairobi",
   AmericaArgentinaBuenosAires: "America/Argentina/Buenos_Aires",
+  AmericaAsuncion: "America/Asuncion",
   AmericaBogota: "America/Bogota",
   AmericaCaracas: "America/Caracas",
   AmericaChicago: "America/Chicago",
   AmericaChihuahua: "America/Chihuahua",
   AmericaDenver: "America/Denver",
-  AmericaGodthab: "America/Godthab",
   AmericaGuatemala: "America/Guatemala",
   AmericaGuyana: "America/Guyana",
   AmericaHalifax: "America/Halifax",
@@ -7145,6 +6919,7 @@ export const TimeZone = {
   AmericaMonterrey: "America/Monterrey",
   AmericaMontevideo: "America/Montevideo",
   AmericaNewYork: "America/New_York",
+  AmericaNuuk: "America/Nuuk",
   AmericaPhoenix: "America/Phoenix",
   AmericaPuertoRico: "America/Puerto_Rico",
   AmericaRegina: "America/Regina",
@@ -7153,6 +6928,7 @@ export const TimeZone = {
   AmericaStJohns: "America/St_Johns",
   AmericaTijuana: "America/Tijuana",
   AsiaAlmaty: "Asia/Almaty",
+  AsiaAlmaty2: "Asia/Almaty",
   AsiaBaghdad: "Asia/Baghdad",
   AsiaBaku: "Asia/Baku",
   AsiaBangkok: "Asia/Bangkok",
@@ -7160,7 +6936,6 @@ export const TimeZone = {
   AsiaChongqing: "Asia/Chongqing",
   AsiaColombo: "Asia/Colombo",
   AsiaDhaka: "Asia/Dhaka",
-  AsiaDhaka2: "Asia/Dhaka",
   AsiaHongKong: "Asia/Hong_Kong",
   AsiaIrkutsk: "Asia/Irkutsk",
   AsiaJakarta: "Asia/Jakarta",
@@ -7181,7 +6956,6 @@ export const TimeZone = {
   AsiaMuscat: "Asia/Muscat",
   AsiaMuscat2: "Asia/Muscat",
   AsiaNovosibirsk: "Asia/Novosibirsk",
-  AsiaRangoon: "Asia/Rangoon",
   AsiaRiyadh: "Asia/Riyadh",
   AsiaSeoul: "Asia/Seoul",
   AsiaShanghai: "Asia/Shanghai",
@@ -7205,10 +6979,10 @@ export const TimeZone = {
   AtlanticSouthGeorgia: "Atlantic/South_Georgia",
   AustraliaAdelaide: "Australia/Adelaide",
   AustraliaBrisbane: "Australia/Brisbane",
+  AustraliaCanberra: "Australia/Canberra",
   AustraliaDarwin: "Australia/Darwin",
   AustraliaHobart: "Australia/Hobart",
   AustraliaMelbourne: "Australia/Melbourne",
-  AustraliaMelbourne2: "Australia/Melbourne",
   AustraliaPerth: "Australia/Perth",
   AustraliaSydney: "Australia/Sydney",
   EtcGmt12: "Etc/GMT+12",
@@ -7226,7 +7000,6 @@ export const TimeZone = {
   EuropeHelsinki: "Europe/Helsinki",
   EuropeIstanbul: "Europe/Istanbul",
   EuropeKaliningrad: "Europe/Kaliningrad",
-  EuropeKiev: "Europe/Kiev",
   EuropeLisbon: "Europe/Lisbon",
   EuropeLjubljana: "Europe/Ljubljana",
   EuropeLondon: "Europe/London",
@@ -7878,24 +7651,489 @@ export interface VoteProposalsIndexResponseMeta {
   per_page?: number;
 }
 /**
+ * @type WebhookDeliveryEnvelope
  * JSON body POSTed to integrator URLs when a subscribed event fires.
  * @export
- * @interface WebhookDeliveryEnvelope
  */
-export interface WebhookDeliveryEnvelope {
+export type WebhookDeliveryEnvelope =
+  | ({ type: "draft_proposal_creation.succeeded" } & WhDraftProposalCreation)
+  | ({ type: "draft_proposal_update.succeeded" } & WhDraftProposalUpdate)
+  | ({ type: "meetings.upcoming_reminder.succeeded" } & WhMeetingUpcoming)
+  | ({ type: "participatory_process.step_activated.succeeded" } & WhPpStep)
+  | ({ type: "proposal_creation.succeeded" } & WhProposalCreation)
+  | ({ type: "proposal_state_change.succeeded" } & WhProposalStateChange)
+  | ({ type: "proposal_update.succeeded" } & WhProposalUpdate)
+  | ({ type: "system.organizations.created" } & WhSystemOrganizationsCreated)
+  | ({ type: "system.organizations.deleted" } & WhSystemOrganizationsDeleted)
+  | ({ type: "system.organizations.updated" } & WhSystemOrganizationsUpdated)
+  | ({ type: "user.created" } & WhUserCreated)
+  | ({ type: "user.updated" } & WhUserUpdated);
+
+/**
+ *
+ * @export
+ * @interface WebhookRegistration
+ */
+export interface WebhookRegistration {
   /**
-   * Event name (matches permission / subscription key, e.g. `proposal_creation.succeeded`)
+   *
    * @type {string}
-   * @memberof WebhookDeliveryEnvelope
+   * @memberof WebhookRegistration
    */
-  type: string;
+  id: string;
   /**
-   * JSON:API-shaped resource payload for the event
+   *
+   * @type {string}
+   * @memberof WebhookRegistration
+   */
+  type: WebhookRegistrationTypeEnum;
+  /**
+   *
+   * @type {WebhookRegistrationAttributes}
+   * @memberof WebhookRegistration
+   */
+  attributes: WebhookRegistrationAttributes;
+}
+
+export const WebhookRegistrationTypeEnum = {
+  WebhookRegistration: "webhook_registration",
+} as const;
+
+export type WebhookRegistrationTypeEnum =
+  (typeof WebhookRegistrationTypeEnum)[keyof typeof WebhookRegistrationTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationAttributes
+ */
+export interface WebhookRegistrationAttributes {
+  /**
+   * HTTPS callback URL
+   * @type {string}
+   * @memberof WebhookRegistrationAttributes
+   */
+  url: string;
+  /**
+   * Event keys this registration receives
+   * @type {Array<string>}
+   * @memberof WebhookRegistrationAttributes
+   */
+  subscriptions: Array<string>;
+  /**
+   * HMAC signing secret (returned only on create)
+   * @type {string}
+   * @memberof WebhookRegistrationAttributes
+   */
+  signing_secret?: string;
+  /**
+   * Creation date, in ISO8601 format.
+   * @type {string}
+   * @memberof WebhookRegistrationAttributes
+   */
+  created_at: string;
+  /**
+   * Last update date, in ISO8601 format.
+   * @type {string}
+   * @memberof WebhookRegistrationAttributes
+   */
+  updated_at: string;
+}
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationCreateAttributes
+ */
+export interface WebhookRegistrationCreateAttributes {
+  /**
+   * HTTPS callback URL
+   * @type {string}
+   * @memberof WebhookRegistrationCreateAttributes
+   */
+  url: string;
+  /**
+   * Event keys to subscribe (must be granted as event permissions on the API client)
+   * @type {Array<string>}
+   * @memberof WebhookRegistrationCreateAttributes
+   */
+  subscriptions: Array<string>;
+}
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationCreateBody
+ */
+export interface WebhookRegistrationCreateBody {
+  /**
+   *
+   * @type {WebhookRegistrationCreateBodyData}
+   * @memberof WebhookRegistrationCreateBody
+   */
+  data: WebhookRegistrationCreateBodyData;
+}
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationCreateBodyData
+ */
+export interface WebhookRegistrationCreateBodyData {
+  /**
+   *
+   * @type {WebhookRegistrationCreateAttributes}
+   * @memberof WebhookRegistrationCreateBodyData
+   */
+  attributes: WebhookRegistrationCreateAttributes;
+}
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationIndexResponse
+ */
+export interface WebhookRegistrationIndexResponse {
+  /**
+   *
+   * @type {Array<WebhookRegistration>}
+   * @memberof WebhookRegistrationIndexResponse
+   */
+  data: Array<WebhookRegistration>;
+}
+/**
+ *
+ * @export
+ * @interface WebhookRegistrationItemResponse
+ */
+export interface WebhookRegistrationItemResponse {
+  /**
+   *
+   * @type {WebhookRegistration}
+   * @memberof WebhookRegistrationItemResponse
+   */
+  data: WebhookRegistration;
+}
+/**
+ *
+ * @export
+ * @interface WhDraftProposalCreation
+ */
+export interface WhDraftProposalCreation {
+  /**
+   *
+   * @type {string}
+   * @memberof WhDraftProposalCreation
+   */
+  type: WhDraftProposalCreationTypeEnum;
+  /**
+   *
+   * @type {DraftProposal}
+   * @memberof WhDraftProposalCreation
+   */
+  data: DraftProposal;
+}
+
+export const WhDraftProposalCreationTypeEnum = {
+  DraftProposalCreationSucceeded: "draft_proposal_creation.succeeded",
+} as const;
+
+export type WhDraftProposalCreationTypeEnum =
+  (typeof WhDraftProposalCreationTypeEnum)[keyof typeof WhDraftProposalCreationTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhDraftProposalUpdate
+ */
+export interface WhDraftProposalUpdate {
+  /**
+   *
+   * @type {string}
+   * @memberof WhDraftProposalUpdate
+   */
+  type: WhDraftProposalUpdateTypeEnum;
+  /**
+   *
+   * @type {DraftProposal}
+   * @memberof WhDraftProposalUpdate
+   */
+  data: DraftProposal;
+}
+
+export const WhDraftProposalUpdateTypeEnum = {
+  DraftProposalUpdateSucceeded: "draft_proposal_update.succeeded",
+} as const;
+
+export type WhDraftProposalUpdateTypeEnum =
+  (typeof WhDraftProposalUpdateTypeEnum)[keyof typeof WhDraftProposalUpdateTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhMeetingUpcoming
+ */
+export interface WhMeetingUpcoming {
+  /**
+   *
+   * @type {string}
+   * @memberof WhMeetingUpcoming
+   */
+  type: WhMeetingUpcomingTypeEnum;
+  /**
+   * JSON:API resource for meetings.upcoming_reminder.succeeded
    * @type {object}
-   * @memberof WebhookDeliveryEnvelope
+   * @memberof WhMeetingUpcoming
    */
   data: object;
 }
+
+export const WhMeetingUpcomingTypeEnum = {
+  MeetingsUpcomingReminderSucceeded: "meetings.upcoming_reminder.succeeded",
+} as const;
+
+export type WhMeetingUpcomingTypeEnum =
+  (typeof WhMeetingUpcomingTypeEnum)[keyof typeof WhMeetingUpcomingTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhPpStep
+ */
+export interface WhPpStep {
+  /**
+   *
+   * @type {string}
+   * @memberof WhPpStep
+   */
+  type: WhPpStepTypeEnum;
+  /**
+   *
+   * @type {Space}
+   * @memberof WhPpStep
+   */
+  data: Space;
+}
+
+export const WhPpStepTypeEnum = {
+  ParticipatoryProcessStepActivatedSucceeded:
+    "participatory_process.step_activated.succeeded",
+} as const;
+
+export type WhPpStepTypeEnum =
+  (typeof WhPpStepTypeEnum)[keyof typeof WhPpStepTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhProposalCreation
+ */
+export interface WhProposalCreation {
+  /**
+   *
+   * @type {string}
+   * @memberof WhProposalCreation
+   */
+  type: WhProposalCreationTypeEnum;
+  /**
+   *
+   * @type {Proposal}
+   * @memberof WhProposalCreation
+   */
+  data: Proposal;
+}
+
+export const WhProposalCreationTypeEnum = {
+  ProposalCreationSucceeded: "proposal_creation.succeeded",
+} as const;
+
+export type WhProposalCreationTypeEnum =
+  (typeof WhProposalCreationTypeEnum)[keyof typeof WhProposalCreationTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhProposalStateChange
+ */
+export interface WhProposalStateChange {
+  /**
+   *
+   * @type {string}
+   * @memberof WhProposalStateChange
+   */
+  type: WhProposalStateChangeTypeEnum;
+  /**
+   *
+   * @type {Proposal}
+   * @memberof WhProposalStateChange
+   */
+  data: Proposal;
+}
+
+export const WhProposalStateChangeTypeEnum = {
+  ProposalStateChangeSucceeded: "proposal_state_change.succeeded",
+} as const;
+
+export type WhProposalStateChangeTypeEnum =
+  (typeof WhProposalStateChangeTypeEnum)[keyof typeof WhProposalStateChangeTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhProposalUpdate
+ */
+export interface WhProposalUpdate {
+  /**
+   *
+   * @type {string}
+   * @memberof WhProposalUpdate
+   */
+  type: WhProposalUpdateTypeEnum;
+  /**
+   *
+   * @type {Proposal}
+   * @memberof WhProposalUpdate
+   */
+  data: Proposal;
+}
+
+export const WhProposalUpdateTypeEnum = {
+  ProposalUpdateSucceeded: "proposal_update.succeeded",
+} as const;
+
+export type WhProposalUpdateTypeEnum =
+  (typeof WhProposalUpdateTypeEnum)[keyof typeof WhProposalUpdateTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhSystemOrganizationsCreated
+ */
+export interface WhSystemOrganizationsCreated {
+  /**
+   *
+   * @type {string}
+   * @memberof WhSystemOrganizationsCreated
+   */
+  type: WhSystemOrganizationsCreatedTypeEnum;
+  /**
+   *
+   * @type {Organization}
+   * @memberof WhSystemOrganizationsCreated
+   */
+  data: Organization;
+}
+
+export const WhSystemOrganizationsCreatedTypeEnum = {
+  SystemOrganizationsCreated: "system.organizations.created",
+} as const;
+
+export type WhSystemOrganizationsCreatedTypeEnum =
+  (typeof WhSystemOrganizationsCreatedTypeEnum)[keyof typeof WhSystemOrganizationsCreatedTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhSystemOrganizationsDeleted
+ */
+export interface WhSystemOrganizationsDeleted {
+  /**
+   *
+   * @type {string}
+   * @memberof WhSystemOrganizationsDeleted
+   */
+  type: WhSystemOrganizationsDeletedTypeEnum;
+  /**
+   *
+   * @type {Organization}
+   * @memberof WhSystemOrganizationsDeleted
+   */
+  data: Organization;
+}
+
+export const WhSystemOrganizationsDeletedTypeEnum = {
+  SystemOrganizationsDeleted: "system.organizations.deleted",
+} as const;
+
+export type WhSystemOrganizationsDeletedTypeEnum =
+  (typeof WhSystemOrganizationsDeletedTypeEnum)[keyof typeof WhSystemOrganizationsDeletedTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhSystemOrganizationsUpdated
+ */
+export interface WhSystemOrganizationsUpdated {
+  /**
+   *
+   * @type {string}
+   * @memberof WhSystemOrganizationsUpdated
+   */
+  type: WhSystemOrganizationsUpdatedTypeEnum;
+  /**
+   *
+   * @type {Organization}
+   * @memberof WhSystemOrganizationsUpdated
+   */
+  data: Organization;
+}
+
+export const WhSystemOrganizationsUpdatedTypeEnum = {
+  SystemOrganizationsUpdated: "system.organizations.updated",
+} as const;
+
+export type WhSystemOrganizationsUpdatedTypeEnum =
+  (typeof WhSystemOrganizationsUpdatedTypeEnum)[keyof typeof WhSystemOrganizationsUpdatedTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhUserCreated
+ */
+export interface WhUserCreated {
+  /**
+   *
+   * @type {string}
+   * @memberof WhUserCreated
+   */
+  type: WhUserCreatedTypeEnum;
+  /**
+   *
+   * @type {User}
+   * @memberof WhUserCreated
+   */
+  data: User;
+}
+
+export const WhUserCreatedTypeEnum = {
+  UserCreated: "user.created",
+} as const;
+
+export type WhUserCreatedTypeEnum =
+  (typeof WhUserCreatedTypeEnum)[keyof typeof WhUserCreatedTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface WhUserUpdated
+ */
+export interface WhUserUpdated {
+  /**
+   *
+   * @type {string}
+   * @memberof WhUserUpdated
+   */
+  type: WhUserUpdatedTypeEnum;
+  /**
+   *
+   * @type {User}
+   * @memberof WhUserUpdated
+   */
+  data: User;
+}
+
+export const WhUserUpdatedTypeEnum = {
+  UserUpdated: "user.updated",
+} as const;
+
+export type WhUserUpdatedTypeEnum =
+  (typeof WhUserUpdatedTypeEnum)[keyof typeof WhUserUpdatedTypeEnum];
 
 /**
  * AttachmentsApi - axios parameter creator
@@ -15673,8 +15911,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -15791,8 +16029,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -15868,8 +16106,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -15936,8 +16174,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create an OAuth token for the given scopes (password or client_credentials grant).
-   * @summary Request an OAuth token (ROPC)
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -23774,6 +24012,1022 @@ export class UsersApi extends BaseAPI {
     return UsersApiFp(this.configuration)
       .signInWithMagicLink(
         requestParameters.magicToken,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * WebhooksApi - axios parameter creator
+ * @export
+ */
+export const WebhooksApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Create a webhook registration for the current API client. The signing secret is returned **only in this response** — store it to verify HMAC signatures. Subscriptions must be event permissions already granted on the API client.
+     * @summary Create webhook registration
+     * @param {WebhookRegistrationCreateBody} webhookRegistrationCreateBody
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createWebhookRegistration: async (
+      webhookRegistrationCreateBody: WebhookRegistrationCreateBody,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'webhookRegistrationCreateBody' is not null or undefined
+      assertParamExists(
+        "createWebhookRegistration",
+        "webhookRegistrationCreateBody",
+        webhookRegistrationCreateBody,
+      );
+      const localVarPath = `/webhook_registrations`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        webhookRegistrationCreateBody,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Delete webhook registration
+     * @param {string} id
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteWebhookRegistration: async (
+      id: string,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("deleteWebhookRegistration", "id", id);
+      const localVarPath = `/webhook_registrations/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List webhook registrations owned by the current API client.
+     * @summary List webhook registrations
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listWebhookRegistrations: async (
+      page?: number,
+      perPage?: number,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/webhook_registrations`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Returns an example delivery envelope for the given event type, built by serializing a real resource in the current organization (same serializers used for outbound delivery).
+     * @summary Show webhook event example payload
+     * @param {string} eventType Event key (e.g. proposal_creation.succeeded)
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    showWebhookEventExample: async (
+      eventType: string,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'eventType' is not null or undefined
+      assertParamExists("showWebhookEventExample", "eventType", eventType);
+      const localVarPath = `/webhook_events/{event_type}`.replace(
+        `{${"event_type"}}`,
+        encodeURIComponent(String(eventType)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Show webhook registration
+     * @param {string} id
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    showWebhookRegistration: async (
+      id: string,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("showWebhookRegistration", "id", id);
+      const localVarPath = `/webhook_registrations/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Update URL and subscriptions. Does not rotate the signing secret.
+     * @summary Update webhook registration
+     * @param {string} id
+     * @param {WebhookRegistrationCreateBody} webhookRegistrationCreateBody
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateWebhookRegistration: async (
+      id: string,
+      webhookRegistrationCreateBody: WebhookRegistrationCreateBody,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("updateWebhookRegistration", "id", id);
+      // verify required parameter 'webhookRegistrationCreateBody' is not null or undefined
+      assertParamExists(
+        "updateWebhookRegistration",
+        "webhookRegistrationCreateBody",
+        webhookRegistrationCreateBody,
+      );
+      const localVarPath = `/webhook_registrations/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        webhookRegistrationCreateBody,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * WebhooksApi - functional programming interface
+ * @export
+ */
+export const WebhooksApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = WebhooksApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Create a webhook registration for the current API client. The signing secret is returned **only in this response** — store it to verify HMAC signatures. Subscriptions must be event permissions already granted on the API client.
+     * @summary Create webhook registration
+     * @param {WebhookRegistrationCreateBody} webhookRegistrationCreateBody
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createWebhookRegistration(
+      webhookRegistrationCreateBody: WebhookRegistrationCreateBody,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<WebhookRegistrationItemResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.createWebhookRegistration(
+          webhookRegistrationCreateBody,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.createWebhookRegistration"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
+     * @summary Delete webhook registration
+     * @param {string} id
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteWebhookRegistration(
+      id: string,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.deleteWebhookRegistration(
+          id,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.deleteWebhookRegistration"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * List webhook registrations owned by the current API client.
+     * @summary List webhook registrations
+     * @param {number} [page] Page number for pagination
+     * @param {number} [perPage] Number of items per page
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listWebhookRegistrations(
+      page?: number,
+      perPage?: number,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<WebhookRegistrationIndexResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listWebhookRegistrations(
+          page,
+          perPage,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.listWebhookRegistrations"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Returns an example delivery envelope for the given event type, built by serializing a real resource in the current organization (same serializers used for outbound delivery).
+     * @summary Show webhook event example payload
+     * @param {string} eventType Event key (e.g. proposal_creation.succeeded)
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async showWebhookEventExample(
+      eventType: string,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<WebhookDeliveryEnvelope>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.showWebhookEventExample(
+          eventType,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.showWebhookEventExample"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
+     * @summary Show webhook registration
+     * @param {string} id
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async showWebhookRegistration(
+      id: string,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<WebhookRegistrationItemResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.showWebhookRegistration(
+          id,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.showWebhookRegistration"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Update URL and subscriptions. Does not rotate the signing secret.
+     * @summary Update webhook registration
+     * @param {string} id
+     * @param {WebhookRegistrationCreateBody} webhookRegistrationCreateBody
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateWebhookRegistration(
+      id: string,
+      webhookRegistrationCreateBody: WebhookRegistrationCreateBody,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<WebhookRegistrationItemResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateWebhookRegistration(
+          id,
+          webhookRegistrationCreateBody,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["WebhooksApi.updateWebhookRegistration"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * WebhooksApi - factory interface
+ * @export
+ */
+export const WebhooksApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = WebhooksApiFp(configuration);
+  return {
+    /**
+     * Create a webhook registration for the current API client. The signing secret is returned **only in this response** — store it to verify HMAC signatures. Subscriptions must be event permissions already granted on the API client.
+     * @summary Create webhook registration
+     * @param {WebhooksApiCreateWebhookRegistrationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createWebhookRegistration(
+      requestParameters: WebhooksApiCreateWebhookRegistrationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<WebhookRegistrationItemResponse> {
+      return localVarFp
+        .createWebhookRegistration(
+          requestParameters.webhookRegistrationCreateBody,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Delete webhook registration
+     * @param {WebhooksApiDeleteWebhookRegistrationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteWebhookRegistration(
+      requestParameters: WebhooksApiDeleteWebhookRegistrationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .deleteWebhookRegistration(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List webhook registrations owned by the current API client.
+     * @summary List webhook registrations
+     * @param {WebhooksApiListWebhookRegistrationsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listWebhookRegistrations(
+      requestParameters: WebhooksApiListWebhookRegistrationsRequest = {},
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<WebhookRegistrationIndexResponse> {
+      return localVarFp
+        .listWebhookRegistrations(
+          requestParameters.page,
+          requestParameters.perPage,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Returns an example delivery envelope for the given event type, built by serializing a real resource in the current organization (same serializers used for outbound delivery).
+     * @summary Show webhook event example payload
+     * @param {WebhooksApiShowWebhookEventExampleRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    showWebhookEventExample(
+      requestParameters: WebhooksApiShowWebhookEventExampleRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<WebhookDeliveryEnvelope> {
+      return localVarFp
+        .showWebhookEventExample(
+          requestParameters.eventType,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Show webhook registration
+     * @param {WebhooksApiShowWebhookRegistrationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    showWebhookRegistration(
+      requestParameters: WebhooksApiShowWebhookRegistrationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<WebhookRegistrationItemResponse> {
+      return localVarFp
+        .showWebhookRegistration(
+          requestParameters.id,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Update URL and subscriptions. Does not rotate the signing secret.
+     * @summary Update webhook registration
+     * @param {WebhooksApiUpdateWebhookRegistrationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateWebhookRegistration(
+      requestParameters: WebhooksApiUpdateWebhookRegistrationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<WebhookRegistrationItemResponse> {
+      return localVarFp
+        .updateWebhookRegistration(
+          requestParameters.id,
+          requestParameters.webhookRegistrationCreateBody,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * Request parameters for createWebhookRegistration operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiCreateWebhookRegistrationRequest
+ */
+export interface WebhooksApiCreateWebhookRegistrationRequest {
+  /**
+   *
+   * @type {WebhookRegistrationCreateBody}
+   * @memberof WebhooksApiCreateWebhookRegistration
+   */
+  readonly webhookRegistrationCreateBody: WebhookRegistrationCreateBody;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiCreateWebhookRegistration
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for deleteWebhookRegistration operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiDeleteWebhookRegistrationRequest
+ */
+export interface WebhooksApiDeleteWebhookRegistrationRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof WebhooksApiDeleteWebhookRegistration
+   */
+  readonly id: string;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiDeleteWebhookRegistration
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for listWebhookRegistrations operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiListWebhookRegistrationsRequest
+ */
+export interface WebhooksApiListWebhookRegistrationsRequest {
+  /**
+   * Page number for pagination
+   * @type {number}
+   * @memberof WebhooksApiListWebhookRegistrations
+   */
+  readonly page?: number;
+
+  /**
+   * Number of items per page
+   * @type {number}
+   * @memberof WebhooksApiListWebhookRegistrations
+   */
+  readonly perPage?: number;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiListWebhookRegistrations
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for showWebhookEventExample operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiShowWebhookEventExampleRequest
+ */
+export interface WebhooksApiShowWebhookEventExampleRequest {
+  /**
+   * Event key (e.g. proposal_creation.succeeded)
+   * @type {string}
+   * @memberof WebhooksApiShowWebhookEventExample
+   */
+  readonly eventType: string;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiShowWebhookEventExample
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for showWebhookRegistration operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiShowWebhookRegistrationRequest
+ */
+export interface WebhooksApiShowWebhookRegistrationRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof WebhooksApiShowWebhookRegistration
+   */
+  readonly id: string;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiShowWebhookRegistration
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for updateWebhookRegistration operation in WebhooksApi.
+ * @export
+ * @interface WebhooksApiUpdateWebhookRegistrationRequest
+ */
+export interface WebhooksApiUpdateWebhookRegistrationRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof WebhooksApiUpdateWebhookRegistration
+   */
+  readonly id: string;
+
+  /**
+   *
+   * @type {WebhookRegistrationCreateBody}
+   * @memberof WebhooksApiUpdateWebhookRegistration
+   */
+  readonly webhookRegistrationCreateBody: WebhookRegistrationCreateBody;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof WebhooksApiUpdateWebhookRegistration
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * WebhooksApi - object-oriented interface
+ * @export
+ * @class WebhooksApi
+ * @extends {BaseAPI}
+ */
+export class WebhooksApi extends BaseAPI {
+  /**
+   * Create a webhook registration for the current API client. The signing secret is returned **only in this response** — store it to verify HMAC signatures. Subscriptions must be event permissions already granted on the API client.
+   * @summary Create webhook registration
+   * @param {WebhooksApiCreateWebhookRegistrationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public createWebhookRegistration(
+    requestParameters: WebhooksApiCreateWebhookRegistrationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .createWebhookRegistration(
+        requestParameters.webhookRegistrationCreateBody,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Delete webhook registration
+   * @param {WebhooksApiDeleteWebhookRegistrationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public deleteWebhookRegistration(
+    requestParameters: WebhooksApiDeleteWebhookRegistrationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .deleteWebhookRegistration(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List webhook registrations owned by the current API client.
+   * @summary List webhook registrations
+   * @param {WebhooksApiListWebhookRegistrationsRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public listWebhookRegistrations(
+    requestParameters: WebhooksApiListWebhookRegistrationsRequest = {},
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .listWebhookRegistrations(
+        requestParameters.page,
+        requestParameters.perPage,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Returns an example delivery envelope for the given event type, built by serializing a real resource in the current organization (same serializers used for outbound delivery).
+   * @summary Show webhook event example payload
+   * @param {WebhooksApiShowWebhookEventExampleRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public showWebhookEventExample(
+    requestParameters: WebhooksApiShowWebhookEventExampleRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .showWebhookEventExample(
+        requestParameters.eventType,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Show webhook registration
+   * @param {WebhooksApiShowWebhookRegistrationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public showWebhookRegistration(
+    requestParameters: WebhooksApiShowWebhookRegistrationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .showWebhookRegistration(
+        requestParameters.id,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Update URL and subscriptions. Does not rotate the signing secret.
+   * @summary Update webhook registration
+   * @param {WebhooksApiUpdateWebhookRegistrationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof WebhooksApi
+   */
+  public updateWebhookRegistration(
+    requestParameters: WebhooksApiUpdateWebhookRegistrationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return WebhooksApiFp(this.configuration)
+      .updateWebhookRegistration(
+        requestParameters.id,
+        requestParameters.webhookRegistrationCreateBody,
         requestParameters.authorization,
         options,
       )

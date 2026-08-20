@@ -30,6 +30,12 @@ module Decidim
             resource.updated_at.iso8601
           end
 
+          attribute :extended_data, if: proc { |_resource, params| params[:includes_extended] } do |resource, _params|
+            next {} unless resource.respond_to?(:extended_data_hash)
+
+            resource.extended_data_hash
+          end
+
           link :related do |object, params|
             infos = link_infos_from_resource(object)
             {
