@@ -75,10 +75,10 @@ module Decidim
 
             settings_h = component.settings.to_h
             current_settings_h = component.current_settings.to_h
+            # Decidim 0.32 renamed/removed some settings; keep stable API meta keys.
             settings_keys = %w(
               amendments_enabled
               attachments_allowed
-              collaborative_drafts_enabled
               comments_enabled
               comments_max_length
               default_sort_order
@@ -86,19 +86,20 @@ module Decidim
               minimum_votes_per_user
               official_proposals_enabled
               participatory_texts_enabled
-              proposal_edit_before_minutes
               proposal_edit_time
               proposal_limit
               resources_permissions_enabled
-              scopes_enabled
               threshold_per_proposal
               vote_limit
             )
             settings_keys.each do |key|
               metas[key.to_sym] = settings_h[key.to_sym]
             end
-            settings_keys = %w(
-              endorsements_enabled
+            metas[:collaborative_drafts_enabled] = false
+            metas[:scopes_enabled] = settings_h.fetch(:scopes_enabled, false)
+            metas[:proposal_edit_before_minutes] = edit_time_to_minutes(settings_h[:edit_time])
+
+            step_settings_keys = %w(
               votes_enabled
               creation_enabled
               proposal_answering_enabled
@@ -106,13 +107,17 @@ module Decidim
               amendment_reaction_enabled
               amendment_promotion_enabled
             )
-            settings_keys.each do |key|
+            step_settings_keys.each do |key|
               metas[key.to_sym] = current_settings_h[key.to_sym]
+            end
+            # endorsements → likes in Decidim 0.32; keep endorsements_* for API stability
+            metas[:endorsements_enabled] = current_settings_h.fetch(:likes_enabled) do
+              current_settings_h[:endorsements_enabled]
             end
 
             resources = ::Decidim::Proposals::Proposal.where(component:)
             act_as = params[:act_as]
-            proposal_limit = metas[:proposal_limit]
+            proposal_limit = metas[:proposal_limit].to_i
             metas[:can_create_proposals] = false
             if metas[:creation_enabled] && act_as.present?
               metas[:can_create_proposals] = proposal_limit.zero? ||
@@ -162,6 +167,19 @@ module Decidim
 
             metas
           end
+
+          def self.edit_time_to_minutes(edit_time)
+            return 0 if edit_time.blank?
+
+            amount, unit = Array(edit_time)
+            amount = amount.to_i
+            case unit.to_s
+            when "hours" then amount * 60
+            when "days" then amount * 24 * 60
+            else amount
+            end
+          end
+          private_class_method :edit_time_to_minutes
 
           link :draft, if: (proc do |component, params|
             next false unless params[:act_as]

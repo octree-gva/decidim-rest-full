@@ -5,6 +5,7 @@ Published at `/` (see `website/docusaurus.config.ts`). Same rules for every sect
 | Section | Audience | Path |
 |---------|----------|------|
 | Overview | New deployers | `docs/my-home-doc.md`, `docs/install.md`, `docs/production-mode.md` |
+| Contribute | First-time helpers picking a path | `docs/contribute/` (`ways-to-contribute.md`, `non-code.md`, `translations.md`, `test-with-bruno.md`, then code: `first-contribution.md`, `core-concepts.md`) |
 | Operating the API | Integrators, client authors | `docs/user_documentation/` |
 | Developer documentation | Module maintainers | `docs/dev/` |
 | Add an endpoint | **Gem maintainers** adding RestFull HTTP routes | `docs/dev/add-endpoint/` — see layer stack below |
@@ -26,5 +27,10 @@ Published at `/` (see `website/docusaurus.config.ts`). Same rules for every sect
 - Admonitions: `:::info`, `:::warning`, `:::caution` only when they change behaviour or prevent mistakes
 - Every procedure page lists **related specs** under `decidim-restfull-*/spec/`
 - Regenerate OpenAPI after request spec changes: `yarn gen:openapi-spec`
+- **Doc voice** (Markdown and OpenAPI descriptions):
+  - Say what something **is**; avoid “not X” framing unless the contrast is the whole point
+  - Name code symbols/tables only when the reader must use that exact identifier; skip decorative `e.g.` lists that rot
+  - Prefer short prose over Topic/Rule (or similar) tables that restate the obvious
+  - Never hardcode the published docs host; Ruby/OpenAPI use `Decidim::RestFull.config.docs_url` (env `DOCS_URL`). In Docusaurus Markdown prefer site-relative paths (`/integrator/…`)
 
-Repo contributor covenant and Docker workflow: [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md)
+Repo [CONTRIBUTING.md](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-module-rest_full/-/blob/main/CONTRIBUTING.md) holds welcome pointers, covenant, and license. How to contribute: [Ways to contribute](/contribute/ways-to-contribute).

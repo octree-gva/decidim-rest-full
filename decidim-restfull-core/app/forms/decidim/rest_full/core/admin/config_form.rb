@@ -25,7 +25,7 @@ module Decidim
             return true unless enabled
 
             feature = attribute.to_s.delete_suffix("_enabled").to_sym
-            return false unless Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.has_key?(feature)
+            return false unless Decidim::RestFull::Core::ModuleAvailability.feature_gems.has_key?(feature)
 
             !Decidim::RestFull::Core::ModuleAvailability.feature_gem_present?(feature)
           end

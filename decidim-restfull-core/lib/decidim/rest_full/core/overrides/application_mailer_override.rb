@@ -10,8 +10,8 @@ module Decidim
         alias_method :decidim_original_mail, :mail
 
         # Override the mail method to add custom behavior
-        def mail(headers = {}, &block)
-          mail_object = decidim_original_mail(headers, &block)
+        def mail(headers = {}, &)
+          mail_object = decidim_original_mail(headers, &)
 
           return mail_object unless headers[:to]
 

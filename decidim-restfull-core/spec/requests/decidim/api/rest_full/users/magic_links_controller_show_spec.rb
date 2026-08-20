@@ -14,7 +14,7 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
         Marked for documentation only; TypeScript clients should not call this operation.
       README
       # OpenAPI extension: hide from typical codegen (browser redirect).
-      # @see https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk
+      # @see integrator TypeScript SDK docs (path under Decidim::RestFull.config.docs_url)
 
       parameter name: "magic_token", in: :path, schema: { type: :string, description: "A token received for magic link" }
 
@@ -31,8 +31,8 @@ RSpec.describe Decidim::Api::RestFull::Users::MagicLinksController do
         response "302", "Signed in" do
           produces "html/text"
           context "when token is valid" do
-            run_test!(example_name: :ok) do |example|
-              expect(example.body).to include("You are being ")
+            run_test!(example_name: :ok) do
+              expect(response).to redirect_to("/")
             end
           end
 

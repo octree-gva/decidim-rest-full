@@ -61,7 +61,7 @@ module Decidim
         end
 
         def schema_for_question(question)
-          case question.question_type
+          case Decidim032Compat.api_question_type(question.question_type)
           when "single_option", "multiple_option", "sorting"
             { type: "string", title: translate(question.body), enum: question.answer_options.map { |o| o.id.to_s } }
           when "matrix_single", "matrix_multiple"

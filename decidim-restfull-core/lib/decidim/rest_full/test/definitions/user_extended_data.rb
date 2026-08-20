@@ -7,9 +7,8 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:user_extended_data)
     properties: {},
     additionalProperties: true,
     description: <<~README
-      Hash of values attached to a user. These values won't be
-      displayed to admins or users, consider this as an internal
-      data payload.
+      Client metadata hash on the current user. Kept out of the Decidim admin UI.
+      See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data) (user path: `/me/extended_data`).
     README
   }.freeze
 end

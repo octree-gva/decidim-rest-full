@@ -3,7 +3,8 @@
 module Decidim
   module RestFull
     module Core
-      DuplicateRouteBlockError = Class.new(StandardError)
+      class DuplicateRouteBlockError < StandardError
+      end
 
       # Collects API route blocks and draws them under /api/rest_full/vX.
       # Boot path: Routes.mount! → RouteSet#append (like Decidim Admin). Do not finalize!

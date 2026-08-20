@@ -59,11 +59,7 @@ RSpec.describe Decidim::RestFull::Core::ModuleAvailability do
 
   describe ".available_feature_modules" do
     it "omits features whose gem is absent" do
-      Decidim::RestFull::Core::ModuleAvailability::FEATURE_GEMS.each_value do |gem_name|
-        next if gem_name.nil?
-
-        allow(Decidim::Toggle).to receive(:gem_present?).with(gem_name).and_return(true)
-      end
+      allow(Decidim::Toggle).to receive(:gem_present?).and_return(true)
       allow(Decidim::Toggle).to receive(:gem_present?).with("decidim-restfull-proposals").and_return(false)
 
       expect(subject.available_feature_modules).not_to include(:proposals)
@@ -92,6 +88,34 @@ RSpec.describe Decidim::RestFull::Core::ModuleAvailability do
     it "keeps surveys scope when forms is on and surveys is off" do
       stub_config(enabled: true, surveys_enabled: false, forms_enabled: true)
       expect(subject.scope_enabled?(organization, :surveys)).to be(true)
+    end
+  end
+
+  describe ".register_feature! / .register_controller_path!" do
+    after do
+      described_class.feature_gems.delete(:widgets)
+      described_class.feature_modules.delete(:widgets)
+      described_class.controller_path_features.delete("widgets")
+      described_class.scope_features.delete(:widgets)
+    end
+
+    it "lets external modules map controller segments to a Toggle feature" do
+      described_class.register_feature!(:widgets, gem: "decidim-restfull-widgets")
+      described_class.register_controller_path!("widgets", feature: :widgets)
+      described_class.register_scope_feature!(:widgets, :widgets)
+
+      expect(described_class.feature_gems[:widgets]).to eq("decidim-restfull-widgets")
+      expect(described_class.controller_path_features["widgets"]).to eq(:widgets)
+      expect(described_class.scope_features[:widgets]).to eq(:widgets)
+      expect(described_class.feature_modules).to include(:widgets)
+    end
+
+    it "resolves feature_for_controller from registered segments" do
+      described_class.register_feature!(:widgets, gem: nil)
+      described_class.register_controller_path!("widgets", feature: :widgets)
+      controller = instance_double(ActionController::Base, controller_path: "decidim/api/rest_full/widgets")
+
+      expect(described_class.feature_for_controller(controller)).to eq(:widgets)
     end
   end
 

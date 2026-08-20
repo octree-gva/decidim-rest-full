@@ -8,7 +8,10 @@ RSpec.shared_examples "unauthorized when no Bearer token" do
     let(:Authorization) { nil }
     let!(:organization) { create(:organization, available_locales: ["en"]) }
 
-    before { host! organization.host }
+    before do
+      host! organization.host
+      https!
+    end
 
     run_test!(example_name: :unauthorized) do |response|
       expect(response).to have_http_status(:unauthorized)

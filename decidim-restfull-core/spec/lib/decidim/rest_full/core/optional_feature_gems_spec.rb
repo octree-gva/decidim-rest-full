@@ -24,12 +24,20 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::RestFull::Core::Configuration do
-    it "omits unloaded feature permissions and events" do
-      allow(Gem).to receive(:loaded_specs).and_return({})
+    it "defaults to core permissions only; feature gems merge via Extension.register" do
+      expect(described_class.default_available_permissions).not_to include("blogs", "proposals", "meetings")
+    end
 
-      expect(described_class.default_events_for_proposals).to eq([])
-      expect(described_class.default_events_for_meetings).to eq([])
-      expect(described_class.default_available_permissions).not_to include("blogs", "proposals")
+    it "receives events_for_proposals from the proposals gem when loaded" do
+      skip "decidim-restfull-proposals not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-proposals")
+
+      expect(described_class.events_for_proposals).to include("proposal_creation.succeeded")
+    end
+
+    it "receives events_for_meetings from the meetings gem when loaded" do
+      skip "decidim-restfull-meetings not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-meetings")
+
+      expect(described_class.events_for_meetings).to eq(%w(meetings.upcoming_reminder.succeeded))
     end
   end
 
@@ -41,20 +49,15 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::RestFull::Core::WebhookEventCatalog do
-    it "registers no proposal events when proposal event config is empty (unloaded gem)" do
+    it "sync_from_configuration registers only core oauth/system events" do
+      snapshot = described_class.entries.dup
       described_class.clear!
-      prev_proposals = Decidim::RestFull::Core::Configuration.events_for_proposals
-      prev_meetings = Decidim::RestFull::Core::Configuration.events_for_meetings
-      Decidim::RestFull::Core::Configuration.events_for_proposals = []
-      Decidim::RestFull::Core::Configuration.events_for_meetings = []
       described_class.sync_from_configuration!
 
-      expect(described_class.all.map(&:scope)).not_to include("proposals", "meetings")
+      expect(described_class.all.map(&:scope).uniq).to match_array(%w(oauth system))
+      expect(described_class.all.map(&:schema_key)).to all(start_with("wh_"))
     ensure
-      Decidim::RestFull::Core::Configuration.events_for_proposals = prev_proposals
-      Decidim::RestFull::Core::Configuration.events_for_meetings = prev_meetings
-      described_class.clear!
-      described_class.sync_from_configuration!
+      described_class.instance_variable_set(:@entries, snapshot)
     end
   end
 
@@ -105,11 +108,11 @@ RSpec.describe "optional decidim-restfull feature gems" do
   end
 
   describe Decidim::Api::RestFull::Core::SerializerLookup do
-    it "falls back to core ComponentSerializer when the adapter gem is absent" do
+    it "falls back to a typed ComponentSerializer subclass when the adapter gem is absent" do
       allow(described_class).to receive(:safe_constant_defined?).and_return(false)
-      expect(described_class.component_serializer_class_for("proposals")).to eq(
-        Decidim::Api::RestFull::Core::ComponentSerializer
-      )
+      klass = described_class.component_serializer_class_for("proposals")
+      expect(klass).to be < Decidim::Api::RestFull::Core::ComponentSerializer
+      expect(klass.record_type).to eq(:proposal_component)
     end
 
     it "resolves meetings serializer when decidim-restfull-meetings is loaded" do

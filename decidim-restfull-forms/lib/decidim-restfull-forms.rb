@@ -10,4 +10,5 @@ module Decidim
   end
 end
 
+require "decidim/rest_full/forms/decidim_032_compat"
 require "decidim/rest_full/forms/engine"

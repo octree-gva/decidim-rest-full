@@ -5,11 +5,14 @@ module Decidim
     module Core
       # Per-organization RestFull gates via decidim-toggle JSON.
       # Missing Toggle row → everything enabled (defaults true).
+      #
+      # Built-in feature maps ship below; external modules (and feature gems) also
+      # register via +Extension#toggle_feature+ / +Extension#controller_paths+.
       class ModuleAvailability
         MODULE_NAME = "decidim_restfull"
 
         FEATURE_MODULES = [
-          :proposals, :blogs, :debates, :surveys, :forms, :meetings, :attachments, :budgets, :accountabilities, :sortition
+          :proposals, :blogs, :debates, :surveys, :forms, :meetings, :attachments, :budgets, :accountabilities
         ].freeze
 
         # Feature Toggle key → RubyGems name. +nil+ means shipped in core (always present).
@@ -22,8 +25,7 @@ module Decidim
           meetings: "decidim-restfull-meetings",
           attachments: nil,
           budgets: "decidim-restfull-budgets",
-          accountabilities: "decidim-restfull-accountabilities",
-          sortition: "decidim-restfull-sortition"
+          accountabilities: "decidim-restfull-accountabilities"
         }.freeze
 
         # OAuth scope → feature key(s). Array means any-of.
@@ -35,8 +37,7 @@ module Decidim
           meetings: :meetings,
           attachments: :attachments,
           budgets: :budgets,
-          accountability: :accountabilities,
-          sortitions: :sortition
+          accountability: :accountabilities
         }.freeze
 
         CONTROLLER_PATH_FEATURES = {
@@ -59,28 +60,56 @@ module Decidim
           "attachments" => :attachments,
           "budgets" => :budgets,
           "accountability" => :accountabilities,
-          "accountabilities" => :accountabilities,
-          "sortitions" => :sortition,
-          "sortition" => :sortition
+          "accountabilities" => :accountabilities
         }.freeze
 
         class << self
+          def reset!
+            @feature_order = FEATURE_MODULES.dup
+            @feature_gems = FEATURE_GEMS.dup
+            @scope_features = SCOPE_FEATURES.dup
+            @controller_path_features = CONTROLLER_PATH_FEATURES.dup
+          end
+
+          def feature_modules
+            @feature_order
+          end
+
+          attr_reader :feature_gems, :scope_features, :controller_path_features
+
+          # +gem:+ RubyGems name for +Decidim::Toggle.gem_present?+ (+nil+ = always present).
+          def register_feature!(feature, gem: nil)
+            feature = feature.to_sym
+            feature_gems[feature] = gem
+            feature_modules << feature unless feature_modules.include?(feature)
+            sync_config_form_attribute!(feature)
+            feature
+          end
+
+          def register_controller_path!(segment, feature:)
+            controller_path_features[segment.to_s] = feature.to_sym
+          end
+
+          def register_scope_feature!(scope, feature)
+            scope_features[scope.to_sym] = feature.is_a?(Array) ? feature.map(&:to_sym) : feature.to_sym
+          end
+
           def enabled?(organization)
             cast_bool(raw_config(organization)[:enabled], default: true)
           end
 
           def feature_gem_present?(feature)
             feature = feature.to_sym
-            return false unless FEATURE_GEMS.has_key?(feature)
+            return false unless feature_gems.has_key?(feature)
 
-            gem_name = FEATURE_GEMS[feature]
+            gem_name = feature_gems[feature]
             return true if gem_name.nil?
 
             Decidim::Toggle.gem_present?(gem_name)
           end
 
           def available_feature_modules
-            FEATURE_MODULES.select { |feature| feature_gem_present?(feature) }
+            feature_modules.select { |feature| feature_gem_present?(feature) }
           end
 
           def module_enabled?(organization, feature)
@@ -94,7 +123,7 @@ module Decidim
           def scope_enabled?(organization, scope)
             return false unless enabled?(organization)
 
-            feature = SCOPE_FEATURES[scope.to_sym]
+            feature = scope_features[scope.to_sym]
             return true if feature.nil?
 
             Array(feature).any? { |f| module_enabled?(organization, f) }
@@ -102,7 +131,7 @@ module Decidim
 
           def feature_for_controller(controller)
             controller.controller_path.split("/").reverse_each do |segment|
-              feature = CONTROLLER_PATH_FEATURES[segment]
+              feature = controller_path_features[segment]
               return feature if feature
             end
             nil
@@ -128,12 +157,24 @@ module Decidim
 
           private
 
+          def sync_config_form_attribute!(feature)
+            return unless defined?(Decidim::RestFull::Core::Admin::ConfigForm)
+
+            attr = :"#{feature}_enabled"
+            form = Decidim::RestFull::Core::Admin::ConfigForm
+            return if form.attribute_types.has_key?(attr.to_s)
+
+            form.attribute attr, :boolean, default: true
+          end
+
           def cast_bool(value, default:)
             return default if value.nil?
 
             ActiveModel::Type::Boolean.new.cast(value)
           end
         end
+
+        reset!
       end
     end
   end

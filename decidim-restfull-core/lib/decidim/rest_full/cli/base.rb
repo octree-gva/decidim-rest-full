@@ -41,7 +41,7 @@ module Decidim
 
             opts.on("-h", "--help", "Show command help") do
               puts opts # rubocop:disable Rails/Output
-              exit 0 # rubocop:disable Rails/Exit
+              exit 0
             end
           end
 
@@ -56,7 +56,7 @@ module Decidim
               puts "" # rubocop:disable Rails/Output
               puts red(text) # rubocop:disable Rails/Output
             end
-            exit 1 # rubocop:disable Rails/Exit
+            exit 1
           end
 
           def puts_api_client(api_client)
@@ -73,7 +73,7 @@ module Decidim
             else
               puts "" # rubocop:disable Rails/Output
               payload.each do |key, value|
-                puts "#{key}=#{value}"
+                Rails.logger.debug "#{key}=#{value}"
               end
             end
           end

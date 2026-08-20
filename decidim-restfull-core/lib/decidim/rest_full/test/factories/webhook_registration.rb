@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :webhook_registration, class: "Decidim::RestFull::Core::WebhookRegistration" do
-    url { Faker::Internet.url }
-    private_key { Faker::Internet.password(min_length: 64, max_length: 64) }
-    subscriptions { ["event.subscribed"] }
+    sequence(:url) { |n| "https://example.org/webhook/#{n}" }
+    private_key { SecureRandom.hex(32) }
+    subscriptions { ["proposal_creation.succeeded"] }
     api_client factory: [:api_client], scopes: ["public"]
   end
 end

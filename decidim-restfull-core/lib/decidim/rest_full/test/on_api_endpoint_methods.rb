@@ -11,7 +11,7 @@ module Decidim
           nil
         end
 
-        def describe_api_endpoint(options = {}, &block)
+        def describe_api_endpoint(options = {}, &)
           rest_full_validate_options!(options)
           scopes = options[:scopes].map(&:to_s)
           security_types = options[:security_types]
@@ -45,7 +45,7 @@ module Decidim
 
               rest_full_handle_forbidden(security_type_item, options) if is_protected
               rest_full_handle_500_error(options)
-              instance_eval(&block)
+              instance_eval(&)
             end
           end
         end
@@ -73,6 +73,7 @@ module Decidim
           let!(:organization) { create(:organization, available_locales: ["en"]) }
           before do
             host! organization.host
+            https!
           end
 
           let(:api_client) do

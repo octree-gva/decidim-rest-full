@@ -12,6 +12,14 @@ module Decidim
 
           register_state_ransacker!
           register_weight_proposal_ransacker!
+          register_proposal_ransackables!
+        end
+
+        def register_proposal_ransackables!
+          Decidim::RestFull::Core::Ransackers.extend_ransackable_attributes!(
+            Decidim::Proposals::Proposal,
+            %w(state voted_weight)
+          )
         end
 
         def register_state_ransacker!
@@ -35,7 +43,7 @@ module Decidim
             current_user = ::Decidim::Api::RestFull::Proposals::ProposalsController::CurrentUser.user
             raise "current_user is nil" if current_user.nil?
 
-            awesome_support = Object.const_defined?("Decidim::DecidimAwesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+            awesome_support = Decidim::Toggle.gem_present?("decidim-decidim_awesome") && Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
             unless awesome_support
               return Arel.sql(<<~SQL.squish
                 (

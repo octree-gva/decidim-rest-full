@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 # Default values for options
 QUIET=0
 VALIDATE=0
@@ -67,6 +66,19 @@ log "validate: $VALIDATE"
 log "input file: $INPUT_FILE"
 log "axios version: $AXIOS_VERSION"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
+
+# Fail fast if host Node does not match repo .nvmrc (exact string; no semver).
+expected="$(tr -d '[:space:]' < .nvmrc)"
+if ! command -v node >/dev/null 2>&1; then
+  echo "node is missing or not on PATH" >&2
+  exit 1
+fi
+got="$(node -v)"
+got="${got#v}"
+if [[ "$got" != "$expected" ]]; then
+  echo "Node version mismatch: expected ${expected} (from .nvmrc), got ${got}. Hint: nvm use" >&2
+  exit 1
+fi
 
 # Validate OpenAPI spec if requested
 if [[ $VALIDATE -eq 1 ]]; then

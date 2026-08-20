@@ -9,10 +9,11 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Component }
 
           def search
-            query = Decidim::Component.all
-            query = query.reorder(nil).ransack(params[:filter]).result
-            page = paginate(in_visible_spaces(query))
+            authorize_extended_data_filter!(::Decidim::Component)
+            query = in_visible_spaces(Decidim::Component.all).reorder(nil).ransack(params[:filter]).result
+            page = paginate(query)
 
+            includes_extended = can?(:read_extended_data, ::Decidim::Component)
             data = page.map do |component|
               serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(component.manifest_name)
               serializer.new(
@@ -22,7 +23,8 @@ module Decidim
                   locales: available_locales,
                   host: current_organization.host,
                   act_as:,
-                  client_id:
+                  client_id:,
+                  includes_extended:
                 }
               ).serializable_hash[:data]
             end

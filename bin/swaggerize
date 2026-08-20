@@ -58,8 +58,23 @@ while [[ $# -gt 0 ]]; do
 done
 
 cd "$ROOT"
+
+# OpenAPI contract is authored against Decidim 0.32 only (Appraisals also cover 0.29 for tests).
+case "${BUNDLE_GEMFILE:-}" in
+  *decidim_0_29*|*decidim_0.29*)
+    echo "OpenAPI generation requires Decidim 0.32 (got BUNDLE_GEMFILE=$BUNDLE_GEMFILE)" >&2
+    exit 1
+    ;;
+esac
+if [[ -f "$ROOT/gemfiles/decidim_0.32.gemfile" ]]; then
+  export BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$ROOT/gemfiles/decidim_0.32.gemfile}"
+fi
+if [[ -n "${BUNDLE_GEMFILE:-}" && "${BUNDLE_GEMFILE}" != /* ]]; then
+  export BUNDLE_GEMFILE="$ROOT/${BUNDLE_GEMFILE#./}"
+fi
+
 bundle check || bundle install
-log "Generating OpenAPI spec"
+log "Generating OpenAPI spec (Decidim 0.32; BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-Gemfile})"
 log "~~~~~~~~~~~~~~~~~~~~~~~"
 log "quiet: $QUIET"
 log "output: $OUTPUT_FILE"

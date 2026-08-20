@@ -20,7 +20,12 @@ Decidim::RestFull::Core::DefinitionRegistry.register_resource(:proposal) do
             :description => "Proposal content"
           },
           created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
-          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }
+          updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) },
+          extended_data: {
+            type: :object,
+            additionalProperties: true,
+            description: "Present when the client has proposals.extended_data.read"
+          }
         },
         required: [:created_at, :updated_at, :title, :body],
         additionalProperties: false

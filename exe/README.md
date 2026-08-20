@@ -7,7 +7,7 @@
 | [`decidim-rest_full-client-gen`](./decidim-rest_full-client-gen) | Generate any OpenAPI Generator client from an existing `openapi.json`. |
 | [`decidim-rest_full-openapi`](./decidim-rest_full-openapi) | Check OpenAPI freshness; prompt or run `bin/swaggerize` (~40 min). |
 
-Published documentation: [Command-line tools](https://octree-gva.github.io/decidim-rest-full/dev/command-line-tools) and [Generate clients and OpenAPI](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/generate-clients).
+Documentation: [Command-line tools](../website/docs/dev/command-line-tools.md) and [Generate clients and OpenAPI](../website/docs/dev/add-endpoint/generate-clients.md).
 
 Related **`bin/`** scripts (repo root): `swaggerize`, `gen-node-client`, `setup-tests`, `check`.
 

@@ -4,8 +4,8 @@ Rails engines that expose a JSON:API-style REST surface for [Decidim](https://gi
 
 ## Documentation
 
-- **Site and ReDoc:** [octree-gva.github.io/decidim-rest-full](https://octree-gva.github.io/decidim-rest-full/) (install, operate the API, contributor guides, live OpenAPI at `/api/`)
-- **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md) (code covenant, license, Docker/CI, links to developer docs on the site)
+- **Site and ReDoc:** published docs base is `Decidim::RestFull.config.docs_url` (override with `DOCS_URL`; see [Installation](website/docs/install.md)). Local tree: [website/docs](website/docs/).
+- **Contributing:** [Ways to contribute](website/docs/contribute/ways-to-contribute.md) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Monorepo
 
@@ -27,7 +27,7 @@ docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for `bin/setup-tests` and per-gem RSpec.
+Full local gate (`bin/setup-tests`, `./bin/check`): [First contribution](website/docs/contribute/first-contribution.md) (code path).
 
 ## License
 

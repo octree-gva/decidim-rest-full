@@ -102,7 +102,7 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationExtendedDataCo
         action: :update_sync,
         security_types: [:credentialFlow],
         scopes: ["system"],
-        permissions: ["system.organization.extended_data.update"]
+        permissions: ["system.organizations.extended_data.update"]
       ) do
         let(:body) { { data: { "foo" => "bar" }, object_path: "." } }
         let(:organization) { create(:organization, available_locales: ["en"]) }

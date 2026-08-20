@@ -12,6 +12,7 @@ module Decidim
       DEFAULT_HANDLERS = {
         "organizations#update" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).organizations_update! },
         "organization_extended_data#update" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).organization_extended_data_update! },
+        "resource_extended_data#update" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).resource_extended_data_update! },
         "user_extended_data#update" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).user_extended_data_update! },
         "roles#create" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).roles_create! },
         "roles#destroy" => ->(ctx, p) { Core::ApiSystemOperations.new(ctx, p).roles_destroy! }

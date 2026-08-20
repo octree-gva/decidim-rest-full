@@ -5,6 +5,7 @@ module Decidim
     module RestFull
       module Meetings
         class MeetingSerializer < ::Decidim::Api::RestFull::Core::ResourceSerializer
+          set_type :meeting
         end
       end
     end

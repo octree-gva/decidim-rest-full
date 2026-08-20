@@ -3,8 +3,7 @@
 module Decidim
   module RestFull
     module Core
-      # DSL builder for +Extension#rest_enhancement+ (relationships, links, meta, http_cache).
-      # rubocop:disable Naming/PredicateName -- mirrors FastJsonapi +has_many+ / +has_one+ API
+      # DSL builder for +Extension#rest_enhancement+ (relationships, links, meta, http_cache). # -- mirrors FastJsonapi +has_many+ / +has_one+ API
       class RestEnhancementBuilder
         class HttpCacheBuilder
           def initialize(parent)
@@ -38,7 +37,8 @@ module Decidim
           instance_eval(&block) if block
         end
 
-        def has_many(relationship_name, **options, &block)
+        # rubocop:disable Naming/PredicatePrefix -- FastJsonapi-style DSL names
+        def has_many(relationship_name, **, &)
           name = relationship_name.to_sym
           if @relationship_names.include?(name)
             raise ArgumentError,
@@ -46,10 +46,10 @@ module Decidim
           end
 
           @relationship_names << name
-          @relationship_installers << proc { has_many(relationship_name, **options, &block) }
+          @relationship_installers << proc { has_many(relationship_name, **, &) }
         end
 
-        def has_one(relationship_name, **options, &block)
+        def has_one(relationship_name, **, &)
           name = relationship_name.to_sym
           if @relationship_names.include?(name)
             raise ArgumentError,
@@ -57,10 +57,11 @@ module Decidim
           end
 
           @relationship_names << name
-          @relationship_installers << proc { has_one(relationship_name, **options, &block) }
+          @relationship_installers << proc { has_one(relationship_name, **, &) }
         end
+        # rubocop:enable Naming/PredicatePrefix
 
-        def link(link_name, &block)
+        def link(link_name, &)
           key = link_name.to_sym
           if @link_names.include?(key)
             raise ArgumentError,
@@ -68,7 +69,7 @@ module Decidim
           end
 
           @link_names << key
-          @link_installers << proc { link(link_name, &block) }
+          @link_installers << proc { link(link_name, &) }
         end
 
         def meta(&block)
@@ -109,7 +110,6 @@ module Decidim
           )
         end
       end
-      # rubocop:enable Naming/PredicateName
     end
   end
 end

@@ -48,6 +48,11 @@ Decidim::RestFull::Core::DefinitionRegistry.register_resource(:space) do
           },
           manifest_name: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:space_manifest) },
           participatory_space_type: { type: :string, example: "Decidim::Assembly" },
+          extended_data: {
+            type: :object,
+            additionalProperties: true,
+            description: "Present when the client has public.space.extended_data.read"
+          },
           visibility: { type: :string, enum: %w(public transparent private), description: "Space visibility" },
           created_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:creation_date) },
           updated_at: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:edition_date) }

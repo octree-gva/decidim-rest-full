@@ -12,6 +12,7 @@ module Decidim
               expect(described_class::SPACE_ROLE_MAP["admin"]).to eq("space_administrator")
               expect(described_class::SPACE_ROLE_MAP["moderator"]).to eq("space_moderator")
               expect(described_class::SPACE_ROLE_MAP["valuator"]).to eq("space_valuator")
+              expect(described_class::SPACE_ROLE_MAP["evaluator"]).to eq("space_valuator")
               expect(described_class::SPACE_ROLE_MAP["collaborator"]).to eq("space_private_member")
             end
           end

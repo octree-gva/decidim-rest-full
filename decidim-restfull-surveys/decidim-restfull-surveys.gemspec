@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "decidim-restfull-core", Decidim::RestFull.version
   s.add_dependency "decidim-restfull-forms", Decidim::RestFull.version
-  s.add_dependency "decidim-surveys", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-surveys", *Decidim::RestFull.decidim_version
 
   s.metadata["rubygems_mfa_required"] = "true"
 end

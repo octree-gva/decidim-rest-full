@@ -27,8 +27,8 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         permissions: ["blogs.read"]
       ) do
         let(:"locales[]") { %w(en fr) }
-        let!(:blog_posts) { create_list(:post, 3, component:, published_at: Time.zone.now - 1.day.ago, author: create(:user, :confirmed, organization:)) }
-        let!(:blog_post) { create(:post, component:, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization:)) }
+        let!(:blog_posts) { create_list(:post, 3, component:, published_at: 1.day.ago, author: create(:user, :confirmed, organization:)) }
+        let!(:blog_post) { create(:post, component:, published_at: 2.days.ago, author: create(:user, :confirmed, organization:)) }
         let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
         let!(:participatory_process) { create(:participatory_process, organization:) }
         it_behaves_like "localized endpoint"

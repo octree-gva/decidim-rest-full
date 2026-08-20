@@ -10,12 +10,14 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::ParticipatorySpaceManifest }
 
           def search
+            authorize_extended_data_filter!(space_extended_data_subject)
             page = paginated_union_results
             payload = Core::SpaceSerializer.new(page, params: space_serializer_params).serializable_hash
             render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
           end
 
           def index
+            authorize_extended_data_filter!(space_extended_data_subject)
             page = paginated_index_results
             payload = Core::SpaceSerializer.new(page, params: space_serializer_params).serializable_hash
             render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
@@ -61,7 +63,22 @@ module Decidim
           end
 
           def space_serializer_params
-            { only: [], locales: available_locales, host: current_organization.host }
+            {
+              only: [],
+              locales: available_locales,
+              host: current_organization.host,
+              includes_extended: can?(:read_extended_data, space_extended_data_subject)
+            }
+          end
+
+          def space_extended_data_subject
+            if params[:manifest_name].present? && available_space?(params[:manifest_name])
+              space_model_from(params[:manifest_name])
+            else
+              ::Decidim::ParticipatoryProcess
+            end
+          rescue Decidim::RestFull::Core::ApiException::BadRequest
+            ::Decidim::ParticipatoryProcess
           end
 
           def paginated_union_results

@@ -1,7 +1,7 @@
 import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 /**
- * Explicit sidebar: adoption / operators → integrators → developers.
+ * Explicit sidebar: overview → contribute → operators → integrators → developers.
  */
 const sidebars: SidebarsConfig = {
   documentationSidebar: [
@@ -10,6 +10,19 @@ const sidebars: SidebarsConfig = {
       label: 'Overview',
       collapsed: false,
       items: ['my-home-doc', 'install', 'production-mode'],
+    },
+    {
+      type: 'category',
+      label: 'Contribute',
+      collapsed: false,
+      items: [
+        'contribute/ways-to-contribute',
+        'contribute/non-code',
+        'contribute/translations',
+        'contribute/test-with-bruno',
+        'contribute/first-contribution',
+        'contribute/core-concepts',
+      ],
     },
     {
       type: 'category',
@@ -35,6 +48,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'integrator/quickstart',
         'integrator/permissions-and-scopes',
+        'integrator/extended-data',
         'integrator/async-and-jobs',
         'integrator/resolve-component-id',
         'integrator/errors',

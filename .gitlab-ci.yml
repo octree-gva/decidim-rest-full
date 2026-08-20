@@ -1,6 +1,7 @@
 ##
-# decidim-restfull monorepo CI: lint, per-gem RSpec, then metagem aggregate.
-# Ruby commands mirror docker compose service `rest_full` (see CONTRIBUTING.md).
+# decidim-restfull monorepo CI: lint, per-gem RSpec (Appraisals 0.32 + 0.29), then metagem aggregate.
+# Ruby commands mirror docker compose service `rest_full` (see website/docs/contribute/first-contribution.md).
+# OpenAPI / client generation is local (0.32 only); not part of this pipeline matrix.
 ##
 stages:
   - lint
@@ -22,11 +23,12 @@ services:
   DATABASE_USERNAME: "decidim"
   DISABLED_DOCKER_COMPOSE: "true"
   TRAEFIK_REDIS_URL: "redis://localhost:6379/1"
-  NODE_MAJOR: 18
+  NODE_MAJOR: 22
   SIMPLECOV: 1
   CI: 1
   RAILS_ENV: test
   DISABLE_SPRING: 1
+  DECIDIM_FORCE_SSL: "false"
 
 .development_rules:
   rules:
@@ -54,41 +56,58 @@ services:
   before_script:
     - bin/setup-tests
 
-.rspec_template:
+.rspec_032:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: test
   variables:
     <<: *rspec_variables
+    BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
+  before_script:
+    - bin/setup-tests
+
+.rspec_029:
+  extends: .development_rules
+  image: ruby:3.2.8
+  stage: test
+  variables:
+    <<: *rspec_variables
+    BUNDLE_GEMFILE: gemfiles/decidim_0.29.gemfile
   before_script:
     - bin/setup-tests
 
 ruby::spec_harness:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
+  variables:
+    BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
   script:
     - ./bin/lint-spec-harness
 
 ruby::rubocop:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
+  variables:
+    BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
   script:
     - bundle
     - bundle exec rubocop .
 
 ruby::erb:
   extends: .development_rules
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: lint
+  variables:
+    BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
   script:
     - bundle
     - bundle exec erblint --lint-all --enable-all-linters
 
 node::prettier:
   extends: .development_rules
-  image: node:20
+  image: node:22
   stage: lint
   script:
     - yarn install --frozen-lockfile
@@ -96,7 +115,7 @@ node::prettier:
 
 crowdin::lint:
   extends: .development_rules
-  image: node:20
+  image: node:22
   stage: lint
   script:
     - npm install -g @crowdin/cli
@@ -122,41 +141,68 @@ k6:smoke:
       fi
     - k6 run perf/k6/scenarios/smoke.js
 
-rspec:decidim-restfull-core:
-  extends: .rspec_template
+rspec:core:0.32:
+  extends: .rspec_032
   script:
     - bundle exec rspec decidim-restfull-core/spec --format progress
 
-rspec:decidim-restfull-proposals:
-  extends: .rspec_template
+rspec:proposals:0.32:
+  extends: .rspec_032
   script:
     - bundle exec rspec decidim-restfull-proposals/spec --format progress
 
-rspec:decidim-restfull-blogs:
-  extends: .rspec_template
+rspec:blogs:0.32:
+  extends: .rspec_032
   script:
     - bundle exec rspec decidim-restfull-blogs/spec --format progress
 
-rspec:decidim-restfull-forms:
-  extends: .rspec_template
+rspec:forms:0.32:
+  extends: .rspec_032
   script:
     - bundle exec rspec decidim-restfull-forms/spec --format progress
 
-rspec:decidim-restfull-adapters:
-  extends: .rspec_template
+rspec:adapters:0.32:
+  extends: .rspec_032
   script:
     - bundle exec rspec decidim-restfull-meetings/spec decidim-restfull-surveys/spec decidim-restfull-budgets/spec
-      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec decidim-restfull-sortition/spec
+      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec
       decidim-restfull-dev/spec --format progress
 
-rspec:decidim-restfull:
-  extends: .rspec_template
+rspec:core:0.29:
+  extends: .rspec_029
+  script:
+    - bundle exec rspec decidim-restfull-core/spec --format progress
+
+rspec:proposals:0.29:
+  extends: .rspec_029
+  script:
+    - bundle exec rspec decidim-restfull-proposals/spec --format progress
+
+rspec:blogs:0.29:
+  extends: .rspec_029
+  script:
+    - bundle exec rspec decidim-restfull-blogs/spec --format progress
+
+rspec:forms:0.29:
+  extends: .rspec_029
+  script:
+    - bundle exec rspec decidim-restfull-forms/spec --format progress
+
+rspec:adapters:0.29:
+  extends: .rspec_029
+  script:
+    - bundle exec rspec decidim-restfull-meetings/spec decidim-restfull-surveys/spec decidim-restfull-budgets/spec
+      decidim-restfull-debates/spec decidim-restfull-accountabilities/spec
+      decidim-restfull-dev/spec --format progress
+
+rspec:decidim-restfull:0.32:
+  extends: .rspec_032
   needs:
-    - rspec:decidim-restfull-core
-    - rspec:decidim-restfull-proposals
-    - rspec:decidim-restfull-blogs
-    - rspec:decidim-restfull-forms
-    - rspec:decidim-restfull-adapters
+    - rspec:core:0.32
+    - rspec:proposals:0.32
+    - rspec:blogs:0.32
+    - rspec:forms:0.32
+    - rspec:adapters:0.32
   artifacts:
     when: always
     paths:
@@ -169,8 +215,25 @@ rspec:decidim-restfull:
   script:
     - bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec.xml
 
+rspec:decidim-restfull:0.29:
+  extends: .rspec_029
+  needs:
+    - rspec:core:0.29
+    - rspec:proposals:0.29
+    - rspec:blogs:0.29
+    - rspec:forms:0.29
+    - rspec:adapters:0.29
+  artifacts:
+    when: always
+    paths:
+      - rspec-0.29.xml
+    reports:
+      junit: rspec-0.29.xml
+  script:
+    - bundle exec rspec decidim-restfull-*/spec --format progress --format RspecJunitFormatter --out rspec-0.29.xml
+
 ruby::rubygem:
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   stage: publish
   script:
     - echo "---" > .credentials
@@ -185,7 +248,6 @@ ruby::rubygem:
     - gem build decidim-restfull-debates/decidim-restfull-debates.gemspec
     - gem build decidim-restfull-meetings/decidim-restfull-meetings.gemspec
     - gem build decidim-restfull-proposals/decidim-restfull-proposals.gemspec
-    - gem build decidim-restfull-sortition/decidim-restfull-sortition.gemspec
     - gem build decidim-restfull-surveys/decidim-restfull-surveys.gemspec
     - gem build decidim-restfull-forms/decidim-restfull-forms.gemspec
     - gem push decidim-restfull-*.gem -k ci_rubygems_api_key --config-file .credentials
@@ -194,7 +256,7 @@ ruby::rubygem:
 
 crowdin::upload:
   stage: translate
-  image: node:20
+  image: node:22
   script:
     - npm install -g @crowdin/cli
     - crowdin upload -T $CROWDIN_PERSONAL_TOKEN -i $CROWDIN_PROJECT_ID --no-progress
@@ -203,7 +265,7 @@ crowdin::upload:
 
 crowdin::merge_request:
   stage: translate
-  image: node:20
+  image: node:22
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $GITLAB_USER_ID != $TRANSLATIONBOT_ID'
       when: always
@@ -224,7 +286,7 @@ crowdin::merge_request:
     - git push $ORIGIN HEAD:$BRANCH_NAME -o merge_request.create -o merge_request.target=main
 
 decidim-client::publish:
-  image: node:20
+  image: node:22
   variables:
     CI: 1
   before_script:

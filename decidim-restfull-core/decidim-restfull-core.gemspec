@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency "activerecord-session_store", "~> 2.0"
   s.add_dependency "api-pagination", "~> 6.0"
   s.add_dependency "cancancan"
-  s.add_dependency "decidim-admin", Decidim::RestFull.decidim_version
-  s.add_dependency "decidim-core", Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-admin", *Decidim::RestFull.decidim_version
+  s.add_dependency "decidim-core", *Decidim::RestFull.decidim_version
   s.add_dependency "decidim-toggle", "~> 0.1.3"
   s.add_dependency "deface", "~> 1.9"
   s.add_dependency "doorkeeper"

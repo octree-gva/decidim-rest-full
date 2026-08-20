@@ -14,6 +14,11 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
       it_behaves_like "ordered params", columns: %w(published_at rand)
       it_behaves_like "filtered params", filter: "voted_weight", item_schema: { type: :string }, only: :integer, security: [:impersonationFlow]
       it_behaves_like "filtered params", filter: "state", item_schema: { type: :string }, only: :string
+      parameter name: :"filter[extended_data_cont]",
+                in: :query,
+                schema: { type: :string },
+                required: false,
+                description: "Search on proposal extended_data. Requires `proposals.extended_data.read`. See [Extended data](#{Decidim::RestFull.config.docs_url}/integrator/extended-data)."
 
       describe_api_endpoint(
         controller: Decidim::Api::RestFull::Proposals::ProposalsController,
@@ -192,6 +197,64 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 end
               end
             end
+          end
+
+          context "with filter[extended_data_cont] and permission" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(proposals))
+              client.permissions = [
+                client.permissions.build(permission: "proposals.read"),
+                client.permissions.build(permission: "proposals.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"ext": "1"' }
+
+            before do
+              proposal.extended_data.update!(data: { "ext" => "1" })
+              create(:proposal, component: proposal_component)
+            end
+
+            run_test!(example_name: :filter_by_extended_data) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data.map { |d| d["id"] }).to eq([proposal.id.to_s])
+            end
+          end
+
+          context "with filter[extended_data_cont] no hit" do
+            let(:api_client) do
+              client = create(:api_client, organization:, scopes: %w(proposals))
+              client.permissions = [
+                client.permissions.build(permission: "proposals.read"),
+                client.permissions.build(permission: "proposals.extended_data.read")
+              ]
+              client.save!
+              client
+            end
+            let(:"filter[extended_data_cont]") { '"ext": "missing"' }
+
+            before do
+              proposal.extended_data.update!(data: { "ext" => "1" })
+            end
+
+            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data).to be_empty
+            end
+          end
+        end
+
+        response "403", "Forbidden when filtering extended_data without permission" do
+          produces "application/json"
+          let(:"filter[extended_data_cont]") { '"ext": "1"' }
+
+          before do
+            proposal.extended_data.update!(data: { "ext" => "1" })
+          end
+
+          run_test!(example_name: :filter_extended_data_forbidden) do |example|
+            expect(example.status).to eq(403)
           end
         end
       end

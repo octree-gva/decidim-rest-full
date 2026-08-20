@@ -6,6 +6,7 @@ module Decidim
       module Users
         class UserExtendedDataController < ApplicationController
           include Decidim::Api::RestFull::AsyncApiJobEnqueuing
+
           before_action -> { doorkeeper_authorize! :oauth }
 
           before_action only: [:index] do

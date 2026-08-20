@@ -42,5 +42,36 @@ RSpec.describe "RestFull ModuleAvailability API gates" do
     # may be 200 or 403 depending on permissions; must not be 501
     expect(response).not_to have_http_status(:not_implemented)
   end
+
+  context "when an Extension-registered feature gem is present" do
+    before do
+      skip "decidim-restfull-dummy not in bundle" unless Gem.loaded_specs.has_key?("decidim-restfull-dummy")
+    end
+
+    let(:api_client) { create(:api_client, organization:, scopes: %w(public dummy)) }
+    let!(:token) do
+      create(:oauth_access_token, scopes: "public dummy", resource_owner_id: user.id, application: api_client)
+    end
+
+    it "registers controller paths and Toggle feature via Extension" do
+      expect(Decidim::RestFull::Core::ModuleAvailability.feature_gems[:dummy]).to eq("decidim-restfull-dummy")
+      expect(Decidim::RestFull::Core::ModuleAvailability.controller_path_features["dummies"]).to eq(:dummy)
+      expect(Decidim::RestFull::Core::ModuleAvailability.scope_features[:dummy]).to eq(:dummy)
+    end
+
+    it "returns 501 when the registered feature Toggle is off" do
+      stub_toggle(enabled: true, dummy_enabled: false)
+      get("/api/rest_full/v#{version}/dummies", headers:)
+      expect(response).to have_http_status(:not_implemented)
+      expect(response.parsed_body["error"]).to include("501")
+    end
+
+    it "returns 501 Not Implemented when a stub controller is hit (Toggle on)" do
+      stub_toggle(enabled: true, dummy_enabled: true)
+      get("/api/rest_full/v#{version}/dummies", headers:)
+      expect(response).to have_http_status(:not_implemented)
+      expect(response.parsed_body["error"]).to include("501")
+    end
+  end
 end
 # rubocop:enable RSpec/DescribeClass

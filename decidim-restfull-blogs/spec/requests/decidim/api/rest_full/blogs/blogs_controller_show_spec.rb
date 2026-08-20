@@ -27,7 +27,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
         let(:space_manifest) { "participatory_processes" }
 
         let(:"locales[]") { %w(en fr) }
-        let!(:blog_post) { create(:post, component:, published_at: Time.zone.now - 2.days.ago, author: create(:user, :confirmed, organization:)) }
+        let!(:blog_post) { create(:post, component:, published_at: 2.days.ago, author: create(:user, :confirmed, organization:)) }
         let!(:component) { create(:component, participatory_space: participatory_process, manifest_name: "blogs", published_at: Time.zone.now) }
         let!(:participatory_process) { create(:participatory_process, organization:) }
 
@@ -98,7 +98,7 @@ RSpec.describe Decidim::Api::RestFull::Blogs::BlogsController do
                 post
               end.reverse
             end
-            let(:id) { blog_post.id }
+            let(:id) { Decidim::Blogs::Post.where(component:).order(published_at: :asc).last.id }
 
             run_test!(example_name: :ok_no_more) do |example|
               data = JSON.parse(example.body)["data"]
