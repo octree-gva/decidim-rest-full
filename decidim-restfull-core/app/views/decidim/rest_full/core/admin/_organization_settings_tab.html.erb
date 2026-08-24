@@ -1,4 +1,4 @@
-<%# locals: () %>
+<%# locals: (organization:, tab:) %>
 <%= decidim_toggle_settings_tab_form(organization, tab) do |tf| %>
   <div data-restfull-toggle-tab>
     <%= tf.fields_for_names(:enabled) %>
