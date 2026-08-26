@@ -14,12 +14,21 @@ data:
 
   # Locale files or `File.find` patterns where translations are read from:
   read:
-    - 'config/locales/decidim_rest_full.%{locale}.yml'
+    - 'decidim-restfull-core/config/locales/decidim_rest_full.%{locale}.yml'
+    - 'decidim-restfull-accountabilities/config/locales/decidim_rest_full_accountabilities.%{locale}.yml'
+    - 'decidim-restfull-blogs/config/locales/decidim_rest_full_blogs.%{locale}.yml'
+    - 'decidim-restfull-budgets/config/locales/decidim_rest_full_budgets.%{locale}.yml'
+    - 'decidim-restfull-debates/config/locales/decidim_rest_full_debates.%{locale}.yml'
+    - 'decidim-restfull-dummy/config/locales/decidim_rest_full_dummy.%{locale}.yml'
+    - 'decidim-restfull-forms/config/locales/decidim_rest_full_forms.%{locale}.yml'
+    - 'decidim-restfull-meetings/config/locales/decidim_rest_full_meetings.%{locale}.yml'
+    - 'decidim-restfull-proposals/config/locales/decidim_rest_full_proposals.%{locale}.yml'
+    - 'decidim-restfull-surveys/config/locales/decidim_rest_full_surveys.%{locale}.yml'
 
   # Locale files to write new keys to, based on a list of key pattern => file rules. Matched from top to bottom:
   # `i18n-tasks normalize -p` will force move the keys according to these rules
   write:
-    - 'config/locales/decidim_rest_full.%{locale}.yml'
+    - 'decidim-restfull-core/config/locales/decidim_rest_full.%{locale}.yml'
 
   ## Specify the router (see Readme for details). Valid values: conservative_router, pattern_router, or a custom class.
   # router: conservative_router
@@ -46,18 +55,18 @@ locales:
 search:
   ## Paths or `File.find` patterns to search in:
   paths:
-    - app
-    - lib
+    - decidim-restfull-core/app
+    - decidim-restfull-core/lib
 
   # Root directories for relative keys resolution.
   relative_roots:
-    - app/controllers
-    - app/helpers
-    - app/mailers
-    - app/presenters
-    - app/services
-    - app/views
-    - app/cells
+    - decidim-restfull-core/app/controllers
+    - decidim-restfull-core/app/helpers
+    - decidim-restfull-core/app/mailers
+    - decidim-restfull-core/app/presenters
+    - decidim-restfull-core/app/services
+    - decidim-restfull-core/app/views
+    - decidim-restfull-core/app/cells
 
   ## Files or `File.fnmatch` patterns to exclude from search. Some files are always excluded regardless of this setting:
   ##   %w(*.jpg *.png *.gif *.svg *.ico *.eot *.otf *.ttf *.woff *.woff2 *.pdf *.css *.sass *.scss *.less *.yml *.json)

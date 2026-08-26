@@ -19,5 +19,8 @@ en:
               succeeded: 'Proposal updated: send proposal details'
             proposals:
               draft: 'draft: create, update, publish and see a draft proposal'
+              extended_data:
+                read: 'read extended data: can read proposal extended data'
+                update: 'write extended data: update and remove proposal extended data'
               read: 'read: list and details of a proposal'
               vote: 'vote: vote on proposals'

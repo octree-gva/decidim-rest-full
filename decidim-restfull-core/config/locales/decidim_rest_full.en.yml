@@ -29,6 +29,7 @@ en:
             scope_roles: 'Roles: manage Decidim roles'
             scope_system: 'System: manage Organizations and Rails'
             scope_spaces: 'Spaces: manage spaces'
+            scope_webhooks: 'Webhooks: manage webhook registrations'
           permission:
             oauth:
               extended_data:
@@ -40,8 +41,14 @@ en:
               read: 'read: List and detail of users'
             public:
               component:
+                extended_data:
+                  read: 'read extended data: can read component extended data'
+                  update: 'write extended data: update and remove component extended data'
                 read: 'read: list and details of a component'
               space:
+                extended_data:
+                  read: 'read extended data: can read space extended data'
+                  update: 'write extended data: update and remove space extended data'
                 read: 'read: list and details of a space'
             participatory_process:
               step_activated:
@@ -51,18 +58,28 @@ en:
               write: 'write: Create and destroy roles'
             system:
               organizations:
+                created: 'Organization created: send organization details'
+                deleted: 'Organization deleted: send organization details'
                 destroy: 'destroy: Remove an organization permanently'
                 extended_data:
                   read: 'read extended data: can read extended data'
                   update: 'write extended data: update and remove extended data'
                 read: 'read: List and detail of organizations'
                 update: 'update: Update an organization'
+                updated: 'Organization updated: send organization details'
               server:
                 exec: 'exec: Execute jobs'
                 restart: 'restart: Soft restart the server'
               users:
                 destroy: 'destroy: Remove a user permanently'
                 update: 'update: Update a user'
+            user:
+              created: 'User created: send user details'
+              updated: 'User updated: send user details'
+            webhooks:
+              destroy: 'destroy: delete webhook registrations'
+              read: 'read: list and details of webhook registrations'
+              write: 'write: create and update webhook registrations'
       pages:
         show:
           documentation_website: Documentation website

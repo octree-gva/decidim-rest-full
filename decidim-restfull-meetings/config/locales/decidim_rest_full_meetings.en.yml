@@ -8,6 +8,9 @@ en:
             scope_meetings: 'Meeting: manage meetings'
           permission:
             meetings:
+              extended_data:
+                read: 'read extended data: can read meeting extended data'
+                update: 'write extended data: update and remove meeting extended data'
               read: 'read: list and details of meetings'
               upcoming_reminder:
                 succeeded: 'Upcoming meeting reminder: webhook with meeting snapshot'

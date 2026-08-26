@@ -11,6 +11,6 @@ en:
         api_client:
           fields:
             scope_dummy: Dummy
-      permissions:
-        dummy:
-          dummy.read: Read dummy stub
+          permission:
+            dummy:
+              read: 'read: access dummy stub endpoint'
