@@ -46,6 +46,15 @@ RSpec.describe "optional decidim-restfull feature gems" do
       # Missing feature gem ⇒ Extension.register never ran ⇒ empty scope.
       expect(described_class.by_scope(:proposals_missing_gem_probe)).to eq([])
     end
+
+    it "lists extension-only scopes for the System API client permissions UI" do
+      described_class.register(:whatsapp, "whatsapp.read", group: :whatsapp)
+
+      expect(described_class.extension_ui_scopes).to include("whatsapp")
+      expect(described_class.extension_ui_scopes).not_to include("proposals", "blogs")
+    ensure
+      described_class.send(:registry).delete("whatsapp.read")
+    end
   end
 
   describe Decidim::RestFull::Core::WebhookEventCatalog do

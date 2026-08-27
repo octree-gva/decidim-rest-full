@@ -11,7 +11,6 @@ module Decidim
             ext.toggle_feature gem: "decidim-restfull-budgets"
             ext.controller_paths "budgets"
             ext.oauth_scopes :budgets
-            ext.permissions(:budgets, "budgets.read", group: :budgets)
             ext.open_api_definitions(
               File.join(Budgets::ENGINE_ROOT, "lib/decidim/rest_full/budgets/test_definitions.rb")
             )
