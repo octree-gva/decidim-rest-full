@@ -1,0 +1,184 @@
+---
+en:
+  decidim:
+    rest_full:
+      forms:
+        magic_link_redirect_url:
+          errors:
+            organization_required: Organization is required
+            redirect_url:
+              ascii_only: Must contain only printable ASCII characters
+              https_only: Must use the https scheme
+              host_blank: Must include a valid host
+              userinfo: Must not include user information
+              host_not_allowed: Host is not allowed for this organization
+              invalid_url: Is not a valid URL
+      admin:
+        menu:
+          api_clients: API Clients
+      models:
+        api_client:
+          fields:
+            client_id: Client ID
+            created_at: Created At
+            name: Human name
+            scope_attachments: 'Attachments: manage attachments'
+            scope_oauth: 'Oauth: Manage user'
+            scope_pages: 'Page: manage pages'
+            scope_public: 'Public: navigate components and spaces'
+            scope_roles: 'Roles: manage Decidim roles'
+            scope_system: 'System: manage Organizations and Rails'
+            scope_spaces: 'Spaces: manage spaces'
+            scope_webhooks: 'Webhooks: manage webhook registrations'
+          permission:
+            oauth:
+              extended_data:
+                read: 'read extended data: can read extended data'
+                update: 'write extended data: update and remove extended data'
+              impersonate: 'impersonate: Login as another user'
+              login: 'login: login with username/password'
+              magic_link: 'magic_link: Create and sign-in through magic link'
+              read: 'read: List and detail of users'
+            public:
+              component:
+                extended_data:
+                  read: 'read extended data: can read component extended data'
+                  update: 'write extended data: update and remove component extended data'
+                read: 'read: list and details of a component'
+              space:
+                extended_data:
+                  read: 'read extended data: can read space extended data'
+                  update: 'write extended data: update and remove space extended data'
+                read: 'read: list and details of a space'
+            participatory_process:
+              step_activated:
+                succeeded: 'Process phase activated: send space details with active step'
+            roles:
+              read: 'read: List and detail of roles'
+              write: 'write: Create and destroy roles'
+            system:
+              organizations:
+                created: 'Organization created: send organization details'
+                deleted: 'Organization deleted: send organization details'
+                destroy: 'destroy: Remove an organization permanently'
+                extended_data:
+                  read: 'read extended data: can read extended data'
+                  update: 'write extended data: update and remove extended data'
+                read: 'read: List and detail of organizations'
+                update: 'update: Update an organization'
+                updated: 'Organization updated: send organization details'
+              server:
+                exec: 'exec: Execute jobs'
+                restart: 'restart: Soft restart the server'
+              users:
+                destroy: 'destroy: Remove a user permanently'
+                update: 'update: Update a user'
+            user:
+              created: 'User created: send user details'
+              updated: 'User updated: send user details'
+            webhooks:
+              destroy: 'destroy: delete webhook registrations'
+              read: 'read: list and details of webhook registrations'
+              write: 'write: create and update webhook registrations'
+      pages:
+        show:
+          documentation_website: Documentation website
+          open_api_spec: Open API spec
+          title: Decidim Rest API
+      system:
+        api_clients:
+          actions:
+            destroy: Revoke
+            edit: Edit
+            new_api_client: New API Client
+            title: Actions
+          create:
+            error: Could not create API Client
+            success: API Client created
+          edit:
+            go_back: Back to the list
+            info: Info
+            permissions: Permissions
+            save: Save
+            title: Edit API Client Credentials
+            webhook: Webhook
+          edit_info_tab:
+            accountability: Accountability
+            auth_type: Auth Type
+            blogs: Blogs
+            budgets: Budgets
+            client_id: Client Id
+            client_secret: Client Secret
+            component: Components
+            debates: Debates
+            keys_label: Credentials
+            meetings: Meetings
+            oauth: User Management
+            organization_perm: Organization
+            permissions_scopes: Allowed scopes
+            permissions_title: Permissions
+            proposals: Proposals
+            rails_perm: Ruby on Rails
+            space: Space
+            surveys: Surveys
+            update_permissions: Update permissions
+            user_perm: User
+          edit_webhook_tab:
+            actions: Actions
+            add_webhook: Add Webhook
+            cancel: Cancel
+            confirm_delete: Are you sure you want to delete this webhook?
+            create: Create
+            created_at: Created At
+            delete: Delete
+            no_webhooks: No webhook registrations found.
+            subscriptions: Subscriptions
+            url: URL
+            webhook_registrations: Webhook Registrations
+            webhook_url: Webhook URL
+          form:
+            scopes_label: Allowed scopes
+            select_organization: Select an organization
+          index:
+            confirm_delete: This will block all queries using these credentials. Are you sure?
+            title: API Clients
+          new:
+            save: Create
+            title: New API Client Credentials
+          show:
+            go_back: Back to the list
+          webhook_events: Webhook events
+          webhook_events_description: Events the API client is allowed to subscribe to.
+        update_organization:
+          unconfirmed_host_explaination_html: "<div class=\"callout info\">\n  <p>\n    Before updating the host, please make sure to configure these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"
+          unconfirmed_host_label: Host
+          unconfirmed_host_pending_warning_html: "<div class=\"callout warning\">\n  <p class=\"h4\">\n    An operation is pending\n  </p>\n  <p>\n    While we are changing the host to <strong>%{unconfirmed_host}</strong>,\n    the current host is still <strong>%{host}</strong>.\n  </p>\n  <p>\n    Once we validated your DNS configuration, the host will be updated. <br />\n    Please make sure to have these DNS records: \n    <pre>\n%{a_records}\n%{aaa_records}</pre>\n  </p>\n</div>\n"
+        webhook_registrations:
+          create:
+            success: Webhook registration created successfully
+  decidim_toggle:
+    system:
+      decidim_restfull:
+        tab: Restfull
+        enabled: Rest API enabled
+        modules_legend: Feature modules
+        proposals_enabled: Rest API for proposals enabled
+        blogs_enabled: Rest API for blogs enabled
+        debates_enabled: Rest API for debates enabled
+        surveys_enabled: Rest API for surveys enabled
+        forms_enabled: Rest API for forms enabled
+        meetings_enabled: Rest API for meetings enabled
+        attachments_enabled: Rest API for attachments enabled
+        budgets_enabled: Rest API for budgets enabled
+        accountabilities_enabled: Rest API for accountabilities enabled
+        helptext:
+          enabled: When off, the whole RestFull API for this organization returns HTTP 501.
+          proposals_enabled: Expose proposals scopes, endpoints, and webhooks.
+          blogs_enabled: Expose blogs scopes, endpoints, and webhooks.
+          debates_enabled: Expose debates scopes and endpoints.
+          surveys_enabled: Expose survey component scopes and endpoints.
+          forms_enabled: Expose questionnaire/forms endpoints (shared surveys OAuth scope).
+          meetings_enabled: Expose meetings scopes, endpoints, and webhooks.
+          attachments_enabled: Expose attachments scopes and endpoints.
+          budgets_enabled: Expose budgets scopes and endpoints.
+          accountabilities_enabled: Expose accountability scopes and endpoints.

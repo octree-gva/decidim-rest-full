@@ -30,8 +30,11 @@ module Decidim
             ["system", :perms_for_system],
             ["proposals", :perms_for_proposals],
             ["meetings", :perms_for_meetings],
+            ["debates", :perms_for_debates],
             ["blogs", :perms_for_blogs],
+            ["budgets", :perms_for_budgets],
             ["surveys", :perms_for_surveys],
+            ["accountability", :perms_for_accountability],
             ["roles", :perms_for_roles],
             ["attachments", :perms_for_attachments],
             ["webhooks", :perms_for_webhooks]
@@ -83,8 +86,10 @@ module Decidim
         end
 
         def perms_for_system
+          can :create, ::Decidim::Organization if permissions.include? "system.organizations.create"
           can :read, ::Decidim::Organization if permissions.include? "system.organizations.read"
           can :update, ::Decidim::Organization if permissions.include? "system.organizations.update"
+          can :destroy, ::Decidim::Organization if permissions.include? "system.organizations.destroy"
 
           can :read_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.read"
           can :update_extended_data, ::Decidim::Organization if permissions.include? "system.organizations.extended_data.update"
@@ -148,6 +153,18 @@ module Decidim
           can :update_extended_data, ::Decidim::Meetings::Meeting if permissions.include? "meetings.extended_data.update"
         end
 
+        def perms_for_debates
+          return unless defined?(::Decidim::Debates::Debate)
+
+          can :read, ::Decidim::Debates::Debate if permissions.include? "debates.read"
+        end
+
+        def perms_for_budgets
+          return unless defined?(::Decidim::Budgets::Budget)
+
+          can :read, ::Decidim::Budgets::Budget if permissions.include? "budgets.read"
+        end
+
         def perms_for_surveys
           return unless defined?(::Decidim::Surveys::Survey)
 
@@ -165,6 +182,12 @@ module Decidim
 
           can :read, ::Decidim::Forms::Answer if permissions.include?("surveys.answers.read")
           can :destroy, ::Decidim::Forms::Answer if permissions.include?("surveys.answers.destroy")
+        end
+
+        def perms_for_accountability
+          return unless defined?(::Decidim::Accountability::Result)
+
+          can :read, ::Decidim::Accountability::Result if permissions.include? "accountability.read"
         end
       end
     end

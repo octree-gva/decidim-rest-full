@@ -47,6 +47,19 @@ RSpec.describe "optional decidim-restfull feature gems" do
       expect(described_class.by_scope(:proposals_missing_gem_probe)).to eq([])
     end
 
+    it "does not register unimplemented system.users / system.server abilities" do
+      keys = described_class.by_scope(:system).map(&:key)
+
+      expect(keys).to include("oauth.read")
+      expect(keys).not_to include(
+        "system.users.update",
+        "system.users.destroy",
+        "system.server.restart",
+        "system.server.exec"
+      )
+      expect(described_class.by_scope_and_group(:system, :rails)).to eq([])
+    end
+
     it "lists extension-only scopes for the System API client permissions UI" do
       described_class.register(:whatsapp, "whatsapp.read", group: :whatsapp)
 

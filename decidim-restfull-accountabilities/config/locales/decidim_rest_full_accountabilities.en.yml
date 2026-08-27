@@ -1,0 +1,11 @@
+---
+en:
+  decidim:
+    rest_full:
+      models:
+        api_client:
+          fields:
+            scope_accountability: 'Accountability: manage results'
+          permission:
+            accountability:
+              read: 'read: list accountability results exposed via the API'

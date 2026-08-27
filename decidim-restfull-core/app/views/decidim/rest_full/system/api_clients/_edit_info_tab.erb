@@ -1,0 +1,224 @@
+<%= decidim_form_for(@form) do |f| %>
+  <%= render partial: "form", object: f, locals: { disabled:true } %>
+<% end %>
+
+<div class="form__wrapper">
+  <h3 class="h5"><%= t(".keys_label") %></h3>
+  <label>
+    <span><%= t(".client_id") %></span>
+    <input type="text" value="<%= @api_client.client_id %>" name="unnamed" autocomplete="off">
+  </label>
+  <label>
+    <span><%= t(".client_secret") %></span>
+    <input type="text" value="<%= @api_client.client_secret %>" name="unnamed" autocomplete="off">
+  </label>
+</div>
+<h2 class="h2"><%= t(".permissions_title") %></h2>
+<div>
+  <strong><%= t(".permissions_scopes") %></strong><code><%= @api_client.scopes.to_a %></code>
+</div>
+
+<%= form_for(@perm_form, method: :post, url: system_api_permissions_path ) do |form| %>
+  <%= form.hidden_field :api_client_id, value: @api_client.id %>
+  <% org = @api_client.organization %>
+  <% avail = Decidim::RestFull::Core::ModuleAvailability %>
+  <% if avail.scope_enabled?(org, :system) && @api_client.scopes.to_a.include?("system") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :system,
+                 dom_id: "system_permissions",
+                 title: t("scope_system", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :auth_type, label: t(".auth_type") },
+                   { group: :organization, label: t(".organization_perm") },
+                   { group: :user, label: t(".user_perm") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :public) && @api_client.scopes.to_a.include?("public") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :public,
+                 dom_id: "public_permissions",
+                 title: t("scope_public", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :component, label: t(".component") },
+                   { group: :space, label: t(".space") }
+                 ]
+               } %>
+    <% public_events = Decidim::RestFull::Core::WebhookEventCatalog.all.select { |e| e.scope == "public" }.map(&:event_name) %>
+    <% if public_events.any? %>
+      <div class="mt-4">
+      <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
+      <p class="text-sm">
+        <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
+      </p>
+      <ul>
+        <% public_events.each do |permission| %>
+          <li class="my-2">
+            <label>
+              <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+              <span class="font-normal">
+                <%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission") %>
+              </span>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+    <% end %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :blogs) && @api_client.scopes.to_a.include?("blogs") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:blogs).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :blogs,
+                 dom_id: "blog_permissions",
+                 title: t("scope_blogs", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :blogs, label: t(".blogs") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :debates) && @api_client.scopes.to_a.include?("debates") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:debates).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :debates,
+                 dom_id: "debates_permissions",
+                 title: t("scope_debates", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :debates, label: t(".debates") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :budgets) && @api_client.scopes.to_a.include?("budgets") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:budgets).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :budgets,
+                 dom_id: "budgets_permissions",
+                 title: t("scope_budgets", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :budgets, label: t(".budgets") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :surveys) && @api_client.scopes.to_a.include?("surveys") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:surveys).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :surveys,
+                 dom_id: "surveys_permissions",
+                 title: t("scope_surveys", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :surveys, label: t(".surveys") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :accountability) && @api_client.scopes.to_a.include?("accountability") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:accountability).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :accountability,
+                 dom_id: "accountability_permissions",
+                 title: t("scope_accountability", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :accountability, label: t(".accountability") }
+                 ]
+               } %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :proposals) && @api_client.scopes.to_a.include?("proposals") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:proposals).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :proposals,
+                 dom_id: "proposals_permission",
+                 title: t("scope_proposals", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :proposals, label: t(".proposals") }
+                 ]
+               } %>
+    <% proposal_events = Decidim::RestFull::Core::WebhookEventCatalog.all.select { |e| e.scope == "proposals" }.map(&:event_name) %>
+    <% if proposal_events.any? %>
+      <div class="mt-4">
+      <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
+      <p class="text-sm">
+        <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
+      </p>
+      <ul>
+        <% proposal_events.each do |permission| %>
+          <li class="my-2">
+            <label>
+              <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+              <span class="font-normal">
+                <%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission") %>
+              </span>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+    <% end %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :meetings) && @api_client.scopes.to_a.include?("meetings") && Decidim::RestFull::Core::PermissionRegistry.by_scope(:meetings).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :meetings,
+                 dom_id: "meetings_permissions",
+                 title: t("scope_meetings", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :meetings, label: t(".meetings") }
+                 ]
+               } %>
+    <% meeting_events = Decidim::RestFull::Core::WebhookEventCatalog.all.select { |e| e.scope == "meetings" }.map(&:event_name) %>
+    <% if meeting_events.any? %>
+      <div class="mt-4">
+      <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
+      <p class="text-sm">
+        <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
+      </p>
+      <ul>
+        <% meeting_events.each do |permission| %>
+          <li class="my-2">
+            <label>
+              <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+              <span class="font-normal">
+                <%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission") %>
+              </span>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+    <% end %>
+  <% end %>
+  <% if avail.scope_enabled?(org, :oauth) && @api_client.scopes.to_a.include?("oauth") %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: :oauth,
+                 dom_id: "oauth_permissions",
+                 title: t("scope_oauth", scope: "decidim.rest_full.models.api_client.fields"),
+                 groups: [
+                   { group: :oauth, label: t(".oauth") }
+                 ]
+               } %>
+  <% end %>
+  <div class="my-4">
+    <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
+  </div>
+<% end %>
