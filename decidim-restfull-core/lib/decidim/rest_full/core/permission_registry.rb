@@ -49,6 +49,10 @@ module Decidim
             all.map(&:scope).uniq - BUILTIN_UI_SCOPES
           end
 
+          def extension_ui_groups(scope)
+            by_scope(scope).reject(&:event).filter_map(&:group).uniq
+          end
+
           private
 
           def registry

@@ -12,7 +12,7 @@
             <% permission = entry.key %>
             <label>
               <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
-              <span class="font-normal"><%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission") %></span>
+              <span class="font-normal"><%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission", default: permission.to_s) %></span>
             </label>
           <% end %>
         </div>

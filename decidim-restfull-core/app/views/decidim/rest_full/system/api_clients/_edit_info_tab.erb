@@ -218,6 +218,22 @@
                  ]
                } %>
   <% end %>
+  <% Decidim::RestFull::Core::PermissionRegistry.extension_ui_scopes.each do |ext_scope| %>
+    <% next unless avail.scope_enabled?(org, ext_scope) %>
+    <% next unless @api_client.scopes.to_a.include?(ext_scope.to_s) %>
+    <% next unless Decidim::RestFull::Core::PermissionRegistry.by_scope(ext_scope).any? %>
+    <%= render partial: "/decidim/rest_full/system/api_clients/permissions_scope",
+               locals: {
+                 form:,
+                 api_client:,
+                 scope: ext_scope.to_sym,
+                 dom_id: "#{ext_scope}_permissions",
+                 title: t("scope_#{ext_scope}", scope: "decidim.rest_full.models.api_client.fields", default: ext_scope.to_s.humanize),
+                 groups: Decidim::RestFull::Core::PermissionRegistry.extension_ui_groups(ext_scope).map do |group|
+                   { group: group.to_sym, label: t(".#{group}", default: group.to_s.humanize) }
+                 end
+               } %>
+  <% end %>
   <div class="my-4">
     <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>
   </div>

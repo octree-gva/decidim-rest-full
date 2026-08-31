@@ -65,6 +65,7 @@ RSpec.describe "optional decidim-restfull feature gems" do
 
       expect(described_class.extension_ui_scopes).to include("whatsapp")
       expect(described_class.extension_ui_scopes).not_to include("proposals", "blogs")
+      expect(described_class.extension_ui_groups(:whatsapp)).to eq(["whatsapp"])
     ensure
       described_class.send(:registry).delete("whatsapp.read")
     end

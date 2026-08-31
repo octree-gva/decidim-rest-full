@@ -29,4 +29,16 @@ RSpec.describe "Decidim RestFull system API clients admin pages" do
     get Decidim::Core::Engine.routes.url_helpers.edit_system_api_client_path(api_client)
     expect(response).to have_http_status(:ok)
   end
+
+  it "renders extension-registered permissions on the edit form" do
+    Decidim::RestFull::Core::PermissionRegistry.register(:whatsapp, "whatsapp.read", group: :whatsapp)
+    client = create(:api_client, organization:, scopes: %w(whatsapp))
+
+    get Decidim::Core::Engine.routes.url_helpers.edit_system_api_client_path(client)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("whatsapp.read")
+  ensure
+    Decidim::RestFull::Core::PermissionRegistry.send(:registry).delete("whatsapp.read")
+  end
 end
