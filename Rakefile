@@ -6,14 +6,19 @@ require "rspec/core/rake_task"
 def install_module(path)
   Dir.chdir(path) do
     system("bundle check || bundle install")
-    system("bundle exec rails decidim_rest_full:install:migrations")
-    system("bundle exec rails decidim_decidim_awesome:install:migrations")
+    install_module_migrations
     system("bundle exec rails generate active_record:session_migration")
     system("bundle exec rails decidim_rest_full:webpacker:install decidim_decidim_awesome:webpacker:install")
     system("bundle exec rails decidim:update")
     system("bundle exec rails db:create db:migrate")
     system("bundle exec rails assets:precompile")
   end
+end
+
+def install_module_migrations
+  system("bundle exec rails decidim_rest_full:install:migrations")
+  system("bundle exec rails decidim_decidim_awesome:install:migrations")
+  system("bundle exec rails decidim_apartment:install:migrations") if Gem.loaded_specs.has_key?("decidim-apartment")
 end
 
 def seed_db(path)
@@ -47,7 +52,7 @@ task :prepare_tests do
     system("bundle add decidim-meetings") unless File.read("Gemfile").include?("decidim-meetings")
     system("bundle add decidim-conferences") unless File.read("Gemfile").include?("decidim-conferences")
     system("bundle add decidim-initiatives") unless File.read("Gemfile").include?("decidim-initiatives")
-    system("sed -i 's/config.cache_classes = true/config.cache_classes = false/' ./config/environments/test.rb")
+    # Do not set cache_classes=false: FactoryBot.reload then drops require'd factories (decidim#13634).
   end
 end
 

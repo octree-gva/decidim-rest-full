@@ -220,7 +220,10 @@ module Decidim
           end
 
           def collection
-            Decidim::Organization.all
+            # Elevator holds the request tenant. Wrap the system collection so a
+            # missing DistributionKey (Elevator → public) does not list every org.
+            Decidim::RestFull::Core::ApartmentTenantSwitch.call(request.host) { Decidim::Organization.all } ||
+              Decidim::Organization.none
           end
         end
       end

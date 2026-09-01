@@ -57,18 +57,21 @@ docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
 ```
 
-### Appraisals (Decidim 0.32 + 0.29)
+### Appraisals (Decidim 0.32 + 0.29 + apartment)
 
-CI runs RSpec against both Decidim minors via [Appraisal](https://github.com/thoughtbot/appraisal) (`Appraisals` → `gemfiles/decidim_0.{29,32}.gemfile`). Default Compose image / OpenAPI generation stay on **0.32**.
+GitLab RSpec jobs are hardcoded to `BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile` (Ruby 3.4) and `gemfiles/decidim_0.29.gemfile` (Ruby 3.2). Default Compose image / OpenAPI generation stay on **0.32**. An extra appraisal (`gemfiles/decidim_0.32_apartment.gemfile`) pins `decidim-apartment` + `ros-apartment` 3.4.4 for tenant-schema compatibility; it is not on the default Gemfile and **is not a GitLab job**. Run it locally with `BUNDLE_GEMFILE` (below).
 
-**Migrations differ between minors.** `bin/setup-tests` stores `spec/decidim_dummy_app/.decidim_appraisal` (`decidim-0.29` / `decidim-0.32`) and **regenerates `test_app` + drops the test DB** when that key changes. Same-appraisal re-runs only migrate.
+**Migrations differ between minors.** `bin/setup-tests` stores `spec/decidim_dummy_app/.decidim_appraisal` (`decidim-0.29` / `decidim-0.32` / `decidim-0.32-apartment`) and **regenerates `test_app` + drops the test DB** when that key changes. Same-appraisal re-runs only migrate.
 
 ```bash
-# Install both lockfiles (inside rest_full for 0.32; use ruby:3.2 for 0.29)
+# Install lockfiles (inside rest_full for 0.32; use ruby:3.2 for 0.29)
 bundle exec appraisal install
 
 BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bin/setup-tests
 BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bundle exec rspec
+
+BUNDLE_GEMFILE=gemfiles/decidim_0.32_apartment.gemfile bin/setup-tests
+BUNDLE_GEMFILE=gemfiles/decidim_0.32_apartment.gemfile bundle exec rspec
 
 # Switching minor rebuilds the dummy automatically (no FORCE_SETUP_TESTS needed)
 BUNDLE_GEMFILE=gemfiles/decidim_0.29.gemfile bin/setup-tests

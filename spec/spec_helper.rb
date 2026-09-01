@@ -32,7 +32,9 @@ end
 Decidim::Dev.dummy_app_path = dummy_app_path
 
 require "decidim/dev/test/base_spec_helper"
-require "decidim/core/test/factories"
+# spec/factories.rb is the 0.32 load path (core + component + rest_full factories).
+FactoryBot.definition_file_paths << File.expand_path("factories", __dir__)
+require File.expand_path("factories", __dir__)
 
 # Do not load gem specs vendored under the dummy app (bundle path leakage).
 RSpec.configure do |config|
@@ -59,6 +61,7 @@ Rails.application.eager_load!
 require "decidim/rest_full/test/definitions"
 require "decidim/rest_full/test/global_context"
 require "decidim/rest_full/test/on_api_endpoint_methods"
+require "decidim/rest_full/test/apartment" if Gem.loaded_specs.has_key?("ros-apartment")
 
 Decidim::RestFull.configure do |config|
   config.strict_rest_enhancement_http_cache = true if ENV["CI"] == "1"

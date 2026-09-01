@@ -2,6 +2,7 @@
 
 require "spec_helper"
 
+# rubocop:disable RSpec/DescribeClass -- integration-style request examples
 RSpec.describe "Decidim RestFull system API clients admin pages" do
   include Warden::Test::Helpers
 
@@ -42,3 +43,4 @@ RSpec.describe "Decidim RestFull system API clients admin pages" do
     Decidim::RestFull::Core::PermissionRegistry.send(:registry).delete("whatsapp.read")
   end
 end
+# rubocop:enable RSpec/DescribeClass

@@ -32,6 +32,22 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
 
             run_test!(example_name: :ok)
           end
+
+          context "when another tenant exists", if: Gem.loaded_specs.has_key?("ros-apartment") do
+            let!(:other_organization) do
+              org = create(:organization, host: "org-b.example.org", available_locales: ["en"])
+              Apartment::Tenant.switch!(Decidim::Apartment::DistributionKey.for_host(organization.host).key)
+              org
+            end
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+
+            run_test! do |example|
+              hosts = JSON.parse(example.body).fetch("data").map { |row| row.dig("attributes", "host") }
+              expect(hosts).to include(organization.host)
+              expect(hosts).not_to include(other_organization.host)
+            end
+          end
         end
       end
 

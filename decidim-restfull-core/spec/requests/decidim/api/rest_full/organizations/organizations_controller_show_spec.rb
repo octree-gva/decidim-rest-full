@@ -48,6 +48,17 @@ RSpec.describe Decidim::Api::RestFull::Organizations::OrganizationsController do
 
             run_test!(example_name: :not_found)
           end
+
+          context "when id belongs to another tenant", if: Gem.loaded_specs.has_key?("ros-apartment") do
+            let!(:other_organization) do
+              org = create(:organization, id: 99_999, host: "org-b.example.org", available_locales: ["en"])
+              Apartment::Tenant.switch!(Decidim::Apartment::DistributionKey.for_host(organization.host).key)
+              org
+            end
+            let(:id) { other_organization.id }
+
+            run_test!
+          end
         end
       end
     end
