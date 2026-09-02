@@ -10,6 +10,8 @@
 #   bundle exec appraisal install
 #   BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bin/setup-tests
 #   BUNDLE_GEMFILE=gemfiles/decidim_0.32.gemfile bundle exec rspec
+#   BUNDLE_GEMFILE=gemfiles/decidim_0.32_apartment.gemfile bin/setup-tests
+#   BUNDLE_GEMFILE=gemfiles/decidim_0.32_apartment.gemfile bundle exec rspec
 #   BUNDLE_GEMFILE=gemfiles/decidim_0.29.gemfile bin/setup-tests   # rebuilds dummy
 #   BUNDLE_GEMFILE=gemfiles/decidim_0.29.gemfile bundle exec rspec
 
@@ -19,6 +21,18 @@ appraise "decidim-0.32" do
   gem "decidim-conferences", "~> 0.32.0"
   gem "decidim-initiatives", "~> 0.32.0"
   gem "decidim-meetings", "~> 0.32.0"
+end
+
+appraise "decidim-0.32-apartment" do
+  gem "decidim", "~> 0.32.0"
+  gem "decidim-dev", "~> 0.32.0"
+  gem "decidim-conferences", "~> 0.32.0"
+  gem "decidim-initiatives", "~> 0.32.0"
+  gem "decidim-meetings", "~> 0.32.0"
+  gem "decidim-apartment",
+      git: "https://gitlab.com/lappis-unb/decidimbr/infra/participa-gem",
+      branch: "feat/imports"
+  gem "ros-apartment", "3.4.4", require: "apartment"
 end
 
 appraise "decidim-0.29" do

@@ -52,6 +52,7 @@ require "decidim/rest_full/core/roles/role_id_codec"
 require "decidim/rest_full/core/roles/roles_aggregator"
 require "decidim/rest_full/core/roles/roles_writer"
 
+require "decidim/rest_full/core/apartment_tenant_switch"
 require "decidim/rest_full/core/overrides/organization_client_ids_override"
 require "decidim/rest_full/core/overrides/user_magic_token_override"
 require "decidim/rest_full/core/overrides/user_extended_data_ransack"

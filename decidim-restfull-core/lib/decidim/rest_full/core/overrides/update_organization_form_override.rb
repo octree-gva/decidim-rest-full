@@ -28,9 +28,17 @@ module Decidim
         end
 
         def unique_host
-          if unconfirmed_host.present? && unconfirmed_host != host && Decidim::Organization.where(host: unconfirmed_host).where.not(id:).exists?
-            errors.add(:unconfirmed_host, :taken)
-          end
+          return unless unconfirmed_host.present? && unconfirmed_host != host
+          return unless host_taken?(unconfirmed_host)
+
+          errors.add(:unconfirmed_host, :taken)
+        end
+
+        def host_taken?(value)
+          return true if Decidim::Organization.where(host: value).where.not(id:).exists?
+          return false unless Gem.loaded_specs.has_key?("ros-apartment")
+
+          Decidim::Apartment::DistributionKey.for_host(value).present?
         end
       end
     end

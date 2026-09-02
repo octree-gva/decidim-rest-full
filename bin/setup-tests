@@ -27,6 +27,7 @@ fi
 # a dummy built for another minor; see Appraisals).
 appraisal_key() {
   case "${BUNDLE_GEMFILE:-Gemfile}" in
+    *apartment*) echo "decidim-0.32-apartment" ;;
     *decidim_0.29*|*decidim_0_29*) echo "decidim-0.29" ;;
     *decidim_0.32*|*decidim_0_32*) echo "decidim-0.32" ;;
     *) echo "decidim-default" ;;
@@ -64,7 +65,7 @@ gem install bundler -v 2.4.6
 # Path must be absolute: with BUNDLE_GEMFILE=gemfiles/*.gemfile, relative
 # "vendor" would resolve under gemfiles/.
 bundle config set path "$(pwd)/vendor"
-# Appraisals: BUNDLE_GEMFILE=gemfiles/decidim_0.{29,32}.gemfile (default Gemfile = 0.32)
+# Appraisals: BUNDLE_GEMFILE=gemfiles/decidim_0.{29,32}.gemfile or gemfiles/decidim_0.32_apartment.gemfile (default Gemfile = 0.32)
 APPRAISAL_ID="$(appraisal_key)"
 echo "BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-Gemfile} (appraisal=$APPRAISAL_ID)"
 bundle install -j $(nproc)
@@ -100,6 +101,12 @@ DROP DATABASE IF EXISTS decidim_test;
 SQL
 }
 
+# Dummy rake task is missing on 0.29; keep it apartment-appraisal only.
+install_apartment_migrations() {
+  [[ "$APPRAISAL_ID" == *apartment* ]] || return 0
+  RAILS_ENV=test bundle exec rake decidim_apartment:install:migrations 2>/dev/null || true
+}
+
 if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
   echo "Dummy app already present for $APPRAISAL_ID; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
   cd spec/decidim_dummy_app
@@ -107,7 +114,8 @@ if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; th
   # Do not db:drop here: RestFull install:migrations timestamps can sort before
   # Doorkeeper; a full replay on an empty DB fails with missing oauth_applications.
   RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
-RAILS_ENV=test bundle exec rake db:migrate
+  install_apartment_migrations
+  RAILS_ENV=test bundle exec rake db:migrate
 # RestFull forces ActiveRecord session store (magic-link / confirmation); ensure sessions table exists.
 if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?(:sessions) ? 0 : 1)"; then
   RAILS_ENV=test bundle exec rails generate active_record:session_migration --force
@@ -149,6 +157,7 @@ DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/
 
 RAILS_ENV=test bundle exec rake db:create
 RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
+install_apartment_migrations
 RAILS_ENV=test bundle exec rake db:migrate
 if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?(:sessions) ? 0 : 1)"; then
   RAILS_ENV=test bundle exec rails generate active_record:session_migration --force

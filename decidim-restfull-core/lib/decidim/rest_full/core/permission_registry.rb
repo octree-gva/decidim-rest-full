@@ -41,9 +41,9 @@ module Decidim
 
           # Scopes with registered abilities rendered by the System API client UI
           # (core + feature gems list scopes explicitly in +_edit_info_tab+).
-          BUILTIN_UI_SCOPES = %w[
+          BUILTIN_UI_SCOPES = %w(
             system public blogs debates budgets surveys accountability proposals meetings oauth
-          ].freeze
+          ).freeze
 
           def extension_ui_scopes
             all.map(&:scope).uniq - BUILTIN_UI_SCOPES

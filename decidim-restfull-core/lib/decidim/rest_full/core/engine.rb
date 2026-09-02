@@ -22,6 +22,8 @@ module Decidim
         initializer "rest_full.ignore_deface_overrides", before: :set_autoload_paths do
           overrides = root.join("app/overrides")
           Rails.autoloaders.main.ignore(overrides) if overrides.exist?
+          test_lib = root.join("lib/decidim/rest_full/test")
+          Rails.autoloaders.main.ignore(test_lib) if test_lib.exist?
         end
 
         # Cookie sessions overflow on magic-link / confirmation (4KB limit).
