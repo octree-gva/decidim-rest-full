@@ -101,6 +101,17 @@ DROP DATABASE IF EXISTS decidim_test;
 SQL
 }
 
+# PG has no portable IF NOT EXISTS for CREATE DATABASE.
+create_test_database() {
+  local host="${DATABASE_HOST:-postgres}"
+  local user="${DATABASE_USERNAME:-decidim}"
+  local pass="${DATABASE_PASSWORD:-}"
+  echo "Creating test database on ${host} (pre-generate)"
+  PGPASSWORD="${pass}" psql -h "${host}" -U "${user}" -d postgres -v ON_ERROR_STOP=1 <<'SQL' || true
+CREATE DATABASE decidim_module_rest_full_test_app_test;
+SQL
+}
+
 # Dummy rake task is missing on 0.29; keep it apartment-appraisal only.
 install_apartment_migrations() {
   [[ "$APPRAISAL_ID" == *apartment* ]] || return 0
@@ -147,6 +158,7 @@ if [ -d spec/decidim_dummy_app ]; then
   rm -rf spec/decidim_dummy_app
 fi
 
+create_test_database
 echo "Generating Decidim dummy app for $APPRAISAL_ID"
 bundle exec rake test_app
 cd spec/decidim_dummy_app

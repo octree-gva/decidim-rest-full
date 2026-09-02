@@ -1,7 +1,7 @@
 {
   "name": "decidim-rest_full",
   "private": true,
-  "version": "0.3.4",
+  "version": "0.3.5",
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@decidim/dev": "^0.32.0",
@@ -28,7 +28,7 @@
     "gen:openapi-spec": "bin/openapi-stale --yes -o website/static/openapi.json",
     "gen:openapi-spec:check": "bin/openapi-stale --check -o website/static/openapi.json",
     "postcommit:setup-tests": "bash -lc 'if docker compose ps --status running -q rest_full | grep -q .; then docker compose exec -u root -w /home/module rest_full bin/setup-tests; else docker compose run -u root -w /home/module --rm rest_full bin/setup-tests; fi'",
-    "gen:node-client": "bin/gen-node-client --validate --input website/static/openapi.json",
+    "gen:node-client": "bash -c '. \"${NVM_DIR:-$HOME/.nvm}/nvm.sh\" 2>/dev/null || . \"$HOME/.config/nvm/nvm.sh\"; ver=\"$(tr -d \"[:space:]\" < .nvmrc)\"; export PATH=\"$(dirname \"$(nvm which \"$ver\")\"):$PATH\"; nvm exec \"$ver\" -- bin/gen-node-client --validate --input website/static/openapi.json'",
     "format:ruby": "docker compose run -u root -w /home/module --rm rest_full bash -lc 'bundle config set path vendor && bundle install -j $(nproc) && bundle exec rubocop -A .'",
     "format:erb": "docker compose run -u root -w /home/module --rm rest_full bash -lc 'bundle config set path vendor && bundle install -j $(nproc) && bundle exec erblint --lint-all --enable-all-linters --autocorrect'",
     "format:packs": "prettier --write \"./decidim-restfull-core/app/packs/**/*.{js,scss,css}\" --no-error-on-unmatched-pattern",

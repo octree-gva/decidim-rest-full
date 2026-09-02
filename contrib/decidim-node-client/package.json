@@ -1,6 +1,6 @@
 {
   "name": "@octree/decidim-sdk",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "TypeScript Axios client for the Decidim REST Full API",
   "keywords": [],
   "license": "AGPL-3.0-only",

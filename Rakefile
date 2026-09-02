@@ -15,8 +15,13 @@ def install_module(path)
   end
 end
 
+def create_test_database
+  system("RAILS_ENV=test bundle exec rails db:prepare") || abort("db:prepare failed")
+end
+
 def install_module_migrations
   system("bundle exec rails decidim_rest_full:install:migrations")
+  create_test_database
   system("bundle exec rails decidim_decidim_awesome:install:migrations")
   system("bundle exec rails decidim_apartment:install:migrations") if Gem.loaded_specs.has_key?("decidim-apartment")
 end
