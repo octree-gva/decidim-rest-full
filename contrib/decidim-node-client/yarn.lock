@@ -462,10 +462,10 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.27.3.tgz#3721f601f973059bfeeb572992cf0dfc94ab2970"
   integrity sha512-vliZLrDmYKyaUoMzEbMTg2JkerfBjn03KmAw9CykO0Zzkzoyd7o3iZNam/TpyWNjNT+Cz2iO3P9Smv2wgrR+Eg==
 
-"@strapi/pack-up@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@strapi/pack-up/-/pack-up-5.0.2.tgz#cd7110048b7c8806618a03e676ba9b70f9141086"
-  integrity sha512-DWicuAyjLjVCxL2FQeTF3keakfHmfKx2BuBhBXEhiSWv7wW05MlW9fQqpZBQMKdkcYuzGnKwryhZQwaOF2CoOQ==
+"@strapi/pack-up@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@strapi/pack-up/-/pack-up-5.1.1.tgz#b2c2a9b488e1e24dbc87043097c74f3c094cbea3"
+  integrity sha512-n3aUFPJiH8gOoJFvwVO6BmkUxaS9IHOY33zFTqI3RSmdI5hzhBRruFXKg4g12ibzQ3YtrRBEvJzjaerRxfpJ3Q==
   dependencies:
     "@vitejs/plugin-react-swc" "3.7.0"
     boxen "5.1.2"
@@ -486,7 +486,7 @@
     prompts "2.4.2"
     rxjs "7.8.1"
     typescript "5.4.4"
-    vite "5.4.8"
+    vite "5.4.21"
     yup "0.32.9"
 
 "@swc/core-darwin-arm64@1.9.2":
@@ -2200,10 +2200,10 @@ util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-vite@5.4.8:
-  version "5.4.8"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-5.4.8.tgz#af548ce1c211b2785478d3ba3e8da51e39a287e8"
-  integrity sha512-FqrItQ4DT1NC4zCUqMB4c4AZORMKIa0m8/URVCZ77OZ/QSNeJ54bU1vrFADbDsuwfIPcgknRkmqakQcgnL4GiQ==
+vite@5.4.21:
+  version "5.4.21"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-5.4.21.tgz#84a4f7c5d860b071676d39ba513c0d598fdc7027"
+  integrity sha512-o5a9xKjbtuhY6Bi5S3+HvbRERmouabWbyUcpXXUA1u+GNUKoROi9byOJ8M0nHbHYHkYICiMlqxkg1KkYmm25Sw==
   dependencies:
     esbuild "^0.21.3"
     postcss "^8.4.43"
