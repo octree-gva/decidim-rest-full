@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Run a command under the Node version in .nvmrc (yarn keeps the launching Node on PATH).
+set -e
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+if [ -z "${NVM_DIR:-}" ] || [ ! -s "${NVM_DIR}/nvm.sh" ]; then
+  if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    export NVM_DIR="$HOME/.nvm"
+  elif [ -s "$HOME/.config/nvm/nvm.sh" ]; then
+    export NVM_DIR="$HOME/.config/nvm"
+  fi
+fi
+# shellcheck disable=SC1091
+[ -s "${NVM_DIR:-}/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+if type nvm >/dev/null 2>&1; then
+  nvm use
+  nvm_bin="$(dirname "$(nvm which "$(tr -d '[:space:]' < .nvmrc)")")"
+  export PATH="$nvm_bin:$PATH"
+  hash -r
+fi
+
+export DECIDIM_WITH_NVM=1
+exec "$@"

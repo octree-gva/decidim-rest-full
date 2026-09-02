@@ -22,8 +22,9 @@ module Decidim
     module AwesomeMapUpgradeGuard
       TASK = "decidim_decidim_awesome:upgrade:migrate_awesome_map_menu_categories_to_menu_taxonomies"
 
-      def define_task(*)
-        super.tap { AwesomeMapUpgradeGuard.install! }
+      def invoke(*)
+        AwesomeMapUpgradeGuard.install! if name == TASK
+        super
       end
 
       def self.install!
@@ -32,14 +33,16 @@ module Decidim
         task = Rake::Task[TASK]
         return if task.instance_variable_get(:@rest_full_map_guard)
 
-        task.prerequisites.unshift("db:create")
+        task.prerequisites.unshift("db:create") unless task.prerequisites.first == "db:create"
         wrap_actions(task)
         task.instance_variable_set(:@rest_full_map_guard, true)
       end
 
       def self.wrap_actions(task)
         originals = task.actions.dup
-        task.clear_actions
+        return if originals.empty?
+
+        task.actions.clear
         task.enhance { |t, args| run_originals(originals, t, args) }
       end
 
@@ -51,10 +54,11 @@ module Decidim
 
       def self.components_table?
         ActiveRecord::Base.connection.data_source_exists?("decidim_components")
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::NoDatabaseError
+        false
       end
     end
   end
 end
 
-Rake::TaskManager.prepend(Decidim::RestFull::AwesomeMapUpgradeGuard)
-Decidim::RestFull::AwesomeMapUpgradeGuard.install!
+Rake::Task.prepend(Decidim::RestFull::AwesomeMapUpgradeGuard) unless Rake::Task < Decidim::RestFull::AwesomeMapUpgradeGuard

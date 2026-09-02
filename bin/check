@@ -11,7 +11,7 @@ export DISABLE_SPRING=1
 bundle exec rubocop .
 mapfile -t erb_files < <(find decidim-restfull-* -path "*/app/views/*.erb" 2>/dev/null || true)
 if [ "${#erb_files[@]}" -gt 0 ]; then
-  bundle exec erblint "${erb_files[@]}"
+  bundle exec erb_lint "${erb_files[@]}"
 else
   echo "warn: no ERB files to lint" >&2
 fi

@@ -34,6 +34,38 @@ appraisal_key() {
   esac
 }
 
+# nproc is 22 in this image; that many native compiles OOM (yarn postcommit → exit 137).
+bundle_jobs() {
+  local n="${BUNDLE_JOBS:-}"
+  if [[ -z "$n" ]]; then
+    n="$(nproc)"
+    [[ "$n" -gt 4 ]] && n=4
+  fi
+  echo "$n"
+}
+
+APPRAISAL_MARKER="spec/decidim_dummy_app/.decidim_appraisal"
+APPRAISAL_ID="$(appraisal_key)"
+
+dummy_ready() {
+  # 0.32+ uses Shakapacker; 0.29 still ships Webpacker.
+  { [[ -f spec/decidim_dummy_app/config/shakapacker.yml ]] ||
+    [[ -f spec/decidim_dummy_app/config/webpacker.yml ]]; } &&
+    [[ -f spec/decidim_dummy_app/config/database.yml ]] &&
+    [[ -f spec/decidim_dummy_app/Gemfile ]]
+}
+
+appraisal_matches() {
+  [[ -f "$APPRAISAL_MARKER" ]] && [[ "$(cat "$APPRAISAL_MARKER")" == "$APPRAISAL_ID" ]]
+}
+
+# postcommit runs this every time. Do not apt/bundle/boot Rails when dummy exists
+# (bundle -j nproc and rake install:migrations were SIGKILL / 137).
+if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
+  echo "Dummy app already present for $APPRAISAL_ID; skipping (set FORCE_SETUP_TESTS=1 to rebuild)"
+  exit 0
+fi
+
 echo "Installing dependencies"
 # libvips-dev: Decidim 0.32 / Rails 8 boots ruby-vips; bare ruby:* CI images lack libvips.so.42
 # postgresql-client: hard-drop test DBs when switching appraisals (Rails db:drop can fail to boot)
@@ -66,23 +98,8 @@ gem install bundler -v 2.4.6
 # "vendor" would resolve under gemfiles/.
 bundle config set path "$(pwd)/vendor"
 # Appraisals: BUNDLE_GEMFILE=gemfiles/decidim_0.{29,32}.gemfile or gemfiles/decidim_0.32_apartment.gemfile (default Gemfile = 0.32)
-APPRAISAL_ID="$(appraisal_key)"
 echo "BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-Gemfile} (appraisal=$APPRAISAL_ID)"
-bundle install -j $(nproc)
-
-APPRAISAL_MARKER="spec/decidim_dummy_app/.decidim_appraisal"
-
-dummy_ready() {
-  # 0.32+ uses Shakapacker; 0.29 still ships Webpacker.
-  { [[ -f spec/decidim_dummy_app/config/shakapacker.yml ]] ||
-    [[ -f spec/decidim_dummy_app/config/webpacker.yml ]]; } &&
-    [[ -f spec/decidim_dummy_app/config/database.yml ]] &&
-    [[ -f spec/decidim_dummy_app/Gemfile ]]
-}
-
-appraisal_matches() {
-  [[ -f "$APPRAISAL_MARKER" ]] && [[ "$(cat "$APPRAISAL_MARKER")" == "$APPRAISAL_ID" ]]
-}
+bundle install -j "$(bundle_jobs)"
 
 # Rails db:drop loads the environment; after 0.29→0.32 that can fail (Rails 8 enums vs
 # prior-minor columns). Drop via psql so sequential ci-local can rebuild cleanly.
@@ -118,26 +135,6 @@ install_apartment_migrations() {
   RAILS_ENV=test bundle exec rake decidim_apartment:install:migrations 2>/dev/null || true
 }
 
-if dummy_ready && appraisal_matches && [[ "${FORCE_SETUP_TESTS:-}" != "1" ]]; then
-  echo "Dummy app already present for $APPRAISAL_ID; migrating only (set FORCE_SETUP_TESTS=1 to rebuild)"
-  cd spec/decidim_dummy_app
-  bundle check || bundle install -j $(nproc)
-  # Do not db:drop here: RestFull install:migrations timestamps can sort before
-  # Doorkeeper; a full replay on an empty DB fails with missing oauth_applications.
-  RAILS_ENV=test bundle exec rake decidim_toggle:install:migrations 2>/dev/null || true
-  install_apartment_migrations
-  RAILS_ENV=test bundle exec rake db:migrate
-# RestFull forces ActiveRecord session store (magic-link / confirmation); ensure sessions table exists.
-if ! RAILS_ENV=test bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?(:sessions) ? 0 : 1)"; then
-  RAILS_ENV=test bundle exec rails generate active_record:session_migration --force
-  RAILS_ENV=test bundle exec rake db:migrate
-fi
-cd ../..
-
-echo "Test app is ready"
-exit 0
-fi
-
 if [ -d spec/decidim_dummy_app ]; then
   if appraisal_matches; then
     echo "Rebuilding dummy app (FORCE_SETUP_TESTS=1)"
@@ -162,7 +159,7 @@ create_test_database
 echo "Generating Decidim dummy app for $APPRAISAL_ID"
 bundle exec rake test_app
 cd spec/decidim_dummy_app
-bundle install -j $(nproc)
+bundle install -j "$(bundle_jobs)"
 # Ensure no leftover test DB before create (psql; Rails drop may still fail to boot).
 drop_test_databases
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1 RAILS_ENV=test bundle exec rake db:drop 2>/dev/null || true

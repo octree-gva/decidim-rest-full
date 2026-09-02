@@ -103,7 +103,7 @@ ruby::erb:
     BUNDLE_GEMFILE: gemfiles/decidim_0.32.gemfile
   script:
     - bundle
-    - bundle exec erblint --lint-all --enable-all-linters
+    - bundle exec erb_lint --lint-all --enable-all-linters
 
 node::prettier:
   extends: .development_rules

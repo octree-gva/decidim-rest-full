@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+if [ -z "${DECIDIM_WITH_NVM:-}" ]; then
+  exec "$(dirname "$0")/with-nvm" "$0" "$@"
+fi
 # Default values for options
 QUIET=0
 VALIDATE=0
