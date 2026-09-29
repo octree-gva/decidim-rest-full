@@ -257,9 +257,12 @@ module Decidim
                 data: {
                   type: :array,
                   items: { "$ref" => reference(name_sym) }
+                },
+                meta: {
+                  "$ref" => reference(:collection_meta)
                 }
               },
-              required: [:data]
+              required: [:data, :meta]
             }
           end
           register_object("#{name_sym}_item_response") do

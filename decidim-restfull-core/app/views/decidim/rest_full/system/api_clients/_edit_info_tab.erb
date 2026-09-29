@@ -233,6 +233,27 @@
                    { group: group.to_sym, label: t(".#{group}", default: group.to_s.humanize) }
                  end
                } %>
+    <% extension_events = Decidim::RestFull::Core::WebhookEventCatalog.all.select { |e| e.scope == ext_scope.to_s }.map(&:event_name) %>
+    <% if extension_events.any? %>
+      <div class="mt-4">
+      <strong><%= t("webhook_events", scope: "decidim.rest_full.system.api_clients") %></strong><br>
+      <p class="text-sm">
+        <%= t("webhook_events_description", scope: "decidim.rest_full.system.api_clients") %>
+      </p>
+      <ul>
+        <% extension_events.each do |permission| %>
+          <li class="my-2">
+            <label>
+              <%= form.check_box :permissions, { multiple: true, label: "", checked: api_client.permissions.pluck(:permission).include?(permission.to_s) }, permission, nil %>
+              <span class="font-normal">
+                <%= t(permission.to_s, scope: "decidim.rest_full.models.api_client.permission", default: permission.to_s) %>
+              </span>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+    <% end %>
   <% end %>
   <div class="my-4">
     <%= form.submit t(".update_permissions"), class: "button button__sm md:button__lg button__primary" %>

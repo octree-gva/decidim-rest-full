@@ -101,13 +101,7 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:rest_full_api_jobs_
         }
       },
       meta: {
-        type: :object,
-        properties: {
-          page: { type: :integer },
-          per_page: { type: :integer }
-        },
-        required: [:page, :per_page],
-        additionalProperties: false
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:collection_meta)
       }
     },
     required: [:data, :meta],

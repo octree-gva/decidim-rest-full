@@ -14,12 +14,14 @@ module Decidim
           before_action :authorize_destroy!, only: [:destroy, :destroy_sync]
 
           def index
-            page = paginate(collection.includes(:component))
+            scoped = collection.includes(:component)
+            records, meta = paginate_collection(scoped)
             payload = Decidim::Api::RestFull::Blogs::BlogSerializer.new(
-              page,
+              records,
               params: serializer_params
             ).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def show

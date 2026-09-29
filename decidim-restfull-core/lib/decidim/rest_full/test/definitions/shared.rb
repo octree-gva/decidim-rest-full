@@ -3,6 +3,7 @@
 require_relative "../open_api_tag_registry"
 
 # Primitives and cross-cutting definitions (used by core and domain definitions).
+require_relative "collection_meta"
 require_relative "translated_prop"
 require_relative "time_zone"
 require_relative "component_type"

@@ -13,13 +13,15 @@ module Decidim
 
           def index
             relation = questionnaire_scope.filter(questionnaire_scope.base_relation, filter_hash)
-            page = paginate_relation(relation.order(updated_at: :desc))
+            scoped = relation.order(updated_at: :desc, id: :desc)
+            records, meta = paginate_collection(scoped)
             payload = Decidim::RestFull::Forms::ResponseBuilder.questionnaire_index(
-              page,
+              records,
               locale_meta:,
               host: current_organization.host
             )
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def show

@@ -61,7 +61,7 @@ flowchart LR
 1. **Reads:** send `If-None-Match` / `If-Modified-Since` on `searchComponents`, `getProposal`, `getBlogPost`, list endpoints.
 2. **Writes:** prefer async routes (`POST` → `202` + `job_id`); poll `GET /jobs/:uuid` with exponential backoff.
 3. **Votes:** default `POST /vote_proposals` (async); use `POST /vote_proposals/sync` when you need an immediate body; add `?include_proposal=true` only when you need the full proposal payload.
-4. **Pagination:** use `page` / `per_page`; do not assume unbounded collections.
+4. **Pagination:** use `page` / `per_page` (default 20, max 100); read `meta.has_more` / `meta.next` — do not assume unbounded collections or `total_count`.
 
 ## Hot endpoints
 

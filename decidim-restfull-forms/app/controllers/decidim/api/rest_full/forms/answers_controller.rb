@@ -15,9 +15,11 @@ module Decidim
             ability.authorize! :read, ::Decidim::Forms::Answer
             relation = answers_corpus
             relation = apply_answer_filters(relation)
-            page = paginate_relation(relation.order(created_at: :desc))
-            payload = Decidim::RestFull::Forms::ResponseBuilder.answer_index(page, locale_meta:)
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            scoped = relation.order(created_at: :desc, id: :desc)
+            records, page_meta = paginate_collection(scoped)
+            payload = Decidim::RestFull::Forms::ResponseBuilder.answer_index(records, locale_meta:)
+            payload[:meta] = page_meta.merge(locale_meta)
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def create

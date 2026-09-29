@@ -9,6 +9,7 @@ module Decidim
       class ApplicationController < ActionController::API
         include Decidim::RestFull::Core::ApiException::Handler
         include Decidim::Api::RestFull::ConditionalGetRendering
+        include Decidim::Api::RestFull::CollectionPagination
 
         delegate :can?, :cannot?, :authorize!, to: :ability
 

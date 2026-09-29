@@ -13,13 +13,15 @@ module Decidim
 
           def index
             question = find_question!
-            options = question.answer_options
+            scoped = question.answer_options.order(:id)
+            records, page_meta = paginate_collection(scoped)
             payload = Decidim::Api::RestFull::Forms::AnswerOptionSerializer.new(
-              options
-            ).serializable_hash.merge(meta: locale_meta)
+              records
+            ).serializable_hash
+            payload[:meta] = page_meta.merge(locale_meta)
             render_json_with_conditional_get(
               payload,
-              fingerprint: collection_fingerprint_for(options, extra: question.id)
+              fingerprint: collection_fingerprint_for(scoped, extra: question.id)
             )
           end
 

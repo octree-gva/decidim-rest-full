@@ -96,14 +96,16 @@ RSpec.describe Decidim::Api::RestFull::Jobs::JobsController do
           end
 
           let(:page) { 1 }
-          let(:per_page) { 25 }
+          let(:per_page) { 20 }
 
           run_test!(example_name: :ok_index) do
             ids = response.parsed_body["data"].map { |j| j["id"] }
             expect(ids).to contain_exactly(mine.id)
             meta = response.parsed_body["meta"]
             expect(meta["page"]).to eq(1)
-            expect(meta["per_page"]).to eq(25)
+            expect(meta["per_page"]).to eq(20)
+            expect(meta).to have_key("has_more")
+            expect(meta).not_to have_key("total_count")
           end
         end
       end

@@ -10,11 +10,11 @@ module Decidim
 
           def search
             authorize_extended_data_filter!(::Decidim::Component)
-            query = in_visible_spaces(Decidim::Component.all).reorder(nil).ransack(params[:filter]).result
-            page = paginate(query)
+            query = in_visible_spaces(Decidim::Component.all).reorder(nil).order(id: :asc).ransack(params[:filter]).result
+            records, meta = paginate_collection(query)
 
             includes_extended = can?(:read_extended_data, ::Decidim::Component)
-            data = page.map do |component|
+            data = records.map do |component|
               serializer = Decidim::Api::RestFull::Core::SerializerLookup.component_serializer_class_for(component.manifest_name)
               serializer.new(
                 component,
@@ -29,7 +29,7 @@ module Decidim
               ).serializable_hash[:data]
             end
 
-            render_json_with_conditional_get({ data: }, fingerprint: collection_fingerprint_for(page))
+            render_json_with_conditional_get({ data:, meta: }, fingerprint: collection_fingerprint_for(query))
           end
 
           def show

@@ -79,12 +79,9 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:vote_proposals_inde
         items: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:vote_proposal) }
       },
       meta: {
-        type: :object,
-        properties: {
-          page: { type: :integer },
-          per_page: { type: :integer }
-        }
+        "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:collection_meta)
       }
-    }
+    },
+    required: [:data, :meta]
   }
 end

@@ -15,12 +15,14 @@ module Decidim
           before_action :validate_votes_enabled!, only: [:create, :create_sync]
 
           def index
-            page = paginate(operations.index_scope)
+            scoped = operations.index_scope.order(id: :asc)
+            records, meta = paginate_collection(scoped)
             payload = Decidim::Api::RestFull::Proposals::VoteProposalSerializer.new(
-              page,
+              records,
               params: serializer_params
             ).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def show

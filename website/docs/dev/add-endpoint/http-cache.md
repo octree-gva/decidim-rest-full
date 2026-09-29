@@ -19,13 +19,15 @@ JSON **GET** responses use **`render_json_with_conditional_get`** on `Applicatio
 `decidim-restfull-blogs/app/controllers/decidim/api/rest_full/blogs/blogs_controller.rb`
 
 ```ruby
-payload = BlogSerializer.new(page, params: serializer_params).serializable_hash
+records, meta = paginate_collection(scoped)
+payload = BlogSerializer.new(records, params: serializer_params).serializable_hash
+payload[:meta] = meta
 ```
 
 ### 2. Call `render_json_with_conditional_get`
 
 ```ruby
-render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
 ```
 
 ### 3. Fingerprint a show action
@@ -44,13 +46,15 @@ end
 
 ```ruby
 def index
-  page = paginate(collection)
-  payload = WidgetSerializer.new(page, params: serializer_params).serializable_hash
-  render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+  scoped = ordered(filtered(collection))
+  records, meta = paginate_collection(scoped)
+  payload = WidgetSerializer.new(records, params: serializer_params).serializable_hash
+  payload[:meta] = meta
+  render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
 end
 ```
 
-Pass a relation, array, or Kaminari page to `collection_fingerprint_for`.
+Pass the **unpaginated** relation (or array) to `collection_fingerprint_for`. Do not put a relation `COUNT` into the ETag.
 
 ### 5. Use a custom show fingerprint when needed
 
@@ -73,7 +77,7 @@ expect(response).to have_http_status(:not_modified)
 |------|--------|
 | Default | All JSON GETs in `decidim-restfull-*` use conditional GET. |
 | Show fingerprint | `ResourceShowFingerprint` — org id, record class, id, `updated_at` (ETag uses subsecond `to_f`), client, locales. |
-| Index fingerprint | `CollectionFingerprint` — max timestamp, count, page, filter, locales. |
+| Index fingerprint | `CollectionFingerprint` — max timestamp, page, per_page, filter, order, locales — **no** count. |
 | `extended_data` | Satellite row uses `belongs_to … touch: true` so parent `updated_at` (and ETag) moves on write. |
 | `Rails.cache` | Optional server-side memoization; not a substitute for client validators. |
 | `rest_enhancement` | Register `cache_time` / `etag_segment` when extra tables affect the body. |
