@@ -17,9 +17,9 @@ module Decidim
 
             results = query.result
             scoped = ordered(results).includes(:component)
-            page = paginate(scoped)
+            records, meta = paginate_collection(scoped)
             payload = Decidim::Api::RestFull::Proposals::ProposalSerializer.new(
-              page,
+              records,
               params: {
                 only: [],
                 locales: available_locales,
@@ -29,6 +29,7 @@ module Decidim
                 includes_extended: can?(:read_extended_data, ::Decidim::Proposals::Proposal)
               }
             ).serializable_hash
+            payload[:meta] = meta
             fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(
               self,
               relation: index_fingerprint_relation(scoped)

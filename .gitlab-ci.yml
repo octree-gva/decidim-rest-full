@@ -85,8 +85,15 @@ ruby::spec_harness:
   script:
     - ./bin/lint-spec-harness
 
+# selma (via graphql-docs) needs libclang to compile on bare ruby:* images
+.lint_bundle_deps:
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq libclang-dev
+
 ruby::rubocop:
-  extends: .development_rules
+  extends:
+    - .development_rules
+    - .lint_bundle_deps
   image: ruby:3.4.7
   stage: lint
   variables:
@@ -96,7 +103,9 @@ ruby::rubocop:
     - bundle exec rubocop .
 
 ruby::erb:
-  extends: .development_rules
+  extends:
+    - .development_rules
+    - .lint_bundle_deps
   image: ruby:3.4.7
   stage: lint
   variables:

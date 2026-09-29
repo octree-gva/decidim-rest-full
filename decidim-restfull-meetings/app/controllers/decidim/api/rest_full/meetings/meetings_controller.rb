@@ -13,9 +13,9 @@ module Decidim
             query = collection.ransack(params[:filter])
             results = query.result
             scoped = ordered(results).includes(:component)
-            page = paginate(scoped)
+            records, meta = paginate_collection(scoped)
             payload = Decidim::Api::RestFull::Meetings::MeetingSerializer.new(
-              page,
+              records,
               params: {
                 only: [],
                 locales: available_locales,
@@ -25,6 +25,7 @@ module Decidim
                 includes_extended: can?(:read_extended_data, ::Decidim::Meetings::Meeting)
               }
             ).serializable_hash
+            payload[:meta] = meta
             fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(
               self,
               relation: scoped.except(:order, :reorder)

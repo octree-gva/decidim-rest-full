@@ -8,6 +8,7 @@ module Decidim
     module Core
       module HttpCache
         # Conditional GET for index-style responses (relation or enumerable scope).
+        # ETag includes page/per_page/filter/order — never a relation COUNT.
         class CollectionFingerprint
           RequestContext = Struct.new(
             :profile,
@@ -18,6 +19,8 @@ module Decidim
             :locales,
             :page,
             :per_page,
+            :order,
+            :order_direction,
             :request_filter,
             :extra,
             keyword_init: true
@@ -34,6 +37,8 @@ module Decidim
                 locales: controller.respond_to?(:available_locales, true) ? controller.send(:available_locales) : [],
                 page: controller.params[:page],
                 per_page: controller.params[:per_page],
+                order: controller.params[:order],
+                order_direction: controller.params[:order_direction],
                 request_filter: controller.params[:filter],
                 extra:
               )
@@ -60,21 +65,17 @@ module Decidim
           end
 
           def etag
-            count = if @ctx.relation.is_a?(ActiveRecord::Relation)
-                      @ctx.relation.count(:all)
-                    else
-                      Array(@ctx.relation).size
-                    end
             input = [
               @ctx.organization.id,
               @ctx.profile,
               last_modified.to_f,
-              count,
               @ctx.client_id,
               @ctx.act_as&.id,
               @locales,
               @ctx.page,
               @ctx.per_page,
+              @ctx.order,
+              @ctx.order_direction,
               @filter,
               @extra
             ].join("/")

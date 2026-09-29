@@ -38,7 +38,7 @@ RSpec.describe Decidim::Api::RestFull::Forms::QuestionsController do
                      type: :array,
                      items: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:question) }
                    },
-                   meta: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:forms_locale_meta) }
+                   meta: { "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:forms_collection_meta) }
                  }
 
           run_test!(example_name: :ok) do |response|

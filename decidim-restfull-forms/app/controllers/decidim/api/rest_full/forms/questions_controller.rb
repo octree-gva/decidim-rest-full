@@ -13,15 +13,17 @@ module Decidim
 
           def index
             questionnaire = questionnaire_for_filter
-            questions = questionnaire.questions.order(:position)
+            scoped = questionnaire.questions.order(:position, :id)
+            records, page_meta = paginate_collection(scoped)
             payload = Decidim::RestFull::Forms::ResponseBuilder.questions(
-              questions,
+              records,
               locale_meta:,
               host: current_organization.host
             )
+            payload[:meta] = page_meta.merge(locale_meta)
             render_json_with_conditional_get(
               payload,
-              fingerprint: collection_fingerprint_for(questions, extra: questionnaire.id)
+              fingerprint: collection_fingerprint_for(scoped, extra: questionnaire.id)
             )
           end
 

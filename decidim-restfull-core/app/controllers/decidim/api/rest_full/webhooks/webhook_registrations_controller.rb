@@ -12,9 +12,10 @@ module Decidim
           before_action :authorize_destroy!, only: [:destroy]
 
           def index
-            items = base_scope.order(created_at: :desc)
-            page = paginate_collection(items)
-            payload = Core::WebhookRegistrationSerializer.new(page, params: serializer_params).serializable_hash
+            items = base_scope.order(created_at: :desc, id: :desc)
+            records, meta = paginate_collection(items)
+            payload = Core::WebhookRegistrationSerializer.new(records, params: serializer_params).serializable_hash
+            payload[:meta] = meta
             render json: payload, status: :ok
           end
 
@@ -97,13 +98,6 @@ module Decidim
 
           def serializer_params
             { host: request.host }
-          end
-
-          def paginate_collection(items)
-            page = (params[:page].presence || 1).to_i
-            per_page = (params[:per_page].presence || 25).to_i
-            per_page = 25 if per_page < 1 || per_page > 100
-            items.page(page).per(per_page)
           end
         end
       end

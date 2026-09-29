@@ -13,12 +13,10 @@ module Decidim
           before_action :require_accessible_token!, only: [:index, :destroy]
 
           def index
-            jobs = base_scope.order(created_at: :desc)
+            jobs = base_scope.order(created_at: :desc, id: :desc)
             jobs = apply_job_filters(jobs)
-            page = (params[:page].presence || 1).to_i
-            per = (params[:per_page].presence || 25).to_i.clamp(1, 100)
-            jobs = jobs.limit(per).offset((page - 1) * per)
-            payload = { data: jobs.map { |j| serialize_job_summary(j) }, meta: { page:, per_page: per } }
+            records, meta = paginate_collection(jobs)
+            payload = { data: records.map { |j| serialize_job_summary(j) }, meta: }
             render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(jobs))
           end
 

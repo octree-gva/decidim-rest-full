@@ -45,13 +45,6 @@ module Decidim
             fp.respond_to?(:to_unsafe_h) ? fp.to_unsafe_h.stringify_keys : {}
           end
 
-          def paginate_relation(relation)
-            page = (params[:page].presence || 1).to_i
-            per_page = (params[:per_page].presence || 25).to_i
-            per_page = 25 if per_page < 1 || per_page > 100
-            relation.page(page).per(per_page)
-          end
-
           def questionnaire_show_json(questionnaire)
             projection = Decidim::RestFull::Forms::QuestionnaireJsonFormsBuilder.new(
               questionnaire,

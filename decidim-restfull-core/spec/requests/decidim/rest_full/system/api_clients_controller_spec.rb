@@ -42,5 +42,28 @@ RSpec.describe "Decidim RestFull system API clients admin pages" do
   ensure
     Decidim::RestFull::Core::PermissionRegistry.send(:registry).delete("whatsapp.read")
   end
+
+  it "renders extension-scoped webhook event checkboxes on the edit form" do
+    Decidim::RestFull::Core::PermissionRegistry.register(:whatsapp, "whatsapp.read", group: :whatsapp)
+    Decidim::RestFull::Core::PermissionRegistry.register(
+      :whatsapp, "chatbot.settings_updated.succeeded", group: :webhooks, event: true
+    )
+    Decidim::RestFull::Core::WebhookEventCatalog.register(
+      "chatbot.settings_updated.succeeded",
+      scope: :whatsapp,
+      trigger: "Chatbot general settings saved",
+      example: ->(_org) { { "type" => "chatbot.settings_updated.succeeded", "data" => {} } }
+    )
+    client = create(:api_client, organization:, scopes: %w(whatsapp))
+
+    get Decidim::Core::Engine.routes.url_helpers.edit_system_api_client_path(client)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("chatbot.settings_updated.succeeded")
+  ensure
+    Decidim::RestFull::Core::PermissionRegistry.send(:registry).delete("whatsapp.read")
+    Decidim::RestFull::Core::PermissionRegistry.send(:registry).delete("chatbot.settings_updated.succeeded")
+    Decidim::RestFull::Core::WebhookEventCatalog.entries.delete("chatbot.settings_updated.succeeded")
+  end
 end
 # rubocop:enable RSpec/DescribeClass
