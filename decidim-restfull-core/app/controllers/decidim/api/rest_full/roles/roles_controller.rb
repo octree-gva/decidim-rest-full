@@ -13,10 +13,11 @@ module Decidim
           before_action :authorize_destroy!, only: [:destroy, :destroy_sync]
 
           def index
-            roles = filtered_roles
-            paginated = paginate_array(roles)
-            payload = Core::RoleSerializer.new(paginated, params: serializer_params).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(paginated))
+            roles = filtered_roles.sort_by { |r| [r.respond_to?(:id) ? r.id.to_s : "", r.object_id] }
+            records, meta = paginate_collection(roles)
+            payload = Core::RoleSerializer.new(records, params: serializer_params).serializable_hash
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(records))
           end
 
           def show
@@ -112,13 +113,6 @@ module Decidim
               value = filter[key]
               value.present? ? ->(r) { block.call(r, value) } : nil
             end
-          end
-
-          def paginate_array(roles)
-            page = (params[:page].presence || 1).to_i
-            per_page = (params[:per_page].presence || 25).to_i
-            per_page = 25 if per_page < 1 || per_page > 100
-            Kaminari.paginate_array(roles).page(page).per(per_page)
           end
 
           def serializer_params

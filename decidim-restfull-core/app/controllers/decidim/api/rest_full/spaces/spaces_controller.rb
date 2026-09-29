@@ -11,16 +11,20 @@ module Decidim
 
           def search
             authorize_extended_data_filter!(space_extended_data_subject)
-            page = paginated_union_results
-            payload = Core::SpaceSerializer.new(page, params: space_serializer_params).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            rows = raw_union_results.map { |row| result_struct(row) }
+            records, meta = paginate_collection(rows)
+            payload = Core::SpaceSerializer.new(records, params: space_serializer_params).serializable_hash
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(rows))
           end
 
           def index
             authorize_extended_data_filter!(space_extended_data_subject)
-            page = paginated_index_results
-            payload = Core::SpaceSerializer.new(page, params: space_serializer_params).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(page))
+            rows = raw_index_results.map { |row| result_struct(row) }
+            records, meta = paginate_collection(rows)
+            payload = Core::SpaceSerializer.new(records, params: space_serializer_params).serializable_hash
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(rows))
           end
 
           def show
@@ -32,11 +36,15 @@ module Decidim
           private
 
           def serialize_index_results
-            Core::SpaceSerializer.new(paginated_index_results, params: space_serializer_params).serializable_hash
+            rows = raw_index_results.map { |row| result_struct(row) }
+            records, meta = paginate_collection(rows)
+            Core::SpaceSerializer.new(records, params: space_serializer_params).serializable_hash.merge(meta:)
           end
 
           def paginated_index_results
-            paginate(raw_index_results.map { |row| result_struct(row) })
+            rows = raw_index_results.map { |row| result_struct(row) }
+            records, _meta = paginate_collection(rows)
+            records
           end
 
           def raw_index_results
@@ -55,7 +63,9 @@ module Decidim
           end
 
           def serialize_search_results
-            Core::SpaceSerializer.new(paginated_union_results, params: space_serializer_params).serializable_hash
+            rows = raw_union_results.map { |row| result_struct(row) }
+            records, meta = paginate_collection(rows)
+            Core::SpaceSerializer.new(records, params: space_serializer_params).serializable_hash.merge(meta:)
           end
 
           def serialize_space_show
@@ -82,7 +92,9 @@ module Decidim
           end
 
           def paginated_union_results
-            paginate(raw_union_results.map { |row| result_struct(row) })
+            rows = raw_union_results.map { |row| result_struct(row) }
+            records, _meta = paginate_collection(rows)
+            records
           end
 
           def raw_union_results

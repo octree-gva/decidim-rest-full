@@ -165,6 +165,12 @@ export interface AccountabilityComponentIndexResponse {
    * @memberof AccountabilityComponentIndexResponse
    */
   data: Array<AccountabilityComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof AccountabilityComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -334,6 +340,12 @@ export interface AnswerIndexResponse {
    * @memberof AnswerIndexResponse
    */
   data: Array<Answer>;
+  /**
+   *
+   * @type {FormsCollectionMeta}
+   * @memberof AnswerIndexResponse
+   */
+  meta: FormsCollectionMeta;
 }
 /**
  *
@@ -412,6 +424,12 @@ export interface AnswerOptionIndexResponse {
    * @memberof AnswerOptionIndexResponse
    */
   data: Array<AnswerOption>;
+  /**
+   *
+   * @type {FormsCollectionMeta}
+   * @memberof AnswerOptionIndexResponse
+   */
+  meta: FormsCollectionMeta;
 }
 /**
  *
@@ -617,6 +635,12 @@ export interface AttachmentIndexResponse {
    * @memberof AttachmentIndexResponse
    */
   data: Array<Attachment>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof AttachmentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -744,6 +768,12 @@ export interface BlogComponentIndexResponse {
    * @memberof BlogComponentIndexResponse
    */
   data: Array<BlogComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof BlogComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -770,6 +800,12 @@ export interface BlogIndexResponse {
    * @memberof BlogIndexResponse
    */
   data: Array<Blog>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof BlogIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -1115,6 +1151,12 @@ export interface BudgetComponentIndexResponse {
    * @memberof BudgetComponentIndexResponse
    */
   data: Array<BudgetComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof BudgetComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -1267,6 +1309,43 @@ export type ClientCredentialScopeEnum =
   (typeof ClientCredentialScopeEnum)[keyof typeof ClientCredentialScopeEnum];
 
 /**
+ *
+ * @export
+ * @interface CollectionMeta
+ */
+export interface CollectionMeta {
+  /**
+   * Current page (1-based)
+   * @type {number}
+   * @memberof CollectionMeta
+   */
+  page: number;
+  /**
+   * Page size (default 20, max 100)
+   * @type {number}
+   * @memberof CollectionMeta
+   */
+  per_page: number;
+  /**
+   * True when another page exists (limit+1, no COUNT)
+   * @type {boolean}
+   * @memberof CollectionMeta
+   */
+  has_more: boolean;
+  /**
+   * Absolute URL for the next page, or null
+   * @type {string}
+   * @memberof CollectionMeta
+   */
+  next?: string | null;
+  /**
+   * Absolute URL for the previous page, or null
+   * @type {string}
+   * @memberof CollectionMeta
+   */
+  prev?: string | null;
+}
+/**
  * @type Component
  * @export
  */
@@ -1342,6 +1421,12 @@ export interface ComponentIndexResponse {
    * @memberof ComponentIndexResponse
    */
   data: Array<Component>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof ComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -1678,6 +1763,12 @@ export interface DebateComponentIndexResponse {
    * @memberof DebateComponentIndexResponse
    */
   data: Array<DebateComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof DebateComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -2007,6 +2098,12 @@ export interface DraftProposalIndexResponse {
    * @memberof DraftProposalIndexResponse
    */
   data: Array<DraftProposal>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof DraftProposalIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -2169,6 +2266,61 @@ export interface DraftPropositionMetadata {
    * @memberof DraftPropositionMetadata
    */
   fields: Array<string>;
+}
+/**
+ *
+ * @export
+ * @interface FormsCollectionMeta
+ */
+export interface FormsCollectionMeta {
+  /**
+   * Current page (1-based)
+   * @type {number}
+   * @memberof FormsCollectionMeta
+   */
+  page: number;
+  /**
+   * Page size (default 20, max 100)
+   * @type {number}
+   * @memberof FormsCollectionMeta
+   */
+  per_page: number;
+  /**
+   * True when another page exists (limit+1, no COUNT)
+   * @type {boolean}
+   * @memberof FormsCollectionMeta
+   */
+  has_more: boolean;
+  /**
+   * Absolute URL for the next page, or null
+   * @type {string}
+   * @memberof FormsCollectionMeta
+   */
+  next?: string | null;
+  /**
+   * Absolute URL for the previous page, or null
+   * @type {string}
+   * @memberof FormsCollectionMeta
+   */
+  prev?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof FormsCollectionMeta
+   */
+  locale: string;
+  /**
+   *
+   * @type {string}
+   * @memberof FormsCollectionMeta
+   */
+  requested_locale: string;
+  /**
+   *
+   * @type {string}
+   * @memberof FormsCollectionMeta
+   */
+  fallback_from?: string | null;
 }
 /**
  *
@@ -2998,6 +3150,12 @@ export interface MagicLinkIndexResponse {
    * @memberof MagicLinkIndexResponse
    */
   data: Array<MagicLink>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof MagicLinkIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -3287,6 +3445,12 @@ export interface MeetingComponentIndexResponse {
    * @memberof MeetingComponentIndexResponse
    */
   data: Array<MeetingComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof MeetingComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -3398,6 +3562,12 @@ export interface MeetingIndexResponse {
    * @memberof MeetingIndexResponse
    */
   data: Array<Meeting>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof MeetingIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -3861,6 +4031,12 @@ export interface OrganizationIndexResponse {
    * @memberof OrganizationIndexResponse
    */
   data: Array<Organization>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof OrganizationIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -4488,6 +4664,12 @@ export interface ProposalComponentIndexResponse {
    * @memberof ProposalComponentIndexResponse
    */
   data: Array<ProposalComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof ProposalComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -4778,6 +4960,12 @@ export interface ProposalIndexResponse {
    * @memberof ProposalIndexResponse
    */
   data: Array<Proposal>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof ProposalIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -5411,6 +5599,12 @@ export interface QuestionIndexResponse {
    * @memberof QuestionIndexResponse
    */
   data: Array<Question>;
+  /**
+   *
+   * @type {FormsCollectionMeta}
+   * @memberof QuestionIndexResponse
+   */
+  meta: FormsCollectionMeta;
 }
 /**
  *
@@ -5608,6 +5802,12 @@ export interface QuestionnaireIndexResponse {
    * @memberof QuestionnaireIndexResponse
    */
   data: Array<Questionnaire>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof QuestionnaireIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -5770,6 +5970,12 @@ export interface QuestionnaireResponseIndexResponse {
    * @memberof QuestionnaireResponseIndexResponse
    */
   data: Array<QuestionnaireResponse>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof QuestionnaireResponseIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -6318,29 +6524,10 @@ export interface RestFullApiJobsIndexResponse {
   data: Array<RestFullApiJobSummary>;
   /**
    *
-   * @type {RestFullApiJobsIndexResponseMeta}
+   * @type {CollectionMeta}
    * @memberof RestFullApiJobsIndexResponse
    */
-  meta: RestFullApiJobsIndexResponseMeta;
-}
-/**
- *
- * @export
- * @interface RestFullApiJobsIndexResponseMeta
- */
-export interface RestFullApiJobsIndexResponseMeta {
-  /**
-   *
-   * @type {number}
-   * @memberof RestFullApiJobsIndexResponseMeta
-   */
-  page: number;
-  /**
-   *
-   * @type {number}
-   * @memberof RestFullApiJobsIndexResponseMeta
-   */
-  per_page: number;
+  meta: CollectionMeta;
 }
 /**
  *
@@ -6499,6 +6686,12 @@ export interface RoleIndexResponse {
    * @memberof RoleIndexResponse
    */
   data: Array<Role>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof RoleIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -6731,6 +6924,12 @@ export interface SpaceIndexResponse {
    * @memberof SpaceIndexResponse
    */
   data: Array<Space>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof SpaceIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -6901,6 +7100,12 @@ export interface SubmissionRequestIndexResponse {
    * @memberof SubmissionRequestIndexResponse
    */
   data: Array<SubmissionRequest>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof SubmissionRequestIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -7073,6 +7278,12 @@ export interface SurveyComponentIndexResponse {
    * @memberof SurveyComponentIndexResponse
    */
   data: Array<SurveyComponent>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof SurveyComponentIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -7594,6 +7805,12 @@ export interface UserIndexResponse {
    * @memberof UserIndexResponse
    */
   data: Array<User>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof UserIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -7788,6 +8005,12 @@ export interface VoteProposalIndexResponse {
    * @memberof VoteProposalIndexResponse
    */
   data: Array<VoteProposal>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof VoteProposalIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *
@@ -7912,32 +8135,13 @@ export interface VoteProposalsIndexResponse {
    * @type {Array<VoteProposal>}
    * @memberof VoteProposalsIndexResponse
    */
-  data?: Array<VoteProposal>;
+  data: Array<VoteProposal>;
   /**
    *
-   * @type {VoteProposalsIndexResponseMeta}
+   * @type {CollectionMeta}
    * @memberof VoteProposalsIndexResponse
    */
-  meta?: VoteProposalsIndexResponseMeta;
-}
-/**
- *
- * @export
- * @interface VoteProposalsIndexResponseMeta
- */
-export interface VoteProposalsIndexResponseMeta {
-  /**
-   *
-   * @type {number}
-   * @memberof VoteProposalsIndexResponseMeta
-   */
-  page?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof VoteProposalsIndexResponseMeta
-   */
-  per_page?: number;
+  meta: CollectionMeta;
 }
 /**
  * @type WebhookDeliveryEnvelope
@@ -8085,6 +8289,12 @@ export interface WebhookRegistrationIndexResponse {
    * @memberof WebhookRegistrationIndexResponse
    */
   data: Array<WebhookRegistration>;
+  /**
+   *
+   * @type {CollectionMeta}
+   * @memberof WebhookRegistrationIndexResponse
+   */
+  meta: CollectionMeta;
 }
 /**
  *

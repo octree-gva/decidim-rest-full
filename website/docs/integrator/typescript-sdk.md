@@ -41,11 +41,14 @@ const { data: tokenPayload } = await oauth.createToken({
 const accessToken = tokenPayload.access_token;
 const spaces = new SpacesApi(new Configuration({ basePath: apiBase }));
 
-const { data } = await spaces.listAssemblies({
+const { data, meta } = await spaces.listAssemblies({
   authorization: `Bearer ${accessToken}`,
   page: 1,
   perPage: 10,
 });
+// meta.page, meta.per_page, meta.has_more, meta.next, meta.prev
+void data;
+void meta;
 ```
 
 Protected routes use OpenAPI **`credentialFlowBearer`** / **`resourceOwnerFlowBearer`** security schemes. The generator still expects an `authorization` field on each request object (`Bearer <token>`) until a thin wrapper adds an Axios interceptor.

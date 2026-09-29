@@ -9,16 +9,17 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Component }
 
           def index
-            query = collection.reorder(nil).ransack(params[:filter]).result
-            page = paginate(in_visible_spaces(query))
-            data = page.map do |component|
+            query = collection.reorder(nil).order(id: :asc).ransack(params[:filter]).result
+            scoped = in_visible_spaces(query)
+            records, meta = paginate_collection(scoped)
+            data = records.map do |component|
               Decidim::Api::RestFull::Blogs::BlogComponentSerializer.new(
                 component,
                 params: { only: [], locales: available_locales, host: current_organization.host, act_as: }
               ).serializable_hash[:data]
             end
-            fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(self, relation: page)
-            render_json_with_conditional_get({ data: }, fingerprint: fp)
+            fp = Decidim::RestFull::Core::HttpCache::CollectionFingerprint.for_request(self, relation: scoped)
+            render_json_with_conditional_get({ data:, meta: }, fingerprint: fp)
           end
 
           def show

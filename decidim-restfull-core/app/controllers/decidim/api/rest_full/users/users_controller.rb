@@ -12,12 +12,14 @@ module Decidim
           before_action :validates_filter_params!
           # List all users
           def index
-            users = paginate(Decidim::User.where(organization: current_organization).ransack(params[:filter]).result)
+            scoped = Decidim::User.where(organization: current_organization).ransack(params[:filter]).result.order(id: :asc)
+            records, meta = paginate_collection(scoped)
             payload = Core::UserSerializer.new(
-              users,
+              records,
               params: { host: current_organization.host, includes_extended: can_include_extended? }
             ).serializable_hash
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(users))
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           private

@@ -13,8 +13,9 @@ module Decidim
 
           def index
             items = operations.index_scope
-            page = paginate_array(items)
-            payload = Core::AttachmentSerializer.new(page, params: serializer_params).serializable_hash
+            records, meta = paginate_collection(items)
+            payload = Core::AttachmentSerializer.new(records, params: serializer_params).serializable_hash
+            payload[:meta] = meta
             render json: payload, status: :ok
           end
 
@@ -72,13 +73,6 @@ module Decidim
 
           def serializer_params
             { host: request.host }
-          end
-
-          def paginate_array(items)
-            page = (params[:page].presence || 1).to_i
-            per_page = (params[:per_page].presence || 25).to_i
-            per_page = 25 if per_page < 1 || per_page > 100
-            Kaminari.paginate_array(items).page(page).per(per_page)
           end
         end
       end

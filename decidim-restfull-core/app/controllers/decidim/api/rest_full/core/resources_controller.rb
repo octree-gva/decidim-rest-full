@@ -38,7 +38,7 @@ module Decidim
           end
 
           def ordered(collection)
-            collection.reorder(order)
+            collection.reorder(Arel.sql(order_string))
           end
 
           def default_order_column
@@ -75,8 +75,10 @@ module Decidim
                                 key = order.keys.first
                                 dir = order[key]
                                 "#{model_class.table_name}.#{key} #{dir}, #{model_class.table_name}.id asc"
+                              elsif order.to_s.upcase.include?("RANDOM")
+                                "RANDOM(), #{model_class.table_name}.id ASC"
                               else
-                                order
+                                order.to_s
                               end
           end
 

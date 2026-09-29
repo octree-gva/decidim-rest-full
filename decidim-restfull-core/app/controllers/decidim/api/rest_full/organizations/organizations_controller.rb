@@ -19,9 +19,11 @@ module Decidim
 
           # List all organizations
           def index
-            organizations = paginate(collection)
-            payload = serializable_hash(organizations)
-            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(organizations))
+            scoped = collection.order(id: :asc)
+            records, meta = paginate_collection(scoped)
+            payload = serializable_hash(records)
+            payload[:meta] = meta
+            render_json_with_conditional_get(payload, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def show

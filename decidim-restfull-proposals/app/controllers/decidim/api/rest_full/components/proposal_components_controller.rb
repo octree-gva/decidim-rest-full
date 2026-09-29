@@ -9,9 +9,10 @@ module Decidim
           before_action { ability.authorize! :read, ::Decidim::Component }
 
           def index
-            query = collection.reorder(nil).ransack(params[:filter]).result
-            page = paginate(in_visible_spaces(query))
-            data = page.map do |component|
+            query = collection.reorder(nil).order(id: :asc).ransack(params[:filter]).result
+            scoped = in_visible_spaces(query)
+            records, meta = paginate_collection(scoped)
+            data = records.map do |component|
               Decidim::Api::RestFull::Proposals::ProposalComponentSerializer.new(
                 component,
                 params: {
@@ -23,7 +24,7 @@ module Decidim
                 }
               ).serializable_hash[:data]
             end
-            render_json_with_conditional_get({ data: }, fingerprint: collection_fingerprint_for(page))
+            render_json_with_conditional_get({ data:, meta: }, fingerprint: collection_fingerprint_for(scoped))
           end
 
           def show

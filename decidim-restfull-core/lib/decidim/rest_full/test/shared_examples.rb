@@ -91,6 +91,30 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
     resources.reload if resources.respond_to?(:reload)
   end
 
+  def expect_collection_meta!(json_response, page:, per_page:, has_more:)
+    meta = json_response.fetch("meta")
+    expect(meta["page"]).to eq(page)
+    expect(meta["per_page"]).to eq(per_page)
+    expect(meta["has_more"]).to eq(has_more)
+    expect(meta).not_to have_key("total_count")
+    expect(meta).not_to have_key("total_pages")
+    expect(meta).not_to have_key("count")
+    expect(meta).not_to have_key("total")
+    if has_more
+      expect(meta["next"]).to be_present
+      expect(meta["next"]).to include("page=#{page + 1}")
+      expect(meta["next"]).to include("per_page=#{per_page}")
+    else
+      expect(meta["next"]).to be_nil
+    end
+    if page > 1
+      expect(meta["prev"]).to be_present
+      expect(meta["prev"]).to include("page=#{page - 1}")
+    else
+      expect(meta["prev"]).to be_nil
+    end
+  end
+
   context "with no resources, return empty array" do
     let(:per_page) { 2 }
     let(:page) { 1 }
@@ -98,6 +122,7 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
     run_test! do |example|
       json_response = JSON.parse(example.body)
       expect(json_response["data"].size).to eq(0)
+      expect_collection_meta!(json_response, page: 1, per_page: 2, has_more: false)
     end
   end
 
@@ -116,6 +141,7 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
       run_test!(example_name: :paginated) do |example|
         json_response = JSON.parse(example.body)
         expect(json_response["data"].size).to eq(2)
+        expect_collection_meta!(json_response, page: 1, per_page: 2, has_more: sample_size > 2)
       end
     end
 
@@ -126,6 +152,12 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
       run_test! do |example|
         json_response = JSON.parse(example.body)
         expect(json_response["data"].size).to eq(sample_size % 2)
+        expect_collection_meta!(
+          json_response,
+          page: ((sample_size + 1) / 2).ceil,
+          per_page: 2,
+          has_more: false
+        )
       end
     end
 
@@ -136,6 +168,7 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
       run_test! do |example|
         json_response = JSON.parse(example.body)
         expect(json_response["data"]).to be_empty
+        expect_collection_meta!(json_response, page: 100, per_page: 1, has_more: false)
       end
     end
   end

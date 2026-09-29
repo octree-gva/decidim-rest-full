@@ -1120,10 +1120,14 @@
             "items": {
               "$ref": "#/components/schemas/role"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "role_item_response": {
@@ -1321,10 +1325,14 @@
             "items": {
               "$ref": "#/components/schemas/space"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "space_item_response": {
@@ -1639,10 +1647,14 @@
             "items": {
               "$ref": "#/components/schemas/organization"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "organization_item_response": {
@@ -1832,10 +1844,14 @@
             "items": {
               "$ref": "#/components/schemas/user"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "user_item_response": {
@@ -1921,10 +1937,14 @@
             "items": {
               "$ref": "#/components/schemas/magic_link"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "magic_link_item_response": {
@@ -2155,20 +2175,7 @@
             }
           },
           "meta": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer"
-              },
-              "per_page": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "page",
-              "per_page"
-            ],
-            "additionalProperties": false
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
@@ -2321,10 +2328,14 @@
             "items": {
               "$ref": "#/components/schemas/attachment"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "attachment_item_response": {
@@ -2476,10 +2487,14 @@
             "items": {
               "$ref": "#/components/schemas/webhook_registration"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "webhook_registration_item_response": {
@@ -2652,10 +2667,14 @@
             "items": {
               "$ref": "#/components/schemas/accountability_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "accountability_component_item_response": {
@@ -2828,10 +2847,14 @@
             "items": {
               "$ref": "#/components/schemas/blog_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "blog_component_item_response": {
@@ -3039,10 +3062,14 @@
             "items": {
               "$ref": "#/components/schemas/blog"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "blog_item_response": {
@@ -3261,10 +3288,14 @@
             "items": {
               "$ref": "#/components/schemas/budget_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "budget_component_item_response": {
@@ -3437,10 +3468,14 @@
             "items": {
               "$ref": "#/components/schemas/debate_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "debate_component_item_response": {
@@ -3637,10 +3672,14 @@
             "items": {
               "$ref": "#/components/schemas/questionnaire"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "questionnaire_item_response": {
@@ -3751,10 +3790,14 @@
             "items": {
               "$ref": "#/components/schemas/questionnaire_response"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "questionnaire_response_item_response": {
@@ -3836,10 +3879,14 @@
             "items": {
               "$ref": "#/components/schemas/submission_request"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "submission_request_item_response": {
@@ -3961,10 +4008,14 @@
             "items": {
               "$ref": "#/components/schemas/question"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/forms_collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "question_item_response": {
@@ -4053,10 +4104,14 @@
             "items": {
               "$ref": "#/components/schemas/answer_option"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/forms_collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "answer_option_item_response": {
@@ -4146,10 +4201,14 @@
             "items": {
               "$ref": "#/components/schemas/answer"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/forms_collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "answer_item_response": {
@@ -4647,10 +4706,14 @@
             "items": {
               "$ref": "#/components/schemas/meeting_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "meeting_component_item_response": {
@@ -4801,10 +4864,14 @@
             "items": {
               "$ref": "#/components/schemas/meeting"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "meeting_item_response": {
@@ -5121,10 +5188,14 @@
             "items": {
               "$ref": "#/components/schemas/proposal_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "proposal_component_item_response": {
@@ -5451,10 +5522,14 @@
             "items": {
               "$ref": "#/components/schemas/proposal"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "proposal_item_response": {
@@ -5745,10 +5820,14 @@
             "items": {
               "$ref": "#/components/schemas/draft_proposal"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "draft_proposal_item_response": {
@@ -5856,10 +5935,14 @@
             "items": {
               "$ref": "#/components/schemas/vote_proposal"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "vote_proposal_item_response": {
@@ -5910,17 +5993,13 @@
             }
           },
           "meta": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer"
-              },
-              "per_page": {
-                "type": "integer"
-              }
-            }
+            "$ref": "#/components/schemas/collection_meta"
           }
-        }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "survey_component": {
         "type": "object",
@@ -6080,10 +6159,14 @@
             "items": {
               "$ref": "#/components/schemas/survey_component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "survey_component_item_response": {
@@ -6288,10 +6371,14 @@
             "items": {
               "$ref": "#/components/schemas/component"
             }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/collection_meta"
           }
         },
         "required": [
-          "data"
+          "data",
+          "meta"
         ]
       },
       "component_item_response": {
@@ -6605,6 +6692,92 @@
             "user.updated": "#/components/schemas/wh_user_updated"
           }
         }
+      },
+      "collection_meta": {
+        "type": "object",
+        "title": "Collection pagination metadata",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Current page (1-based)"
+          },
+          "per_page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Page size (default 20, max 100)"
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "True when another page exists (limit+1, no COUNT)"
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "description": "Absolute URL for the next page, or null"
+          },
+          "prev": {
+            "type": "string",
+            "nullable": true,
+            "description": "Absolute URL for the previous page, or null"
+          }
+        },
+        "required": [
+          "page",
+          "per_page",
+          "has_more"
+        ],
+        "additionalProperties": false
+      },
+      "forms_collection_meta": {
+        "type": "object",
+        "title": "Forms collection pagination and locale metadata",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Current page (1-based)"
+          },
+          "per_page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Page size (default 20, max 100)"
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "True when another page exists (limit+1, no COUNT)"
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "description": "Absolute URL for the next page, or null"
+          },
+          "prev": {
+            "type": "string",
+            "nullable": true,
+            "description": "Absolute URL for the previous page, or null"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "requested_locale": {
+            "type": "string"
+          },
+          "fallback_from": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "page",
+          "per_page",
+          "has_more",
+          "locale",
+          "requested_locale"
+        ],
+        "additionalProperties": false
       }
     }
   },
