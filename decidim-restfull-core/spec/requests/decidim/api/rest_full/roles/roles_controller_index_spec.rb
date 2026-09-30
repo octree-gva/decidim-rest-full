@@ -75,7 +75,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
           context "with filter[user_id_eq]" do
             let(:"filter[user_id_eq]") { admin_user.id }
 
-            run_test!(example_name: :filter_by_user_id) do |example|
+            run_test!(example_name: :filtered_by_user_id) do |example|
               data = JSON.parse(example.body)["data"]
               user_ids = data.map { |item| item["attributes"]["user_id"] }.compact
 
@@ -86,7 +86,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
           context "with filter[resource_type_eq]" do
             let(:"filter[resource_type_eq]") { "Decidim::ParticipatoryProcess" }
 
-            run_test!(example_name: :filter_by_resource_type) do |example|
+            run_test!(example_name: :filtered_by_resource_type) do |example|
               data = JSON.parse(example.body)["data"]
               resource_types = data.map { |item| item["attributes"]["resource_type"] }.uniq
 
@@ -97,7 +97,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
           context "with filter[type_eq]" do
             let(:"filter[type_eq]") { "space_administrator" }
 
-            run_test!(example_name: :filter_by_type) do |example|
+            run_test!(example_name: :filtered_by_type) do |example|
               data = JSON.parse(example.body)["data"]
               types = data.map { |item| item["attributes"]["type"] }.compact
 
@@ -110,7 +110,7 @@ RSpec.describe Decidim::Api::RestFull::Roles::RolesController do
             let(:"filter[resource_id_eq]") { space.id }
             let(:"filter[type_eq]") { "space_administrator" }
 
-            run_test!(example_name: :filter_by_participatory_space_and_type) do |example|
+            run_test!(example_name: :filtered_by_participatory_space_and_type) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(1)
               expect(data.first["attributes"]["type"]).to eq("space_administrator")

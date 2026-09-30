@@ -106,7 +106,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
                   participatory_process.extended_data.update!(data: { "idx" => "1" })
                 end
 
-                run_test!(example_name: :filter_by_extended_data) do |example|
+                run_test!(example_name: :filtered_by_extended_data) do |example|
                   data = JSON.parse(example.body)["data"]
                   expect(data.map { |d| d["id"] }).to include(participatory_process.id.to_s)
                 end
@@ -131,7 +131,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
                   participatory_process.extended_data.update!(data: { "idx" => "1" })
                 end
 
-                run_test!(example_name: :filter_by_extended_data_miss) do |example|
+                run_test!(example_name: :filtered_by_extended_data_miss) do |example|
                   data = JSON.parse(example.body)["data"]
                   expect(data.map { |d| d["id"] }).not_to include(participatory_process.id.to_s)
                 end

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-09-29
+
+### Added
+
+- Named OpenAPI index examples: `ok_empty`, `paginated` / `paginated_last`, `ok_sorted_and_paginated` / `ok_sorted_and_paginated_last`, `filtered_by_*`, `sorted_by_*` / `sorted_by_random` (blogs, proposals, meetings + shared examples).
+- Blogs `filtered_by_component` and `ok_sorted_and_paginated(_last)` regression coverage.
+
+### Changed
+
+- Blogs and proposals default order is `published_at` **desc**.
+- When `order=rand`, collection `meta.has_more` is always `true` (RANDOM() is unstable across pages).
+- OpenAPI `filter_by_*` example names renamed to `filtered_by_*`.
+
+### Fixed
+
+- Blogs index published visibility filter was discarded before `ordered()` (drafts inflated `has_more` on the last page).
+- Blogs published_at SQL qualified against `includes(:component)` join ambiguity.
+
+## [0.3.7]
+
 ### Added
 
 - Shared collection pagination envelope on every GET index/search: `{ data, meta: { page, per_page, has_more, next, prev } }` via `CollectionPagination` (limit+1, no `COUNT(*)`).

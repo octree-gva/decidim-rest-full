@@ -51,6 +51,22 @@ RSpec.describe Decidim::Api::RestFull::Meetings::MeetingsController do
             end
           end
 
+          it_behaves_like "paginated endpoint" do
+            let(:create_resource) { -> { create(:meeting, :published, component: meeting_component) } }
+            let(:each_resource) { ->(_resource, _index) {} }
+            let(:resources) { Decidim::Meetings::Meeting.where(component: meeting_component) }
+          end
+
+          it_behaves_like "ordered endpoint", columns: %w(rand start_time) do
+            let(:create_resource) { -> { create(:meeting, :published, component: meeting_component) } }
+            let(:each_resource) do
+              lambda { |resource, index|
+                resource.update!(start_time: (index + 1).hours.from_now, end_time: (index + 2).hours.from_now)
+              }
+            end
+            let(:resources) { Decidim::Meetings::Meeting.where(component: meeting_component) }
+          end
+
           context "with filter[extended_data_cont] and permission" do
             let(:api_client) do
               client = create(:api_client, organization:, scopes: %w(meetings))
@@ -68,7 +84,7 @@ RSpec.describe Decidim::Api::RestFull::Meetings::MeetingsController do
               create(:meeting, :published, component: meeting_component)
             end
 
-            run_test!(example_name: :filter_by_extended_data) do |example|
+            run_test!(example_name: :filtered_by_extended_data) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(1)
               expect(data.first["id"]).to eq(meeting.id.to_s)
@@ -91,7 +107,7 @@ RSpec.describe Decidim::Api::RestFull::Meetings::MeetingsController do
               meeting.extended_data.update!(data: { "integration" => "alpha" })
             end
 
-            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+            run_test!(example_name: :filtered_by_extended_data_miss) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data).to be_empty
             end

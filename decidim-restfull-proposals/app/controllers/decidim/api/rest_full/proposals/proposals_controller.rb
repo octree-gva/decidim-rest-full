@@ -55,6 +55,10 @@ module Decidim
             "published_at"
           end
 
+          def default_order_direction
+            "desc"
+          end
+
           def component_manifest
             "proposals"
           end

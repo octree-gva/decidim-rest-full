@@ -43,6 +43,31 @@ RSpec.shared_examples "ordered endpoint" do |options = {}|
   break if columns.blank?
 
   columns.each do |column|
+    if column.to_s == "rand"
+      context "when ordered by rand" do
+        let(:order) { "rand" }
+        let(:per_page) { 1 }
+        let(:page) { 1 }
+
+        before do
+          resources.each(&:destroy)
+          Array.new(3) { create_resource.call }.each_with_index do |resource, index|
+            each_resource.call(resource, index)
+            resource.reload
+          end
+          resources.reload if resources.respond_to?(:reload)
+        end
+
+        run_test!(example_name: :sorted_by_random) do |example|
+          meta = JSON.parse(example.body).fetch("meta")
+          expect(meta["has_more"]).to be(true)
+          expect(meta["next"]).to be_present
+          expect(meta["next"]).to include("order=rand")
+        end
+      end
+      next
+    end
+
     context "when ordered by #{column}" do
       before do
         resources.each(&:destroy)
@@ -57,7 +82,7 @@ RSpec.shared_examples "ordered endpoint" do |options = {}|
         let(:order) { column }
         let(:order_direction) { "asc" }
 
-        run_test! do |example|
+        run_test!(example_name: :"sorted_by_#{column}_asc") do |example|
           data = JSON.parse(example.body)["data"]
           resources_ids = resources.order(column => :asc).ids
           expect(data.first["id"]).to eq(resources_ids.first.to_s)
@@ -69,7 +94,7 @@ RSpec.shared_examples "ordered endpoint" do |options = {}|
         let(:order) { column }
         let(:order_direction) { "desc" }
 
-        run_test! do |example|
+        run_test!(example_name: :"sorted_by_#{column}_desc") do |example|
           data = JSON.parse(example.body)["data"]
           resources_ids = resources.order(column => :desc).ids
           expect(data.first["id"]).to eq(resources_ids.first.to_s)
@@ -119,7 +144,7 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
     let(:per_page) { 2 }
     let(:page) { 1 }
 
-    run_test! do |example|
+    run_test!(example_name: :ok_empty) do |example|
       json_response = JSON.parse(example.body)
       expect(json_response["data"].size).to eq(0)
       expect_collection_meta!(json_response, page: 1, per_page: 2, has_more: false)
@@ -149,7 +174,7 @@ RSpec.shared_examples "paginated endpoint" do |options = {}|
       let(:per_page) { 2 }
       let(:page) { ((sample_size + 1) / 2).ceil }
 
-      run_test! do |example|
+      run_test!(example_name: :paginated_last) do |example|
         json_response = JSON.parse(example.body)
         expect(json_response["data"].size).to eq(sample_size % 2)
         expect_collection_meta!(

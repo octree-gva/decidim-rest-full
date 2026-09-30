@@ -93,27 +93,31 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
             end
 
             context "when looking for the next not-rejected proposal" do
-              let!(:first_accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
-              let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
-              let!(:second_proposal) { create(:proposal, component: proposal_component) }
+              let(:order) { "published_at" }
+              let(:order_direction) { "desc" }
+              let!(:newer_proposal) { create(:proposal, :accepted, component: proposal_component, published_at: 1.day.ago) }
+              let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component, published_at: 1.5.days.ago) }
+              let!(:older_proposal) { create(:proposal, component: proposal_component, published_at: 2.days.ago) }
               let(:"filter[state_not_eq]") { "rejected" }
-              let(:id) { first_accepted_proposal.id }
+              let(:id) { newer_proposal.id }
 
               run_test!(example_name: :navigation_non_rejected) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data["id"].to_i).to eq(id.to_i)
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_present
-                expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(second_proposal.id.to_i)
+                expect(data["links"]["next"]["meta"]["resource_id"].to_i).to eq(older_proposal.id.to_i)
               end
             end
 
             context "when looking at the last accepted proposal" do
-              let!(:first_accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
-              let!(:second_accepted_proposal) { create(:proposal, :accepted, component: proposal_component) }
-              let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component) }
+              let(:order) { "published_at" }
+              let(:order_direction) { "desc" }
+              let!(:newer_accepted_proposal) { create(:proposal, :accepted, component: proposal_component, published_at: 1.day.ago) }
+              let!(:older_accepted_proposal) { create(:proposal, :accepted, component: proposal_component, published_at: 2.days.ago) }
+              let!(:rejected_proposal) { create(:proposal, :rejected, component: proposal_component, published_at: 1.5.days.ago) }
               let(:"filter[state_eq]") { "accepted" }
-              let(:id) { second_accepted_proposal.id }
+              let(:id) { older_accepted_proposal.id }
 
               run_test!(example_name: :navigation_last_accepted) do |example|
                 data = JSON.parse(example.body)["data"]
@@ -121,7 +125,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
                 expect(data["meta"]["published"]).to be_truthy
                 expect(data["links"]["next"]).to be_nil
                 expect(data["links"]["prev"]).to be_present
-                expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(first_accepted_proposal.id.to_i)
+                expect(data["links"]["prev"]["meta"]["resource_id"].to_i).to eq(newer_accepted_proposal.id.to_i)
               end
             end
           end

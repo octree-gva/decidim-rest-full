@@ -91,6 +91,37 @@ module Decidim
           expect(records).to eq([1, 2])
           expect(meta[:has_more]).to be(true)
         end
+
+        it "always sets has_more true when order is rand" do
+          records, meta = paginate((1..2).to_a, page: 2, per_page: 1, query: { "order" => "rand" })
+          expect(records).to eq([2])
+          expect(meta[:has_more]).to be(true)
+          expect(meta[:next]).to include("page=3")
+          expect(meta[:next]).to include("order=rand")
+        end
+
+        it "treats blank order as rand when default_order_column is rand" do
+          host_with_default = Class.new do
+            include CollectionPagination
+
+            attr_accessor :params, :request
+
+            def initialize(params:, request:)
+              @params = params
+              @request = request
+            end
+
+            def default_order_column
+              "rand"
+            end
+          end
+
+          params = ActionController::Parameters.new(page: 1, per_page: 10)
+          request = build_request(query: { "page" => 1, "per_page" => 10 })
+          instance = host_with_default.new(params:, request:)
+          _records, meta = instance.send(:paginate_collection, (1..3).to_a)
+          expect(meta[:has_more]).to be(true)
+        end
       end
     end
   end

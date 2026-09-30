@@ -21,7 +21,10 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:forms_collection_me
     properties: {
       page: { type: :integer, minimum: 1 },
       per_page: { type: :integer, minimum: 1, maximum: 100 },
-      has_more: { type: :boolean },
+      has_more: {
+        type: :boolean,
+        description: "True when another page may exist (limit+1). Always true when order=rand."
+      },
       next: { type: :string, nullable: true },
       prev: { type: :string, nullable: true },
       locale: { type: :string, description: "Effective locale for projected strings" },

@@ -98,7 +98,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_id_in) do |example|
+            run_test!(example_name: :filtered_by_id_in) do |example|
               data = JSON.parse(example.body)["data"]
               space_list.each do |space|
                 match = data.find do |row|
@@ -130,7 +130,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_manifest_name_eq) do |example|
+            run_test!(example_name: :filtered_by_manifest_name_eq) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data).not_to be_empty
               expect(data.all? { |item| item["attributes"]["manifest_name"] == "assemblies" }).to be(true)
@@ -144,7 +144,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_id_eq) do |example|
+            run_test!(example_name: :filtered_by_id_eq) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).to contain_exactly(assembly.id.to_s)
             end
@@ -171,7 +171,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_id_eq_returns_both_space_types) do |example|
+            run_test!(example_name: :filtered_by_id_eq_returns_both_space_types) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| [d["id"], d["attributes"]["participatory_space_type"]] }).to contain_exactly(["1", "Decidim::Assembly"], ["1", "Decidim::ParticipatoryProcess"])
             end
@@ -182,7 +182,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_slug_eq) do |example|
+            run_test!(example_name: :filtered_by_slug_eq) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(1)
               expect(data.first["attributes"]["manifest_name"]).to eq("participatory_processes")
@@ -196,7 +196,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :filter_by_slug_matches_prefix) do |example|
+            run_test!(example_name: :filtered_by_slug_matches_prefix) do |example|
               data = JSON.parse(example.body)["data"]
               data.map { |item| item["attributes"]["manifest_name"] if item["id"].in?([demospace1.id.to_s, demospace2.id.to_s]) }
               expect(data.size).to be >= 2
@@ -221,7 +221,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
               participatory_process.extended_data.update!(data: { "region" => "west" })
             end
 
-            run_test!(example_name: :filter_by_extended_data) do |example|
+            run_test!(example_name: :filtered_by_extended_data) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).to include(participatory_process.id.to_s)
             end
@@ -245,7 +245,7 @@ RSpec.describe Decidim::Api::RestFull::Spaces::SpacesController do
               participatory_process.extended_data.update!(data: { "region" => "west" })
             end
 
-            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+            run_test!(example_name: :filtered_by_extended_data_miss) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).not_to include(participatory_process.id.to_s)
             end

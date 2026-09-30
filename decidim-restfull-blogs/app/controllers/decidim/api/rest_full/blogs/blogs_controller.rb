@@ -76,16 +76,30 @@ module Decidim
             %w(rand published_at)
           end
 
+          def default_order_column
+            "published_at"
+          end
+
+          def default_order_direction
+            "desc"
+          end
+
           def collection
             query = filter_for_context(model_class.order(published_at: :asc))
             query = query.where(decidim_component_id: params.require(:component_id)) if params.has_key? :component_id
 
             now = Time.zone.now
-            if act_as.nil?
-              query.where(published_at: ...now)
-            else
-              query.where("published_at <= ? OR (published_at > ? AND decidim_author_id = ?)", now, now, act_as.id)
-            end
+            table = model_class.table_name
+            query = if act_as.nil?
+                      query.where(table => { published_at: ...now })
+                    else
+                      query.where(
+                        "#{table}.published_at <= ? OR (#{table}.published_at > ? AND #{table}.decidim_author_id = ?)",
+                        now,
+                        now,
+                        act_as.id
+                      )
+                    end
             ordered(query)
           end
 

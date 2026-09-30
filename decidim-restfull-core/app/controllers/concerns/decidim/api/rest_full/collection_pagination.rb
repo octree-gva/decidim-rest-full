@@ -5,6 +5,10 @@ module Decidim
     module RestFull
       # Offset pagination for collection/index responses (limit+1, no COUNT).
       # Returns [records, meta] with page, per_page, has_more, next, prev.
+      #
+      # When sorting with +rand+ / +RANDOM()+, page offsets are not stable across
+      # requests, so +has_more+ is always +true+ (clients should stop when a page
+      # returns fewer than +per_page+ rows if they need a finite walk).
       module CollectionPagination
         extend ActiveSupport::Concern
 
@@ -27,8 +31,10 @@ module Decidim
                    Array(scope).slice(offset, fetch_limit) || []
                  end
 
-          has_more = rows.size > per
-          records = has_more ? rows.first(per) : rows
+          overflow = rows.size > per
+          records = overflow ? rows.first(per) : rows
+          # RANDOM() order is not stable across pages — never claim a last page.
+          has_more = random_collection_order? || overflow
 
           meta = {
             page:,
@@ -38,6 +44,12 @@ module Decidim
             prev: page > 1 ? collection_page_url(page - 1, per) : nil
           }
           [records, meta]
+        end
+
+        def random_collection_order?
+          explicit = params[:order].presence
+          explicit = default_order_column if explicit.blank? && respond_to?(:default_order_column, true)
+          explicit.to_s == "rand"
         end
 
         def normalize_collection_page(raw)

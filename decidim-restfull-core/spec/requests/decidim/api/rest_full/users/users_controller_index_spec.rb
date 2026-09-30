@@ -97,7 +97,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
                 '"key": {"is": "awesome"}'
               end
 
-              run_test!(example_name: :filter_by_extended_data) do |example|
+              run_test!(example_name: :filtered_by_extended_data) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data.size).to eq(1)
                 expect(data.first["attributes"]["nickname"]).to eq("specific-data")
@@ -114,7 +114,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
                 '"foo": "bar"'
               end
 
-              run_test!(example_name: :filter_by_extended_data) do |example|
+              run_test!(example_name: :filtered_by_extended_data) do |example|
                 data = JSON.parse(example.body)["data"]
                 expect(data.size).to eq(0)
               end
@@ -125,7 +125,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
             let(:user_list) { create_list(:user, 5, organization:) }
             let(:"filter[id_in][]") { user_list.map(&:id) }
 
-            run_test!(example_name: :filter_by_id_in) do |example|
+            run_test!(example_name: :filtered_by_id_in) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(5)
             end
@@ -141,7 +141,7 @@ RSpec.describe Decidim::Api::RestFull::Users::UsersController do
             let(:page) { 1 }
             let(:per_page) { 2 }
 
-            run_test!(example_name: :filter_by_nickname) do |example|
+            run_test!(example_name: :filtered_by_nickname) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.size).to eq(1)
               expect(data.first["attributes"]["nickname"]).to eq("blue-panda-218")

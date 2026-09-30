@@ -146,7 +146,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
               component.extended_data.update!(data: { "sync" => "ok" })
             end
 
-            run_test!(example_name: :filter_by_extended_data) do |example|
+            run_test!(example_name: :filtered_by_extended_data) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).to include(component.id.to_s)
             end
@@ -171,7 +171,7 @@ RSpec.describe Decidim::Api::RestFull::Components::ComponentsController do
               component.extended_data.update!(data: { "sync" => "ok" })
             end
 
-            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+            run_test!(example_name: :filtered_by_extended_data_miss) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).not_to include(component.id.to_s)
             end

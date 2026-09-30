@@ -26,12 +26,26 @@ Every collection **index** / **search** response uses the same offset-pagination
 |-------|------|
 | `page` | Integer ≥ 1 (default `1`) |
 | `per_page` | Default `20`, hard cap `100`; invalid/≤0 → `20` |
-| `has_more` | From **limit+1** (fetch `per_page + 1`, drop the extra). Never `COUNT(*)` |
-| `next` / `prev` | Absolute URLs preserving all query params; `null` when inapplicable |
+| `has_more` | From **limit+1** (fetch `per_page + 1`, drop the extra). Never `COUNT(*)`. **Exception:** when `order=rand`, always `true` (RANDOM() is unstable across pages; stop client-side when a page returns fewer than `per_page` rows). |
+| `next` / `prev` | Absolute URLs preserving all query params; `null` when inapplicable (`next` stays set under `order=rand`) |
 | Forbidden | `count`, `total_count`, `total_pages`, `total`, and pagination `Total` headers |
 
 Forms indexes that already expose locale meta merge locale keys into the same `meta` object (`forms_collection_meta`).
 
+### RSwag named examples (index / search)
+
+Every paginated collection operation should publish these example names when the case applies:
+
+| Example name | Meaning |
+|--------------|---------|
+| `ok_empty` | Empty `data`, stable `meta` (`has_more: false`) |
+| `paginated` / `paginated_last` | Envelope + limit+1 mid / last page |
+| `ok_sorted_and_paginated` / `ok_sorted_and_paginated_last` | Sort + page walk (last page `has_more: false`) |
+| `impersonation_*` | Impersonation-only visibility (e.g. drafts) |
+| `filtered_by_<filter>` | One example per supported filter / context key |
+| `sorted_by_<column>_<asc\|desc>` / `sorted_by_random` | One example per `order` column |
+
+Use shared examples `paginated endpoint` and `ordered endpoint` (they set these names).
 ## When to use
 
 - You add or change an **index** or **search** action.

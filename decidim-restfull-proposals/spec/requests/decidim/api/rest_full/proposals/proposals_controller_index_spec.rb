@@ -50,6 +50,16 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
             let(:resources) { Decidim::Proposals::Proposal.where(component: proposal_component) }
           end
 
+          it_behaves_like "ordered endpoint", columns: %w(rand published_at) do
+            let(:create_resource) { -> { create(:proposal, :accepted, component: proposal_component, published_at: 1.day.ago) } }
+            let(:each_resource) do
+              lambda { |resource, index|
+                resource.update!(published_at: (index + 1).minutes.ago)
+              }
+            end
+            let(:resources) { Decidim::Proposals::Proposal.where(component: proposal_component) }
+          end
+
           context "when voting_cards is enabled" do
             let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
             let(:proposal_component) do
@@ -71,7 +81,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
             context "with filter state_eq accepted, filter only published accepted proposal" do
               let(:"filter[state_eq]") { "accepted" }
 
-              run_test!(example_name: :state_accepted) do |example|
+              run_test!(example_name: :filtered_by_state) do |example|
                 data = JSON.parse(example.body)["data"]
                 data.each do |d|
                   expect(d["relationships"]["state"]["meta"]["token"]).to eq("accepted")
@@ -216,7 +226,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               create(:proposal, component: proposal_component)
             end
 
-            run_test!(example_name: :filter_by_extended_data) do |example|
+            run_test!(example_name: :filtered_by_extended_data) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data.map { |d| d["id"] }).to eq([proposal.id.to_s])
             end
@@ -238,7 +248,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalsController do
               proposal.extended_data.update!(data: { "ext" => "1" })
             end
 
-            run_test!(example_name: :filter_by_extended_data_miss) do |example|
+            run_test!(example_name: :filtered_by_extended_data_miss) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data).to be_empty
             end
