@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Avoid `NameError: uninitialized constant Decidim::ApplicationMailer` on cold boot
+  (`deface:precompile` / environment load) caused by a circular load with
+  `devise_invitable`'s `on_load(:action_mailer)` when including
+  `ApplicationMailerOverride` in `config.to_prepare`.
+
 ## [0.3.8] - 2026-09-29
 
 ### Added
