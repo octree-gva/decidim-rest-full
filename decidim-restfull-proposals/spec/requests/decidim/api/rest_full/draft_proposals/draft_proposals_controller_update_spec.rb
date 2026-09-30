@@ -122,7 +122,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
             let(:body) { { data: { body: text } } }
             let(:id) { proposal.id }
 
-            run_test!(:ok_update_body) do |example|
+            run_test!(example_name: :ok_update_body) do |example|
               data = JSON.parse(example.body)["data"]
               expect(data["attributes"]["body"]["fr"]).to eq(text)
             end
@@ -134,12 +134,76 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
           produces "application/json"
           schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
 
-          context "with invalid title payload data" do
-            let(:body) { { data: { title: "lol!" } } }
+          context "when title is blank" do
+            let(:body) { { data: { title: "" } } }
 
-            run_test!(:bad_request_validation_title) do |example|
-              error_description = JSON.parse(example.body)["error_description"]
-              expect(error_description).to start_with("Title ")
+            run_test!(example_name: :bad_request_title_blank) do |example|
+              data = JSON.parse(example.body)
+              expect(response).to have_http_status(:bad_request)
+              expect(data["error_details"]).to include(
+                a_hash_including("code" => "blank", "field" => "title")
+              )
+            end
+          end
+
+          context "when title is too short" do
+            let(:body) { { data: { title: "Abcdefghijklm" } } } # 13 chars, starts with cap, low caps ratio
+
+            run_test!(example_name: :bad_request_title_too_short) do |example|
+              data = JSON.parse(example.body)
+              expect(data["error_details"]).to include(
+                a_hash_including("code" => "too_short", "field" => "title")
+              )
+            end
+          end
+
+          context "when title must start with caps" do
+            let(:body) { { data: { title: "this is a long enough title" } } }
+
+            run_test!(example_name: :bad_request_title_must_start_with_caps) do |example|
+              data = JSON.parse(example.body)
+              expect(data["error_details"]).to include(
+                a_hash_including("code" => "must_start_with_caps", "field" => "title")
+              )
+            end
+          end
+
+          context "when title has too many caps" do
+            let(:body) { { data: { title: "THIS IS ALL CAPS TITLE HERE" } } }
+
+            run_test!(example_name: :bad_request_title_too_much_caps) do |example|
+              data = JSON.parse(example.body)
+              expect(data["error_details"]).to include(
+                a_hash_including("code" => "too_much_caps", "field" => "title")
+              )
+            end
+          end
+
+          context "when title is too long" do
+            let(:body) { { data: { title: "A#{'b' * 150}" } } } # 151 chars, etiquette-clean
+
+            run_test!(example_name: :bad_request_title_too_long) do |example|
+              data = JSON.parse(example.body)
+              expect(data["error_details"]).to include(
+                a_hash_including("code" => "too_long", "field" => "title")
+              )
+            end
+          end
+
+          context "when title and body are both invalid" do
+            let(:body) { { data: { title: "PROPOSAL", body: "proposal 2" } } }
+
+            run_test!(example_name: :bad_request_title_and_body_multi) do |example|
+              data = JSON.parse(example.body)
+              details = data["error_details"]
+              expect(details.size).to be >= 4
+              expect(details).to include(
+                a_hash_including("code" => "too_short", "field" => "title"),
+                a_hash_including("code" => "too_much_caps", "field" => "title"),
+                a_hash_including("code" => "too_short", "field" => "body"),
+                a_hash_including("code" => "must_start_with_caps", "field" => "body")
+              )
+              expect(data["error_description"]).to be_present
             end
           end
         end

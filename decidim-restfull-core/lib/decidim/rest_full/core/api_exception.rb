@@ -42,7 +42,68 @@ module Decidim
 
         class BaseError < StandardError; end
 
-        class BadRequest < StandardError; end
+        # 400 with optional machine-readable error_details (ActiveModel types).
+        class BadRequest < StandardError
+          attr_reader :error_details
+
+          def initialize(message = nil, error_details: nil)
+            @error_details = error_details
+            super(message)
+          end
+
+          # Map ActiveModel::Error objects → BadRequest with error_details.
+          # Note: ActiveModel::Errors#to_a returns message strings — iterate with #each/#map instead.
+          def self.from_errors(errors)
+            list = if errors.is_a?(ActiveModel::Errors)
+                     errors.map { |error| error }
+                   else
+                     Array(errors)
+                   end
+            details = list.map do |error|
+              {
+                code: code_for(error),
+                field: error.attribute.to_s,
+                description: error.full_message
+              }
+            end
+            message = details.map { |d| d[:description] }.join(". ")
+            new(message, error_details: details)
+          end
+
+          # Convenience: form.errors, optionally limited to attribute names.
+          def self.from_form(form, only: nil)
+            errs = form.errors
+            if only
+              keys = Array(only).map(&:to_s)
+              errs = errs.select { |err| keys.include?(err.attribute.to_s) }
+            end
+            from_errors(errs)
+          end
+
+          # Prefer ActiveModel symbol types. Some hosts (e.g. DecidimAwesome
+          # etiquette override) add translated strings instead of symbols.
+          def self.code_for(error)
+            type = error.respond_to?(:raw_type) ? error.raw_type : error.type
+            return type.to_s if type.is_a?(Symbol)
+
+            infer_code_from_message(type.to_s.presence || error.message.to_s)
+          end
+          private_class_method :code_for
+
+          def self.infer_code_from_message(message)
+            msg = message.to_s.downcase
+            return "too_much_caps" if msg.include?("capital letter") && msg.include?("too many")
+            return "must_start_with_caps" if msg.include?("start with a capital")
+            return "too_many_marks" if msg.include?("punctuation")
+            return "too_short" if msg.include?("too short")
+            return "too_long" if msg.include?("too long")
+            return "blank" if msg.include?("blank")
+            return "cant_be_equal_to_template" if msg.include?("template")
+
+            "invalid"
+          end
+          private_class_method :infer_code_from_message
+        end
 
         class NotImplemented < StandardError; end
 
@@ -70,15 +131,18 @@ module Decidim
 
               EXCEPTIONS.each do |exception_name, context|
                 rescue_from exception_name do |exception|
-                  render status: context[:status],
-                         json: {
-                           error: "#{context[:status]}: #{context[:message]}",
-                           error_description: if context[:status] == 400
-                                                exception.message
-                                              else
-                                                Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN", "1") == "1" ? "#{Rails.env}: #{exception.message}" : (context[:message]).to_s
-                                              end
-                         }.compact
+                  payload = {
+                    error: "#{context[:status]}: #{context[:message]}",
+                    error_description: if context[:status] == 400
+                                         exception.message
+                                       else
+                                         Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN", "1") == "1" ? "#{Rails.env}: #{exception.message}" : (context[:message]).to_s
+                                       end
+                  }
+                  if exception.respond_to?(:error_details) && exception.error_details.present?
+                    payload[:error_details] = exception.error_details
+                  end
+                  render status: context[:status], json: payload.compact
                 end
               end
             end

@@ -3,7 +3,7 @@
   "info": {
     "title": "API V1",
     "version": "0.3.8",
-    "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.  \n_current version: 0.3.8_\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant **Organizations**\nOne deployment hosts many **Organizations** (tenants by **`host`**).\n- The **`system` scope** endpoints apply in the context of the resolved organization\n- The request **`host`** selects which **Organization** you target.\n  For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations' OAuth applications.\n\n### Integrators\nStart with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).\n\nTypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).\n\n**Extended data** (client metadata on organizations, components, spaces, proposals, meetings): [https://octree-gva.github.io/decidim-rest-full/integrator/extended-data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).\n\nOutbound **webhook** events are listed under the **Webhooks** tag.\nManage registrations via `/webhook_registrations` (or System admin) and fetch example\npayloads from `GET /webhook_events/{event_type}`.\n"
+    "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.  \n_current version: 0.3.8_\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant **Organizations**\nOne deployment hosts many **Organizations** (tenants by **`host`**).\n- The **`system` scope** endpoints apply in the context of the resolved organization\n- The request **`host`** selects which **Organization** you target.\n  For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations' OAuth applications.\n\n### Integrators\nStart with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host \u2192 API client \u2192 token \u2192 first API call).\n\nTypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).\n\n**Extended data** (client metadata on organizations, components, spaces, proposals, meetings): [https://octree-gva.github.io/decidim-rest-full/integrator/extended-data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).\n\nOutbound **webhook** events are listed under the **Webhooks** tag.\nManage registrations via `/webhook_registrations` (or System admin) and fetch example\npayloads from `GET /webhook_events/{event_type}`.\n"
   },
   "servers": [
     {
@@ -38,7 +38,7 @@
     },
     {
       "name": "Organizations Extended Data",
-      "description": "Read organization `extended_data` and merge updates under a dot-path via sync (`PUT /organizations/{id}/extended_data/sync`). Supports recursive merge, dot paths (use `.` for the root), path creation, and clearing keys by setting them to null or empty—see the operation description for full examples. Requires `system` scopes as documented on each operation.\n\nOverview: [Extended data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).\n",
+      "description": "Read organization `extended_data` and merge updates under a dot-path via sync (`PUT /organizations/{id}/extended_data/sync`). Supports recursive merge, dot paths (use `.` for the root), path creation, and clearing keys by setting them to null or empty\u2014see the operation description for full examples. Requires `system` scopes as documented on each operation.\n\nOverview: [Extended data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).\n",
       "externalDocs": {
         "description": "Extended data integrator guide",
         "url": "https://octree-gva.github.io/decidim-rest-full/integrator/extended-data"
@@ -54,7 +54,7 @@
     },
     {
       "name": "Components",
-      "description": "Participatory-space **components** (`Decidim::Component`): modular features (proposals, blogs, meetings, surveys, …) attached to a space.\n\nUse **`GET /components/search`** to discover components by manifest, id, participatory space, or name—within the organization resolved from the request host.\n\nManifest-specific sub-resources (e.g. `proposal_components`, `blog_components`) expose typed settings for that feature.\n\n**Extended data**: `GET/PUT /components/{id}/extended_data` (+ `/sync`); filter with `filter[extended_data_cont]` on search. See [Extended data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).",
+      "description": "Participatory-space **components** (`Decidim::Component`): modular features (proposals, blogs, meetings, surveys, \u2026) attached to a space.\n\nUse **`GET /components/search`** to discover components by manifest, id, participatory space, or name\u2014within the organization resolved from the request host.\n\nManifest-specific sub-resources (e.g. `proposal_components`, `blog_components`) expose typed settings for that feature.\n\n**Extended data**: `GET/PUT /components/{id}/extended_data` (+ `/sync`); filter with `filter[extended_data_cont]` on search. See [Extended data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).",
       "externalDocs": {
         "description": "Extended data integrator guide",
         "url": "https://octree-gva.github.io/decidim-rest-full/integrator/extended-data"
@@ -66,15 +66,15 @@
     },
     {
       "name": "Attachments",
-      "description": "Manage **Decidim::Attachment** rows (files linked to proposals, spaces, etc.).\n\n**Create (mode A):** `POST /attachments` with `multipart/form-data` (`file`, `attached_to_type`, `attached_to_id`, translated `title` / `description`).\n\n**Create (mode B):** `POST /attachments/direct_upload` → use `signed_id` in `POST /attachments` (`application/json`).\n\n**Update:** metadata only (`PUT /attachments/{id}`) — no file replacement in v1.\n\n**List filters:** `filter[attached_to_type]`, `filter[attached_to_id]`, `filter[attachment_collection_id]`, `filter[file_type]` (`image`, `document`, `link`)."
+      "description": "Manage **Decidim::Attachment** rows (files linked to proposals, spaces, etc.).\n\n**Create (mode A):** `POST /attachments` with `multipart/form-data` (`file`, `attached_to_type`, `attached_to_id`, translated `title` / `description`).\n\n**Create (mode B):** `POST /attachments/direct_upload` \u2192 use `signed_id` in `POST /attachments` (`application/json`).\n\n**Update:** metadata only (`PUT /attachments/{id}`) \u2014 no file replacement in v1.\n\n**List filters:** `filter[attached_to_type]`, `filter[attached_to_id]`, `filter[attachment_collection_id]`, `filter[file_type]` (`image`, `document`, `link`)."
     },
     {
       "name": "Blogs",
-      "description": "Blog posts (`Decidim::Blogs::Post`) on components with the `:blogs` manifest.\n\n**Visibility** is driven by `published_at`, not a separate published flag:\n- `published_at` is `null` or in the **future** → the post is **not** shown in public index/show (unless you impersonate the author).\n- `published_at` in the **past** → the post is visible to readers with `blogs.read`.\n\n**Read**: `GET /blogs` and `GET /blogs/:id` (conditional caching on GET).\n\n**Write** (`blogs.write`): create and update posts (async by default; `POST /blogs/sync`, `PUT /blogs/:id/sync`). **Delete** (`blogs.destroy`): remove a post (`DELETE /blogs/:id`, async; `DELETE /blogs/:id/sync` inline)."
+      "description": "Blog posts (`Decidim::Blogs::Post`) on components with the `:blogs` manifest.\n\n**Visibility** is driven by `published_at`, not a separate published flag:\n- `published_at` is `null` or in the **future** \u2192 the post is **not** shown in public index/show (unless you impersonate the author).\n- `published_at` in the **past** \u2192 the post is visible to readers with `blogs.read`.\n\n**Read**: `GET /blogs` and `GET /blogs/:id` (conditional caching on GET).\n\n**Write** (`blogs.write`): create and update posts (async by default; `POST /blogs/sync`, `PUT /blogs/:id/sync`). **Delete** (`blogs.destroy`): remove a post (`DELETE /blogs/:id`, async; `DELETE /blogs/:id/sync` inline)."
     },
     {
       "name": "Forms",
-      "description": "Survey and questionnaire authoring backed by Decidim::Forms.\n\n**Questionnaire** (`Decidim::Forms::Questionnaire`) is the container: title, description, and terms of service. It belongs to a survey resource (e.g. `Decidim::Surveys::Survey`) via `questionnaire_for`.\n\n**Questions** (`Decidim::Forms::Question`) define rows in the questionnaire (`question_type`, `body`, `mandatory`, …). **Answer options** (`Decidim::Forms::AnswerOption`) belong to choice-style questions.\n\n**Participant flow**: answers are submitted as a bundle (`POST /answers` → `submission_requests/:id` for validation state). **Questionnaire responses** (`GET /questionnaire_responses/:id`) expose a read model of stored answers; admins can delete a response bundle.\n\n**Authoring** (credential token, `surveys.questions.manage`): mutate questionnaires, questions, and answer options. Default writes are **async** (`HTTP 202` + `GET /jobs/:uuid`); use `…/sync` routes for inline `200`/`201`.\n\n**Listing**: `GET /questionnaires` returns a JSON Forms projection for rendering; `GET /questions` and `GET /answers` require `filter[questionnaire_id]`."
+      "description": "Survey and questionnaire authoring backed by Decidim::Forms.\n\n**Questionnaire** (`Decidim::Forms::Questionnaire`) is the container: title, description, and terms of service. It belongs to a survey resource (e.g. `Decidim::Surveys::Survey`) via `questionnaire_for`.\n\n**Questions** (`Decidim::Forms::Question`) define rows in the questionnaire (`question_type`, `body`, `mandatory`, \u2026). **Answer options** (`Decidim::Forms::AnswerOption`) belong to choice-style questions.\n\n**Participant flow**: answers are submitted as a bundle (`POST /answers` \u2192 `submission_requests/:id` for validation state). **Questionnaire responses** (`GET /questionnaire_responses/:id`) expose a read model of stored answers; admins can delete a response bundle.\n\n**Authoring** (credential token, `surveys.questions.manage`): mutate questionnaires, questions, and answer options. Default writes are **async** (`HTTP 202` + `GET /jobs/:uuid`); use `\u2026/sync` routes for inline `200`/`201`.\n\n**Listing**: `GET /questionnaires` returns a JSON Forms projection for rendering; `GET /questions` and `GET /answers` require `filter[questionnaire_id]`."
     },
     {
       "name": "Meetings",
@@ -94,11 +94,11 @@
     },
     {
       "name": "Draft Proposals",
-      "description": "Unpublished proposals (`published_at` is `null`) tied to your OAuth application and impersonated participant.\n\n**One draft per component**: for a given proposals component and user, only a single draft may exist. Creating again returns `400` if a draft is already present.\n\n**Isolation from the Decidim UI**: drafts created or updated through this API are not editable in the web app, and drafts created in the UI are not visible here.\n\n**Lifecycle**: create → update (`meta.publishable`) → **publish** (`POST /draft_proposals/:id/publish`, async by default; `…/publish/sync` for inline publication) → the resource becomes a published proposal.\n\nRequires **impersonation** token (`proposals.draft`); service (client credentials) tokens cannot hold drafts."
+      "description": "Unpublished proposals (`published_at` is `null`) tied to your OAuth application and impersonated participant.\n\n**One draft per component**: for a given proposals component and user, only a single draft may exist. Creating again returns `400` if a draft is already present.\n\n**Isolation from the Decidim UI**: drafts created or updated through this API are not editable in the web app, and drafts created in the UI are not visible here.\n\n**Lifecycle**: create \u2192 update (`meta.publishable`) \u2192 **publish** (`POST /draft_proposals/:id/publish`, async by default; `\u2026/publish/sync` for inline publication) \u2192 the resource becomes a published proposal.\n\nRequires **impersonation** token (`proposals.draft`); service (client credentials) tokens cannot hold drafts."
     },
     {
       "name": "Jobs",
-      "description": "Durable records for **asynchronous API writes** (`decidim_rest_full_api_jobs`).\n\nWhen a mutating route returns **HTTP 202**, the body includes `job_id` (UUID). Poll **`GET /jobs/{id}`** without a Bearer token—the UUID is the capability—or list jobs with the **same OAuth application and resource owner** via **`GET /jobs`** (Bearer required).\n\nFilter the index with `filter[command_key]` (job name, e.g. `draft_proposals#create`) and `filter[status]` (`pending`, `processing`, `completed`, `failed`). Delete a job with **`DELETE /jobs/{id}`** (same OAuth context as the list)."
+      "description": "Durable records for **asynchronous API writes** (`decidim_rest_full_api_jobs`).\n\nWhen a mutating route returns **HTTP 202**, the body includes `job_id` (UUID). Poll **`GET /jobs/{id}`** without a Bearer token\u2014the UUID is the capability\u2014or list jobs with the **same OAuth application and resource owner** via **`GET /jobs`** (Bearer required).\n\nFilter the index with `filter[command_key]` (job name, e.g. `draft_proposals#create`) and `filter[status]` (`pending`, `processing`, `completed`, `failed`). Delete a job with **`DELETE /jobs/{id}`** (same OAuth context as the list)."
     },
     {
       "name": "Roles",
@@ -106,7 +106,7 @@
     },
     {
       "name": "Webhooks",
-      "description": "**Outbound HTTP callbacks** plus REST management of registrations.\n\n### Manage registrations\n- `GET|POST /webhook_registrations` — list / create (signing secret returned **only on create**)\n- `GET|PUT|DELETE /webhook_registrations/{id}` — show / update / destroy (scoped to the API client)\n- `GET /webhook_events/{event_type}` — canned example payload for typed clients\n\nSubscribe via this API or in **System admin → API clients → Webhooks**.\n\nVerify deliveries with `X-Webhook-Signature` (`v1=` + HMAC-SHA256 hex of `timestamp + \".\" + raw body`) and `X-Webhook-Timestamp`.\n\nPayload envelope: schema **WebhookDeliveryEnvelope** (discriminated on `type`).\n\n### Event catalog\n\n| Event | Scope | Permission | Payload | Trigger |\n|-------|-------|------------|---------|---------|\n| `draft_proposal_creation.succeeded` | `proposals` | `draft_proposal_creation.succeeded` | `draft_proposal` | Proposal lifecycle notification |\n| `draft_proposal_update.succeeded` | `proposals` | `draft_proposal_update.succeeded` | `draft_proposal` | Proposal lifecycle notification |\n| `meetings.upcoming_reminder.succeeded` | `meetings` | `meetings.upcoming_reminder.succeeded` | — | Upcoming meeting reminder |\n| `participatory_process.step_activated.succeeded` | `public` | `participatory_process.step_activated.succeeded` | `space` | Participatory process step (phase) activated |\n| `proposal_creation.succeeded` | `proposals` | `proposal_creation.succeeded` | `proposal` | Proposal lifecycle notification |\n| `proposal_state_change.succeeded` | `proposals` | `proposal_state_change.succeeded` | `proposal` | Proposal lifecycle notification |\n| `proposal_update.succeeded` | `proposals` | `proposal_update.succeeded` | `proposal` | Proposal lifecycle notification |\n| `system.organizations.created` | `system` | `system.organizations.created` | `organization` | Organization admin change |\n| `system.organizations.deleted` | `system` | `system.organizations.deleted` | `organization` | Organization admin change |\n| `system.organizations.updated` | `system` | `system.organizations.updated` | `organization` | Organization admin change |\n| `user.created` | `oauth` | `user.created` | `user` | User account change |\n| `user.updated` | `oauth` | `user.updated` | `user` | User account change |"
+      "description": "**Outbound HTTP callbacks** plus REST management of registrations.\n\n### Manage registrations\n- `GET|POST /webhook_registrations` \u2014 list / create (signing secret returned **only on create**)\n- `GET|PUT|DELETE /webhook_registrations/{id}` \u2014 show / update / destroy (scoped to the API client)\n- `GET /webhook_events/{event_type}` \u2014 canned example payload for typed clients\n\nSubscribe via this API or in **System admin \u2192 API clients \u2192 Webhooks**.\n\nVerify deliveries with `X-Webhook-Signature` (`v1=` + HMAC-SHA256 hex of `timestamp + \".\" + raw body`) and `X-Webhook-Timestamp`.\n\nPayload envelope: schema **WebhookDeliveryEnvelope** (discriminated on `type`).\n\n### Event catalog\n\n| Event | Scope | Permission | Payload | Trigger |\n|-------|-------|------------|---------|---------|\n| `draft_proposal_creation.succeeded` | `proposals` | `draft_proposal_creation.succeeded` | `draft_proposal` | Proposal lifecycle notification |\n| `draft_proposal_update.succeeded` | `proposals` | `draft_proposal_update.succeeded` | `draft_proposal` | Proposal lifecycle notification |\n| `meetings.upcoming_reminder.succeeded` | `meetings` | `meetings.upcoming_reminder.succeeded` | \u2014 | Upcoming meeting reminder |\n| `participatory_process.step_activated.succeeded` | `public` | `participatory_process.step_activated.succeeded` | `space` | Participatory process step (phase) activated |\n| `proposal_creation.succeeded` | `proposals` | `proposal_creation.succeeded` | `proposal` | Proposal lifecycle notification |\n| `proposal_state_change.succeeded` | `proposals` | `proposal_state_change.succeeded` | `proposal` | Proposal lifecycle notification |\n| `proposal_update.succeeded` | `proposals` | `proposal_update.succeeded` | `proposal` | Proposal lifecycle notification |\n| `system.organizations.created` | `system` | `system.organizations.created` | `organization` | Organization admin change |\n| `system.organizations.deleted` | `system` | `system.organizations.deleted` | `organization` | Organization admin change |\n| `system.organizations.updated` | `system` | `system.organizations.updated` | `organization` | Organization admin change |\n| `user.created` | `oauth` | `user.created` | `user` | User account change |\n| `user.updated` | `oauth` | `user.updated` | `user` | User account change |"
     }
   ],
   "components": {
@@ -943,6 +943,13 @@
           "error_description": {
             "type": "string",
             "description": "Human-readable detail; for many 4xx responses this is the validation or exception message."
+          },
+          "error_details": {
+            "type": "array",
+            "description": "Machine-readable validation errors when present (e.g. draft proposal update/publish). One entry per ActiveModel error.",
+            "items": {
+              "$ref": "#/components/schemas/error_detail"
+            }
           },
           "state": {
             "type": "string",
@@ -6777,6 +6784,28 @@
             "user.updated": "#/components/schemas/wh_user_updated"
           }
         }
+      },
+      "error_detail": {
+        "type": "object",
+        "title": "API error detail",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable ActiveModel error type (e.g. `blank`, `too_short`, `too_much_caps`)."
+          },
+          "field": {
+            "type": "string",
+            "description": "Attribute name when the error targets a request field (e.g. `title`, `body`)."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable full message for this single validation error."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "code"
+        ]
       }
     }
   },
@@ -9132,7 +9161,7 @@
           "Webhooks"
         ],
         "operationId": "createWebhookRegistration",
-        "description": "Create a webhook registration for the current API client.\nThe signing secret is returned **only in this response** — store it to verify HMAC signatures.\nSubscriptions must be event permissions already granted on the API client.\n",
+        "description": "Create a webhook registration for the current API client.\nThe signing secret is returned **only in this response** \u2014 store it to verify HMAC signatures.\nSubscriptions must be event permissions already granted on the API client.\n",
         "parameters": [
           {
             "name": "Authorization",
@@ -9648,7 +9677,7 @@
           "Users"
         ],
         "operationId": "signInWithMagicLink",
-        "description": "Challenge given token, open a session and redirect. **Browser-only** — not intended for server-side SDK clients; use `generateMagicLink` and send users the URL instead.\n\nMarked for documentation only; TypeScript clients should not call this operation.\n",
+        "description": "Challenge given token, open a session and redirect. **Browser-only** \u2014 not intended for server-side SDK clients; use `generateMagicLink` and send users the URL instead.\n\nMarked for documentation only; TypeScript clients should not call this operation.\n",
         "parameters": [
           {
             "name": "magic_token",
@@ -11299,7 +11328,7 @@
                             "participatory_space_type": "Decidim::Assembly",
                             "title": {
                               "en": "My assembly for testing purpose",
-                              "fr": "c'est une assemblée"
+                              "fr": "c'est une assembl\u00e9e"
                             },
                             "subtitle": {
                               "en": "<script>alert(\"assembly_subtitle\");</script> Beatae quis et. 30644",
@@ -12474,7 +12503,7 @@
                             "participatory_space_type": "Decidim::Assembly",
                             "title": {
                               "en": "My assembly for testing purpose",
-                              "fr": "c'est une assemblée"
+                              "fr": "c'est une assembl\u00e9e"
                             },
                             "subtitle": {
                               "en": "<script>alert(\"assembly_subtitle\");</script> Ab est amet. 35264",
@@ -12619,7 +12648,7 @@
                             "participatory_space_type": "Decidim::Assembly",
                             "title": {
                               "en": "My assembly for testing purpose",
-                              "fr": "c'est une assemblée"
+                              "fr": "c'est une assembl\u00e9e"
                             },
                             "subtitle": {
                               "en": "<script>alert(\"assembly_subtitle\");</script> Repudiandae et voluptatem. 42092",
@@ -12965,7 +12994,7 @@
                             "participatory_space_type": "Decidim::Assembly",
                             "title": {
                               "en": "My assembly for testing purpose",
-                              "fr": "c'est une assemblée"
+                              "fr": "c'est une assembl\u00e9e"
                             },
                             "subtitle": {
                               "en": "<script>alert(\"assembly_subtitle\");</script> Aut ut voluptatem. 33446",
@@ -15701,202 +15730,6 @@
       }
     },
     "/draft_proposals/{id}/sync": {
-      "delete": {
-        "summary": "Withdraw a draft proposal",
-        "tags": [
-          "Draft Proposals"
-        ],
-        "operationId": "withdrawDraftProposal",
-        "description": "Withdraw (delete) a draft proposal. This action cannot be undone.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "integer",
-              "description": "Draft Id"
-            },
-            "required": true
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "required": false,
-            "description": "Bearer access token (see security schemes)"
-          }
-        ],
-        "security": [
-          {
-            "resourceOwnerFlowBearer": [
-              "proposals"
-            ]
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Draft proposal Removed",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "ok": {
-                    "value": {
-                      "data": {
-                        "id": "2044",
-                        "type": "draft_proposal",
-                        "attributes": {
-                          "created_at": "2026-09-29T22:18:23Z",
-                          "updated_at": "2026-09-29T22:18:24Z",
-                          "title": {
-                            "fr": "<script>alert(\"proposal_title\");</script> Inventore atque nobis. 55748"
-                          },
-                          "body": {
-                            "fr": "<p><script>alert(\"proposal_body\");</script> Aliquam dolore voluptas. 55751</p>"
-                          },
-                          "errors": {
-                            "title": [],
-                            "body": []
-                          }
-                        },
-                        "relationships": {
-                          "space": {
-                            "data": {
-                              "id": "1497",
-                              "type": "participatory_processes"
-                            }
-                          },
-                          "component": {
-                            "data": {
-                              "id": "3834",
-                              "type": "proposal_component"
-                            }
-                          },
-                          "author": {
-                            "data": {
-                              "id": "3296",
-                              "type": "user"
-                            }
-                          },
-                          "coauthors": {
-                            "data": [
-                              {
-                                "id": "3296",
-                                "type": "user"
-                              }
-                            ],
-                            "meta": {
-                              "count": 1
-                            }
-                          }
-                        },
-                        "links": {
-                          "related": {
-                            "href": "https://567.lvh.me/public/components/3834",
-                            "title": "<script>alert(\"component_name\");</script> Eum debitis necessitatibus. 55738",
-                            "rel": "resource",
-                            "meta": {
-                              "space_id": "1497",
-                              "space_manifest": "participatory_processes",
-                              "component_id": "3834",
-                              "component_manifest": "proposals",
-                              "action_method": "GET"
-                            }
-                          },
-                          "self": {
-                            "href": "https://567.lvh.me/api/rest_full/v0.3/proposals/2044",
-                            "title": "Proposals Details",
-                            "rel": "resource",
-                            "meta": {
-                              "component_id": "3834",
-                              "component_manifest": "proposals",
-                              "space_id": "1497",
-                              "space_manifest": "participatory_processes",
-                              "resource_id": "2044",
-                              "action_method": "GET"
-                            }
-                          },
-                          "collection": {
-                            "href": "https://567.lvh.me/api/rest_full/v0.3/proposals",
-                            "title": "Proposals List",
-                            "rel": "resource",
-                            "meta": {
-                              "component_id": "3834",
-                              "component_manifest": "proposals",
-                              "space_id": "1497",
-                              "space_manifest": "participatory_processes",
-                              "resource_id": "2044",
-                              "action_method": "GET"
-                            }
-                          }
-                        },
-                        "meta": {
-                          "publishable": false,
-                          "client_id": "95U0cGHDdzoQQGFwookLxkYB2dERjVVUKaeTnifNRRM",
-                          "fields": [
-                            "title",
-                            "body"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/draft_proposal_item_response"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "not_found": {
-                    "value": {
-                      "error": "404: Resource not found",
-                      "error_description": "Resource not found"
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error_response"
-                },
-                "examples": {
-                  "forbidden_impersonationFlow": {
-                    "value": {
-                      "error": "403: Forbidden",
-                      "error_description": "Forbidden"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "put": {
         "summary": "Update draft proposal",
         "tags": [
@@ -15955,115 +15788,14 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "ok_empty": {
-                    "value": {
-                      "data": {
-                        "id": "3237",
-                        "type": "draft_proposal",
-                        "attributes": {
-                          "created_at": "2026-09-29T22:32:21Z",
-                          "updated_at": "2026-09-29T22:32:21Z",
-                          "title": {},
-                          "body": {},
-                          "errors": {
-                            "title": [
-                              "Title cannot be blank"
-                            ],
-                            "body": [
-                              "Body cannot be blank"
-                            ]
-                          }
-                        },
-                        "relationships": {
-                          "space": {
-                            "data": {
-                              "id": "2195",
-                              "type": "participatory_processes"
-                            }
-                          },
-                          "component": {
-                            "data": {
-                              "id": "5849",
-                              "type": "proposal_component"
-                            }
-                          },
-                          "author": {
-                            "data": {
-                              "id": "5055",
-                              "type": "user"
-                            }
-                          },
-                          "coauthors": {
-                            "data": [
-                              {
-                                "id": "5055",
-                                "type": "user"
-                              }
-                            ],
-                            "meta": {
-                              "count": 1
-                            }
-                          }
-                        },
-                        "links": {
-                          "related": {
-                            "href": "https://1857.lvh.me/public/components/5849",
-                            "title": "<script>alert(\"component_name\");</script> Nobis et optio. 185358",
-                            "rel": "resource",
-                            "meta": {
-                              "space_id": "2195",
-                              "space_manifest": "participatory_processes",
-                              "component_id": "5849",
-                              "component_manifest": "proposals",
-                              "action_method": "GET"
-                            }
-                          },
-                          "self": {
-                            "href": "https://1857.lvh.me/api/rest_full/v0.3/proposals/3237",
-                            "title": "Proposals Details",
-                            "rel": "resource",
-                            "meta": {
-                              "component_id": "5849",
-                              "component_manifest": "proposals",
-                              "space_id": "2195",
-                              "space_manifest": "participatory_processes",
-                              "resource_id": "3237",
-                              "action_method": "GET"
-                            }
-                          },
-                          "collection": {
-                            "href": "https://1857.lvh.me/api/rest_full/v0.3/proposals",
-                            "title": "Proposals List",
-                            "rel": "resource",
-                            "meta": {
-                              "component_id": "5849",
-                              "component_manifest": "proposals",
-                              "space_id": "2195",
-                              "space_manifest": "participatory_processes",
-                              "resource_id": "3237",
-                              "action_method": "GET"
-                            }
-                          }
-                        },
-                        "meta": {
-                          "publishable": false,
-                          "client_id": "mhaNJ7uwtuHXMsPEZ-DEp0iZG-Lk-NH5wHnkF9HxPi4",
-                          "fields": [
-                            "title",
-                            "body"
-                          ]
-                        }
-                      }
-                    }
-                  },
                   "ok": {
                     "value": {
                       "data": {
-                        "id": "3238",
+                        "id": "3280",
                         "type": "draft_proposal",
                         "attributes": {
-                          "created_at": "2026-09-29T22:32:22Z",
-                          "updated_at": "2026-09-29T22:32:23Z",
+                          "created_at": "2026-09-30T22:20:18Z",
+                          "updated_at": "2026-09-30T22:20:18Z",
                           "title": {
                             "fr": "This is a valid proposal title sample"
                           },
@@ -16080,26 +15812,26 @@
                         "relationships": {
                           "space": {
                             "data": {
-                              "id": "2196",
+                              "id": "2240",
                               "type": "participatory_processes"
                             }
                           },
                           "component": {
                             "data": {
-                              "id": "5850",
+                              "id": "5894",
                               "type": "proposal_component"
                             }
                           },
                           "author": {
                             "data": {
-                              "id": "5056",
+                              "id": "5098",
                               "type": "user"
                             }
                           },
                           "coauthors": {
                             "data": [
                               {
-                                "id": "5056",
+                                "id": "5098",
                                 "type": "user"
                               }
                             ],
@@ -16110,47 +15842,251 @@
                         },
                         "links": {
                           "related": {
-                            "href": "https://1858.lvh.me/public/components/5850",
-                            "title": "<script>alert(\"component_name\");</script> Aut cupiditate dicta. 185422",
+                            "href": "https://2.lvh.me/public/components/5894",
+                            "title": "<script>alert(\"component_name\");</script> Quia quas repudiandae. 108",
                             "rel": "resource",
                             "meta": {
-                              "space_id": "2196",
+                              "space_id": "2240",
                               "space_manifest": "participatory_processes",
-                              "component_id": "5850",
+                              "component_id": "5894",
                               "component_manifest": "proposals",
                               "action_method": "GET"
                             }
                           },
                           "self": {
-                            "href": "https://1858.lvh.me/api/rest_full/v0.3/proposals/3238",
+                            "href": "https://2.lvh.me/api/rest_full/v0.3/proposals/3280",
                             "title": "Proposals Details",
                             "rel": "resource",
                             "meta": {
-                              "component_id": "5850",
+                              "component_id": "5894",
                               "component_manifest": "proposals",
-                              "space_id": "2196",
+                              "space_id": "2240",
                               "space_manifest": "participatory_processes",
-                              "resource_id": "3238",
+                              "resource_id": "3280",
                               "action_method": "GET"
                             }
                           },
                           "collection": {
-                            "href": "https://1858.lvh.me/api/rest_full/v0.3/proposals",
+                            "href": "https://2.lvh.me/api/rest_full/v0.3/proposals",
                             "title": "Proposals List",
                             "rel": "resource",
                             "meta": {
-                              "component_id": "5850",
+                              "component_id": "5894",
                               "component_manifest": "proposals",
-                              "space_id": "2196",
+                              "space_id": "2240",
                               "space_manifest": "participatory_processes",
-                              "resource_id": "3238",
+                              "resource_id": "3280",
                               "action_method": "GET"
                             }
                           }
                         },
                         "meta": {
                           "publishable": false,
-                          "client_id": "uXQonwjAjBOcFTTlCyw3NlWksf9qrnx0bg1wrS-iPPk",
+                          "client_id": "FaQhpEQxEtsbr3tjwoKwH11f1ir3uv8HGb9HFruSR-U",
+                          "fields": [
+                            "title",
+                            "body"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "ok_empty": {
+                    "value": {
+                      "data": {
+                        "id": "3281",
+                        "type": "draft_proposal",
+                        "attributes": {
+                          "created_at": "2026-09-30T22:20:18Z",
+                          "updated_at": "2026-09-30T22:20:18Z",
+                          "title": {},
+                          "body": {},
+                          "errors": {
+                            "title": [
+                              "Title cannot be blank"
+                            ],
+                            "body": [
+                              "Body cannot be blank"
+                            ]
+                          }
+                        },
+                        "relationships": {
+                          "space": {
+                            "data": {
+                              "id": "2241",
+                              "type": "participatory_processes"
+                            }
+                          },
+                          "component": {
+                            "data": {
+                              "id": "5895",
+                              "type": "proposal_component"
+                            }
+                          },
+                          "author": {
+                            "data": {
+                              "id": "5099",
+                              "type": "user"
+                            }
+                          },
+                          "coauthors": {
+                            "data": [
+                              {
+                                "id": "5099",
+                                "type": "user"
+                              }
+                            ],
+                            "meta": {
+                              "count": 1
+                            }
+                          }
+                        },
+                        "links": {
+                          "related": {
+                            "href": "https://3.lvh.me/public/components/5895",
+                            "title": "<script>alert(\"component_name\");</script> Laboriosam sunt quia. 172",
+                            "rel": "resource",
+                            "meta": {
+                              "space_id": "2241",
+                              "space_manifest": "participatory_processes",
+                              "component_id": "5895",
+                              "component_manifest": "proposals",
+                              "action_method": "GET"
+                            }
+                          },
+                          "self": {
+                            "href": "https://3.lvh.me/api/rest_full/v0.3/proposals/3281",
+                            "title": "Proposals Details",
+                            "rel": "resource",
+                            "meta": {
+                              "component_id": "5895",
+                              "component_manifest": "proposals",
+                              "space_id": "2241",
+                              "space_manifest": "participatory_processes",
+                              "resource_id": "3281",
+                              "action_method": "GET"
+                            }
+                          },
+                          "collection": {
+                            "href": "https://3.lvh.me/api/rest_full/v0.3/proposals",
+                            "title": "Proposals List",
+                            "rel": "resource",
+                            "meta": {
+                              "component_id": "5895",
+                              "component_manifest": "proposals",
+                              "space_id": "2241",
+                              "space_manifest": "participatory_processes",
+                              "resource_id": "3281",
+                              "action_method": "GET"
+                            }
+                          }
+                        },
+                        "meta": {
+                          "publishable": false,
+                          "client_id": "IJLzYg5UioLkGCVLhhYJVom7a5jmA-iLDlvvv-4Ao0s",
+                          "fields": [
+                            "title",
+                            "body"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "ok_update_body": {
+                    "value": {
+                      "data": {
+                        "id": "3282",
+                        "type": "draft_proposal",
+                        "attributes": {
+                          "created_at": "2026-09-30T22:20:19Z",
+                          "updated_at": "2026-09-30T22:20:19Z",
+                          "title": {
+                            "fr": ""
+                          },
+                          "body": {
+                            "fr": "I am quiet a valid proposal, with one sentence that is long enough to be valid I think."
+                          },
+                          "errors": {
+                            "title": [
+                              "Title cannot be blank"
+                            ],
+                            "body": []
+                          }
+                        },
+                        "relationships": {
+                          "space": {
+                            "data": {
+                              "id": "2242",
+                              "type": "participatory_processes"
+                            }
+                          },
+                          "component": {
+                            "data": {
+                              "id": "5896",
+                              "type": "proposal_component"
+                            }
+                          },
+                          "author": {
+                            "data": {
+                              "id": "5100",
+                              "type": "user"
+                            }
+                          },
+                          "coauthors": {
+                            "data": [
+                              {
+                                "id": "5100",
+                                "type": "user"
+                              }
+                            ],
+                            "meta": {
+                              "count": 1
+                            }
+                          }
+                        },
+                        "links": {
+                          "related": {
+                            "href": "https://4.lvh.me/public/components/5896",
+                            "title": "<script>alert(\"component_name\");</script> Quia quas officiis. 236",
+                            "rel": "resource",
+                            "meta": {
+                              "space_id": "2242",
+                              "space_manifest": "participatory_processes",
+                              "component_id": "5896",
+                              "component_manifest": "proposals",
+                              "action_method": "GET"
+                            }
+                          },
+                          "self": {
+                            "href": "https://4.lvh.me/api/rest_full/v0.3/proposals/3282",
+                            "title": "Proposals Details",
+                            "rel": "resource",
+                            "meta": {
+                              "component_id": "5896",
+                              "component_manifest": "proposals",
+                              "space_id": "2242",
+                              "space_manifest": "participatory_processes",
+                              "resource_id": "3282",
+                              "action_method": "GET"
+                            }
+                          },
+                          "collection": {
+                            "href": "https://4.lvh.me/api/rest_full/v0.3/proposals",
+                            "title": "Proposals List",
+                            "rel": "resource",
+                            "meta": {
+                              "component_id": "5896",
+                              "component_manifest": "proposals",
+                              "space_id": "2242",
+                              "space_manifest": "participatory_processes",
+                              "resource_id": "3282",
+                              "action_method": "GET"
+                            }
+                          }
+                        },
+                        "meta": {
+                          "publishable": false,
+                          "client_id": "aX6issx_s4bbL7_cc4dJKXvtFw9QiGgmz-P9SXsozTE",
                           "fields": [
                             "title",
                             "body"
@@ -16166,8 +16102,8 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -16176,10 +16112,105 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
+                "examples": {
+                  "bad_request_title_too_much_caps": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title Is using too many capital letters (over 25% of the text)",
+                      "error_details": [
+                        {
+                          "code": "too_much_caps",
+                          "field": "title",
+                          "description": "Title Is using too many capital letters (over 25% of the text)"
+                        }
+                      ]
+                    }
+                  },
+                  "bad_request_title_too_long": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title is too long (maximum is 150 characters)",
+                      "error_details": [
+                        {
+                          "code": "too_long",
+                          "field": "title",
+                          "description": "Title is too long (maximum is 150 characters)"
+                        }
+                      ]
+                    }
+                  },
+                  "bad_request_title_and_body_multi": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title Is using too many capital letters (over 25% of the text). Title is too short (under 15 characters). Body must start with a capital letter. Body is too short (under 15 characters)",
+                      "error_details": [
+                        {
+                          "code": "too_much_caps",
+                          "field": "title",
+                          "description": "Title Is using too many capital letters (over 25% of the text)"
+                        },
+                        {
+                          "code": "too_short",
+                          "field": "title",
+                          "description": "Title is too short (under 15 characters)"
+                        },
+                        {
+                          "code": "must_start_with_caps",
+                          "field": "body",
+                          "description": "Body must start with a capital letter"
+                        },
+                        {
+                          "code": "too_short",
+                          "field": "body",
+                          "description": "Body is too short (under 15 characters)"
+                        }
+                      ]
+                    }
+                  },
+                  "bad_request_title_blank": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title cannot be blank",
+                      "error_details": [
+                        {
+                          "code": "blank",
+                          "field": "title",
+                          "description": "Title cannot be blank"
+                        }
+                      ]
+                    }
+                  },
+                  "bad_request_title_must_start_with_caps": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title must start with a capital letter",
+                      "error_details": [
+                        {
+                          "code": "must_start_with_caps",
+                          "field": "title",
+                          "description": "Title must start with a capital letter"
+                        }
+                      ]
+                    }
+                  },
+                  "bad_request_title_too_short": {
+                    "value": {
+                      "error": "400: Bad request",
+                      "error_description": "Title is too short (under 15 characters)",
+                      "error_details": [
+                        {
+                          "code": "too_short",
+                          "field": "title",
+                          "description": "Title is too short (under 15 characters)"
+                        }
+                      ]
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/error_response"
                 }
@@ -17551,7 +17582,7 @@
                             "participatory_space_type": "Decidim::Assembly",
                             "title": {
                               "en": "My assembly for testing purpose",
-                              "fr": "c'est une assemblée"
+                              "fr": "c'est une assembl\u00e9e"
                             },
                             "subtitle": {
                               "en": "<script>alert(\"assembly_subtitle\");</script> Nam enim corrupti. 99157",
@@ -31626,7 +31657,7 @@
                           "participatory_space_type": "Decidim::Assembly",
                           "title": {
                             "en": "My assembly for testing purpose",
-                            "fr": "c'est une assemblée"
+                            "fr": "c'est une assembl\u00e9e"
                           },
                           "subtitle": {
                             "en": "<script>alert(\"assembly_subtitle\");</script> Sed et quo. 162597",
