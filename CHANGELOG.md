@@ -9,10 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Avoid `NameError: uninitialized constant Decidim::ApplicationMailer` on cold boot
-  (`deface:precompile` / environment load) caused by a circular load with
-  `devise_invitable`'s `on_load(:action_mailer)` when including
-  `ApplicationMailerOverride` in `config.to_prepare`.
+- Avoid `NameError` on cold boot with `devise_invitable` >= 2.0.13 by preloading
+  `ActionMailer::Base` before `to_prepare` (so invitable's `on_load(:action_mailer)`
+  does not race `Decidim::ApplicationMailer` definition).
 
 ## [0.3.8] - 2026-09-29
 

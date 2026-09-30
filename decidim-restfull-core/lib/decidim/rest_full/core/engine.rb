@@ -31,6 +31,14 @@ module Decidim
           app.config.session_store :active_record_store
         end
 
+        # devise_invitable >= 2.0.13 registers on_load(:action_mailer) in to_prepare and
+        # then calls Devise.mailer. If ActionMailer is first loaded from ApplicationMailer
+        # during that same prepare pass, DecidimDeviseMailer ↔ ApplicationMailer circularizes.
+        # Load ActionMailer before prepare so invitable's hook runs against a settled stack.
+        initializer "rest_full.preload_action_mailer", before: :run_prepare_callbacks do
+          require "action_mailer/base"
+        end
+
         config.to_prepare do
           Decidim::Organization.include(Decidim::RestFull::OrganizationClientIdsOverride)
 
@@ -39,18 +47,6 @@ module Decidim
           ::Doorkeeper::TokensController.include(Decidim::RestFull::Core::ApiException::Handler)
           ::Doorkeeper::TokensController.include(Decidim::RestFull::Core::TokensAvailability)
 
-          # Cold boot (e.g. deface:precompile) can hit a circular constant load:
-          # ApplicationMailer → ActionMailer → devise_invitable on_load(:action_mailer) →
-          # ::Devise.mailer → DecidimDeviseMailer < ApplicationMailer (still opening).
-          # Preload ActionMailer with a safe Devise.mailer so invitable hooks finish first.
-          # Use ::Devise (bare Devise resolves to Decidim::Devise inside this module).
-          previous_mailer = ::Devise.mailer
-          begin
-            ::Devise.mailer = "ActionMailer::Base"
-            require "action_mailer/base"
-          ensure
-            ::Devise.mailer = previous_mailer
-          end
           ::Decidim::ApplicationMailer.include(Decidim::RestFull::ApplicationMailerOverride)
           ::Decidim::System::UpdateOrganizationForm.include(Decidim::RestFull::UpdateOrganizationFormOverride)
           ::Decidim::System::UpdateOrganization.include(Decidim::RestFull::UpdateOrganizationCommandOverride)
