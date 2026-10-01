@@ -114,38 +114,63 @@ module Decidim
         class NotFound < StandardError; end
 
         module Handler
+          module_function
+
           def self.included(klass)
             klass.class_eval do
               rescue_from StandardError do |exception|
                 render status: :internal_server_error,
-                       json: {
-                         error: "Server error",
-                         error_description: if Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN",
-                                                                            "1") == "1"
-                                              "Internal Server Error (#{Rails.env}: #{exception.message || "unknown"})"
-                                            else
-                                              "Internal Server Error"
-                                            end
-                       }.compact
+                       json: Decidim::RestFull::Core::ApiException::Handler.server_error_payload(exception)
               end
 
               EXCEPTIONS.each do |exception_name, context|
                 rescue_from exception_name do |exception|
-                  payload = {
-                    error: "#{context[:status]}: #{context[:message]}",
-                    error_description: if context[:status] == 400
-                                         exception.message
-                                       else
-                                         Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN", "1") == "1" ? "#{Rails.env}: #{exception.message}" : (context[:message]).to_s
-                                       end
-                  }
-                  if exception.respond_to?(:error_details) && exception.error_details.present?
-                    payload[:error_details] = exception.error_details
-                  end
-                  render status: context[:status], json: payload.compact
+                  render status: context[:status],
+                         json: Decidim::RestFull::Core::ApiException::Handler.mapped_error_payload(exception, context)
                 end
               end
             end
+          end
+
+          def server_error_payload(exception)
+            {
+              error: "Server error",
+              error_description: server_error_description(exception)
+            }.compact
+          end
+
+          def mapped_error_payload(exception, context)
+            {
+              error: "#{context[:status]}: #{context[:message]}",
+              error_description: mapped_error_description(exception, context),
+              error_details: error_details_for(exception)
+            }.compact
+          end
+
+          def server_error_description(exception)
+            if swagger_dry_run?
+              "Internal Server Error (#{Rails.env}: #{exception.message || "unknown"})"
+            else
+              "Internal Server Error"
+            end
+          end
+
+          def mapped_error_description(exception, context)
+            return exception.message if context[:status] == 400
+            return "#{Rails.env}: #{exception.message}" if swagger_dry_run?
+
+            context[:message].to_s
+          end
+
+          def error_details_for(exception)
+            return unless exception.respond_to?(:error_details)
+            return if exception.error_details.blank?
+
+            exception.error_details
+          end
+
+          def swagger_dry_run?
+            Rails.env.test? && ENV.fetch("SWAGGER_DRY_RUN", "1") == "1"
           end
         end
       end

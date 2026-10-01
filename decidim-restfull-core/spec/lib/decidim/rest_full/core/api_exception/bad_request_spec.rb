@@ -8,6 +8,7 @@ module Decidim
       module ApiExceptionBadRequestSpec
         class SampleForm
           include ActiveModel::Model
+
           attr_accessor :title, :body
 
           validates :title, :body, presence: true

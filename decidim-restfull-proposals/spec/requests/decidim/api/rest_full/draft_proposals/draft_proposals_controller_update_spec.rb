@@ -180,7 +180,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
           end
 
           context "when title is too long" do
-            let(:body) { { data: { title: "A#{'b' * 150}" } } } # 151 chars, etiquette-clean
+            let(:body) { { data: { title: "A#{"b" * 150}" } } } # 151 chars, etiquette-clean
 
             run_test!(example_name: :bad_request_title_too_long) do |example|
               data = JSON.parse(example.body)
