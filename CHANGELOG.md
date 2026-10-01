@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Draft proposal update/publish 400 responses may include `error_details`
+  (`code`, `field`, `description`) derived from ActiveModel errors, while keeping
+  joined `error_description` for compatibility.
+
 ### Fixed
 
 - Avoid `NameError` on cold boot with `devise_invitable` >= 2.0.13 by preloading

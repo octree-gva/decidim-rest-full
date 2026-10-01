@@ -104,7 +104,7 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
               create(:proposal, component: proposal_component, published_at: Time.now.utc, users: [user])
             end
 
-            run_test!(:bad_request_limit_reached) do |example|
+            run_test!(example_name: :bad_request_limit_reached) do |example|
               error_description = JSON.parse(example.body)["error_description"]
               expect(error_description).to include("you have exceeded the limit.")
             end

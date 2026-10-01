@@ -2270,6 +2270,31 @@ export interface DraftPropositionMetadata {
 /**
  *
  * @export
+ * @interface ErrorDetail
+ */
+export interface ErrorDetail {
+  /**
+   * Stable ActiveModel error type (e.g. `blank`, `too_short`, `too_much_caps`).
+   * @type {string}
+   * @memberof ErrorDetail
+   */
+  code: string;
+  /**
+   * Attribute name when the error targets a request field (e.g. `title`, `body`).
+   * @type {string}
+   * @memberof ErrorDetail
+   */
+  field?: string;
+  /**
+   * Human-readable full message for this single validation error.
+   * @type {string}
+   * @memberof ErrorDetail
+   */
+  description?: string;
+}
+/**
+ *
+ * @export
  * @interface FormsCollectionMeta
  */
 export interface FormsCollectionMeta {
@@ -3767,6 +3792,12 @@ export interface ModelError {
    * @memberof ModelError
    */
   error_description: string;
+  /**
+   * Machine-readable validation errors when present (e.g. draft proposal update/publish). One entry per ActiveModel error.
+   * @type {Array<ErrorDetail>}
+   * @memberof ModelError
+   */
+  error_details?: Array<ErrorDetail>;
   /**
    * Optional OAuth layer hint present on some token errors (e.g. `unauthorized`).
    * @type {string}
@@ -6727,13 +6758,13 @@ export interface RoleItemResponse {
 /**
  *
  * @export
- * @interface SetComponentExtendedDataRequest
+ * @interface SetProposalExtendedDataRequest
  */
-export interface SetComponentExtendedDataRequest {
+export interface SetProposalExtendedDataRequest {
   /**
    *
    * @type {{ [key: string]: any; }}
-   * @memberof SetComponentExtendedDataRequest
+   * @memberof SetProposalExtendedDataRequest
    */
   data: { [key: string]: any };
 }
@@ -11196,7 +11227,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11204,7 +11235,7 @@ export const ComponentsApiAxiosParamCreator = function (
     setComponentExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -11212,11 +11243,11 @@ export const ComponentsApiAxiosParamCreator = function (
       assertParamExists("setComponentExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setComponentExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setProposalExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setComponentExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setProposalExtendedDataRequest",
+        setProposalExtendedDataRequest,
       );
       const localVarPath = `/components/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -11260,7 +11291,7 @@ export const ComponentsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setProposalExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -11867,7 +11898,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11875,7 +11906,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     async setComponentExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -11888,7 +11919,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setComponentExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setProposalExtendedDataRequest,
           authorization,
           options,
         );
@@ -12204,7 +12235,7 @@ export const ComponentsApiFactory = function (
         .setComponentExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setProposalExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -12937,10 +12968,10 @@ export interface ComponentsApiSetComponentExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetProposalExtendedDataRequest}
    * @memberof ComponentsApiSetComponentExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setProposalExtendedDataRequest: SetProposalExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -13271,7 +13302,7 @@ export class ComponentsApi extends BaseAPI {
       .setComponentExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setProposalExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -17003,7 +17034,7 @@ export const MeetingsApiAxiosParamCreator = function (
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17011,7 +17042,7 @@ export const MeetingsApiAxiosParamCreator = function (
     setMeetingExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -17019,11 +17050,11 @@ export const MeetingsApiAxiosParamCreator = function (
       assertParamExists("setMeetingExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setMeetingExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setProposalExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setMeetingExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setProposalExtendedDataRequest",
+        setProposalExtendedDataRequest,
       );
       const localVarPath = `/meetings/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -17067,7 +17098,7 @@ export const MeetingsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setProposalExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -17192,7 +17223,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17200,7 +17231,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
     async setMeetingExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -17213,7 +17244,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setMeetingExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setProposalExtendedDataRequest,
           authorization,
           options,
         );
@@ -17306,7 +17337,7 @@ export const MeetingsApiFactory = function (
         .setMeetingExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setProposalExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -17442,10 +17473,10 @@ export interface MeetingsApiSetMeetingExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetProposalExtendedDataRequest}
    * @memberof MeetingsApiSetMeetingExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setProposalExtendedDataRequest: SetProposalExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -17529,7 +17560,7 @@ export class MeetingsApi extends BaseAPI {
       .setMeetingExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setProposalExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -17576,8 +17607,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17694,8 +17725,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17771,8 +17802,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17839,8 +17870,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create an OAuth token for the given scopes (password or client_credentials grant).
-   * @summary Request an OAuth token (ROPC)
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -19771,7 +19802,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19779,7 +19810,7 @@ export const ProposalsApiAxiosParamCreator = function (
     setProposalExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -19787,11 +19818,11 @@ export const ProposalsApiAxiosParamCreator = function (
       assertParamExists("setProposalExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setProposalExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setProposalExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setProposalExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setProposalExtendedDataRequest",
+        setProposalExtendedDataRequest,
       );
       const localVarPath = `/proposals/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -19835,7 +19866,7 @@ export const ProposalsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setProposalExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -19874,7 +19905,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       (
         axios?: AxiosInstance,
         basePath?: string,
-      ) => AxiosPromise<VoteProposalItemResponse>
+      ) => AxiosPromise<ProposalItemResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.castProposalVote(
@@ -20355,7 +20386,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -20363,7 +20394,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
     async setProposalExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -20376,7 +20407,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setProposalExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setProposalExtendedDataRequest,
           authorization,
           options,
         );
@@ -20417,7 +20448,7 @@ export const ProposalsApiFactory = function (
     castProposalVote(
       requestParameters: ProposalsApiCastProposalVoteRequest,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<VoteProposalItemResponse> {
+    ): AxiosPromise<ProposalItemResponse> {
       return localVarFp
         .castProposalVote(
           requestParameters.voteProposalCreateBody,
@@ -20642,7 +20673,7 @@ export const ProposalsApiFactory = function (
         .setProposalExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setProposalExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -21317,10 +21348,10 @@ export interface ProposalsApiSetProposalExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetProposalExtendedDataRequest}
    * @memberof ProposalsApiSetProposalExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setProposalExtendedDataRequest: SetProposalExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -21589,7 +21620,7 @@ export class ProposalsApi extends BaseAPI {
       .setProposalExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setProposalExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -23401,7 +23432,7 @@ export const SpacesApiAxiosParamCreator = function (
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -23409,7 +23440,7 @@ export const SpacesApiAxiosParamCreator = function (
     setSpaceExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -23417,11 +23448,11 @@ export const SpacesApiAxiosParamCreator = function (
       assertParamExists("setSpaceExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setSpaceExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setProposalExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setSpaceExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setProposalExtendedDataRequest",
+        setProposalExtendedDataRequest,
       );
       const localVarPath =
         `/spaces/participatory_processes/{id}/extended_data/sync`.replace(
@@ -23466,7 +23497,7 @@ export const SpacesApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setProposalExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -24086,7 +24117,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetProposalExtendedDataRequest} setProposalExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -24094,7 +24125,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
     async setSpaceExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setProposalExtendedDataRequest: SetProposalExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -24107,7 +24138,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setSpaceExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setProposalExtendedDataRequest,
           authorization,
           options,
         );
@@ -24467,7 +24498,7 @@ export const SpacesApiFactory = function (
         .setSpaceExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setProposalExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -25005,10 +25036,10 @@ export interface SpacesApiSetSpaceExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetProposalExtendedDataRequest}
    * @memberof SpacesApiSetSpaceExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setProposalExtendedDataRequest: SetProposalExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -25322,7 +25353,7 @@ export class SpacesApi extends BaseAPI {
       .setSpaceExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setProposalExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
