@@ -4937,11 +4937,41 @@ export interface ProposalComponentMetadata {
    */
   amendment_promotion_enabled?: boolean;
   /**
-   * Vote weight, if can_vote is true.
+   * Always present (never null). Empty array when votes are not available (`votes_enabled` false). When votes are enabled: simple vote ([1] or [0,1] with abstention), or voting cards ([1,2,3] or [0,1,2,3]). Independent of `can_vote` (per-actor flag).
    * @type {Array<ProposalVoteWeight>}
    * @memberof ProposalComponentMetadata
    */
-  votes?: Array<ProposalVoteWeight>;
+  votes: Array<ProposalVoteWeight>;
+  /**
+   * Decidim Awesome weighted voting manifest (e.g. empty/default or voting_cards). Present when Awesome weighted voting is enabled.
+   * @type {string}
+   * @memberof ProposalComponentMetadata
+   */
+  awesome_voting_manifest?: string;
+  /**
+   * Decidim Awesome: include abstention (weight 0) in vote options.
+   * @type {boolean}
+   * @memberof ProposalComponentMetadata
+   */
+  voting_cards_show_abstain?: boolean;
+  /**
+   * Decidim Awesome: show voting help modal.
+   * @type {boolean}
+   * @memberof ProposalComponentMetadata
+   */
+  voting_cards_show_modal_help?: boolean;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ProposalComponentMetadata
+   */
+  voting_cards_box_title?: TranslatedProp;
+  /**
+   *
+   * @type {TranslatedProp}
+   * @memberof ProposalComponentMetadata
+   */
+  voting_cards_instructions?: TranslatedProp;
 }
 
 export const ProposalComponentMetadataDefaultSortOrderEnum = {
@@ -17590,8 +17620,8 @@ export const OAuthApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17708,8 +17738,8 @@ export const OAuthApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = OAuthApiAxiosParamCreator(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OauthGrantParam} oauthGrantParam
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17785,8 +17815,8 @@ export const OAuthApiFactory = function (
   const localVarFp = OAuthApiFp(configuration);
   return {
     /**
-     * Create an OAuth token for the given scopes (password or client_credentials grant).
-     * @summary Request an OAuth token (ROPC)
+     * Create a oauth token for the given scopes
+     * @summary Request a OAuth token through Client Credentials
      * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17853,8 +17883,8 @@ export interface OAuthApiIntrospectTokenRequest {
  */
 export class OAuthApi extends BaseAPI {
   /**
-   * Create an OAuth token for the given scopes (password or client_credentials grant).
-   * @summary Request an OAuth token (ROPC)
+   * Create a oauth token for the given scopes
+   * @summary Request a OAuth token through Client Credentials
    * @param {OAuthApiCreateTokenRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -19888,7 +19918,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
       (
         axios?: AxiosInstance,
         basePath?: string,
-      ) => AxiosPromise<VoteProposalItemResponse>
+      ) => AxiosPromise<ProposalItemResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.castProposalVote(
@@ -20431,7 +20461,7 @@ export const ProposalsApiFactory = function (
     castProposalVote(
       requestParameters: ProposalsApiCastProposalVoteRequest,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<VoteProposalItemResponse> {
+    ): AxiosPromise<ProposalItemResponse> {
       return localVarFp
         .castProposalVote(
           requestParameters.voteProposalCreateBody,
