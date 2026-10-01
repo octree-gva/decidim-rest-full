@@ -28,7 +28,7 @@ module Decidim
           uri = URI(url)
           request = Net::HTTP::Post.new(uri, headers)
           request.body = json_payload
-          response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+          response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
             http.request(request)
           end
 

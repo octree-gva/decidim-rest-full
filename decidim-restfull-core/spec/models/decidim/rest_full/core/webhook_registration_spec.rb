@@ -137,5 +137,25 @@ RSpec.describe Decidim::RestFull::Core::WebhookRegistration do
         expect { webhook_registration.send_webhook(event, timestamp) }.not_to raise_error
       end
     end
+
+    context "when the callback URL is http" do
+      let(:webhook_registration) { create(:webhook_registration, url: "http://internal.example/webhook") }
+
+      it "starts Net::HTTP without SSL" do
+        allow(Net::HTTP).to receive(:start).with("internal.example", 80, use_ssl: false).and_yield(mock_http)
+        webhook_registration.send_webhook(event, timestamp)
+        expect(Net::HTTP).to have_received(:start).with("internal.example", 80, use_ssl: false)
+      end
+    end
+
+    context "when the callback URL is https" do
+      let(:webhook_registration) { create(:webhook_registration, url: "https://example.org/webhook") }
+
+      it "starts Net::HTTP with SSL" do
+        allow(Net::HTTP).to receive(:start).with("example.org", 443, use_ssl: true).and_yield(mock_http)
+        webhook_registration.send_webhook(event, timestamp)
+        expect(Net::HTTP).to have_received(:start).with("example.org", 443, use_ssl: true)
+      end
+    end
   end
 end
