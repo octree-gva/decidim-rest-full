@@ -20,7 +20,14 @@ module Decidim
         private
 
         def valid_schema?
-          errors.add(:url, "must be a valid HTTPS URL") unless url.start_with?("https://")
+          return false if url.blank?
+
+          uri = URI.parse(url)
+          return false if %w(http https).include?(uri.scheme) && uri.host.present?
+
+          errors.add(:url, "must be a valid HTTP or HTTPS URL")
+        rescue URI::InvalidURIError
+          errors.add(:url, "must be a valid HTTP or HTTPS URL")
         end
 
         def valid_subscriptions?

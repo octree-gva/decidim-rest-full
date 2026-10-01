@@ -42,7 +42,11 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
             run_test!(example_name: :ok)
           end
 
-          context "when voting is restricted by proposal status" do
+          context "when voting is restricted by proposal status", if: (
+            Decidim::Toggle.gem_present?("decidim-decidim_awesome") &&
+            defined?(Decidim::DecidimAwesome) &&
+            Decidim::DecidimAwesome.enabled?(:votes_by_proposal_status)
+          ) do
             let(:"locales[]") { %w(en fr) }
             let(:page) { 1 }
             let(:per_page) { 10 }
