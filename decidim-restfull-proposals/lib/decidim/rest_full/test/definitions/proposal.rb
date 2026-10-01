@@ -35,6 +35,10 @@ Decidim::RestFull::Core::DefinitionRegistry.register_resource(:proposal) do
         title: "Proposal Metadata",
         properties: {
           published: { type: :boolean, description: "Whether the proposal is published" },
+          can_vote: {
+            type: :boolean,
+            description: "Whether this proposal accepts votes given component voting settings and Awesome status restriction (or not rejected when restriction is off)"
+          },
           scope: { type: :integer, description: "Scope Id" },
           voted: {
             type: :object,
@@ -63,7 +67,7 @@ Decidim::RestFull::Core::DefinitionRegistry.register_resource(:proposal) do
             }
           ]
         },
-        required: [:published]
+        required: [:published, :can_vote]
       },
       links: {
         type: :object,
