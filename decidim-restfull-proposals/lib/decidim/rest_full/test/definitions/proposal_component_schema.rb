@@ -10,7 +10,9 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
 
     Features toggles:#{" "}
     - `can_create_proposals`: If participants can create proposals
-    - `can_vote`: If participants can vote
+    - `can_vote`: If voting is enabled for the component (and, when impersonating, if unvoted votable proposals remain)
+    - `awesome_votes_enabled_by_status`: Decidim Awesome step setting — restrict voting by proposal status
+    - `awesome_votes_enabled_states`: Allowed proposal state tokens when status restriction is on
     - `can_comment`: If participants can comments
     - .... and some more
 
@@ -21,7 +23,20 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
   proposal_component[:properties][:links][:properties][:draft] = Decidim::RestFull::Core::DefinitionRegistry.resource_link
   additional_properties = {
     can_create_proposals: { type: :boolean, description: "If the current user can create proposal (component allows, and user did not reach publication limit)" },
-    can_vote: { type: :boolean, description: "If the current user can vote on the component" },
+    can_vote: {
+      type: :boolean,
+      description: "If voting is enabled for the component (votes_enabled and not votes_blocked; " \
+                   "when impersonating, also requires unvoted votable proposals)"
+    },
+    awesome_votes_enabled_by_status: {
+      type: :boolean,
+      description: "Decidim Awesome step setting: when true, voting is restricted to proposals whose status is listed in awesome_votes_enabled_states"
+    },
+    awesome_votes_enabled_states: {
+      type: :array,
+      items: { type: :string },
+      description: "Allowed proposal state tokens when awesome_votes_enabled_by_status is true (e.g. accepted, evaluating, not_answered)"
+    },
     can_comment: { type: :boolean, description: "If the current user can comment on the component" },
     geocoding_enabled: { type: :boolean, description: "If the component needs a map to display its resources" },
     attachments_allowed: { type: :boolean, description: "If the component allows to attach files to resources" },
@@ -62,7 +77,10 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
     }
   }
   proposal_component[:properties][:meta][:properties].merge!(additional_properties)
-  proposal_component[:properties][:meta][:required].push(:can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit)
+  proposal_component[:properties][:meta][:required].push(
+    :can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit,
+    :awesome_votes_enabled_by_status, :awesome_votes_enabled_states
+  )
   proposal_component
 end
 Decidim::RestFull::Core::DefinitionRegistry.register_response_for(:proposal_component)
