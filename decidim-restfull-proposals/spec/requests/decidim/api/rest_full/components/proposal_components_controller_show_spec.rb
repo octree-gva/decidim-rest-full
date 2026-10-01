@@ -42,6 +42,36 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
             run_test!(example_name: :ok)
           end
 
+          context "when voting is restricted by proposal status" do
+            let(:"locales[]") { %w(en fr) }
+            let(:page) { 1 }
+            let(:per_page) { 10 }
+            let(:component) do
+              step_id = participatory_process.active_step.id
+              create(
+                :proposal_component,
+                participatory_space: participatory_process,
+                published_at: Time.zone.now,
+                step_settings: {
+                  step_id => {
+                    votes_enabled: true,
+                    awesome_votes_enabled_by_status: true,
+                    awesome_votes_enabled_states: %w(accepted)
+                  }
+                }
+              )
+            end
+            let!(:accepted_proposal) { create(:proposal, :accepted, component:) }
+
+            run_test!(example_name: :restricted_by_status) do |example|
+              meta = JSON.parse(example.body).dig("data", "meta")
+              expect(meta["votes_enabled"]).to be(true)
+              expect(meta["can_vote"]).to be(true)
+              expect(meta["awesome_votes_enabled_by_status"]).to be(true)
+              expect(meta["awesome_votes_enabled_states"]).to eq(%w(accepted))
+            end
+          end
+
           on_security(:impersonationFlow) do
             context "without an active draft" do
               let(:user) { create(:user, locale: "fr", organization:) }
