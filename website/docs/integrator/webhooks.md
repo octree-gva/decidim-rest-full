@@ -12,7 +12,7 @@ Outbound **HTTP POSTs** to URLs you configure. Manage registrations via the REST
 
 ### REST API (recommended for automation)
 
-Requires OAuth scope `webhooks` and permissions `webhooks.read` / `webhooks.write` / `webhooks.destroy`.
+Requires OAuth scope `webhooks` and permissions `webhooks.read` / `webhooks.write` / `webhooks.destroy`. Callback URLs may be `http` or `https` (plain HTTP is fine for same-network receivers).
 
 | Method | Path | Notes |
 |--------|------|-------|
