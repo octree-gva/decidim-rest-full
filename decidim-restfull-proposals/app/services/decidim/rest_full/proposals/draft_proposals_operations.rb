@@ -50,7 +50,7 @@ module Decidim
           raise Decidim::RestFull::Core::ApiException::NotFound, "Draft Proposal Not Found" unless draft_record
 
           form = form_for(draft_record)
-          raise Decidim::RestFull::Core::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+          raise Decidim::RestFull::Core::ApiException::BadRequest.from_form(form) unless form.valid?
 
           draft_record.update!(published_at: Time.now.utc)
           published = nil
@@ -68,7 +68,7 @@ module Decidim
               ).serializable_hash
             end
             on(:invalid) do
-              raise Decidim::RestFull::Core::ApiException::BadRequest, form.errors.full_messages.join(". ") unless form.valid?
+              raise Decidim::RestFull::Core::ApiException::BadRequest.from_form(form) unless form.valid?
             end
           end
           published
@@ -200,7 +200,7 @@ module Decidim
           update_errors = form.errors.select { |err| update_keys.include?(err.attribute.to_s) }
           return if update_errors.empty?
 
-          raise Decidim::RestFull::Core::ApiException::BadRequest, update_errors.map(&:full_message).join(". ")
+          raise Decidim::RestFull::Core::ApiException::BadRequest.from_errors(update_errors)
         end
 
         def copy_form_to_draft_and_save(draft_proposal, form)
