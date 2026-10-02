@@ -7,6 +7,16 @@ module Decidim
         class ProposalComponentSerializer < ::Decidim::Api::RestFull::Core::ComponentSerializer
           extend ::Decidim::Api::RestFull::Core::Helpers::ResourceLinksHelper
 
+          AWESOME_SETTINGS_KEYS = [
+            :awesome_voting_manifest,
+            :voting_cards_show_abstain,
+            :voting_cards_show_modal_help,
+            :voting_cards_box_title,
+            :voting_cards_instructions
+          ].freeze
+
+          AWESOME_TRANSLATED_SETTINGS = [:voting_cards_box_title, :voting_cards_instructions].freeze
+
           def self.resources_for(component, act_as)
             resources = ::Decidim::Proposals::Proposal.where(component:)
             if act_as.nil?
@@ -37,19 +47,57 @@ module Decidim
             Decidim::RestFull::Proposals::ProposalVoteEligibility.unvoted_voteable_proposals_exist?(component, user)
           end
 
-          def self.vote_weights_from_i18n(i18n_values, vote_manifest, available_locales, has_abstain)
-            options = i18n_values.reject { |k| k.end_with? "short" }
-            options = options.map do |k, _v|
-              {
-                weight: k.to_s.split("_").last.to_i,
-                label: available_locales.index_with do |locale|
-                  I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights.#{k}", locale:)
-                end
-              }
-            end
-            return options if has_abstain
+          def self.awesome_weighted_voting?
+            Decidim::Toggle.gem_present?("decidim-decidim_awesome") &&
+              Decidim::DecidimAwesome.enabled?(:weighted_proposal_voting)
+          end
 
-            options.select { |value| (value[:weight]).positive? }
+          def self.voting_cards_manifest?(settings_h)
+            settings_h[:awesome_voting_manifest].to_s == "voting_cards"
+          end
+
+          def self.vote_option(weight, available_locales, label_key)
+            {
+              weight:,
+              label: available_locales.index_with { |locale| I18n.t(label_key, locale:) }
+            }
+          end
+
+          def self.vote_options_for(settings_h, available_locales)
+            has_abstain = ActiveModel::Type::Boolean.new.cast(settings_h[:voting_cards_show_abstain])
+            weights =
+              if awesome_weighted_voting? && voting_cards_manifest?(settings_h)
+                [1, 2, 3]
+              else
+                [1]
+              end
+            weights = [0] + weights if has_abstain
+
+            weights.map do |weight|
+              label_key =
+                if weight.zero? || (awesome_weighted_voting? && voting_cards_manifest?(settings_h))
+                  "decidim.decidim_awesome.voting.voting_cards.weights.weight_#{weight}"
+                else
+                  "decidim.components.proposals.actions.vote"
+                end
+              vote_option(weight, available_locales, label_key)
+            end
+          end
+
+          def self.assign_awesome_settings!(metas, settings_h, available_locales)
+            return unless awesome_weighted_voting?
+
+            AWESOME_SETTINGS_KEYS.each do |key|
+              next unless settings_h.has_key?(key)
+
+              value = settings_h[key]
+              metas[key] =
+                if AWESOME_TRANSLATED_SETTINGS.include?(key)
+                  translated_field(value, available_locales)
+                else
+                  value
+                end
+            end
           end
 
           meta do |component, params|
@@ -124,33 +172,14 @@ module Decidim
             metas[:can_endorse] = metas[:endorsements_enabled]
             metas[:can_comment] = metas[:comments_enabled]
 
-            has_abstain = settings_h[:voting_cards_show_abstain]
-            if metas[:can_vote]
-              metas[:votes] = begin
-                vote_manifest = settings_h[:awesome_voting_manifest]
-                i18n_key = "decidim.decidim_awesome.voting.#{vote_manifest}.weights"
-                default_votes = [
-                  {
-                    label: available_locales.index_with { |locale| I18n.t("decidim.components.proposals.actions.vote", locale:) },
-                    weight: 1
-                  }
-                ]
+            assign_awesome_settings!(metas, settings_h, available_locales)
 
-                if has_abstain
-                  default_votes << {
-                    label: available_locales.index_with { |locale| I18n.t("decidim.decidim_awesome.voting.voting_cards.weights.weight_0", locale:) },
-                    weight: 0
-                  }
-                end
-
-                if settings_h.include?(:awesome_voting_manifest) && I18n.exists?(i18n_key)
-                  i18n_values = I18n.t("decidim.decidim_awesome.voting.#{vote_manifest}.weights", object: true)
-                  i18n_values.empty? ? default_votes : vote_weights_from_i18n(i18n_values, vote_manifest, available_locales, has_abstain)
-                else
-                  default_votes
-                end
+            metas[:votes] =
+              if metas[:votes_enabled]
+                vote_options_for(settings_h, available_locales)
+              else
+                []
               end
-            end
 
             metas
           end
@@ -167,6 +196,11 @@ module Decidim
             end
           end
           private_class_method :edit_time_to_minutes
+          private_class_method :awesome_weighted_voting?
+          private_class_method :voting_cards_manifest?
+          private_class_method :vote_option
+          private_class_method :vote_options_for
+          private_class_method :assign_awesome_settings!
 
           link :draft, if: (proc do |component, params|
             next false unless params[:act_as]

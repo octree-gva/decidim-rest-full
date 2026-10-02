@@ -1,6 +1,6 @@
 ##
 # decidim-restfull monorepo CI: lint, per-gem RSpec (Appraisals 0.32 + 0.29), then metagem aggregate.
-# Ruby commands mirror docker compose service `rest_full` (see website/docs/contribute/first-contribution.md).
+# Ruby commands mirror docker compose service `rest_full` (see https://octree-gva.github.io/decidim-rest-full/contribute/first-contribution).
 # OpenAPI / client generation is local (0.32 only); not part of this pipeline matrix.
 ##
 stages:

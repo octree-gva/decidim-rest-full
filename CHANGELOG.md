@@ -12,6 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Draft proposal update/publish 400 responses may include `error_details`
   (`code`, `field`, `description`) derived from ActiveModel errors, while keeping
   joined `error_description` for compatibility.
+- Proposal component `meta` mirrors Decidim Awesome voting settings when weighted
+  voting is enabled: `awesome_voting_manifest`, `voting_cards_show_abstain`,
+  `voting_cards_show_modal_help`, `voting_cards_box_title`, `voting_cards_instructions`.
+- OpenAPI `:ok` example for proposal components index shows four `meta.votes`
+  shapes (simple±abstain, cards±abstain).
+
+### Changed
+
+- Proposal component `meta.votes` is always an array (never null): `[]` when
+  `votes_enabled` is false; otherwise the configured catalog (independent of
+  `can_vote`).
 
 ### Fixed
 

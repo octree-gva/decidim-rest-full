@@ -1,6 +1,6 @@
 # Website
 
-Published base URL for OpenAPI/doc links is `Decidim::RestFull.config.docs_url` (env `DOCS_URL`). This package is the Docusaurus source for that site.
+Published at [https://octree-gva.github.io/decidim-rest-full](https://octree-gva.github.io/decidim-rest-full) (`Decidim::RestFull.config.docs_url` / env `DOCS_URL`). This package is the Docusaurus source for that site.
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
