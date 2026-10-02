@@ -4799,7 +4799,7 @@ export interface ProposalComponentMetadata {
    */
   can_create_proposals: boolean;
   /**
-   * If the current user can vote on the component
+   * If voting is enabled for the component (votes_enabled and not votes_blocked; when impersonating, also requires unvoted votable proposals)
    * @type {boolean}
    * @memberof ProposalComponentMetadata
    */
@@ -4972,6 +4972,18 @@ export interface ProposalComponentMetadata {
    * @memberof ProposalComponentMetadata
    */
   voting_cards_instructions?: TranslatedProp;
+  /**
+   * Decidim Awesome step setting: when true, voting is restricted to proposals whose status is listed in awesome_votes_enabled_states
+   * @type {boolean}
+   * @memberof ProposalComponentMetadata
+   */
+  awesome_votes_enabled_by_status: boolean;
+  /**
+   * Allowed proposal state tokens when awesome_votes_enabled_by_status is true (e.g. accepted, evaluating, not_answered)
+   * @type {Array<string>}
+   * @memberof ProposalComponentMetadata
+   */
+  awesome_votes_enabled_states: Array<string>;
 }
 
 export const ProposalComponentMetadataDefaultSortOrderEnum = {
@@ -6770,13 +6782,13 @@ export interface RoleItemResponse {
 /**
  *
  * @export
- * @interface SetComponentExtendedDataRequest
+ * @interface SetMeetingExtendedDataRequest
  */
-export interface SetComponentExtendedDataRequest {
+export interface SetMeetingExtendedDataRequest {
   /**
    *
    * @type {{ [key: string]: any; }}
-   * @memberof SetComponentExtendedDataRequest
+   * @memberof SetMeetingExtendedDataRequest
    */
   data: { [key: string]: any };
 }
@@ -9531,6 +9543,98 @@ export const BlogsApiAxiosParamCreator = function (
 ) {
   return {
     /**
+     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
+     * @summary Show a blog detail (pagination / same published_at)
+     * @param {number} id
+     * @param {Array<Locale>} [locales]
+     * @param {BlogShowPaginationSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
+     * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {BlogShowPaginationOrderDirectionEnum} [orderDirection] Order direction
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blogShowPagination: async (
+      id: number,
+      locales?: Array<Locale>,
+      spaceManifest?: BlogShowPaginationSpaceManifestEnum,
+      spaceId?: number,
+      componentId?: number,
+      order?: string,
+      orderDirection?: BlogShowPaginationOrderDirectionEnum,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("blogShowPagination", "id", id);
+      const localVarPath = `/blogs/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (spaceManifest !== undefined) {
+        localVarQueryParameter["space_manifest"] = spaceManifest;
+      }
+
+      if (spaceId !== undefined) {
+        localVarQueryParameter["space_id"] = spaceId;
+      }
+
+      if (componentId !== undefined) {
+        localVarQueryParameter["component_id"] = componentId;
+      }
+
+      if (order !== undefined) {
+        localVarQueryParameter["order"] = order;
+      }
+
+      if (orderDirection !== undefined) {
+        localVarQueryParameter["order_direction"] = orderDirection;
+      }
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogPostCreatePayload} blogPostCreatePayload
@@ -9631,98 +9735,6 @@ export const BlogsApiAxiosParamCreator = function (
       // authentication resourceOwnerFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (authorization != null) {
-        localVarHeaderParameter["Authorization"] = String(authorization);
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     * Get post details (Decidim::Blogs::Post)
-     * @summary Show post
-     * @param {number} id
-     * @param {Array<Locale>} [locales]
-     * @param {GetBlogPostSpaceManifestEnum} [spaceManifest]
-     * @param {number} [spaceId]
-     * @param {number} [componentId]
-     * @param {string} [order] Order by
-     * @param {GetBlogPostOrderDirectionEnum} [orderDirection] Order direction
-     * @param {string} [authorization] Bearer access token (see security schemes)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getBlogPost: async (
-      id: number,
-      locales?: Array<Locale>,
-      spaceManifest?: GetBlogPostSpaceManifestEnum,
-      spaceId?: number,
-      componentId?: number,
-      order?: string,
-      orderDirection?: GetBlogPostOrderDirectionEnum,
-      authorization?: string,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("getBlogPost", "id", id);
-      const localVarPath = `/blogs/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (locales) {
-        localVarQueryParameter["locales[]"] = locales;
-      }
-
-      if (spaceManifest !== undefined) {
-        localVarQueryParameter["space_manifest"] = spaceManifest;
-      }
-
-      if (spaceId !== undefined) {
-        localVarQueryParameter["space_id"] = spaceId;
-      }
-
-      if (componentId !== undefined) {
-        localVarQueryParameter["component_id"] = componentId;
-      }
-
-      if (order !== undefined) {
-        localVarQueryParameter["order"] = order;
-      }
-
-      if (orderDirection !== undefined) {
-        localVarQueryParameter["order_direction"] = orderDirection;
-      }
 
       if (authorization != null) {
         localVarHeaderParameter["Authorization"] = String(authorization);
@@ -9850,6 +9862,61 @@ export const BlogsApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = BlogsApiAxiosParamCreator(configuration);
   return {
     /**
+     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
+     * @summary Show a blog detail (pagination / same published_at)
+     * @param {number} id
+     * @param {Array<Locale>} [locales]
+     * @param {BlogShowPaginationSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
+     * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {BlogShowPaginationOrderDirectionEnum} [orderDirection] Order direction
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async blogShowPagination(
+      id: number,
+      locales?: Array<Locale>,
+      spaceManifest?: BlogShowPaginationSpaceManifestEnum,
+      spaceId?: number,
+      componentId?: number,
+      order?: string,
+      orderDirection?: BlogShowPaginationOrderDirectionEnum,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<BlogItemResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.blogShowPagination(
+          id,
+          locales,
+          spaceManifest,
+          spaceId,
+          componentId,
+          order,
+          orderDirection,
+          authorization,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["BlogsApi.blogShowPagination"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogPostCreatePayload} blogPostCreatePayload
@@ -9913,60 +9980,6 @@ export const BlogsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["BlogsApi.deleteBlogPostAsync"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     * Get post details (Decidim::Blogs::Post)
-     * @summary Show post
-     * @param {number} id
-     * @param {Array<Locale>} [locales]
-     * @param {GetBlogPostSpaceManifestEnum} [spaceManifest]
-     * @param {number} [spaceId]
-     * @param {number} [componentId]
-     * @param {string} [order] Order by
-     * @param {GetBlogPostOrderDirectionEnum} [orderDirection] Order direction
-     * @param {string} [authorization] Bearer access token (see security schemes)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getBlogPost(
-      id: number,
-      locales?: Array<Locale>,
-      spaceManifest?: GetBlogPostSpaceManifestEnum,
-      spaceId?: number,
-      componentId?: number,
-      order?: string,
-      orderDirection?: GetBlogPostOrderDirectionEnum,
-      authorization?: string,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<BlogItemResponse>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getBlogPost(
-        id,
-        locales,
-        spaceManifest,
-        spaceId,
-        componentId,
-        order,
-        orderDirection,
-        authorization,
-        options,
-      );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["BlogsApi.getBlogPost"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -10049,6 +10062,31 @@ export const BlogsApiFactory = function (
   const localVarFp = BlogsApiFp(configuration);
   return {
     /**
+     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
+     * @summary Show a blog detail (pagination / same published_at)
+     * @param {BlogsApiBlogShowPaginationRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    blogShowPagination(
+      requestParameters: BlogsApiBlogShowPaginationRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<BlogItemResponse> {
+      return localVarFp
+        .blogShowPagination(
+          requestParameters.id,
+          requestParameters.locales,
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.order,
+          requestParameters.orderDirection,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogsApiCreateBlogPostAsyncRequest} requestParameters Request parameters.
@@ -10087,31 +10125,6 @@ export const BlogsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * Get post details (Decidim::Blogs::Post)
-     * @summary Show post
-     * @param {BlogsApiGetBlogPostRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getBlogPost(
-      requestParameters: BlogsApiGetBlogPostRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<BlogItemResponse> {
-      return localVarFp
-        .getBlogPost(
-          requestParameters.id,
-          requestParameters.locales,
-          requestParameters.spaceManifest,
-          requestParameters.spaceId,
-          requestParameters.componentId,
-          requestParameters.order,
-          requestParameters.orderDirection,
-          requestParameters.authorization,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
      * List posts (Decidim::Blogs::Post)
      * @summary List posts
      * @param {BlogsApiListBlogPostsRequest} requestParameters Request parameters.
@@ -10139,6 +10152,69 @@ export const BlogsApiFactory = function (
     },
   };
 };
+
+/**
+ * Request parameters for blogShowPagination operation in BlogsApi.
+ * @export
+ * @interface BlogsApiBlogShowPaginationRequest
+ */
+export interface BlogsApiBlogShowPaginationRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly spaceManifest?: BlogShowPaginationSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly spaceId?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly componentId?: number;
+
+  /**
+   * Order by
+   * @type {string}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly order?: string;
+
+  /**
+   * Order direction
+   * @type {'asc' | 'desc'}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly orderDirection?: BlogShowPaginationOrderDirectionEnum;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof BlogsApiBlogShowPagination
+   */
+  readonly authorization?: string;
+}
 
 /**
  * Request parameters for createBlogPostAsync operation in BlogsApi.
@@ -10178,69 +10254,6 @@ export interface BlogsApiDeleteBlogPostAsyncRequest {
    * Bearer access token (see security schemes)
    * @type {string}
    * @memberof BlogsApiDeleteBlogPostAsync
-   */
-  readonly authorization?: string;
-}
-
-/**
- * Request parameters for getBlogPost operation in BlogsApi.
- * @export
- * @interface BlogsApiGetBlogPostRequest
- */
-export interface BlogsApiGetBlogPostRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly id: number;
-
-  /**
-   *
-   * @type {Array<Locale>}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly locales?: Array<Locale>;
-
-  /**
-   *
-   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly spaceManifest?: GetBlogPostSpaceManifestEnum;
-
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly spaceId?: number;
-
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly componentId?: number;
-
-  /**
-   * Order by
-   * @type {string}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly order?: string;
-
-  /**
-   * Order direction
-   * @type {'asc' | 'desc'}
-   * @memberof BlogsApiGetBlogPost
-   */
-  readonly orderDirection?: GetBlogPostOrderDirectionEnum;
-
-  /**
-   * Bearer access token (see security schemes)
-   * @type {string}
-   * @memberof BlogsApiGetBlogPost
    */
   readonly authorization?: string;
 }
@@ -10323,6 +10336,33 @@ export interface BlogsApiListBlogPostsRequest {
  */
 export class BlogsApi extends BaseAPI {
   /**
+   * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
+   * @summary Show a blog detail (pagination / same published_at)
+   * @param {BlogsApiBlogShowPaginationRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof BlogsApi
+   */
+  public blogShowPagination(
+    requestParameters: BlogsApiBlogShowPaginationRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return BlogsApiFp(this.configuration)
+      .blogShowPagination(
+        requestParameters.id,
+        requestParameters.locales,
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.order,
+        requestParameters.orderDirection,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
    * @summary Create blog post (async)
    * @param {BlogsApiCreateBlogPostAsyncRequest} requestParameters Request parameters.
@@ -10365,33 +10405,6 @@ export class BlogsApi extends BaseAPI {
   }
 
   /**
-   * Get post details (Decidim::Blogs::Post)
-   * @summary Show post
-   * @param {BlogsApiGetBlogPostRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof BlogsApi
-   */
-  public getBlogPost(
-    requestParameters: BlogsApiGetBlogPostRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return BlogsApiFp(this.configuration)
-      .getBlogPost(
-        requestParameters.id,
-        requestParameters.locales,
-        requestParameters.spaceManifest,
-        requestParameters.spaceId,
-        requestParameters.componentId,
-        requestParameters.order,
-        requestParameters.orderDirection,
-        requestParameters.authorization,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
    * List posts (Decidim::Blogs::Post)
    * @summary List posts
    * @param {BlogsApiListBlogPostsRequest} requestParameters Request parameters.
@@ -10423,23 +10436,23 @@ export class BlogsApi extends BaseAPI {
 /**
  * @export
  */
-export const GetBlogPostSpaceManifestEnum = {
+export const BlogShowPaginationSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
   Conferences: "conferences",
   Initiatives: "initiatives",
 } as const;
-export type GetBlogPostSpaceManifestEnum =
-  (typeof GetBlogPostSpaceManifestEnum)[keyof typeof GetBlogPostSpaceManifestEnum];
+export type BlogShowPaginationSpaceManifestEnum =
+  (typeof BlogShowPaginationSpaceManifestEnum)[keyof typeof BlogShowPaginationSpaceManifestEnum];
 /**
  * @export
  */
-export const GetBlogPostOrderDirectionEnum = {
+export const BlogShowPaginationOrderDirectionEnum = {
   Asc: "asc",
   Desc: "desc",
 } as const;
-export type GetBlogPostOrderDirectionEnum =
-  (typeof GetBlogPostOrderDirectionEnum)[keyof typeof GetBlogPostOrderDirectionEnum];
+export type BlogShowPaginationOrderDirectionEnum =
+  (typeof BlogShowPaginationOrderDirectionEnum)[keyof typeof BlogShowPaginationOrderDirectionEnum];
 /**
  * @export
  */
@@ -11239,7 +11252,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11247,7 +11260,7 @@ export const ComponentsApiAxiosParamCreator = function (
     setComponentExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -11255,11 +11268,11 @@ export const ComponentsApiAxiosParamCreator = function (
       assertParamExists("setComponentExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setComponentExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setComponentExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setMeetingExtendedDataRequest",
+        setMeetingExtendedDataRequest,
       );
       const localVarPath = `/components/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -11303,7 +11316,7 @@ export const ComponentsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setMeetingExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -11910,7 +11923,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11918,7 +11931,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     async setComponentExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -11931,7 +11944,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setComponentExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setMeetingExtendedDataRequest,
           authorization,
           options,
         );
@@ -12247,7 +12260,7 @@ export const ComponentsApiFactory = function (
         .setComponentExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setMeetingExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -12980,10 +12993,10 @@ export interface ComponentsApiSetComponentExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetMeetingExtendedDataRequest}
    * @memberof ComponentsApiSetComponentExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -13314,7 +13327,7 @@ export class ComponentsApi extends BaseAPI {
       .setComponentExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setMeetingExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -17046,7 +17059,7 @@ export const MeetingsApiAxiosParamCreator = function (
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17054,7 +17067,7 @@ export const MeetingsApiAxiosParamCreator = function (
     setMeetingExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -17062,11 +17075,11 @@ export const MeetingsApiAxiosParamCreator = function (
       assertParamExists("setMeetingExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setMeetingExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setMeetingExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setMeetingExtendedDataRequest",
+        setMeetingExtendedDataRequest,
       );
       const localVarPath = `/meetings/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -17110,7 +17123,7 @@ export const MeetingsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setMeetingExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -17235,7 +17248,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17243,7 +17256,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
     async setMeetingExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -17256,7 +17269,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setMeetingExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setMeetingExtendedDataRequest,
           authorization,
           options,
         );
@@ -17349,7 +17362,7 @@ export const MeetingsApiFactory = function (
         .setMeetingExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setMeetingExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -17485,10 +17498,10 @@ export interface MeetingsApiSetMeetingExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetMeetingExtendedDataRequest}
    * @memberof MeetingsApiSetMeetingExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -17572,7 +17585,7 @@ export class MeetingsApi extends BaseAPI {
       .setMeetingExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setMeetingExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -19814,7 +19827,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19822,7 +19835,7 @@ export const ProposalsApiAxiosParamCreator = function (
     setProposalExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -19830,11 +19843,11 @@ export const ProposalsApiAxiosParamCreator = function (
       assertParamExists("setProposalExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setProposalExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setProposalExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setMeetingExtendedDataRequest",
+        setMeetingExtendedDataRequest,
       );
       const localVarPath = `/proposals/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -19878,7 +19891,7 @@ export const ProposalsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setMeetingExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -20398,7 +20411,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -20406,7 +20419,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
     async setProposalExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -20419,7 +20432,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setProposalExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setMeetingExtendedDataRequest,
           authorization,
           options,
         );
@@ -20685,7 +20698,7 @@ export const ProposalsApiFactory = function (
         .setProposalExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setMeetingExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -21360,10 +21373,10 @@ export interface ProposalsApiSetProposalExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetMeetingExtendedDataRequest}
    * @memberof ProposalsApiSetProposalExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -21632,7 +21645,7 @@ export class ProposalsApi extends BaseAPI {
       .setProposalExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setMeetingExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -23444,7 +23457,7 @@ export const SpacesApiAxiosParamCreator = function (
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -23452,7 +23465,7 @@ export const SpacesApiAxiosParamCreator = function (
     setSpaceExtendedData: async (
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -23460,11 +23473,11 @@ export const SpacesApiAxiosParamCreator = function (
       assertParamExists("setSpaceExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setSpaceExtendedData", "id", id);
-      // verify required parameter 'setComponentExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setSpaceExtendedData",
-        "setComponentExtendedDataRequest",
-        setComponentExtendedDataRequest,
+        "setMeetingExtendedDataRequest",
+        setMeetingExtendedDataRequest,
       );
       const localVarPath =
         `/spaces/participatory_processes/{id}/extended_data/sync`.replace(
@@ -23509,7 +23522,7 @@ export const SpacesApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setComponentExtendedDataRequest,
+        setMeetingExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -24129,7 +24142,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetComponentExtendedDataRequest} setComponentExtendedDataRequest
+     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -24137,7 +24150,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
     async setSpaceExtendedData(
       objectPath: string,
       id: string,
-      setComponentExtendedDataRequest: SetComponentExtendedDataRequest,
+      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -24150,7 +24163,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setSpaceExtendedData(
           objectPath,
           id,
-          setComponentExtendedDataRequest,
+          setMeetingExtendedDataRequest,
           authorization,
           options,
         );
@@ -24510,7 +24523,7 @@ export const SpacesApiFactory = function (
         .setSpaceExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setComponentExtendedDataRequest,
+          requestParameters.setMeetingExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -25048,10 +25061,10 @@ export interface SpacesApiSetSpaceExtendedDataRequest {
 
   /**
    *
-   * @type {SetComponentExtendedDataRequest}
+   * @type {SetMeetingExtendedDataRequest}
    * @memberof SpacesApiSetSpaceExtendedData
    */
-  readonly setComponentExtendedDataRequest: SetComponentExtendedDataRequest;
+  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -25365,7 +25378,7 @@ export class SpacesApi extends BaseAPI {
       .setSpaceExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setComponentExtendedDataRequest,
+        requestParameters.setMeetingExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
