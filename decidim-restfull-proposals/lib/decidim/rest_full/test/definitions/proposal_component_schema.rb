@@ -63,7 +63,11 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
     amendment_promotion_enabled: { type: :boolean, description: "If participant choose an amendment to replace their initial proposal" },
     votes: {
       title: "Proposal Vote Weights Options",
-      description: "Vote weight, if can_vote is true.",
+      description: <<~DESC.squish,
+        Always present (never null). Empty array when votes are not available (`votes_enabled` false).
+        When votes are enabled: simple vote ([1] or [0,1] with abstention), or voting cards ([1,2,3] or [0,1,2,3]).
+        Independent of `can_vote` (per-actor flag).
+      DESC
       type: :array,
       items: {
         type: :object,
@@ -74,11 +78,31 @@ Decidim::RestFull::Core::DefinitionRegistry.extends_object(:proposal_component, 
         },
         required: [:label, :weight]
       }
+    },
+    awesome_voting_manifest: {
+      type: :string,
+      description: "Decidim Awesome weighted voting manifest (e.g. empty/default or voting_cards). Present when Awesome weighted voting is enabled."
+    },
+    voting_cards_show_abstain: {
+      type: :boolean,
+      description: "Decidim Awesome: include abstention (weight 0) in vote options."
+    },
+    voting_cards_show_modal_help: {
+      type: :boolean,
+      description: "Decidim Awesome: show voting help modal."
+    },
+    voting_cards_box_title: {
+      "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
+      :description => "Decidim Awesome: title for the voting box."
+    },
+    voting_cards_instructions: {
+      "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:translated_prop),
+      :description => "Decidim Awesome: voting instructions (help modal)."
     }
   }
   proposal_component[:properties][:meta][:properties].merge!(additional_properties)
   proposal_component[:properties][:meta][:required].push(
-    :can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit,
+    :can_create_proposals, :can_vote, :can_comment, :geocoding_enabled, :attachments_allowed, :vote_limit, :votes,
     :awesome_votes_enabled_by_status, :awesome_votes_enabled_states
   )
   proposal_component

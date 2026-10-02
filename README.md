@@ -4,8 +4,8 @@ Rails engines that expose a JSON:API-style REST surface for [Decidim](https://gi
 
 ## Documentation
 
-- **Site and ReDoc:** published docs base is `Decidim::RestFull.config.docs_url` (override with `DOCS_URL`; see [Installation](website/docs/install.md)). Local tree: [website/docs](website/docs/).
-- **Contributing:** [Ways to contribute](website/docs/contribute/ways-to-contribute.md) · [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Site and ReDoc:** [https://octree-gva.github.io/decidim-rest-full](https://octree-gva.github.io/decidim-rest-full) (override published base with `DOCS_URL`; see [Installation](https://octree-gva.github.io/decidim-rest-full/install)). OpenAPI/ReDoc: [/api](https://octree-gva.github.io/decidim-rest-full/api).
+- **Contributing:** [Ways to contribute](https://octree-gva.github.io/decidim-rest-full/contribute/ways-to-contribute) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Monorepo
 
@@ -16,7 +16,7 @@ Rails engines that expose a JSON:API-style REST surface for [Decidim](https://gi
 | `decidim-restfull-*` | Feature adapters (proposals, blogs, forms, …) |
 | `decidim-restfull-dev` | OpenAPI swaggerize helper |
 
-Layout and extension DSL: [Architecture](website/docs/dev/architecture.md) on the doc site.
+Layout and extension DSL: [Architecture](https://octree-gva.github.io/decidim-rest-full/dev/architecture) on the doc site.
 
 **E2e:** `extended_data` clear-at-path returns `{}` (not 404) via `Decidim::RestFull::Core::ExtendedDataAtPath`. Consumed by [NCA e2e](../../nca/contrib/e2e/README.md) and [chat-platform e2e](../../chat-platform/e2e/README.md).
 
@@ -27,7 +27,7 @@ docker compose up -d
 docker compose exec rest_full bash -lc 'cd /home/module && ./bin/check'
 ```
 
-Full local gate (`bin/setup-tests`, `./bin/check`): [First contribution](website/docs/contribute/first-contribution.md) (code path).
+Full local gate (`bin/setup-tests`, `./bin/check`): [First contribution](https://octree-gva.github.io/decidim-rest-full/contribute/first-contribution) (code path).
 
 ## License
 

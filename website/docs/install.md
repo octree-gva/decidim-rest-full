@@ -47,6 +47,6 @@ Tenant-specific routes (chatbot bridges, legacy paths, one-deployment APIs) can 
 | `DECIDIM_REST_LOADBALANCER_IPS` | CSV of load balancer IPs for safe `host` handling. See [Safe host update](/dev/update-hosts). | `127.0.0.1, ::1` |
 | `DECIDIM_REST_MAX_ASYNC_API_JOB_PAYLOAD_BYTES` | Cap async job JSON payload size | unset (no limit) |
 | `DECIDIM_REST_MAX_EXTENDED_DATA_PAYLOAD_BYTES` | Cap sync `extended_data` stored JSON size; falls back to the async cap when unset | unset (no limit) |
-| `DOCS_URL` | Sets `Decidim::RestFull.config.docs_url` (links baked into OpenAPI) | Default from `configuration.rb` when unset |
+| `DOCS_URL` | Sets `Decidim::RestFull.config.docs_url` (links baked into OpenAPI) | `https://octree-gva.github.io/decidim-rest-full` when unset |
 
 For capacity planning (Puma, Redis, Sidekiq, k6, client patterns), see [Production mode](/production-mode).

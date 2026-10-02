@@ -27,18 +27,47 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
         let!(:participatory_process) { create(:participatory_process, :with_steps, organization:) }
         let!(:organization) { create(:organization, available_locales: ["en"]) }
 
-        before do
-          proposals = create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now)
-          create(:proposal, component: proposals)
-          create(:proposal, component: proposals)
-          create(:proposal, component: proposals, state: "accepted")
-
+        let!(:simple_no_abstain) do
           create(
             :proposal_component,
             :with_votes_enabled,
             participatory_space: participatory_process,
-            settings: { awesome_voting_manifest: :voting_cards }
+            name: { en: "Simple vote no abstain" },
+            settings: { voting_cards_show_abstain: false }
           )
+        end
+        let!(:simple_with_abstain) do
+          create(
+            :proposal_component,
+            :with_votes_enabled,
+            participatory_space: participatory_process,
+            name: { en: "Simple vote with abstain" },
+            settings: { voting_cards_show_abstain: true }
+          )
+        end
+        let!(:cards_no_abstain) do
+          create(
+            :proposal_component,
+            :with_votes_enabled,
+            participatory_space: participatory_process,
+            name: { en: "Cards vote no abstain" },
+            settings: { awesome_voting_manifest: :voting_cards, voting_cards_show_abstain: false }
+          )
+        end
+        let!(:cards_with_abstain) do
+          create(
+            :proposal_component,
+            :with_votes_enabled,
+            participatory_space: participatory_process,
+            name: { en: "Cards vote with abstain" },
+            settings: { awesome_voting_manifest: :voting_cards, voting_cards_show_abstain: true }
+          )
+        end
+
+        before do
+          [simple_no_abstain, simple_with_abstain, cards_no_abstain, cards_with_abstain].each do |comp|
+            create(:proposal, :accepted, component: comp)
+          end
         end
 
         it_behaves_like "localized endpoint"
@@ -52,7 +81,19 @@ RSpec.describe Decidim::Api::RestFull::Components::ProposalComponentsController 
             let(:page) { 1 }
             let(:per_page) { 10 }
 
-            run_test!(example_name: :ok)
+            run_test!(example_name: :ok) do |example|
+              data = JSON.parse(example.body)["data"]
+              by_id = data.index_by { |row| row["id"] }
+
+              expect(by_id.fetch(simple_no_abstain.id.to_s).dig("meta", "votes").map { |v| v["weight"] }).to eq([1])
+              expect(by_id.fetch(simple_with_abstain.id.to_s).dig("meta", "votes").map { |v| v["weight"] }).to eq([0, 1])
+              expect(by_id.fetch(cards_no_abstain.id.to_s).dig("meta", "votes").map { |v| v["weight"] }).to eq([1, 2, 3])
+              expect(by_id.fetch(cards_with_abstain.id.to_s).dig("meta", "votes").map { |v| v["weight"] }).to eq([0, 1, 2, 3])
+
+              data.each do |row|
+                expect(row["meta"]["votes"]).to be_an(Array)
+              end
+            end
           end
 
           context "with filter[participatory_space_type_eq]=Decidim::ParticipatoryProcess and filter[participatory_space_type_id_eq]=processId filters" do

@@ -44,6 +44,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer,
       expect(meta[:can_vote]).to be(false)
       expect(meta[:creation_enabled]).to be(true)
       expect(meta[:can_create_proposals]).to be(true)
+      expect(meta[:votes]).to eq([])
     end
   end
 
@@ -62,6 +63,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer,
       expect(meta[:creation_enabled]).to be(false)
       expect(meta[:can_create_proposals]).to be(false)
       expect(meta[:can_vote]).to be(true)
+      expect(meta[:votes].map { |v| v[:weight] }).to eq([1, 2, 3])
     end
   end
 
@@ -79,6 +81,7 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer,
     it "sets can_vote false" do
       expect(meta[:votes_enabled]).to be(true)
       expect(meta[:can_vote]).to be(false)
+      expect(meta[:votes].map { |v| v[:weight] }).to eq([1, 2, 3])
     end
   end
 end

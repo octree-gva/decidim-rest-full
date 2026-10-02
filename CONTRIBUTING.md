@@ -1,6 +1,6 @@
 # Contributing to decidim-restfull
 
-Code covenant for the monorepo. **How-to guides** for adding endpoints live on the [documentation site](website/docs/dev/add-endpoint/) (`website/docs/README.md` describes the site layout).
+Code covenant for the monorepo. **How-to guides** for adding endpoints live on the [documentation site](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/recipe) (`website/docs/README.md` describes the site layout).
 
 ## License
 
@@ -19,7 +19,7 @@ docker compose exec rest_full bash -lc 'cd /home/module && bundle install && bin
 
 GitLab runs **lint** (`ruby::rubocop`, `ruby::erb`, `node::prettier`, `ruby::spec_harness`) then **per-gem RSpec** and **`rspec:decidim-restfull`** (see `.gitlab-ci.yml`).
 
-OpenAPI rebuild: `yarn gen:openapi-spec` (docker) or `bundle exec decidim_restfull_swaggerize` from `decidim-restfull-dev`. CLI reference: [Command-line tools](website/docs/dev/command-line-tools.md), [Generate clients and OpenAPI](website/docs/dev/add-endpoint/generate-clients.md).
+OpenAPI rebuild: `yarn gen:openapi-spec` (docker) or `bundle exec decidim_restfull_swaggerize` from `decidim-restfull-dev`. CLI reference: [Command-line tools](https://octree-gva.github.io/decidim-rest-full/dev/command-line-tools), [Generate clients and OpenAPI](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/generate-clients).
 
 ## Commits and releases
 
@@ -27,7 +27,7 @@ Use **[Conventional Commits](https://www.conventionalcommits.org/)** via `yarn c
 
 Release maintainer: `yarn release` updates `CHANGELOG.md` and version, then existing `postversion` syncs gemspecs and OpenAPI.
 
-Integrators read [contract changes](website/docs/integrator/contract-changes.md) and root `CHANGELOG.md`.
+Integrators read [contract changes](https://octree-gva.github.io/decidim-rest-full/integrator/contract-changes) and root `CHANGELOG.md`.
 
 **CI / local gate:** `./bin/check` runs `bin/lint-spec-harness`, RuboCop (including `Decidim/RestFull/AsyncApiMutation`), ERB lint, Prettier, and all `decidim-restfull-*/spec` via RSpec. Repo-root `spec/` must not contain `*_spec.rb` (harness only).
 
@@ -165,7 +165,7 @@ docker compose exec rest_full bash -lc 'cd /home/module && unset DATABASE_URL &&
 
 Use `require "spec_helper"` at the top of specs (dummy app harness via decidim/dev). There is no `rails_helper` in this repo.
 
-Request specs use RSwag: they both hit the API and generate OpenAPI snippets. See `spec/swagger_helper.rb` and the site section [Add an endpoint](website/docs/dev/add-endpoint/) (built from `website/`).
+Request specs use RSwag: they both hit the API and generate OpenAPI snippets. See `spec/swagger_helper.rb` and the site section [Add an endpoint](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/recipe) (built from `website/`).
 
 **Simple spec examples**: `decidim-restfull-core/spec/requests/decidim/api/rest_full/decidim/rest_full/pages_controller_spec.rb` (one path, one response). `decidim-restfull-core/spec/lib/decidim/rest_full/core/route_registry_spec.rb` (unit test with isolated RouteSet). The repo-root `spec/` directory only holds the dummy app and shared helpers — see `spec/README.md`.
 
@@ -181,17 +181,17 @@ Request specs use RSwag: they both hit the API and generate OpenAPI snippets. Se
 
 ## Developer documentation (site)
 
-Procedures live on the doc site under **Add an endpoint** (`website/docs/dev/add-endpoint/`). Structure map and doc-voice rules: `website/docs/README.md`. Do not duplicate long how-to sections in this file.
+Procedures live on the doc site under **[Add an endpoint](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/recipe)** (source: `website/docs/dev/add-endpoint/`). Structure map and doc-voice rules: `website/docs/README.md`. Do not duplicate long how-to sections in this file.
 
 ## Adding a new API endpoint (checklist)
 
-Start with [Recipe](website/docs/dev/add-endpoint/recipe.md) on the doc site, then:
+Start with [Recipe](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/recipe) on the doc site, then:
 
-1. Core routes: `decidim-restfull-core/config/routes.rb`. Feature routes: `Extension.register` → `ext.routes` with `Decidim::RestFull::Routing` — [Routing](website/docs/dev/add-endpoint/routing.md), [Boot and extension](website/docs/dev/add-endpoint/boot-and-extension.md).
-2. Controller + operations — [Controllers](website/docs/dev/add-endpoint/controllers.md), [Async](website/docs/dev/add-endpoint/async.md).
-3. Request spec + `ext.rswag_specs` — [RSwag](website/docs/dev/add-endpoint/rswag.md).
-4. `DefinitionRegistry` schemas in the owning gem — [Test definitions](website/docs/dev/add-endpoint/test-definitions.md).
-5. Regenerate OpenAPI — [Generate clients and ReDoc](website/docs/dev/add-endpoint/generate-clients.md).
+1. Core routes: `decidim-restfull-core/config/routes.rb`. Feature routes: `Extension.register` → `ext.routes` with `Decidim::RestFull::Routing` — [Routing](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/routing), [Boot and extension](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/boot-and-extension).
+2. Controller + operations — [Controllers](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/controllers), [Async](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/async).
+3. Request spec + `ext.rswag_specs` — [RSwag](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/rswag).
+4. `DefinitionRegistry` schemas in the owning gem — [Test definitions](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/test-definitions).
+5. Regenerate OpenAPI — [Generate clients and ReDoc](https://octree-gva.github.io/decidim-rest-full/dev/add-endpoint/generate-clients).
 
 ## External links
 
@@ -202,4 +202,4 @@ Start with [Recipe](website/docs/dev/add-endpoint/recipe.md) on the doc site, th
 - **Class-level docs**: Key classes have a short comment at the top (Engine, RouteRegistry, ApiException, DefinitionRegistry, ApplicationController, DoorkeeperConfig, etc.).
 - **Tests**: Prefer clear, linear specs over deep nesting. Use `let` for data and one expectation per example when it helps readability. Naming: use the same vocabulary as Decidim (e.g. "organization", "component", "proposal", "form", "command").
 - **OpenAPI**: Request specs drive the generated document. **`bin/swaggerize`** loads **`spec/rest_full_swagger_spec_paths.rb`** (gem-local `spec/requests` via `GemSpecPaths`). Shared `/components/search` and `/spaces/...` specs live in **decidim-restfull-core**. Each engine registers **`ext.rswag_specs File.join(ENGINE_ROOT, ...)`**. Regenerate after changing your gem set (`yarn gen:openapi-spec` or `./bin/swaggerize`).
-- **Docusaurus site** (`website/`): **Overview**, **Operating the API**, **Developer documentation** → **Add an endpoint** (one topic per page). ReDoc at `/api/` mirrors `website/static/openapi.json`.
+- **Docusaurus site** ([published](https://octree-gva.github.io/decidim-rest-full), source `website/`): **Overview**, **Operating the API**, **Developer documentation** → **Add an endpoint** (one topic per page). ReDoc at [/api](https://octree-gva.github.io/decidim-rest-full/api) mirrors `website/static/openapi.json`.
