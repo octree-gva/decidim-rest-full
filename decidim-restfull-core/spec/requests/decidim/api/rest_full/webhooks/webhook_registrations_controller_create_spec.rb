@@ -52,6 +52,26 @@ RSpec.describe Decidim::Api::RestFull::Webhooks::WebhookRegistrationsController 
           end
         end
 
+        response "201", "Registration created with http URL" do
+          schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:webhook_registration_item_response)
+          let(:body) do
+            {
+              data: {
+                attributes: {
+                  url: "http://internal.example/hooks/new",
+                  subscriptions: [event_key]
+                }
+              }
+            }
+          end
+
+          run_test!(example_name: :ok_http) do |example|
+            data = JSON.parse(example.body)["data"]
+            expect(data["attributes"]["url"]).to eq("http://internal.example/hooks/new")
+            expect(data["attributes"]["signing_secret"]).to be_present
+          end
+        end
+
         response "400", "Invalid subscription" do
           schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
           let(:body) do

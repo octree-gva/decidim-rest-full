@@ -43,24 +43,8 @@ module Decidim
             ).limit(1)
           end
 
-          # Mirrors chat-platform VoteSDK filtering (published, not rejected; user has no vote row yet).
           def self.unvoted_voteable_proposals_exist?(component, user)
-            base = ::Decidim::Proposals::Proposal
-                   .where(decidim_component_id: component.id)
-                   .published
-                   .not_withdrawn
-                   .except_rejected
-
-            return false unless base.exists?
-
-            voted_ids = ::Decidim::Proposals::ProposalVote
-                        .where(decidim_author_id: user.id)
-                        .distinct
-                        .pluck(:decidim_proposal_id)
-
-            return true if voted_ids.blank?
-
-            base.where.not(id: voted_ids).exists?
+            Decidim::RestFull::Proposals::ProposalVoteEligibility.unvoted_voteable_proposals_exist?(component, user)
           end
 
           def self.awesome_weighted_voting?
@@ -173,7 +157,10 @@ module Decidim
                                                coauthorships: { decidim_author_id: act_as.id }
                                              ).count < proposal_limit
             end
-            metas[:can_vote] = metas[:votes_enabled]
+            eligibility = Decidim::RestFull::Proposals::ProposalVoteEligibility
+            metas[:awesome_votes_enabled_by_status] = eligibility.awesome_votes_enabled_by_status(component)
+            metas[:awesome_votes_enabled_states] = eligibility.awesome_votes_enabled_states(component)
+            metas[:can_vote] = eligibility.voting_enabled?(component)
             if metas[:can_vote]
               metas[:can_vote] =
                 if act_as.present?

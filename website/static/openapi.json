@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "API V1",
-    "version": "v0.3",
+    "version": "0.3.9",
     "description": "A RestFull API for Decidim, to be able to CRUD resources from Decidim.  \n_current version: 0.3.8_\n\n## Authentication\n[Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes,\nfollowing OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.\n\n### Permissions\nA permission system is attached to the created OAuth application, that is designed in two levels:\n\n- **scope**: a broad permission to access a collection of endpoints\n- **abilities**: a fine grained permission system that allow actions.\n\nThe scopes and abilities are manageable in your System Admin Panel.\n\n### Multi-tenant **Organizations**\nOne deployment hosts many **Organizations** (tenants by **`host`**).\n- The **`system` scope** endpoints apply in the context of the resolved organization\n- The request **`host`** selects which **Organization** you target.\n  For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations' OAuth applications.\n\n### Integrators\nStart with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).\n\nTypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).\n\n**Extended data** (client metadata on organizations, components, spaces, proposals, meetings): [https://octree-gva.github.io/decidim-rest-full/integrator/extended-data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).\n\nOutbound **webhook** events are listed under the **Webhooks** tag.\nManage registrations via `/webhook_registrations` (or System admin) and fetch example\npayloads from `GET /webhook_events/{event_type}`.\n"
   },
   "servers": [
@@ -2447,7 +2447,7 @@
           "url": {
             "type": "string",
             "format": "uri",
-            "description": "HTTPS callback URL"
+            "description": "HTTP or HTTPS callback URL"
           },
           "subscriptions": {
             "type": "array",
@@ -2482,7 +2482,7 @@
           "url": {
             "type": "string",
             "format": "uri",
-            "description": "HTTPS callback URL"
+            "description": "HTTP or HTTPS callback URL"
           },
           "subscriptions": {
             "type": "array",
@@ -5079,7 +5079,7 @@
               },
               "can_vote": {
                 "type": "boolean",
-                "description": "If the current user can vote on the component"
+                "description": "If voting is enabled for the component (votes_enabled and not votes_blocked; when impersonating, also requires unvoted votable proposals)"
               },
               "can_comment": {
                 "type": "boolean",
@@ -5226,6 +5226,17 @@
               "voting_cards_instructions": {
                 "$ref": "#/components/schemas/translated_prop",
                 "description": "Decidim Awesome: voting instructions (help modal)."
+              },
+              "awesome_votes_enabled_by_status": {
+                "type": "boolean",
+                "description": "Decidim Awesome step setting: when true, voting is restricted to proposals whose status is listed in awesome_votes_enabled_states"
+              },
+              "awesome_votes_enabled_states": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Allowed proposal state tokens when awesome_votes_enabled_by_status is true (e.g. accepted, evaluating, not_answered)"
               }
             },
             "additionalProperties": {
@@ -5253,7 +5264,9 @@
               "geocoding_enabled",
               "attachments_allowed",
               "vote_limit",
-              "votes"
+              "votes",
+              "awesome_votes_enabled_by_status",
+              "awesome_votes_enabled_states"
             ]
           },
           "links": {
@@ -24617,6 +24630,23 @@
                           "signing_secret": "5320728870e72c85cce4d8fe1033f9235b3086ac900dfc6dcca93d2072b33762",
                           "created_at": "2026-10-01T02:52:40Z",
                           "updated_at": "2026-10-01T02:52:40Z"
+                        }
+                      }
+                    }
+                  },
+                  "ok_http": {
+                    "value": {
+                      "data": {
+                        "id": "16",
+                        "type": "webhook_registration",
+                        "attributes": {
+                          "url": "http://internal.example/hooks/new",
+                          "subscriptions": [
+                            "proposal_creation.succeeded"
+                          ],
+                          "signing_secret": "2deeb7c59829023f0fe6a41ff00ec173e8eaf6cb25999047c8d3966b0e285774",
+                          "created_at": "2026-10-01T03:51:49Z",
+                          "updated_at": "2026-10-01T03:51:49Z"
                         }
                       }
                     }

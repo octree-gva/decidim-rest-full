@@ -26,7 +26,7 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:webhook_registratio
     title: "Webhook Registration Attributes",
     type: :object,
     properties: {
-      url: { type: :string, format: :uri, description: "HTTPS callback URL" },
+      url: { type: :string, format: :uri, description: "HTTP or HTTPS callback URL" },
       subscriptions: {
         type: :array,
         items: { type: :string },
@@ -49,7 +49,7 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:webhook_registratio
     title: "Webhook Registration Create Attributes",
     type: :object,
     properties: {
-      url: { type: :string, format: :uri, description: "HTTPS callback URL" },
+      url: { type: :string, format: :uri, description: "HTTP or HTTPS callback URL" },
       subscriptions: {
         type: :array,
         items: { type: :string },

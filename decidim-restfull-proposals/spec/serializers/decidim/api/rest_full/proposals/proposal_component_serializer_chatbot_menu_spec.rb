@@ -82,6 +82,13 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
           expect(meta[:can_vote]).to be(true)
         end
 
+        it "exposes awesome status restriction keys" do
+          expect(meta).to have_key(:awesome_votes_enabled_by_status)
+          expect(meta).to have_key(:awesome_votes_enabled_states)
+          expect(meta[:awesome_votes_enabled_by_status]).to be(false)
+          expect(meta[:awesome_votes_enabled_states]).to eq([])
+        end
+
         context "when the participant has voted on every voteable proposal" do
           before do
             create(:proposal_vote, proposal: published_proposal, author: user)
@@ -90,6 +97,49 @@ RSpec.describe Decidim::Api::RestFull::Proposals::ProposalComponentSerializer do
           it "sets can_vote false" do
             expect(meta[:can_vote]).to be(false)
           end
+        end
+      end
+    end
+
+    context "when voting is restricted by proposal status", if: (
+      Decidim::Toggle.gem_present?("decidim-decidim_awesome") &&
+      defined?(Decidim::DecidimAwesome) &&
+      Decidim::DecidimAwesome.enabled?(:votes_by_proposal_status)
+    ) do
+      let!(:proposal_component) do
+        step_id = participatory_process.active_step.id
+        create(
+          :proposal_component,
+          participatory_space: participatory_process,
+          step_settings: {
+            step_id => {
+              creation_enabled: true,
+              votes_enabled: true,
+              awesome_votes_enabled_by_status: true,
+              awesome_votes_enabled_states: %w(accepted)
+            }
+          }
+        )
+      end
+
+      it "exposes status restriction meta" do
+        expect(meta[:awesome_votes_enabled_by_status]).to be(true)
+        expect(meta[:awesome_votes_enabled_states]).to eq(%w(accepted))
+      end
+
+      context "with only disallowed-status proposals" do
+        before { create(:proposal, :evaluating, component: proposal_component) }
+
+        it "sets can_vote false" do
+          expect(meta[:can_vote]).to be(false)
+        end
+      end
+
+      context "with an allowed unvoted proposal" do
+        before { create(:proposal, :accepted, component: proposal_component) }
+
+        it "sets can_vote true" do
+          expect(meta[:can_vote]).to be(true)
         end
       end
     end
