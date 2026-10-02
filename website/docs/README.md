@@ -1,6 +1,6 @@
 # Documentation site structure
 
-Published at `/` (see `website/docusaurus.config.ts`). Same rules for every section — no one-off layouts without a maintainer note here.
+Published at [https://octree-gva.github.io/decidim-rest-full](https://octree-gva.github.io/decidim-rest-full) (`routeBasePath: '/'` under `baseUrl: '/decidim-rest-full/'` — see `website/docusaurus.config.ts`). Same rules for every section — no one-off layouts without a maintainer note here.
 
 | Section | Audience | Path |
 |---------|----------|------|
