@@ -72,6 +72,9 @@ module Decidim
             opts.on("--allow-impersonate", "If client can impersonate a user") do
               @options[:allow_impersonate] = true
             end
+            opts.on("--allow-impersonate-register", "If client can create users via impersonate register_on_missing") do
+              @options[:allow_impersonate_register] = true
+            end
             opts.on("--allow-login", "If client can insert user/password to login") do
               @options[:allow_login] = true
             end
@@ -95,6 +98,7 @@ module Decidim
             before_execute!
             permissions = @options[:permissions] || []
             permissions << "oauth.impersonate" if @options[:allow_impersonate]
+            permissions << "oauth.impersonate.register" if @options[:allow_impersonate_register]
             permissions << "oauth.login" if @options[:allow_login]
 
             api_client = Decidim::RestFull::Core::ApiClient.new(

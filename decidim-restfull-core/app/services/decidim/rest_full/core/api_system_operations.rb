@@ -478,14 +478,7 @@ module Decidim
         end
 
         def assert_extended_data_payload_size!(data)
-          max = Decidim::RestFull.config.max_extended_data_payload_bytes
-          return if max.blank? || !max.positive?
-
-          size = data.to_json.bytesize
-          return if size <= max
-
-          raise Decidim::RestFull::Core::ApiException::BadRequest,
-                "extended_data exceeds maximum size of #{max} bytes"
+          ExtendedDataPayloadSize.assert!(data)
         end
 
         def object_path

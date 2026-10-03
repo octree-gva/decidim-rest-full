@@ -33,7 +33,7 @@ module Decidim
 
           def system_permissions
             %w(
-              oauth.impersonate oauth.login
+              oauth.impersonate oauth.impersonate.register oauth.login
               system.organizations.read system.organizations.update system.organizations.destroy
               system.organizations.extended_data.read system.organizations.extended_data.update
               system.organizations.created system.organizations.updated system.organizations.deleted
@@ -45,6 +45,7 @@ module Decidim
         mattr_accessor :queue_name
         mattr_accessor :max_async_api_job_payload_bytes
         mattr_accessor :max_extended_data_payload_bytes
+        mattr_accessor :register_per_minute
         mattr_accessor :docs_url
         mattr_accessor :available_permissions
         mattr_accessor :events_for_proposals
@@ -85,6 +86,14 @@ module Decidim
           end
         rescue ArgumentError
           max_async_api_job_payload_bytes
+        end
+
+        # Max ROPC register-on-missing token requests per org+client_id per minute (Rack::Attack).
+        # +0+ disables the throttle.
+        self.register_per_minute = begin
+          Integer(ENV.fetch("DECIDIM_REST_REGISTER_PER_MINUTE", "10"))
+        rescue ArgumentError
+          10
         end
 
         self.docs_url = ENV.fetch("DOCS_URL", "https://octree-gva.github.io/decidim-rest-full")

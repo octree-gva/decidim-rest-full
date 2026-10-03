@@ -19,6 +19,7 @@ RSpec.describe "Draft publish async increments component count and lists newest"
     c = create(:api_client, organization:, scopes: %w(oauth public proposals))
     c.permissions = [
       Decidim::RestFull::Core::Permission.new(permission: "oauth.impersonate"),
+      Decidim::RestFull::Core::Permission.new(permission: "oauth.impersonate.register"),
       Decidim::RestFull::Core::Permission.new(permission: "public.component.read"),
       Decidim::RestFull::Core::Permission.new(permission: "proposals.draft"),
       Decidim::RestFull::Core::Permission.new(permission: "proposals.read")

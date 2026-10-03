@@ -17,14 +17,9 @@ module Decidim
           validate_params!
           user = user_from_params
           if user
-            # Update meta data
-            user.update!(
-              extended_data: (user.extended_data || {}).merge(
-                extra
-              )
-            )
+            apply_extra!(user)
           else
-            # Create user
+            ability.authorize! :impersonate_register, Decidim::RestFull::Core::ApiClient
             user = create_user_from_params!
           end
           broadcast(:ok, user)
@@ -37,13 +32,12 @@ module Decidim
         def validate_params!
           has_id = params.has_key? :id
           has_username = params.has_key? :username
-          wants_register = meta["register_on_missing"]
           user_exists = user_from_params
 
           return true if user_exists
 
           # It does not exists, and do not want to register.
-          raise Decidim::RestFull::Core::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing" unless wants_register
+          raise Decidim::RestFull::Core::ApiException::NotFound, "User not found. To create one, user meta.register_on_missing" unless wants_register?
 
           # It does not exists, want to register, but has no username
           raise StandardError, "Param .username required. Check your impersonation payload" unless has_username
@@ -57,19 +51,15 @@ module Decidim
           email = meta.delete("email") || "#{username}@example.org"
           name = meta.delete("name") || username.titleize
 
+          apply_extra_authorization_and_size!
+
           user = current_organization.users.build(
             email:,
             name:,
             nickname: username,
-            extended_data: extra
+            extended_data: extra.presence || {}
           )
-          user.accepted_tos_version = if meta["accept_tos_on_register"]
-                                        current_organization.tos_version + 1.hour
-                                      else
-                                        # Will need to revalidate tos
-                                        current_organization.tos_version - 1.hour
-                                      end
-          user.tos_agreement = true
+          apply_tos!(user)
 
           password = begin
             special_chars = ["@", "#", "$", "%", "^", "&", "*", "-", "_", "+", "=", "~"]
@@ -90,6 +80,33 @@ module Decidim
           user
         end
 
+        def apply_tos!(user)
+          # Decidim validates +tos_agreement+ on create (checkbox). Compliance signal is
+          # +accepted_tos_version+: future/current = accepted; past = must re-accept in UI.
+          user.tos_agreement = true
+          user.accepted_tos_version = if meta["accept_tos_on_register"]
+                                        current_organization.tos_version + 1.hour
+                                      else
+                                        current_organization.tos_version - 1.hour
+                                      end
+        end
+
+        def apply_extra!(user)
+          return if extra.blank?
+
+          ability.authorize! :update_extended_data, user
+          merged = (user.extended_data || {}).merge(extra)
+          ExtendedDataPayloadSize.assert!(merged)
+          user.update!(extended_data: merged)
+        end
+
+        def apply_extra_authorization_and_size!
+          return if extra.blank?
+
+          ability.authorize! :update_extended_data, ::Decidim::User
+          ExtendedDataPayloadSize.assert!(extra)
+        end
+
         def user_from_params
           @user_from_params ||= if params.has_key? "id"
                                   Decidim::User.find_by(
@@ -105,7 +122,14 @@ module Decidim
         end
 
         def extra
-          @extra ||= params[:extra] || {}
+          @extra ||= begin
+            raw = params[:extra] || params["extra"] || {}
+            raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw.to_h
+          end
+        end
+
+        def wants_register?
+          meta["register_on_missing"]
         end
 
         def default_meta
@@ -119,7 +143,11 @@ module Decidim
         def meta
           @meta ||= begin
             user_meta = (params[:meta] || {}).to_h.stringify_keys
-            default_meta.merge(user_meta)
+            merged = default_meta.merge(user_meta)
+            %w(register_on_missing accept_tos_on_register skip_confirmation_on_register).each do |key|
+              merged[key] = ActiveModel::Type::Boolean.new.cast(merged[key])
+            end
+            merged
           end
         end
 

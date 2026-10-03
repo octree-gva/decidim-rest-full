@@ -17,6 +17,7 @@ module Decidim
           @permissions = api_client.permission_strings
 
           can :impersonate, Decidim::RestFull::Core::ApiClient if permissions.include? "oauth.impersonate"
+          can :impersonate_register, Decidim::RestFull::Core::ApiClient if permissions.include? "oauth.impersonate.register"
           can :login, Decidim::RestFull::Core::ApiClient if permissions.include? "oauth.login"
           # Switch scopes and compose permissions
           scopes = api_client.scopes.to_a if scopes.nil?

@@ -115,6 +115,7 @@ module Decidim
           registry.register(:oauth, "oauth.extended_data.update", group: :oauth)
 
           registry.register(:system, "oauth.impersonate", group: :auth_type)
+          registry.register(:system, "oauth.impersonate.register", group: :auth_type)
           registry.register(:system, "oauth.login", group: :auth_type)
 
           registry.register(:system, "system.organizations.read", group: :organization)
@@ -160,6 +161,10 @@ module Decidim
         # Keep name +rest_full.draw_routes+ so feature gems can use before: safely.
         initializer "rest_full.draw_routes" do
           Decidim::RestFull::Routes.mount!
+        end
+
+        initializer "rest_full.rack_attack" do
+          Decidim::RestFull::Core::RackAttack.install!
         end
       end
     end

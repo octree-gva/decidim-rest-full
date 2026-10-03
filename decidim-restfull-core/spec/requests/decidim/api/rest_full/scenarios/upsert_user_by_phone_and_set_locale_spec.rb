@@ -14,6 +14,8 @@ RSpec.describe "Upsert user by phone via ROPC and set locale" do
     c = create(:api_client, organization:, scopes: %w(oauth public))
     c.permissions = [
       Decidim::RestFull::Core::Permission.new(permission: "oauth.impersonate"),
+      Decidim::RestFull::Core::Permission.new(permission: "oauth.impersonate.register"),
+      Decidim::RestFull::Core::Permission.new(permission: "oauth.extended_data.update"),
       Decidim::RestFull::Core::Permission.new(permission: "oauth.read"),
       Decidim::RestFull::Core::Permission.new(permission: "oauth.extended_data.read")
     ]
@@ -36,7 +38,7 @@ RSpec.describe "Upsert user by phone via ROPC and set locale" do
         client_id: api_client.client_id,
         client_secret: api_client.client_secret,
         scope: "oauth",
-        meta: { register_on_missing: true },
+        meta: { register_on_missing: true, skip_confirmation_on_register: true },
         extra: { phone_number: }
       }.to_json,
       headers: json_headers

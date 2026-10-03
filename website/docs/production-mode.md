@@ -52,6 +52,7 @@ flowchart LR
 | `DECIDIM_REST_QUEUE_NAME` | Active Job queue for async API jobs |
 | `DECIDIM_REST_LOADBALANCER_IPS` | Trusted proxy IPs ([safe host](/dev/update-hosts)) |
 | `DECIDIM_REST_MAX_ASYNC_API_JOB_PAYLOAD_BYTES` | Max JSONB job payload |
+| `DECIDIM_REST_REGISTER_PER_MINUTE` | ROPC register-on-missing throttle (org + `client_id` / minute; `0` off) |
 | Host `DATABASE_URL` | Primary (+ replica URLs for `connected_to(:reading)` in host) |
 | `REDIS_URL` | Sidekiq + optional cache |
 | `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` | Puma |
@@ -95,7 +96,7 @@ Against staging, set `K6_BASE_URL` in `.env` to your host URL; the same `k6 run`
 - **304 rate** on hot GETs (target &gt; 60% with well-behaved clients)
 - Postgres pool wait, slow query log
 - Sidekiq queue latency (p95 &lt; 5s under peak enqueue)
-- Per-org / per-`client_id` rate limits (Rack::Attack in **host**)
+- Per-org / per-`client_id` rate limits (engine ships ROPC register throttle via Rack::Attack; add broader host limits as needed)
 
 ## Multi-tenant safety
 

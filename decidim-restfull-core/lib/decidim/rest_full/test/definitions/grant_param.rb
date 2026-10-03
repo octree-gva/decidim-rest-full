@@ -44,13 +44,18 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:password_grant_impe
         title: "User impersonation settings",
         description: "Impersonation Settings",
         properties: {
-          register_on_missing: { type: :boolean, description: "Register the user if they do not exist. Default: false" },
+          register_on_missing: { type: :boolean, description: "Register the user if they do not exist. Requires oauth.impersonate.register. Default: false" },
           accept_tos_on_register: { type: :boolean, description: "Accept the TOS on registration, used only if register_on_missing=true. Default: false" },
           skip_confirmation_on_register: { type: :boolean, description: "Skip email confirmation on creation, used only if register_on_missing=true. Default: false" },
           email: { type: :string, description: "User email to use on registration. used only if register_on_missing=true. Default to <username>@example.org" },
           name: { type: :string, description: "User name. Used only if register_on_missing=true. Default to username" }
         },
         additionalProperties: false
+      },
+      extra: {
+        type: :object,
+        description: "Merged into user.extended_data. Requires oauth.extended_data.update. Empty object is a no-op.",
+        additionalProperties: true
       },
       client_id: { type: :string, description: "OAuth application Client Id" },
       client_secret: { type: :string, description: "OAuth application Client Secret" },

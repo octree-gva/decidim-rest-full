@@ -4,7 +4,7 @@
 require "swagger_helper"
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization, available_locales: ["en"]) }
-  let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
+  let!(:user) { create(:user, :confirmed, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) { create(:api_client, organization:, scopes: "oauth") }
   let!(:permissions) do
     api_client.permissions = [

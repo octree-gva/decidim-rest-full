@@ -21,7 +21,7 @@ module Decidim
 
           def validate_permissions(permissions, scopes)
             permission_mapping = ::Decidim::RestFull.config.available_permissions
-            permission_without_validation = ["oauth.impersonate", "oauth.login"]
+            permission_without_validation = ["oauth.impersonate", "oauth.impersonate.register", "oauth.login"]
 
             allowed_permissions = scopes.map do |scope|
               permission_mapping[scope.to_s]

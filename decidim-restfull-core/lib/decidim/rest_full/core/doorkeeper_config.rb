@@ -62,14 +62,16 @@ module Decidim
             raise ::Decidim::RestFull::Core::ApiException::BadRequest, "Invalid Api Client, check credentials" unless api_client
 
             auth_type = params.require(:auth_type)
-            case auth_type
-            when "impersonate"
-              find_user_via_impersonate(api_client, params, current_organization)
-            when "login"
-              find_user_via_login(api_client, params, current_organization)
-            else
-              raise ::Decidim::RestFull::Core::ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
-            end
+            user = case auth_type
+                   when "impersonate"
+                     find_user_via_impersonate(api_client, params, current_organization)
+                   when "login"
+                     find_user_via_login(api_client, params, current_organization)
+                   else
+                     raise ::Decidim::RestFull::Core::ApiException::Unauthorized, "Not allowed param auth_type='#{auth_type}'"
+                   end
+            ::Decidim::RestFull::Core::UserApiEligibility.assert!(user)
+            user
           end
 
           private
@@ -86,8 +88,7 @@ module Decidim
 
           def token_active?(token_valid, user)
             if user
-              user_valid = !user.blocked? && user.locked_at.blank?
-              token_valid && user_valid
+              token_valid && ::Decidim::RestFull::Core::UserApiEligibility.eligible?(user)
             else
               token_valid
             end
@@ -95,7 +96,7 @@ module Decidim
 
           def find_user_via_impersonate(api_client, params, current_organization)
             # `extra` is merged into user.extended_data by ImpersonateResourceOwnerFromCredentials
-            # (OpenAPI may omit it; runtime still accepts it).
+            # when the client has oauth.extended_data.update.
             impersonation_payload = params.permit(
               :username, :id,
               meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :send_welcome_message, :name, :email],

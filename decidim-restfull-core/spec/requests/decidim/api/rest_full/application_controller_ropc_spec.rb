@@ -13,11 +13,12 @@ def uniq_nickname
 end
 RSpec.describe Decidim::Api::RestFull::ApplicationController do
   let!(:organization) { create(:organization, available_locales: ["en"]) }
-  let!(:user) { create(:user, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
+  let!(:user) { create(:user, :confirmed, organization:, password: "decidim123456789!", password_confirmation: "decidim123456789!") }
   let!(:api_client) do
     api_client = create(:api_client, organization:, scopes: %w(oauth public))
     api_client.permissions = [
       api_client.permissions.build(permission: "oauth.impersonate"),
+      api_client.permissions.build(permission: "oauth.impersonate.register"),
       api_client.permissions.build(permission: "oauth.login")
     ]
     api_client.save!
@@ -70,7 +71,8 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
                 client_id: api_client.client_id,
                 client_secret: api_client.client_secret,
                 meta: {
-                  register_on_missing: true
+                  register_on_missing: true,
+                  skip_confirmation_on_register: true
                 },
                 scope: "public"
               }
@@ -95,6 +97,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
                 client_secret: api_client.client_secret,
                 meta: {
                   register_on_missing: true,
+                  skip_confirmation_on_register: true,
                   email:
                 },
                 scope: "public"
@@ -121,6 +124,7 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
                 client_secret: api_client.client_secret,
                 meta: {
                   register_on_missing: true,
+                  skip_confirmation_on_register: true,
                   name: "My Name"
                 },
                 scope: "public"
@@ -194,6 +198,58 @@ RSpec.describe Decidim::Api::RestFull::ApplicationController do
       response "400", "Bad Request" do
         produces "application/json"
         schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:error_response)
+
+        context "when user is unconfirmed" do
+          let!(:unconfirmed_user) do
+            u = create(:user, :confirmed, organization:, nickname: "unconf#{SecureRandom.hex(3)}")
+            u.update_columns(confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
+            u
+          end
+          let(:body) do
+            {
+              grant_type: "password",
+              auth_type: "impersonate",
+              username: unconfirmed_user.nickname,
+              client_id: api_client.client_id,
+              client_secret: api_client.client_secret,
+              scope: "public"
+            }
+          end
+
+          run_test!(example_name: :user_unconfirmed) do |_example|
+            expect(response).to have_http_status(:bad_request)
+          end
+        end
+
+        context "when register_on_missing without register permission" do
+          let!(:api_client) do
+            api_client = create(:api_client, organization:, scopes: %w(oauth public))
+            api_client.permissions = [
+              api_client.permissions.build(permission: "oauth.impersonate")
+            ]
+            api_client.save!
+            api_client.reload
+          end
+          let(:nickname) { uniq_nickname }
+          let(:body) do
+            {
+              grant_type: "password",
+              auth_type: "impersonate",
+              username: nickname,
+              client_id: api_client.client_id,
+              client_secret: api_client.client_secret,
+              meta: {
+                register_on_missing: true,
+                skip_confirmation_on_register: true
+              },
+              scope: "public"
+            }
+          end
+
+          run_test!(example_name: :register_forbidden) do |_example|
+            expect(Decidim::User.find_by(nickname:)).to be_nil
+          end
+        end
 
         context "when user does not exists" do
           context "with meta.register_on_missing=false" do

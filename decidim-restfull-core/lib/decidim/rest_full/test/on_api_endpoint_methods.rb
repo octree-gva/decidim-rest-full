@@ -101,7 +101,7 @@ module Decidim
         end
 
         def rest_full_bearer_resource_owner_flow!(scopes)
-          let(:user) { create(:user, locale: "fr", organization:, confirmed_at: Time.zone.now) }
+          let(:user) { create(:user, :confirmed, locale: "fr", organization:) }
           let!(:bearer_token) { create(:oauth_access_token, scopes: scopes.join(" "), resource_owner_id: user.id, application: api_client) }
         end
 

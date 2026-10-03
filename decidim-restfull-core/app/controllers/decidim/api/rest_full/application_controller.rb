@@ -34,13 +34,11 @@ module Decidim
           UNPROCESSABLE_STATUS
         end
 
-        # Ensures a user is present and not blocked or locked. Use for resource-owner-only actions.
+        # Ensures a user is present, confirmed, and not blocked or locked. Use for resource-owner-only actions.
         # @param user [Decidim::User, nil] when +nil+, uses +current_user+
         def require_user!(user = nil)
           u = user.nil? ? current_user : user
-          raise Decidim::RestFull::Core::ApiException::BadRequest, "User required" unless u
-          raise Decidim::RestFull::Core::ApiException::BadRequest, "User blocked" if u.blocked_at
-          raise Decidim::RestFull::Core::ApiException::BadRequest, "User locked" if u.locked_at
+          Decidim::RestFull::Core::UserApiEligibility.assert!(u)
         end
 
         def available_space?(manifest)
