@@ -8,48 +8,72 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
       produces "application/json"
       operationId "updateDraftProposal"
       description <<~README
-        This endpoint allows you to  update a draft proposal associated with your application ID.
-        Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API.
-        Therefore, any draft you create here is new and tied to your application's credentials.
+        Update a draft proposal owned by this API client.
 
-        ### Example Request
+        Drafts updated here stay hidden on the Decidim front-end. Drafts created in the Decidim UI are not editable through this API.
 
-        ```http
-        PUT /public/assemblies/12/2319/proposals/draft
-        Content-Type: application/json
-        Authorization: Bearer YOUR_bearer_token
+        Send `title` and `body` as strings. Do not send a locale. The server stores each field as an object with **one** locale key. The response includes only that key.
 
-        {
-          "title": "My valid title"
-        }
-        ```
-        ## Access Requirements
+        The locale is the impersonated user's `locale`. When `locale` is null, the server uses the organization `default_locale`.
 
-        * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).
+        Only an impersonation token (ROPC) is accepted. A service token is rejected.
 
-        ## Error Handling
+        Field errors cover only the fields present in the request. `data.meta.publishable` tells you if the draft can be published. An empty `data` object does not move locales and does not write.
 
-        * Field Errors: Only errors related to the fields you're updating will be returned.
-        * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.
+        ## Update sequence
 
-        ### Example response
+        A draft keeps a single locale. Changing the user's locale and sending a new value runs two steps: **move**, then **overlay**.
+
+        ### 1. Edited while the user locale is `fr`
+
         ```json
         {
-          "data": {
-            "id": "12345",
-            "type": "proposal",
-            "attributes": {
-              "title": "My valid title",
-              "body": null
-            },
-            "meta": {
-              "publishable": false
-            }
+          "title": {
+            "fr": "J'aimerais de nouveaux bancs publiques avec des prises USB-C"
+          },
+          "body": {
+            "fr": "<p>Lorem Ipsum...</p>"
           }
         }
         ```
-        In this example, the title is valid, so the server returns a 200 OK status.
-        However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+
+        ### 2. The user locale becomes `en`, and the client sends a new title
+
+        ```json
+        {
+          "data": {
+            "title": "I would like new benches with USB-C charging ports"
+          }
+        }
+        ```
+
+        **Move.** Strings stay the same. Keys change to the current locale. `fr` is removed.
+
+        ```json
+        {
+          "title": {
+            "en": "J'aimerais de nouveaux bancs publiques avec des prises USB-C"
+          },
+          "body": {
+            "en": "<p>Lorem Ipsum...</p>"
+          }
+        }
+        ```
+
+        **Overlay.** Only fields in the request are replaced. `body` was not sent, so it stays on the moved string.
+
+        ```json
+        {
+          "title": {
+            "en": "I would like new benches with USB-C charging ports"
+          },
+          "body": {
+            "en": "<p>Lorem Ipsum...</p>"
+          }
+        }
+        ```
+
+        The same two steps apply for `es`, and for a null user locale resolved to the organization `default_locale`.
       README
 
       parameter name: "id", in: :path, schema: { type: :integer, description: "Draft Id" }, required: true
@@ -61,9 +85,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
             type: :object,
             title: "Update Draft Proposal Payload Data",
             properties: {
-              title: { type: :string, description: "Title of the draft" },
-              body: { type: :string, description: "Content of the draft" },
-              locale: { type: :string, enum: Decidim.available_locales, description: "Locale of the draft. default to user locale" }
+              title: { type: :string, description: "Title of the draft. Stored under the impersonated user's locale, or the organization default_locale when that locale is null." },
+              body: { type: :string, description: "Content of the draft. Stored under the same locale as title." }
             },
             description: "Payload to update in the proposal"
           }
@@ -77,6 +100,8 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
         scopes: ["proposals"],
         permissions: ["proposals.draft"]
       ) do
+        let!(:organization) { create(:organization, available_locales: %w(en fr es), default_locale: "en") }
+        let(:valid_title) { "This is a valid proposal title sample" }
         let!(:participatory_process) { create(:participatory_process, organization:) }
         let(:proposal_component) { create(:component, participatory_space: participatory_process, manifest_name: "proposals", published_at: Time.zone.now) }
         let!(:proposal) do
@@ -96,35 +121,93 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
           produces "application/json"
           schema "$ref" => Decidim::RestFull::Core::DefinitionRegistry.reference(:draft_proposal_item_response)
 
-          context "when update title" do
-            let(:body) { { data: { title: "This is a valid proposal title sample" } } }
+          context "when updating the title in fr" do
+            let(:user) { create(:user, locale: "fr", organization:, confirmed_at: Time.zone.now) }
+            let(:body) { { data: { title: valid_title } } }
 
-            run_test!(example_name: :ok) do |example|
+            run_test!(example_name: :ok_update_title_fr) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data["attributes"]["title"]["fr"]).to eq("This is a valid proposal title sample")
-              expect(data["meta"]["publishable"]).to be(false)
+              expect(data["attributes"]["title"]).to eq({ "fr" => valid_title })
+              expect(proposal.reload.title).to eq({ "fr" => valid_title })
+            end
+          end
+
+          context "when updating the title in en" do
+            let(:user) { create(:user, locale: "en", organization:, confirmed_at: Time.zone.now) }
+            let(:body) { { data: { title: valid_title } } }
+
+            run_test!(example_name: :ok_update_title_en) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data["attributes"]["title"]).to eq({ "en" => valid_title })
+              expect(proposal.reload.title).to eq({ "en" => valid_title })
+            end
+          end
+
+          context "when updating the title in es" do
+            let(:user) { create(:user, locale: "es", organization:, confirmed_at: Time.zone.now) }
+            let(:body) { { data: { title: valid_title } } }
+
+            run_test!(example_name: :ok_update_title_es) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data["attributes"]["title"]).to eq({ "es" => valid_title })
+              expect(proposal.reload.title).to eq({ "es" => valid_title })
+            end
+          end
+
+          context "when the user locale is nil" do
+            let(:user) { create(:user, locale: nil, organization:, confirmed_at: Time.zone.now) }
+            let(:body) { { data: { title: valid_title } } }
+
+            run_test!(example_name: :ok_update_title_default_locale) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data["attributes"]["title"]).to eq({ "en" => valid_title })
+              expect(proposal.reload.title).to eq({ "en" => valid_title })
+            end
+          end
+
+          context "when updating the body in en" do
+            let(:user) { create(:user, locale: "en", organization:, confirmed_at: Time.zone.now) }
+            let(:text) { "I am quiet a valid proposal, with one sentence that is long enough to be valid I think." }
+            let(:body) { { data: { body: text } } }
+
+            run_test!(example_name: :ok_update_body_en) do |example|
+              data = JSON.parse(example.body)["data"]
+              expect(data["attributes"]["body"]).to eq({ "en" => text })
+              expect(proposal.reload.body).to eq({ "en" => text })
             end
           end
 
           context "when update nothing" do
+            let(:user) { create(:user, locale: "en", organization:, confirmed_at: Time.zone.now) }
             let(:body) { { data: {} } }
-            let(:id) { proposal.id }
 
             run_test!(example_name: :ok_empty) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data["attributes"]["title"]["fr"]).to be_nil
+              expect(data["attributes"]["title"]["en"]).to be_nil
               expect(data["meta"]["publishable"]).to be(false)
+              expect(proposal.reload.title).to be_blank
             end
           end
 
-          context "when update body" do
-            let(:text) { "I am quiet a valid proposal, with one sentence that is long enough to be valid I think." }
-            let(:body) { { data: { body: text } } }
-            let(:id) { proposal.id }
+          context "when the user locale changes from fr to en" do
+            let(:french_title) { "J'aimerais de nouveaux bancs publiques avec des prises USB-C" }
+            let(:english_title) { "I would like new benches with USB-C charging ports" }
+            let(:french_body) { "<p>Lorem Ipsum...</p>" }
+            let(:user) { create(:user, locale: "en", organization:, confirmed_at: Time.zone.now) }
+            let(:body) { { data: { title: english_title } } }
 
-            run_test!(example_name: :ok_update_body) do |example|
+            before do
+              proposal.title = { "fr" => french_title }
+              proposal.body = { "fr" => french_body }
+              proposal.save(validate: false)
+            end
+
+            run_test!(example_name: :ok_locale_switch_fr_to_en) do |example|
               data = JSON.parse(example.body)["data"]
-              expect(data["attributes"]["body"]["fr"]).to eq(text)
+              expect(data["attributes"]["title"]).to eq({ "en" => english_title })
+              expect(data["attributes"]["body"]).to eq({ "en" => french_body })
+              expect(proposal.reload.title).to eq({ "en" => english_title })
+              expect(proposal.reload.body).to eq({ "en" => french_body })
             end
           end
         end
@@ -187,6 +270,17 @@ RSpec.describe Decidim::Api::RestFull::DraftProposals::DraftProposalsController 
               expect(data["error_details"]).to include(
                 a_hash_including("code" => "too_long", "field" => "title")
               )
+            end
+          end
+
+          context "when the token is a service token" do
+            let!(:bearer_token) { create(:oauth_access_token, scopes: "proposals", resource_owner_id: nil, application: api_client) }
+            let(:body) { { data: { title: valid_title } } }
+
+            run_test!(example_name: :bad_request_service_token) do |example|
+              data = JSON.parse(example.body)
+              expect(response).to have_http_status(:bad_request)
+              expect(data["error_description"]).to include("User required")
             end
           end
 

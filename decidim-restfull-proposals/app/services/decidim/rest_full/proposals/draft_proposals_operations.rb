@@ -29,10 +29,11 @@ module Decidim
           payload = data
           return serialize_draft(draft_record.reload, form_for(draft_record)) if payload.keys.empty?
 
+          move_translations_to_current_locale!(draft_record)
           form = form_for(draft_record)
           apply_payload_to_form(form, payload)
-          validate_form_for_update!(form, payload.keys)
-          copy_form_to_draft_and_save(draft_record, form)
+          validate_form_for_update!(form, payload.keys.map(&:to_s))
+          overlay_payload!(draft_record, form, payload)
           serialize_draft(draft_record.reload, form_for(draft_record.reload))
         end
 
@@ -189,9 +190,9 @@ module Decidim
         def apply_payload_to_form(form, payload)
           sanitizer = Rails::Html::FullSanitizer.new
           allowed_data_keys.each do |field_name|
-            next unless payload.has_key?(field_name.to_sym)
+            next unless payload_includes?(payload, field_name)
 
-            form.public_send(:"#{field_name}=", sanitizer.sanitize(payload[field_name.to_sym]))
+            form.public_send(:"#{field_name}=", sanitizer.sanitize(payload_fetch(payload, field_name).to_s))
           end
         end
 
@@ -203,12 +204,43 @@ module Decidim
           raise Decidim::RestFull::Core::ApiException::BadRequest.from_errors(update_errors)
         end
 
-        def copy_form_to_draft_and_save(draft_proposal, form)
+        # Collapse title and body onto the resolved locale (user locale, or the
+        # organization default when user.locale is nil). Other locale keys are dropped.
+        # The stored string is copied as-is. Payload fields are applied afterwards.
+        def move_translations_to_current_locale!(draft_proposal)
+          locale = current_locale.to_s
           allowed_data_keys.each do |field_name|
-            value = form.public_send(field_name)
-            draft_proposal.public_send(:"#{field_name}=", { current_locale.to_s => value })
+            value = stored_translation(draft_proposal, field_name, locale)
+            draft_proposal.public_send(:"#{field_name}=", value.nil? ? {} : { locale => value })
+          end
+        end
+
+        def stored_translation(draft_proposal, field_name, locale)
+          raw = draft_proposal.public_send(field_name)
+          hash = raw.is_a?(Hash) ? raw.stringify_keys : {}
+          return hash[locale] if hash[locale].present?
+
+          hash.each_value.find(&:present?)
+        end
+
+        def overlay_payload!(draft_proposal, form, payload)
+          locale = current_locale.to_s
+          allowed_data_keys.each do |field_name|
+            next unless payload_includes?(payload, field_name)
+
+            draft_proposal.public_send(:"#{field_name}=", { locale => form.public_send(field_name) })
           end
           draft_proposal.save(validate: false)
+        end
+
+        def payload_includes?(payload, field_name)
+          payload.has_key?(field_name) || payload.has_key?(field_name.to_sym)
+        end
+
+        def payload_fetch(payload, field_name)
+          return payload[field_name] if payload.has_key?(field_name)
+
+          payload[field_name.to_sym]
         end
       end
     end
