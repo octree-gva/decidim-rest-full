@@ -36,7 +36,7 @@ RSpec.describe "Upsert user by phone via ROPC and set locale" do
         client_id: api_client.client_id,
         client_secret: api_client.client_secret,
         scope: "oauth",
-        meta: { register_on_missing: true },
+        meta: { register_on_missing: true, locale: "fr" },
         extra: { phone_number: }
       }.to_json,
       headers: json_headers
@@ -46,10 +46,7 @@ RSpec.describe "Upsert user by phone via ROPC and set locale" do
 
     user = Decidim::User.find_by!(nickname:, organization:)
     expect(user.extended_data["phone_number"]).to eq(phone_number)
-
-    # No REST endpoint mutates locale; set via model then assert API read path.
-    user.update!(locale: "fr")
-    expect(user.reload.locale).to eq("fr")
+    expect(user.locale).to eq("fr")
 
     credential_token = create(
       :oauth_access_token,

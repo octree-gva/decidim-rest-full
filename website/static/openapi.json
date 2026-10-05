@@ -753,6 +753,10 @@
               "name": {
                 "type": "string",
                 "description": "User name. Used only if register_on_missing=true. Default to username"
+              },
+              "locale": {
+                "type": "string",
+                "description": "Participant locale. Applied on create and when the user already exists. Must be an organization locale."
               }
             },
             "additionalProperties": false

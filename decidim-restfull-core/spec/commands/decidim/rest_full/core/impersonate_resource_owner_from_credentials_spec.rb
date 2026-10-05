@@ -104,5 +104,56 @@ RSpec.describe Decidim::RestFull::Core::ImpersonateResourceOwnerFromCredentials 
         expect(user.name).to eq("New User")
       end
     end
+
+    context "when meta locale is an organization locale" do
+      let(:organization) { create(:organization, available_locales: %w(en fr), default_locale: "en") }
+      let(:params) do
+        {
+          username: "locale_user",
+          meta: {
+            register_on_missing: true,
+            locale: "fr"
+          }
+        }
+      end
+
+      it "stores the locale on create" do
+        command.call
+        user = Decidim::User.find_by(nickname: "locale_user", organization:)
+        expect(user.locale).to eq("fr")
+      end
+    end
+
+    context "when the user already exists" do
+      let(:organization) { create(:organization, available_locales: %w(en fr), default_locale: "en") }
+      let!(:user) { create(:user, organization:, nickname: "known_user", locale: "en") }
+      let(:params) do
+        {
+          username: "known_user",
+          meta: { locale: "fr" }
+        }
+      end
+
+      it "updates the locale" do
+        command.call
+        expect(user.reload.locale).to eq("fr")
+      end
+    end
+
+    context "when meta locale is not available" do
+      let(:params) do
+        {
+          username: "bad_locale",
+          meta: {
+            register_on_missing: true,
+            locale: "de"
+          }
+        }
+      end
+
+      it "broadcasts an error" do
+        expect(command.call).to broadcast(:error)
+      end
+    end
   end
 end

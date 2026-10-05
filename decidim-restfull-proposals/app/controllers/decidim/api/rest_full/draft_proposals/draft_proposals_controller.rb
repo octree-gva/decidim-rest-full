@@ -5,8 +5,8 @@ module Decidim
     module RestFull
       module DraftProposals
         # CRUD for draft proposals (unpublished). Uses Decidim ProposalForm for validation.
-        # Allowed writable fields: title, body (see allowed_data_keys). Update applies
-        # payload to form, validates, then copies to draft and saves.
+        # Allowed writable fields: title, body (see allowed_data_keys). Update moves
+        # stored strings onto the current locale, validates the payload, then overlays it.
         class DraftProposalsController < Decidim::Api::RestFull::Core::ResourcesController
           include Decidim::Api::RestFull::AsyncApiJobEnqueuing
 

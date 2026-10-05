@@ -56,6 +56,11 @@ Rails.application.config.i18n.default_locale = :en
 Decidim.available_locales = test_locales
 Decidim.default_locale = :en
 
+# decidim-core eager-loads a subclass of Devise::InvitationsController before
+# devise_invitable's app controller is autoloaded.
+invitable_root = Gem.loaded_specs["devise_invitable"]&.full_gem_path
+require File.join(invitable_root, "app/controllers/devise/invitations_controller") if invitable_root
+
 Rails.application.eager_load!
 
 require "decidim/rest_full/test/definitions"

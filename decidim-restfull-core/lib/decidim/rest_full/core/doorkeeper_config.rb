@@ -98,7 +98,7 @@ module Decidim
             # (OpenAPI may omit it; runtime still accepts it).
             impersonation_payload = params.permit(
               :username, :id,
-              meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :send_welcome_message, :name, :email],
+              meta: [:register_on_missing, :accept_tos_on_register, :skip_confirmation_on_register, :send_welcome_message, :name, :email, :locale],
               extra: {}
             ).to_h
 
