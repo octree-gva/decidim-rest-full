@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * API V1
- * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.3.8_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant **Organizations** One deployment hosts many **Organizations** (tenants by **`host`**). - The **`system` scope** endpoints apply in the context of the resolved organization - The request **`host`** selects which **Organization** you target.   For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations\' OAuth applications.  ### Integrators Start with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).  TypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).  **Extended data** (client metadata on organizations, components, spaces, proposals, meetings): [https://octree-gva.github.io/decidim-rest-full/integrator/extended-data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).  Outbound **webhook** events are listed under the **Webhooks** tag. Manage registrations via `/webhook_registrations` (or System admin) and fetch example payloads from `GET /webhook_events/{event_type}`.
+ * A RestFull API for Decidim, to be able to CRUD resources from Decidim.   _current version: 0.3.10_  ## Authentication [Get a token](https://octree-gva.github.io/decidim-rest-full/category/authentication) from our `/oauth/token` routes, following OAuth specs on Credential Flows or Resource Owner Password Credentials Flow.  ### Permissions A permission system is attached to the created OAuth application, that is designed in two levels:  - **scope**: a broad permission to access a collection of endpoints - **abilities**: a fine grained permission system that allow actions.  The scopes and abilities are manageable in your System Admin Panel.  ### Multi-tenant **Organizations** One deployment hosts many **Organizations** (tenants by **`host`**). - The **`system` scope** endpoints apply in the context of the resolved organization - The request **`host`** selects which **Organization** you target.   For example, `example.org/oauth/token` and `foobar.org/oauth/token` obtain tokens for those organizations\' OAuth applications.  ### Integrators Start with the [Integrator quickstart](https://octree-gva.github.io/decidim-rest-full/integrator/quickstart) (host → API client → token → first API call).  TypeScript client: [https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk](https://octree-gva.github.io/decidim-rest-full/integrator/typescript-sdk) (`@octree/decidim-sdk`).  **Extended data** (client metadata on organizations, components, spaces, proposals, meetings): [https://octree-gva.github.io/decidim-rest-full/integrator/extended-data](https://octree-gva.github.io/decidim-rest-full/integrator/extended-data).  Outbound **webhook** events are listed under the **Webhooks** tag. Manage registrations via `/webhook_registrations` (or System admin) and fetch example payloads from `GET /webhook_events/{event_type}`.
  *
  * The version of the OpenAPI document: 0.3.10
  *
@@ -4570,7 +4570,7 @@ export interface ProposalAttributes {
   extended_data?: { [key: string]: any };
 }
 /**
- * A proposal component can host proposals from participants, and official proposals (proposals from the organization). This component have many metadatas that explain what are the restrictions regarding proposing, voting, commenting, amending or endorsing.   Features toggles:  - `can_create_proposals`: If participants can create proposals - `can_vote`: If participants can vote - `can_comment`: If participants can comments - .... and some more
+ * A proposal component can host proposals from participants, and official proposals (proposals from the organization). This component have many metadatas that explain what are the restrictions regarding proposing, voting, commenting, amending or endorsing.   Features toggles:  - `can_create_proposals`: If participants can create proposals - `can_vote`: If voting is enabled for the component (and, when impersonating, if unvoted votable proposals remain) - `awesome_votes_enabled_by_status`: Decidim Awesome step setting — restrict voting by proposal status - `awesome_votes_enabled_states`: Allowed proposal state tokens when status restriction is on - `can_comment`: If participants can comments - .... and some more
  * @export
  * @interface ProposalComponent
  */
@@ -4805,6 +4805,18 @@ export interface ProposalComponentMetadata {
    */
   can_vote: boolean;
   /**
+   * Decidim Awesome step setting: when true, voting is restricted to proposals whose status is listed in awesome_votes_enabled_states
+   * @type {boolean}
+   * @memberof ProposalComponentMetadata
+   */
+  awesome_votes_enabled_by_status: boolean;
+  /**
+   * Allowed proposal state tokens when awesome_votes_enabled_by_status is true (e.g. accepted, evaluating, not_answered)
+   * @type {Array<string>}
+   * @memberof ProposalComponentMetadata
+   */
+  awesome_votes_enabled_states: Array<string>;
+  /**
    * If the current user can comment on the component
    * @type {boolean}
    * @memberof ProposalComponentMetadata
@@ -4972,18 +4984,6 @@ export interface ProposalComponentMetadata {
    * @memberof ProposalComponentMetadata
    */
   voting_cards_instructions?: TranslatedProp;
-  /**
-   * Decidim Awesome step setting: when true, voting is restricted to proposals whose status is listed in awesome_votes_enabled_states
-   * @type {boolean}
-   * @memberof ProposalComponentMetadata
-   */
-  awesome_votes_enabled_by_status: boolean;
-  /**
-   * Allowed proposal state tokens when awesome_votes_enabled_by_status is true (e.g. accepted, evaluating, not_answered)
-   * @type {Array<string>}
-   * @memberof ProposalComponentMetadata
-   */
-  awesome_votes_enabled_states: Array<string>;
 }
 
 export const ProposalComponentMetadataDefaultSortOrderEnum = {
@@ -5129,6 +5129,12 @@ export interface ProposalMetadata {
    * @memberof ProposalMetadata
    */
   published: boolean;
+  /**
+   * Whether this proposal accepts votes given component voting settings and Awesome status restriction (or not rejected when restriction is off)
+   * @type {boolean}
+   * @memberof ProposalMetadata
+   */
+  can_vote: boolean;
   /**
    * Scope Id
    * @type {number}
@@ -6782,13 +6788,13 @@ export interface RoleItemResponse {
 /**
  *
  * @export
- * @interface SetMeetingExtendedDataRequest
+ * @interface SetSpaceExtendedDataRequest
  */
-export interface SetMeetingExtendedDataRequest {
+export interface SetSpaceExtendedDataRequest {
   /**
    *
    * @type {{ [key: string]: any; }}
-   * @memberof SetMeetingExtendedDataRequest
+   * @memberof SetSpaceExtendedDataRequest
    */
   data: { [key: string]: any };
 }
@@ -7663,34 +7669,18 @@ export interface UpdateDraftProposalPayload {
  */
 export interface UpdateDraftProposalPayloadData {
   /**
-   * Title of the draft
+   * Title of the draft. Stored under the impersonated user\'s locale, or the organization default_locale when that locale is null.
    * @type {string}
    * @memberof UpdateDraftProposalPayloadData
    */
   title?: string;
   /**
-   * Content of the draft
+   * Content of the draft. Stored under the same locale as title.
    * @type {string}
    * @memberof UpdateDraftProposalPayloadData
    */
   body?: string;
-  /**
-   * Locale of the draft. default to user locale
-   * @type {string}
-   * @memberof UpdateDraftProposalPayloadData
-   */
-  locale?: UpdateDraftProposalPayloadDataLocaleEnum;
 }
-
-export const UpdateDraftProposalPayloadDataLocaleEnum = {
-  En: "en",
-  Fr: "fr",
-  Es: "es",
-} as const;
-
-export type UpdateDraftProposalPayloadDataLocaleEnum =
-  (typeof UpdateDraftProposalPayloadDataLocaleEnum)[keyof typeof UpdateDraftProposalPayloadDataLocaleEnum];
-
 /**
  *
  * @export
@@ -7865,6 +7855,12 @@ export interface UserImpersonationSettings {
    * @memberof UserImpersonationSettings
    */
   name?: string;
+  /**
+   * Participant locale. Applied on create and when the user already exists. Must be an organization locale.
+   * @type {string}
+   * @memberof UserImpersonationSettings
+   */
+  locale?: string;
 }
 /**
  *
@@ -9543,98 +9539,6 @@ export const BlogsApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
-     * @summary Show a blog detail (pagination / same published_at)
-     * @param {number} id
-     * @param {Array<Locale>} [locales]
-     * @param {BlogShowPaginationSpaceManifestEnum} [spaceManifest]
-     * @param {number} [spaceId]
-     * @param {number} [componentId]
-     * @param {string} [order] Order by
-     * @param {BlogShowPaginationOrderDirectionEnum} [orderDirection] Order direction
-     * @param {string} [authorization] Bearer access token (see security schemes)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    blogShowPagination: async (
-      id: number,
-      locales?: Array<Locale>,
-      spaceManifest?: BlogShowPaginationSpaceManifestEnum,
-      spaceId?: number,
-      componentId?: number,
-      order?: string,
-      orderDirection?: BlogShowPaginationOrderDirectionEnum,
-      authorization?: string,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("blogShowPagination", "id", id);
-      const localVarPath = `/blogs/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication credentialFlowBearer required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (locales) {
-        localVarQueryParameter["locales[]"] = locales;
-      }
-
-      if (spaceManifest !== undefined) {
-        localVarQueryParameter["space_manifest"] = spaceManifest;
-      }
-
-      if (spaceId !== undefined) {
-        localVarQueryParameter["space_id"] = spaceId;
-      }
-
-      if (componentId !== undefined) {
-        localVarQueryParameter["component_id"] = componentId;
-      }
-
-      if (order !== undefined) {
-        localVarQueryParameter["order"] = order;
-      }
-
-      if (orderDirection !== undefined) {
-        localVarQueryParameter["order_direction"] = orderDirection;
-      }
-
-      if (authorization != null) {
-        localVarHeaderParameter["Authorization"] = String(authorization);
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogPostCreatePayload} blogPostCreatePayload
@@ -9735,6 +9639,98 @@ export const BlogsApiAxiosParamCreator = function (
       // authentication resourceOwnerFlowBearer required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (authorization != null) {
+        localVarHeaderParameter["Authorization"] = String(authorization);
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get post details (Decidim::Blogs::Post)
+     * @summary Show post
+     * @param {number} id
+     * @param {Array<Locale>} [locales]
+     * @param {GetBlogPostSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
+     * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {GetBlogPostOrderDirectionEnum} [orderDirection] Order direction
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getBlogPost: async (
+      id: number,
+      locales?: Array<Locale>,
+      spaceManifest?: GetBlogPostSpaceManifestEnum,
+      spaceId?: number,
+      componentId?: number,
+      order?: string,
+      orderDirection?: GetBlogPostOrderDirectionEnum,
+      authorization?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("getBlogPost", "id", id);
+      const localVarPath = `/blogs/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication credentialFlowBearer required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (locales) {
+        localVarQueryParameter["locales[]"] = locales;
+      }
+
+      if (spaceManifest !== undefined) {
+        localVarQueryParameter["space_manifest"] = spaceManifest;
+      }
+
+      if (spaceId !== undefined) {
+        localVarQueryParameter["space_id"] = spaceId;
+      }
+
+      if (componentId !== undefined) {
+        localVarQueryParameter["component_id"] = componentId;
+      }
+
+      if (order !== undefined) {
+        localVarQueryParameter["order"] = order;
+      }
+
+      if (orderDirection !== undefined) {
+        localVarQueryParameter["order_direction"] = orderDirection;
+      }
 
       if (authorization != null) {
         localVarHeaderParameter["Authorization"] = String(authorization);
@@ -9862,61 +9858,6 @@ export const BlogsApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = BlogsApiAxiosParamCreator(configuration);
   return {
     /**
-     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
-     * @summary Show a blog detail (pagination / same published_at)
-     * @param {number} id
-     * @param {Array<Locale>} [locales]
-     * @param {BlogShowPaginationSpaceManifestEnum} [spaceManifest]
-     * @param {number} [spaceId]
-     * @param {number} [componentId]
-     * @param {string} [order] Order by
-     * @param {BlogShowPaginationOrderDirectionEnum} [orderDirection] Order direction
-     * @param {string} [authorization] Bearer access token (see security schemes)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async blogShowPagination(
-      id: number,
-      locales?: Array<Locale>,
-      spaceManifest?: BlogShowPaginationSpaceManifestEnum,
-      spaceId?: number,
-      componentId?: number,
-      order?: string,
-      orderDirection?: BlogShowPaginationOrderDirectionEnum,
-      authorization?: string,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<BlogItemResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.blogShowPagination(
-          id,
-          locales,
-          spaceManifest,
-          spaceId,
-          componentId,
-          order,
-          orderDirection,
-          authorization,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["BlogsApi.blogShowPagination"]?.[
-          localVarOperationServerIndex
-        ]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogPostCreatePayload} blogPostCreatePayload
@@ -9980,6 +9921,60 @@ export const BlogsApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
         operationServerMap["BlogsApi.deleteBlogPostAsync"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Get post details (Decidim::Blogs::Post)
+     * @summary Show post
+     * @param {number} id
+     * @param {Array<Locale>} [locales]
+     * @param {GetBlogPostSpaceManifestEnum} [spaceManifest]
+     * @param {number} [spaceId]
+     * @param {number} [componentId]
+     * @param {string} [order] Order by
+     * @param {GetBlogPostOrderDirectionEnum} [orderDirection] Order direction
+     * @param {string} [authorization] Bearer access token (see security schemes)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getBlogPost(
+      id: number,
+      locales?: Array<Locale>,
+      spaceManifest?: GetBlogPostSpaceManifestEnum,
+      spaceId?: number,
+      componentId?: number,
+      order?: string,
+      orderDirection?: GetBlogPostOrderDirectionEnum,
+      authorization?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<BlogItemResponse>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getBlogPost(
+        id,
+        locales,
+        spaceManifest,
+        spaceId,
+        componentId,
+        order,
+        orderDirection,
+        authorization,
+        options,
+      );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["BlogsApi.getBlogPost"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -10062,31 +10057,6 @@ export const BlogsApiFactory = function (
   const localVarFp = BlogsApiFp(configuration);
   return {
     /**
-     * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
-     * @summary Show a blog detail (pagination / same published_at)
-     * @param {BlogsApiBlogShowPaginationRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    blogShowPagination(
-      requestParameters: BlogsApiBlogShowPaginationRequest,
-      options?: RawAxiosRequestConfig,
-    ): AxiosPromise<BlogItemResponse> {
-      return localVarFp
-        .blogShowPagination(
-          requestParameters.id,
-          requestParameters.locales,
-          requestParameters.spaceManifest,
-          requestParameters.spaceId,
-          requestParameters.componentId,
-          requestParameters.order,
-          requestParameters.orderDirection,
-          requestParameters.authorization,
-          options,
-        )
-        .then((request) => request(axios, basePath));
-    },
-    /**
      * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
      * @summary Create blog post (async)
      * @param {BlogsApiCreateBlogPostAsyncRequest} requestParameters Request parameters.
@@ -10125,6 +10095,31 @@ export const BlogsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * Get post details (Decidim::Blogs::Post)
+     * @summary Show post
+     * @param {BlogsApiGetBlogPostRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getBlogPost(
+      requestParameters: BlogsApiGetBlogPostRequest,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<BlogItemResponse> {
+      return localVarFp
+        .getBlogPost(
+          requestParameters.id,
+          requestParameters.locales,
+          requestParameters.spaceManifest,
+          requestParameters.spaceId,
+          requestParameters.componentId,
+          requestParameters.order,
+          requestParameters.orderDirection,
+          requestParameters.authorization,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * List posts (Decidim::Blogs::Post)
      * @summary List posts
      * @param {BlogsApiListBlogPostsRequest} requestParameters Request parameters.
@@ -10152,69 +10147,6 @@ export const BlogsApiFactory = function (
     },
   };
 };
-
-/**
- * Request parameters for blogShowPagination operation in BlogsApi.
- * @export
- * @interface BlogsApiBlogShowPaginationRequest
- */
-export interface BlogsApiBlogShowPaginationRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly id: number;
-
-  /**
-   *
-   * @type {Array<Locale>}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly locales?: Array<Locale>;
-
-  /**
-   *
-   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly spaceManifest?: BlogShowPaginationSpaceManifestEnum;
-
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly spaceId?: number;
-
-  /**
-   *
-   * @type {number}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly componentId?: number;
-
-  /**
-   * Order by
-   * @type {string}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly order?: string;
-
-  /**
-   * Order direction
-   * @type {'asc' | 'desc'}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly orderDirection?: BlogShowPaginationOrderDirectionEnum;
-
-  /**
-   * Bearer access token (see security schemes)
-   * @type {string}
-   * @memberof BlogsApiBlogShowPagination
-   */
-  readonly authorization?: string;
-}
 
 /**
  * Request parameters for createBlogPostAsync operation in BlogsApi.
@@ -10254,6 +10186,69 @@ export interface BlogsApiDeleteBlogPostAsyncRequest {
    * Bearer access token (see security schemes)
    * @type {string}
    * @memberof BlogsApiDeleteBlogPostAsync
+   */
+  readonly authorization?: string;
+}
+
+/**
+ * Request parameters for getBlogPost operation in BlogsApi.
+ * @export
+ * @interface BlogsApiGetBlogPostRequest
+ */
+export interface BlogsApiGetBlogPostRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly id: number;
+
+  /**
+   *
+   * @type {Array<Locale>}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly locales?: Array<Locale>;
+
+  /**
+   *
+   * @type {'participatory_processes' | 'assemblies' | 'conferences' | 'initiatives'}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly spaceManifest?: GetBlogPostSpaceManifestEnum;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly spaceId?: number;
+
+  /**
+   *
+   * @type {number}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly componentId?: number;
+
+  /**
+   * Order by
+   * @type {string}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly order?: string;
+
+  /**
+   * Order direction
+   * @type {'asc' | 'desc'}
+   * @memberof BlogsApiGetBlogPost
+   */
+  readonly orderDirection?: GetBlogPostOrderDirectionEnum;
+
+  /**
+   * Bearer access token (see security schemes)
+   * @type {string}
+   * @memberof BlogsApiGetBlogPost
    */
   readonly authorization?: string;
 }
@@ -10336,33 +10331,6 @@ export interface BlogsApiListBlogPostsRequest {
  */
 export class BlogsApi extends BaseAPI {
   /**
-   * Blog show links.next / links.prev when two posts share published_at (DESC + id tie-break)
-   * @summary Show a blog detail (pagination / same published_at)
-   * @param {BlogsApiBlogShowPaginationRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof BlogsApi
-   */
-  public blogShowPagination(
-    requestParameters: BlogsApiBlogShowPaginationRequest,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return BlogsApiFp(this.configuration)
-      .blogShowPagination(
-        requestParameters.id,
-        requestParameters.locales,
-        requestParameters.spaceManifest,
-        requestParameters.spaceId,
-        requestParameters.componentId,
-        requestParameters.order,
-        requestParameters.orderDirection,
-        requestParameters.authorization,
-        options,
-      )
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
    * Enqueue creation of a blog post. Poll `GET /jobs/:uuid`.  Set `published_at` to control visibility (see **Blogs** tag). Requires `blogs.write` and impersonation.
    * @summary Create blog post (async)
    * @param {BlogsApiCreateBlogPostAsyncRequest} requestParameters Request parameters.
@@ -10405,6 +10373,33 @@ export class BlogsApi extends BaseAPI {
   }
 
   /**
+   * Get post details (Decidim::Blogs::Post)
+   * @summary Show post
+   * @param {BlogsApiGetBlogPostRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof BlogsApi
+   */
+  public getBlogPost(
+    requestParameters: BlogsApiGetBlogPostRequest,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return BlogsApiFp(this.configuration)
+      .getBlogPost(
+        requestParameters.id,
+        requestParameters.locales,
+        requestParameters.spaceManifest,
+        requestParameters.spaceId,
+        requestParameters.componentId,
+        requestParameters.order,
+        requestParameters.orderDirection,
+        requestParameters.authorization,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * List posts (Decidim::Blogs::Post)
    * @summary List posts
    * @param {BlogsApiListBlogPostsRequest} requestParameters Request parameters.
@@ -10436,23 +10431,23 @@ export class BlogsApi extends BaseAPI {
 /**
  * @export
  */
-export const BlogShowPaginationSpaceManifestEnum = {
+export const GetBlogPostSpaceManifestEnum = {
   ParticipatoryProcesses: "participatory_processes",
   Assemblies: "assemblies",
   Conferences: "conferences",
   Initiatives: "initiatives",
 } as const;
-export type BlogShowPaginationSpaceManifestEnum =
-  (typeof BlogShowPaginationSpaceManifestEnum)[keyof typeof BlogShowPaginationSpaceManifestEnum];
+export type GetBlogPostSpaceManifestEnum =
+  (typeof GetBlogPostSpaceManifestEnum)[keyof typeof GetBlogPostSpaceManifestEnum];
 /**
  * @export
  */
-export const BlogShowPaginationOrderDirectionEnum = {
+export const GetBlogPostOrderDirectionEnum = {
   Asc: "asc",
   Desc: "desc",
 } as const;
-export type BlogShowPaginationOrderDirectionEnum =
-  (typeof BlogShowPaginationOrderDirectionEnum)[keyof typeof BlogShowPaginationOrderDirectionEnum];
+export type GetBlogPostOrderDirectionEnum =
+  (typeof GetBlogPostOrderDirectionEnum)[keyof typeof GetBlogPostOrderDirectionEnum];
 /**
  * @export
  */
@@ -11252,7 +11247,7 @@ export const ComponentsApiAxiosParamCreator = function (
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11260,7 +11255,7 @@ export const ComponentsApiAxiosParamCreator = function (
     setComponentExtendedData: async (
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -11268,11 +11263,11 @@ export const ComponentsApiAxiosParamCreator = function (
       assertParamExists("setComponentExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setComponentExtendedData", "id", id);
-      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setSpaceExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setComponentExtendedData",
-        "setMeetingExtendedDataRequest",
-        setMeetingExtendedDataRequest,
+        "setSpaceExtendedDataRequest",
+        setSpaceExtendedDataRequest,
       );
       const localVarPath = `/components/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -11316,7 +11311,7 @@ export const ComponentsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setMeetingExtendedDataRequest,
+        setSpaceExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -11923,7 +11918,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
      * @summary Set component extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11931,7 +11926,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
     async setComponentExtendedData(
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -11944,7 +11939,7 @@ export const ComponentsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setComponentExtendedData(
           objectPath,
           id,
-          setMeetingExtendedDataRequest,
+          setSpaceExtendedDataRequest,
           authorization,
           options,
         );
@@ -12260,7 +12255,7 @@ export const ComponentsApiFactory = function (
         .setComponentExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setMeetingExtendedDataRequest,
+          requestParameters.setSpaceExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -12993,10 +12988,10 @@ export interface ComponentsApiSetComponentExtendedDataRequest {
 
   /**
    *
-   * @type {SetMeetingExtendedDataRequest}
+   * @type {SetSpaceExtendedDataRequest}
    * @memberof ComponentsApiSetComponentExtendedData
    */
-  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
+  readonly setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -13327,7 +13322,7 @@ export class ComponentsApi extends BaseAPI {
       .setComponentExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setMeetingExtendedDataRequest,
+        requestParameters.setSpaceExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -13643,7 +13638,7 @@ export const DraftProposalsApiAxiosParamCreator = function (
       };
     },
     /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * Update a draft proposal owned by this API client.  Drafts updated here stay hidden on the Decidim front-end. Drafts created in the Decidim UI are not editable through this API.  Send `title` and `body` as strings. Do not send a locale. The server stores each field as an object with **one** locale key. The response includes only that key.  The locale is the impersonated user\'s `locale`. When `locale` is null, the server uses the organization `default_locale`.  Only an impersonation token (ROPC) is accepted. A service token is rejected.  Field errors cover only the fields present in the request. `data.meta.publishable` tells you if the draft can be published. An empty `data` object does not move locales and does not write.  ## Update sequence  A draft keeps a single locale. Changing the user\'s locale and sending a new value runs two steps: **move**, then **overlay**.  ### 1. Edited while the user locale is `fr`  ```json {   \"title\": {     \"fr\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"fr\": \"<p>Lorem Ipsum...</p>\"   } } ```  ### 2. The user locale becomes `en`, and the client sends a new title  ```json {   \"data\": {     \"title\": \"I would like new benches with USB-C charging ports\"   } } ```  **Move.** Strings stay the same. Keys change to the current locale. `fr` is removed.  ```json {   \"title\": {     \"en\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  **Overlay.** Only fields in the request are replaced. `body` was not sent, so it stays on the moved string.  ```json {   \"title\": {     \"en\": \"I would like new benches with USB-C charging ports\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  The same two steps apply for `es`, and for a null user locale resolved to the organization `default_locale`.
      * @summary Update draft proposal
      * @param {number} id
      * @param {UpdateDraftProposalPayload} updateDraftProposalPayload
@@ -13929,7 +13924,7 @@ export const DraftProposalsApiFp = function (configuration?: Configuration) {
         )(axios, localVarOperationServerBasePath || basePath);
     },
     /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * Update a draft proposal owned by this API client.  Drafts updated here stay hidden on the Decidim front-end. Drafts created in the Decidim UI are not editable through this API.  Send `title` and `body` as strings. Do not send a locale. The server stores each field as an object with **one** locale key. The response includes only that key.  The locale is the impersonated user\'s `locale`. When `locale` is null, the server uses the organization `default_locale`.  Only an impersonation token (ROPC) is accepted. A service token is rejected.  Field errors cover only the fields present in the request. `data.meta.publishable` tells you if the draft can be published. An empty `data` object does not move locales and does not write.  ## Update sequence  A draft keeps a single locale. Changing the user\'s locale and sending a new value runs two steps: **move**, then **overlay**.  ### 1. Edited while the user locale is `fr`  ```json {   \"title\": {     \"fr\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"fr\": \"<p>Lorem Ipsum...</p>\"   } } ```  ### 2. The user locale becomes `en`, and the client sends a new title  ```json {   \"data\": {     \"title\": \"I would like new benches with USB-C charging ports\"   } } ```  **Move.** Strings stay the same. Keys change to the current locale. `fr` is removed.  ```json {   \"title\": {     \"en\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  **Overlay.** Only fields in the request are replaced. `body` was not sent, so it stays on the moved string.  ```json {   \"title\": {     \"en\": \"I would like new benches with USB-C charging ports\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  The same two steps apply for `es`, and for a null user locale resolved to the organization `default_locale`.
      * @summary Update draft proposal
      * @param {number} id
      * @param {UpdateDraftProposalPayload} updateDraftProposalPayload
@@ -14096,7 +14091,7 @@ export const DraftProposalsApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+     * Update a draft proposal owned by this API client.  Drafts updated here stay hidden on the Decidim front-end. Drafts created in the Decidim UI are not editable through this API.  Send `title` and `body` as strings. Do not send a locale. The server stores each field as an object with **one** locale key. The response includes only that key.  The locale is the impersonated user\'s `locale`. When `locale` is null, the server uses the organization `default_locale`.  Only an impersonation token (ROPC) is accepted. A service token is rejected.  Field errors cover only the fields present in the request. `data.meta.publishable` tells you if the draft can be published. An empty `data` object does not move locales and does not write.  ## Update sequence  A draft keeps a single locale. Changing the user\'s locale and sending a new value runs two steps: **move**, then **overlay**.  ### 1. Edited while the user locale is `fr`  ```json {   \"title\": {     \"fr\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"fr\": \"<p>Lorem Ipsum...</p>\"   } } ```  ### 2. The user locale becomes `en`, and the client sends a new title  ```json {   \"data\": {     \"title\": \"I would like new benches with USB-C charging ports\"   } } ```  **Move.** Strings stay the same. Keys change to the current locale. `fr` is removed.  ```json {   \"title\": {     \"en\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  **Overlay.** Only fields in the request are replaced. `body` was not sent, so it stays on the moved string.  ```json {   \"title\": {     \"en\": \"I would like new benches with USB-C charging ports\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  The same two steps apply for `es`, and for a null user locale resolved to the organization `default_locale`.
      * @summary Update draft proposal
      * @param {DraftProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -14362,7 +14357,7 @@ export class DraftProposalsApi extends BaseAPI {
   }
 
   /**
-   * This endpoint allows you to  update a draft proposal associated with your application ID. Drafts updated via this API are not visible in the Decidim front-end, and drafts created from the Decidim application are not editable through the API. Therefore, any draft you create here is new and tied to your application\'s credentials.  ### Example Request  ```http PUT /public/assemblies/12/2319/proposals/draft Content-Type: application/json Authorization: Bearer YOUR_bearer_token  {   \"title\": \"My valid title\" } ``` ## Access Requirements  * Authentication: This endpoint requires an impersonation token. You must create drafts on behalf of a participant; drafts cannot be created using a service token (credential_token).  ## Error Handling  * Field Errors: Only errors related to the fields you\'re updating will be returned. * Publishable Status: To determine if the draft is publishable, check the data.meta.publishable field in the response.  ### Example response ```json {   \"data\": {     \"id\": \"12345\",     \"type\": \"proposal\",     \"attributes\": {       \"title\": \"My valid title\",       \"body\": null     },     \"meta\": {       \"publishable\": false     }   } } ``` In this example, the title is valid, so the server returns a 200 OK status. However, since the body is blank, meta.publishable is false, indicating that the draft is not yet ready for publication.
+   * Update a draft proposal owned by this API client.  Drafts updated here stay hidden on the Decidim front-end. Drafts created in the Decidim UI are not editable through this API.  Send `title` and `body` as strings. Do not send a locale. The server stores each field as an object with **one** locale key. The response includes only that key.  The locale is the impersonated user\'s `locale`. When `locale` is null, the server uses the organization `default_locale`.  Only an impersonation token (ROPC) is accepted. A service token is rejected.  Field errors cover only the fields present in the request. `data.meta.publishable` tells you if the draft can be published. An empty `data` object does not move locales and does not write.  ## Update sequence  A draft keeps a single locale. Changing the user\'s locale and sending a new value runs two steps: **move**, then **overlay**.  ### 1. Edited while the user locale is `fr`  ```json {   \"title\": {     \"fr\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"fr\": \"<p>Lorem Ipsum...</p>\"   } } ```  ### 2. The user locale becomes `en`, and the client sends a new title  ```json {   \"data\": {     \"title\": \"I would like new benches with USB-C charging ports\"   } } ```  **Move.** Strings stay the same. Keys change to the current locale. `fr` is removed.  ```json {   \"title\": {     \"en\": \"J\'aimerais de nouveaux bancs publiques avec des prises USB-C\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  **Overlay.** Only fields in the request are replaced. `body` was not sent, so it stays on the moved string.  ```json {   \"title\": {     \"en\": \"I would like new benches with USB-C charging ports\"   },   \"body\": {     \"en\": \"<p>Lorem Ipsum...</p>\"   } } ```  The same two steps apply for `es`, and for a null user locale resolved to the organization `default_locale`.
    * @summary Update draft proposal
    * @param {DraftProposalsApiUpdateDraftProposalRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
@@ -17059,7 +17054,7 @@ export const MeetingsApiAxiosParamCreator = function (
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17067,7 +17062,7 @@ export const MeetingsApiAxiosParamCreator = function (
     setMeetingExtendedData: async (
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -17075,11 +17070,11 @@ export const MeetingsApiAxiosParamCreator = function (
       assertParamExists("setMeetingExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setMeetingExtendedData", "id", id);
-      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setSpaceExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setMeetingExtendedData",
-        "setMeetingExtendedDataRequest",
-        setMeetingExtendedDataRequest,
+        "setSpaceExtendedDataRequest",
+        setSpaceExtendedDataRequest,
       );
       const localVarPath = `/meetings/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -17123,7 +17118,7 @@ export const MeetingsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setMeetingExtendedDataRequest,
+        setSpaceExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -17248,7 +17243,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
      * @summary Set meeting extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17256,7 +17251,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
     async setMeetingExtendedData(
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -17269,7 +17264,7 @@ export const MeetingsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setMeetingExtendedData(
           objectPath,
           id,
-          setMeetingExtendedDataRequest,
+          setSpaceExtendedDataRequest,
           authorization,
           options,
         );
@@ -17362,7 +17357,7 @@ export const MeetingsApiFactory = function (
         .setMeetingExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setMeetingExtendedDataRequest,
+          requestParameters.setSpaceExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -17498,10 +17493,10 @@ export interface MeetingsApiSetMeetingExtendedDataRequest {
 
   /**
    *
-   * @type {SetMeetingExtendedDataRequest}
+   * @type {SetSpaceExtendedDataRequest}
    * @memberof MeetingsApiSetMeetingExtendedData
    */
-  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
+  readonly setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -17585,7 +17580,7 @@ export class MeetingsApi extends BaseAPI {
       .setMeetingExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setMeetingExtendedDataRequest,
+        requestParameters.setSpaceExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -19827,7 +19822,7 @@ export const ProposalsApiAxiosParamCreator = function (
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19835,7 +19830,7 @@ export const ProposalsApiAxiosParamCreator = function (
     setProposalExtendedData: async (
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -19843,11 +19838,11 @@ export const ProposalsApiAxiosParamCreator = function (
       assertParamExists("setProposalExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setProposalExtendedData", "id", id);
-      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setSpaceExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setProposalExtendedData",
-        "setMeetingExtendedDataRequest",
-        setMeetingExtendedDataRequest,
+        "setSpaceExtendedDataRequest",
+        setSpaceExtendedDataRequest,
       );
       const localVarPath = `/proposals/{id}/extended_data/sync`.replace(
         `{${"id"}}`,
@@ -19891,7 +19886,7 @@ export const ProposalsApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setMeetingExtendedDataRequest,
+        setSpaceExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -20411,7 +20406,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
      * @summary Set proposal extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -20419,7 +20414,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
     async setProposalExtendedData(
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -20432,7 +20427,7 @@ export const ProposalsApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setProposalExtendedData(
           objectPath,
           id,
-          setMeetingExtendedDataRequest,
+          setSpaceExtendedDataRequest,
           authorization,
           options,
         );
@@ -20698,7 +20693,7 @@ export const ProposalsApiFactory = function (
         .setProposalExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setMeetingExtendedDataRequest,
+          requestParameters.setSpaceExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -21373,10 +21368,10 @@ export interface ProposalsApiSetProposalExtendedDataRequest {
 
   /**
    *
-   * @type {SetMeetingExtendedDataRequest}
+   * @type {SetSpaceExtendedDataRequest}
    * @memberof ProposalsApiSetProposalExtendedData
    */
-  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
+  readonly setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -21645,7 +21640,7 @@ export class ProposalsApi extends BaseAPI {
       .setProposalExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setMeetingExtendedDataRequest,
+        requestParameters.setSpaceExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
@@ -23457,7 +23452,7 @@ export const SpacesApiAxiosParamCreator = function (
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -23465,7 +23460,7 @@ export const SpacesApiAxiosParamCreator = function (
     setSpaceExtendedData: async (
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -23473,11 +23468,11 @@ export const SpacesApiAxiosParamCreator = function (
       assertParamExists("setSpaceExtendedData", "objectPath", objectPath);
       // verify required parameter 'id' is not null or undefined
       assertParamExists("setSpaceExtendedData", "id", id);
-      // verify required parameter 'setMeetingExtendedDataRequest' is not null or undefined
+      // verify required parameter 'setSpaceExtendedDataRequest' is not null or undefined
       assertParamExists(
         "setSpaceExtendedData",
-        "setMeetingExtendedDataRequest",
-        setMeetingExtendedDataRequest,
+        "setSpaceExtendedDataRequest",
+        setSpaceExtendedDataRequest,
       );
       const localVarPath =
         `/spaces/participatory_processes/{id}/extended_data/sync`.replace(
@@ -23522,7 +23517,7 @@ export const SpacesApiAxiosParamCreator = function (
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        setMeetingExtendedDataRequest,
+        setSpaceExtendedDataRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -24142,7 +24137,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
      * @summary Set space extended data (sync)
      * @param {string} objectPath
      * @param {string} id
-     * @param {SetMeetingExtendedDataRequest} setMeetingExtendedDataRequest
+     * @param {SetSpaceExtendedDataRequest} setSpaceExtendedDataRequest
      * @param {string} [authorization] Bearer access token (see security schemes)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -24150,7 +24145,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
     async setSpaceExtendedData(
       objectPath: string,
       id: string,
-      setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest,
+      setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest,
       authorization?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -24163,7 +24158,7 @@ export const SpacesApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.setSpaceExtendedData(
           objectPath,
           id,
-          setMeetingExtendedDataRequest,
+          setSpaceExtendedDataRequest,
           authorization,
           options,
         );
@@ -24523,7 +24518,7 @@ export const SpacesApiFactory = function (
         .setSpaceExtendedData(
           requestParameters.objectPath,
           requestParameters.id,
-          requestParameters.setMeetingExtendedDataRequest,
+          requestParameters.setSpaceExtendedDataRequest,
           requestParameters.authorization,
           options,
         )
@@ -25061,10 +25056,10 @@ export interface SpacesApiSetSpaceExtendedDataRequest {
 
   /**
    *
-   * @type {SetMeetingExtendedDataRequest}
+   * @type {SetSpaceExtendedDataRequest}
    * @memberof SpacesApiSetSpaceExtendedData
    */
-  readonly setMeetingExtendedDataRequest: SetMeetingExtendedDataRequest;
+  readonly setSpaceExtendedDataRequest: SetSpaceExtendedDataRequest;
 
   /**
    * Bearer access token (see security schemes)
@@ -25378,7 +25373,7 @@ export class SpacesApi extends BaseAPI {
       .setSpaceExtendedData(
         requestParameters.objectPath,
         requestParameters.id,
-        requestParameters.setMeetingExtendedDataRequest,
+        requestParameters.setSpaceExtendedDataRequest,
         requestParameters.authorization,
         options,
       )
