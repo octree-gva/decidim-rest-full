@@ -48,7 +48,8 @@ Decidim::RestFull::Core::DefinitionRegistry.register_object(:password_grant_impe
           accept_tos_on_register: { type: :boolean, description: "Accept the TOS on registration, used only if register_on_missing=true. Default: false" },
           skip_confirmation_on_register: { type: :boolean, description: "Skip email confirmation on creation, used only if register_on_missing=true. Default: false" },
           email: { type: :string, description: "User email to use on registration. used only if register_on_missing=true. Default to <username>@example.org" },
-          name: { type: :string, description: "User name. Used only if register_on_missing=true. Default to username" }
+          name: { type: :string, description: "User name. Used only if register_on_missing=true. Default to username" },
+          locale: { type: :string, description: "Participant locale. Applied on create and when the user already exists. Must be an organization locale." }
         },
         additionalProperties: false
       },

@@ -19,9 +19,11 @@ module Decidim
           if user
             # Update meta data
             user.update!(
-              extended_data: (user.extended_data || {}).merge(
-                extra
-              )
+              {
+                extended_data: (user.extended_data || {}).merge(
+                  extra
+                )
+              }.merge(locale_attributes)
             )
           else
             # Create user
@@ -70,6 +72,7 @@ module Decidim
                                         current_organization.tos_version - 1.hour
                                       end
           user.tos_agreement = true
+          user.assign_attributes(locale_attributes)
 
           password = begin
             special_chars = ["@", "#", "$", "%", "^", "&", "*", "-", "_", "+", "=", "~"]
@@ -106,6 +109,16 @@ module Decidim
 
         def extra
           @extra ||= params[:extra] || {}
+        end
+
+        def locale_attributes
+          code = meta["locale"].to_s.strip
+          return {} if code.blank?
+
+          allowed = current_organization.available_locales.map(&:to_s)
+          raise StandardError, "Locale #{code} is not available" unless allowed.include?(code)
+
+          { locale: code }
         end
 
         def default_meta
